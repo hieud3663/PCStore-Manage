@@ -1,6 +1,6 @@
 # MÔ HÌNH CHỨC NĂNG HỆ THỐNG QUẢN LÝ CỬA HÀNG MÁY TÍNH & LINH KIỆN
 
-## 1. QUẢN LÝ SẢN PHẨM VÀ KHO HÀNG
+## 1. QUẢN LÝ SẢN PHẨM VÀ KHO HÀNG (Lộc)
    ### 1.1. Quản lý danh mục sản phẩm
       - Thêm mới danh mục sản phẩm
       - Xem danh sách/Tìm kiếm danh mục
@@ -31,7 +31,7 @@
       - Xem lịch sử giao dịch
       - Đánh giá nhà cung cấp
 
-## 2. QUẢN LÝ BÁN HÀNG
+## 2. QUẢN LÝ BÁN HÀNG (Hiếu)
    ### 2.1. Quản lý hóa đơn bán hàng
       - Tạo hóa đơn mới
       - Thêm/xóa/sửa sản phẩm trong hóa đơn
@@ -65,7 +65,7 @@
       - Xem lịch sử thanh toán
       - In biên lai thanh toán
 
-## 3. QUẢN LÝ DỊCH VỤ SAU BÁN HÀNG
+## 3. QUẢN LÝ DỊCH VỤ SAU BÁN HÀNG (Đức Anh)
    ### 3.1. Quản lý bảo hành
       - Đăng ký bảo hành
       - Tra cứu thông tin bảo hành
@@ -92,7 +92,7 @@
       - Theo dõi trạng thái xử lý
       - In biên nhận đổi/trả hàng
 
-## 4. QUẢN LÝ NHÂN VIÊN VÀ PHÂN QUYỀN
+## 4. QUẢN LÝ NHÂN VIÊN VÀ PHÂN QUYỀN (Hiếu)
    ### 4.1. Quản lý nhân viên
       - Thêm mới nhân viên
       - Xem danh sách/Tìm kiếm nhân viên
@@ -116,7 +116,7 @@
       - Cập nhật quyền hạn
       - Kiểm soát truy cập theo vai trò
 
-## 5. THỐNG KÊ VÀ BÁO CÁO
+## 5. THỐNG KÊ VÀ BÁO CÁO (Lộc + Đức Anh)
    ### 5.1. Báo cáo bán hàng
       - Thống kê doanh thu
       - Thống kê doanh số theo nhân viên
@@ -147,7 +147,7 @@
       - Báo cáo tần suất mua hàng
       - Xuất báo cáo PDF/Excel
 
-## 6. QUẢN LÝ HỆ THỐNG
+## 6. QUẢN LÝ HỆ THỐNG (option)
    ### 6.1. Cấu hình hệ thống
       - Cấu hình thông tin cửa hàng
       - Thiết lập các tham số hệ thống

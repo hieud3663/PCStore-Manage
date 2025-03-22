@@ -1,6 +1,9 @@
 package com.pcstore.dao.impl;
 
+import com.pcstore.controller.PCrypt;
 import com.pcstore.dao.DAO;
+import com.pcstore.dao.DAOFactory;
+import com.pcstore.model.Employee;
 import com.pcstore.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,6 +25,10 @@ public class UserDAO implements DAO<User, String> {
         this.connection = connection;
     }
     
+    // public UserDAO(Connection connection2, DAOFactory daoFactory) {
+    //     //TODO Auto-generated constructor stub
+    // }
+
     @Override
     public User add(User user) {
         String sql = "INSERT INTO Users (Username, Password, RoleID, EmployeeID, Status) " +
@@ -30,7 +37,7 @@ public class UserDAO implements DAO<User, String> {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, user.getPassword());
-            statement.setInt(3, user.getRoleId());
+            statement.setInt(3, user.getRoleID());
             statement.setString(4, user.getEmployeeId());
             statement.setBoolean(5, user.getStatus());
             
@@ -53,7 +60,7 @@ public class UserDAO implements DAO<User, String> {
                     
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getPassword());
-            statement.setInt(2, user.getRoleId());
+            statement.setInt(2, user.getRoleID());
             statement.setBoolean(3, user.getStatus());
             statement.setString(4, user.getUsername());
             
@@ -138,24 +145,49 @@ public class UserDAO implements DAO<User, String> {
     }
     
     // Xác thực người dùng đăng nhập
-    public Optional<User> authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         String sql = "SELECT u.*, r.RoleName, e.FullName as EmployeeName " +
                      "FROM Users u " +
-                     "LEFT JOIN Roles r ON u.RoleID = r.RoleID " +
+                     "join UserRoles ur on u.UserID = ur.UserID "+
+                     "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
                      "LEFT JOIN Employees e ON u.EmployeeID = e.EmployeeID " +
-                     "WHERE u.Username = ? AND u.Password = ? AND u.Status = 1";
+                     "WHERE u.Username =  ? AND u.IsActive = 1";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
-            statement.setString(2, password); // Note: In production, use hashed passwords
+
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
-                return Optional.of(mapResultSetToUser(resultSet));
+                // System.err.println(resultSet.toString());
+                
+                String hashedPassword = resultSet.getString("PasswordHash");
+                if (!PCrypt.checkPassword(password, hashedPassword)) {
+                    return null;
+                }
+                String EmployeeId = resultSet.getString("EmployeeID");
+                if(EmployeeId == null){
+                    EmployeeId = "NV000";
+                }
+
+                String fullName = resultSet.getString("EmployeeName");
+                if (fullName == null) {
+                    fullName = "Admin";
+                }
+
+                Employee employee = new Employee();
+                employee.setEmployeeId(EmployeeId);
+                employee.setFullName(fullName);
+
+                User user = mapResultSetToUser(resultSet);
+                user.setEmployee(employee);
+                
+                return user;
+                
             }
-            return Optional.empty();
+            return null;
         } catch (SQLException e) {
-            throw new RuntimeException("Error authenticating user", e);
+            throw new RuntimeException("Xác thực người dùng thất bại: ( "+e.getMessage()+" )", e);
         }
     }
     
@@ -238,18 +270,29 @@ public class UserDAO implements DAO<User, String> {
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
         User user = new User();
         user.setUsername(resultSet.getString("Username"));
-        user.setPassword(resultSet.getString("Password"));
-        user.setRoleId(resultSet.getInt("RoleID"));
-        user.setEmployeeId(resultSet.getString("EmployeeID"));
-        user.setStatus(resultSet.getBoolean("Status"));
-        
-        // Additional data from joins
-        try {
-            user.setRoleName(resultSet.getString("RoleName"));
-            user.setEmployeeName(resultSet.getString("EmployeeName"));
+        user.setPassword(resultSet.getString("PasswordHash"));
+        // user.setRoleID(resultSet.getInt("RoleID"));
+        user.setRoleName(resultSet.getString("RoleName"));
+
+        String EmployeeId = resultSet.getString("EmployeeID");
+
+        // user.setStatus(resultSet.getBoolean("Status"));
+
+        String sql = "SELECT * FROM Employees WHERE EmployeeID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, EmployeeId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                String employeeId = rs.getString("EmployeeID");
+                String fullName = rs.getString("FullName");
+                String position = rs.getString("Position");
+                
+            }
         } catch (SQLException e) {
-            // Ignore if these columns don't exist
+            throw new RuntimeException("Error finding employee by ID", e);
         }
+        
+       
         
         return user;
     }

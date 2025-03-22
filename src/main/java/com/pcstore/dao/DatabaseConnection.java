@@ -16,13 +16,14 @@ public class DatabaseConnection {
     private String password = "123456";
     private String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     
-    private DatabaseConnection() {
+    public DatabaseConnection() {
         try {
             Class.forName(driver);
             this.connection = DriverManager.getConnection(url, username, password);
-            System.out.println("Kết nối thành công đến CSDL");
+            // System.out.println("Kết nối thành công đến CSDL");
         } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Lỗi kết nối đến CSDL: " + e.getMessage());
+            // System.out.println("Lỗi kết nối đến CSDL: " + e.getMessage());
+            throw new RuntimeException("Lỗi kết nối đến CSDL: " + e.getMessage());
         }
     }
     
@@ -53,10 +54,10 @@ public class DatabaseConnection {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("Đã đóng kết nối CSDL");
+                // System.out.println("Đã đóng kết nối CSDL");
             }
         } catch (SQLException e) {
-            System.out.println("Lỗi khi đóng kết nối CSDL: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi đóng kết nối CSDL: " + e.getMessage());
         }
     }
 }

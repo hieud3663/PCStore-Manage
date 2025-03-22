@@ -2,7 +2,7 @@ package test.controller;
 
 import test.dao.EmployeeDAO;
 import test.model.Employee;
-import model.enums.EmployeePositionEnum;
+import test.model.enums.EmployeePositionEnum;
 import test.view.EmployeeView;
 
 import java.awt.event.ActionEvent;

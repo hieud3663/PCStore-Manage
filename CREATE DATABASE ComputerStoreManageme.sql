@@ -92,7 +92,7 @@ CREATE TABLE Suppliers (
 
 -- Bảng danh mục sản phẩm
 CREATE TABLE Categories (
-    CategoryID INT IDENTITY(1,1) PRIMARY KEY, -- Mã danh mục sản phẩm
+    CategoryID VARCHAR(10) PRIMARY KEY, -- Mã danh mục sản phẩm, LAP, PC, PK, LK,...
     CategoryName NVARCHAR(255) NOT NULL UNIQUE -- Tên danh mục
 );
 
@@ -100,7 +100,7 @@ CREATE TABLE Categories (
 CREATE TABLE Products (
     ProductID VARCHAR(10) PRIMARY KEY, -- Mã sản phẩm
     ProductName NVARCHAR(255) NOT NULL, -- Tên sản phẩm
-    CategoryID INT NULL, -- Mã danh mục sản phẩm (FK)
+    CategoryID VARCHAR(10), -- Mã danh mục sản phẩm (FK)
     SupplierID VARCHAR(10) NULL, -- Mã nhà cung cấp (FK)
     Price DECIMAL(10,2) NOT NULL CHECK (Price > 0) , -- Giá bán
     StockQuantity INT DEFAULT 0 CHECK (StockQuantity >= 0), -- Số lượng tồn kho
@@ -116,11 +116,25 @@ CREATE TABLE Products (
 
 -- Bảng nhân viên
 CREATE TABLE Employees (
-    EmployeeID VARCHAR(10) PRIMARY KEY, -- Mã nhân viên
+    EmployeeID VARCHAR(10) PRIMARY KEY, -- Mã nhân viên, NV01, NV02,...
     FullName NVARCHAR(255) NOT NULL, -- Họ và tên
     PhoneNumber NVARCHAR(15) UNIQUE NOT NULL, -- Số điện thoại
     Email NVARCHAR(255) UNIQUE NOT NULL, -- Email
     Position NVARCHAR(50) CHECK (Position IN ('Manager', 'Sales', 'Stock Keeper')) NOT NULL -- Chức vụ
+);
+
+-- Bảng phương thức thanh toán
+CREATE TABLE PaymentMethods (
+    PaymentMethodID VARCHAR(10) PRIMARY KEY,
+    MethodName NVARCHAR(50) NOT NULL UNIQUE, -- VD: Tiền mặt, Thẻ tín dụng, Chuyển khoản...
+    Description NVARCHAR(255)
+);
+
+-- Bổ sung trạng thái đơn hàng
+CREATE TABLE InvoiceStatus (
+    StatusID INT PRIMARY KEY,
+    StatusName NVARCHAR(50) NOT NULL UNIQUE, -- VD: Chờ xử lý, Đã thanh toán, Đã hủy...
+    Description NVARCHAR(255)
 );
 
 -- Bảng hóa đơn
@@ -130,24 +144,35 @@ CREATE TABLE Invoices (
     EmployeeID VARCHAR(10) NULL, -- Mã nhân viên lập hóa đơn (FK)
     TotalAmount DECIMAL(10,2) CHECK (TotalAmount >= 0) NOT NULL, -- Tổng tiền hóa đơn
     InvoiceDate DATETIME DEFAULT GETDATE(), -- Ngày lập hóa đơn
+    StatusID INT NOT NULL DEFAULT 0, -- Default status (e.g., 1 could be "Pending")
+    PaymentMethodID VARCHAR(10) NOT NULL DEFAULT 1, -- Default payment method (e.g., 1 = Cash)
+    Notes NVARCHAR(MAX), -- Ghi chú
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) 
         ON DELETE SET NULL
         ON UPDATE CASCADE,
     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) 
         ON DELETE SET NULL
         ON UPDATE CASCADE,
+    FOREIGN KEY (StatusID) REFERENCES InvoiceStatus(StatusID)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE,
+    FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
+        ON DELETE NO ACTION
+        ON UPDATE CASCADE
 
 );
 
-ALTER TABLE Invoices
-ADD StatusID INT NOT NULL DEFAULT 1, -- Default status (e.g., 1 could be "Pending")
-FOREIGN KEY (StatusID) REFERENCES InvoiceStatus(StatusID)
-    ON UPDATE CASCADE;
 
-ALTER TABLE Invoices
-ADD PaymentMethodID INT NOT NULL DEFAULT 1, -- Default payment method (e.g., 1 = Cash)
-FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
-    ON UPDATE CASCADE;
+
+-- ALTER TABLE Invoices
+-- ADD StatusID INT NOT NULL DEFAULT 1, -- Default status (e.g., 1 could be "Pending")
+-- FOREIGN KEY (StatusID) REFERENCES InvoiceStatus(StatusID)
+--     ON UPDATE CASCADE;
+
+-- ALTER TABLE Invoices
+-- ADD PaymentMethodID INT NOT NULL DEFAULT 1, -- Default payment method (e.g., 1 = Cash)
+-- FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
+--     ON UPDATE CASCADE;
     
 -- Bảng chi tiết hóa đơn
 CREATE TABLE InvoiceDetails (
@@ -208,19 +233,6 @@ CREATE TABLE Warranties (
 );
 
 
--- Bảng phương thức thanh toán
-CREATE TABLE PaymentMethods (
-    PaymentMethodID INT IDENTITY(1,1) PRIMARY KEY,
-    MethodName NVARCHAR(50) NOT NULL UNIQUE, -- VD: Tiền mặt, Thẻ tín dụng, Chuyển khoản...
-    Description NVARCHAR(255)
-);
-
--- Bổ sung trạng thái đơn hàng
-CREATE TABLE InvoiceStatus (
-    StatusID INT IDENTITY(1,1) PRIMARY KEY,
-    StatusName NVARCHAR(50) NOT NULL UNIQUE, -- VD: Chờ xử lý, Đã thanh toán, Đã hủy...
-    Description NVARCHAR(255)
-);
 
 -- Bảng khuyến mãi và giảm giá
 CREATE TABLE Promotions (
@@ -262,7 +274,7 @@ CREATE TABLE RepairServices (
 
 -- Bảng quản lý người dùng (cho đăng nhập hệ thống)
 CREATE TABLE Users (
-    UserID INT IDENTITY(1,1) PRIMARY KEY,
+    UserID VARCHAR(10) PRIMARY KEY, -- vd: U001, U002,... (nên tạo triger để tự động tạo mã)
     Username NVARCHAR(50) NOT NULL UNIQUE,
     PasswordHash NVARCHAR(255) NOT NULL, -- Lưu hash của mật khẩu, không lưu trực tiếp
     EmployeeID VARCHAR(10) NULL, -- Liên kết với nhân viên nếu là tài khoản nhân viên
@@ -272,16 +284,17 @@ CREATE TABLE Users (
     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE SET NULL
 );
 
+
 -- Bảng phân quyền
 CREATE TABLE Roles (
-    RoleID INT IDENTITY(1,1) PRIMARY KEY,
+    RoleID INT PRIMARY KEY,
     RoleName NVARCHAR(50) NOT NULL UNIQUE,
     Description NVARCHAR(255)
 );
 
 -- Bảng phân quyền cho người dùng
 CREATE TABLE UserRoles (
-    UserID INT NOT NULL,
+    UserID VARCHAR(10) NOT NULL,
     RoleID INT NOT NULL,
     PRIMARY KEY (UserID, RoleID),
     FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
@@ -308,3 +321,4 @@ CREATE TABLE Returns (
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
+

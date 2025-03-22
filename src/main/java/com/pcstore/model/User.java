@@ -2,8 +2,6 @@ package com.pcstore.model;
 
 import com.pcstore.model.base.BaseTimeEntity;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Class biểu diễn thông tin tài khoản người dùng
@@ -14,8 +12,13 @@ public class User extends BaseTimeEntity {
     private String password;
     private boolean isActive;
     private LocalDateTime lastLogin;
-    private Set<String> roles = new HashSet<>();
+    // private Set<String> roles = new HashSet<>();
+    private Integer roleID;
+    private String roleName;
     private Employee employee;
+    private boolean status;
+
+    
 
     @Override
     public Object getId() {
@@ -74,24 +77,7 @@ public class User extends BaseTimeEntity {
         this.lastLogin = lastLogin;
     }
 
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
-
-    public void addRole(String role) {
-        if (role == null || role.trim().isEmpty()) {
-            throw new IllegalArgumentException("Vai trò không được để trống");
-        }
-        this.roles.add(role);
-    }
-
-    public void removeRole(String role) {
-        this.roles.remove(role);
-    }
+    
 
     public Employee getEmployee() {
         return employee;
@@ -113,15 +99,7 @@ public class User extends BaseTimeEntity {
         }
     }
 
-    // Phương thức kiểm tra tài khoản có một vai trò cụ thể hay không
-    public boolean hasRole(String role) {
-        return roles.contains(role);
-    }
 
-    // Phương thức kiểm tra tài khoản có quyền admin không
-    public boolean isAdmin() {
-        return roles.contains("ADMIN");
-    }
 
     // Phương thức kiểm tra tài khoản có thể đăng nhập không
     public boolean canLogin() {
@@ -156,4 +134,34 @@ public class User extends BaseTimeEntity {
         this.isActive = false;
         this.setUpdatedAt(LocalDateTime.now());
     }
+
+    public Integer getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(Integer roleID) {
+        this.roleID = roleID;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public String getEmployeeId() {
+        return employee.getEmployeeId();
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+
 }

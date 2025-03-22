@@ -9,7 +9,7 @@ import java.util.List;
  * Class biểu diễn danh mục sản phẩm
  */
 public class Category extends BaseTimeEntity {
-    private Integer categoryId;
+    private String categoryId;
     private String categoryName;
     private String description;
     private Category parentCategory;
@@ -22,12 +22,12 @@ public class Category extends BaseTimeEntity {
         return categoryId;
     }
 
-    public Integer getCategoryId() {
+    public String getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryId(String generatedId) {
+        this.categoryId = generatedId;
     }
 
     public String getCategoryName() {

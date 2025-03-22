@@ -8,25 +8,30 @@ import java.time.temporal.ChronoUnit;
  * Class biểu diễn thông tin bảo hành
  */
 public class Warranty extends BaseTimeEntity {
-    private Integer warrantyId;
+    private String warrantyId;
     private InvoiceDetail invoiceDetail;
-    private Product product;
-    private RepairService repairService;
+    // Bỏ thuộc tính product vì đã có trong invoiceDetail
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String warrantyTerms;
     private boolean isUsed;
+    
+    // Thông tin tạm thời để hiển thị UI
+    private transient String customerName;
+    private transient String productName;
+    private transient Integer repairServiceId;
+    private transient String repairStatus;
 
     @Override
     public Object getId() {
         return warrantyId;
     }
 
-    public Integer getWarrantyId() {
+    public String getWarrantyId() {
         return warrantyId;
     }
 
-    public void setWarrantyId(Integer warrantyId) {
+    public void setWarrantyId(String warrantyId) {
         this.warrantyId = warrantyId;
     }
 
@@ -41,29 +46,31 @@ public class Warranty extends BaseTimeEntity {
         this.invoiceDetail = invoiceDetail;
     }
 
+    // Phương thức để lấy product từ invoiceDetail
     public Product getProduct() {
-        return product;
+        return invoiceDetail != null ? invoiceDetail.getProduct() : null;
     }
     
-    public void setProduct(Product product) {
-        if (product == null) {
-            throw new IllegalArgumentException("Sản phẩm không được để trống");
-        }
-        this.product = product;
+    // Bỏ setter của product
+    
+    // Thay đổi cách xử lý RepairService để tránh tham chiếu vòng
+    public Integer getRepairServiceId() {
+        return repairServiceId;
     }
-
-    public RepairService getRepairService() {
-        return repairService;
-    }
-
-    public void setRepairService(RepairService repairService) {
-        if (isUsed && repairService == null) {
-            throw new IllegalStateException("Không thể hủy dịch vụ sửa chữa của bảo hành đã sử dụng");
-        }
-        this.repairService = repairService;
-        if (repairService != null) {
+    
+    public void setRepairServiceId(Integer repairServiceId) {
+        this.repairServiceId = repairServiceId;
+        if (repairServiceId != null) {
             this.isUsed = true;
         }
+    }
+    
+    public String getRepairStatus() {
+        return repairStatus;
+    }
+    
+    public void setRepairStatus(String repairStatus) {
+        this.repairStatus = repairStatus;
     }
 
     public LocalDateTime getStartDate() {
@@ -109,8 +116,25 @@ public class Warranty extends BaseTimeEntity {
         return isUsed;
     }
 
-    protected void setUsed(boolean used) {
+    public void setUsed(boolean used) {
         this.isUsed = used;
+    }
+
+    // Getter/Setter cho các thuộc tính tạm thời UI
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     // Phương thức kiểm tra bảo hành còn hiệu lực không

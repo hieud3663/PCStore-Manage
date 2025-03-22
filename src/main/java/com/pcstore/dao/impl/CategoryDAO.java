@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * DAO implementation cho Category entity
  */
-public class CategoryDAO implements DAO<Category, Integer> {
+public class CategoryDAO implements DAO<Category, String> {
     private Connection connection;
     
     public CategoryDAO(Connection connection) {
@@ -33,7 +33,7 @@ public class CategoryDAO implements DAO<Category, Integer> {
             
             ResultSet generatedKeys = statement.getGeneratedKeys();
             if (generatedKeys.next()) {
-                int generatedId = generatedKeys.getInt(1);
+                String generatedId = generatedKeys.getString(1);
                 category.setCategoryId(generatedId);
             }
             
@@ -53,7 +53,7 @@ public class CategoryDAO implements DAO<Category, Integer> {
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, category.getCategoryName());
-            statement.setInt(2, category.getCategoryId());
+            statement.setString(2, category.getCategoryId());
             
             statement.executeUpdate();
             
@@ -65,11 +65,11 @@ public class CategoryDAO implements DAO<Category, Integer> {
     }
     
     @Override
-    public boolean delete(Integer id) {
+    public boolean delete(String id) {
         String sql = "DELETE FROM Categories WHERE CategoryID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
+            statement.setString(1, id);
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -78,11 +78,11 @@ public class CategoryDAO implements DAO<Category, Integer> {
     }
     
     @Override
-    public Optional<Category> findById(Integer id) {
+    public Optional<Category> findById(String id) {
         String sql = "SELECT * FROM Categories WHERE CategoryID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -112,11 +112,11 @@ public class CategoryDAO implements DAO<Category, Integer> {
     }
     
     @Override
-    public boolean exists(Integer id) {
+    public boolean exists(String id) {
         String sql = "SELECT COUNT(*) FROM Categories WHERE CategoryID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -167,7 +167,7 @@ public class CategoryDAO implements DAO<Category, Integer> {
     
     private Category mapResultSetToCategory(ResultSet resultSet) throws SQLException {
         Category category = new Category();
-        category.setCategoryId(resultSet.getInt("CategoryID"));
+        category.setCategoryId(resultSet.getString("CategoryID"));
         category.setCategoryName(resultSet.getString("CategoryName"));
         
         // Products sẽ được load khi cần thông qua ProductDAO

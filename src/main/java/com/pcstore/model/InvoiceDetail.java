@@ -133,10 +133,10 @@ public class InvoiceDetail extends BaseTimeEntity {
             return;
         }
 
-        BigDecimal calculatedDiscount = discount.calculateDiscount(this.product, this.quantity);
+        BigDecimal calculatedDiscount = discount.calculateDiscount(this.getTotalAmount());
         if (calculatedDiscount.compareTo(BigDecimal.ZERO) > 0) {
             setDiscountAmount(calculatedDiscount);
-            discount.use();
+            // discount.use();
         }
     }
 
@@ -168,7 +168,7 @@ public class InvoiceDetail extends BaseTimeEntity {
 
         if (warranty == null) {
             warranty = new Warranty();
-            warranty.setProduct(product);
+            // warranty.setProduct(product);
             warranty.setInvoiceDetail(this);
             warranty.initializeWarrantyPeriod();
         }

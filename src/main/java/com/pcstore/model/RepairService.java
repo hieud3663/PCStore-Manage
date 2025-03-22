@@ -62,7 +62,7 @@ public class RepairService extends BaseTimeEntity {
     public void setWarranty(Warranty warranty) {
         this.warranty = warranty;
         if (warranty != null) {
-            warranty.setRepairService(this);
+            warranty.setRepairServiceId(repairServiceId);
             // Nếu còn bảo hành, phí dịch vụ = 0
             if (warranty.isValid()) {
                 setServiceFee(BigDecimal.ZERO);

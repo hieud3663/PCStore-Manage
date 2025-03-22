@@ -1,8 +1,8 @@
 package com.pcstore.dao.impl;
 
 import com.pcstore.dao.DAO;
+import com.pcstore.dao.DAOFactory;
 import com.pcstore.model.RepairService;
-import com.pcstore.model.enums.RepairStatusEnum;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,51 +13,56 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * DAO implementation cho RepairService entity
  */
-public class RepairServiceDAO implements DAO<RepairService, String> {
+public class RepairServiceDAO implements DAO<RepairService, Integer> {
     private Connection connection;
     
     public RepairServiceDAO(Connection connection) {
         this.connection = connection;
     }
     
+    // public RepairServiceDAO(Connection connection2, DAOFactory daoFactory) {
+    //     //TODO Auto-generated constructor stub
+    // }
+
     @Override
     public RepairService add(RepairService repairService) {
-        String sql = "INSERT INTO RepairServices (ServiceID, CustomerID, ProductDescription, " +
-                     "IssueDescription, Status, EstimatedCost, StartDate, EstimatedCompletionDate, " +
-                     "TechnicianID, Notes, CreatedAt, UpdatedAt) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO RepairServices (CustomerID, EmployeeID, DeviceDescription, " +
+                     "Problem, DiagnosisResult, RepairCost, ReceiveDate, EstimatedCompletionDate, " +
+                     "ActualCompletionDate, Status, Notes) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                      
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            // Generate a new ID if not provided
-            if (repairService.getId() == null) {
-                repairService.setId(UUID.randomUUID().toString());
-            }
-            
+        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             LocalDateTime now = LocalDateTime.now();
             repairService.setCreatedAt(now);
             repairService.setUpdatedAt(now);
             
-            statement.setString(1, repairService.getId());
-            statement.setString(2, repairService.getCustomerId());
-            statement.setString(3, repairService.getProductDescription());
-            statement.setString(4, repairService.getIssueDescription());
-            statement.setString(5, repairService.getStatus().toString());
-            statement.setBigDecimal(6, repairService.getEstimatedCost());
-            statement.setTimestamp(7, repairService.getStartDate() != null ? 
-                    Timestamp.valueOf(repairService.getStartDate()) : null);
-            statement.setTimestamp(8, repairService.getEstimatedCompletionDate() != null ? 
-                    Timestamp.valueOf(repairService.getEstimatedCompletionDate()) : null);
-            statement.setString(9, repairService.getTechnicianId());
-            statement.setString(10, repairService.getNotes());
-            statement.setTimestamp(11, Timestamp.valueOf(repairService.getCreatedAt()));
-            statement.setTimestamp(12, Timestamp.valueOf(repairService.getUpdatedAt()));
+            statement.setString(1, repairService.getCustomer().getCustomerId());
+            statement.setString(2, repairService.getEmployee() != null ? 
+                    repairService.getEmployee().getEmployeeId() : null);
+            statement.setString(3, repairService.getDescription());
+            statement.setString(4, repairService.getDescription()); // Problem matches description
+            statement.setString(5, repairService.getDiagnosis());
+            statement.setBigDecimal(6, repairService.getServiceFee());
+            statement.setTimestamp(7, repairService.getReceiveDate() != null ? 
+                    Timestamp.valueOf(repairService.getReceiveDate()) : null);
+            statement.setTimestamp(8, null); // EstimatedCompletionDate not in model
+            statement.setTimestamp(9, repairService.getCompletionDate() != null ? 
+                    Timestamp.valueOf(repairService.getCompletionDate()) : null);
+            statement.setString(10, repairService.getStatus());
+            statement.setString(11, repairService.getNotes());
             
             statement.executeUpdate();
+            
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    repairService.setRepairServiceId(generatedKeys.getInt(1));
+                }
+            }
+            
             return repairService;
         } catch (SQLException e) {
             throw new RuntimeException("Error adding repair service", e);
@@ -66,32 +71,31 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     
     @Override
     public RepairService update(RepairService repairService) {
-        String sql = "UPDATE RepairServices SET CustomerID = ?, ProductDescription = ?, " +
-                     "IssueDescription = ?, Status = ?, EstimatedCost = ?, StartDate = ?, " +
-                     "EstimatedCompletionDate = ?, ActualCompletionDate = ?, TechnicianID = ?, " +
-                     "Notes = ?, FinalCost = ?, UpdatedAt = ? " +
-                     "WHERE ServiceID = ?";
+        String sql = "UPDATE RepairServices SET CustomerID = ?, EmployeeID = ?, " +
+                     "DeviceDescription = ?, Problem = ?, DiagnosisResult = ?, " +
+                     "RepairCost = ?, ReceiveDate = ?, EstimatedCompletionDate = ?, " +
+                     "ActualCompletionDate = ?, Status = ?, Notes = ? " +
+                     "WHERE RepairID = ?";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             LocalDateTime now = LocalDateTime.now();
             repairService.setUpdatedAt(now);
             
-            statement.setString(1, repairService.getCustomerId());
-            statement.setString(2, repairService.getProductDescription());
-            statement.setString(3, repairService.getIssueDescription());
-            statement.setString(4, repairService.getStatus().toString());
-            statement.setBigDecimal(5, repairService.getEstimatedCost());
-            statement.setTimestamp(6, repairService.getStartDate() != null ? 
-                    Timestamp.valueOf(repairService.getStartDate()) : null);
-            statement.setTimestamp(7, repairService.getEstimatedCompletionDate() != null ? 
-                    Timestamp.valueOf(repairService.getEstimatedCompletionDate()) : null);
-            statement.setTimestamp(8, repairService.getActualCompletionDate() != null ? 
-                    Timestamp.valueOf(repairService.getActualCompletionDate()) : null);
-            statement.setString(9, repairService.getTechnicianId());
-            statement.setString(10, repairService.getNotes());
-            statement.setBigDecimal(11, repairService.getFinalCost());
-            statement.setTimestamp(12, Timestamp.valueOf(repairService.getUpdatedAt()));
-            statement.setString(13, repairService.getId());
+            statement.setString(1, repairService.getCustomer().getCustomerId());
+            statement.setString(2, repairService.getEmployee() != null ? 
+                    repairService.getEmployee().getEmployeeId() : null);
+            statement.setString(3, repairService.getDescription());
+            statement.setString(4, repairService.getDescription()); // Problem matches description
+            statement.setString(5, repairService.getDiagnosis());
+            statement.setBigDecimal(6, repairService.getServiceFee());
+            statement.setTimestamp(7, repairService.getReceiveDate() != null ? 
+                    Timestamp.valueOf(repairService.getReceiveDate()) : null);
+            statement.setTimestamp(8, null); // EstimatedCompletionDate not in model
+            statement.setTimestamp(9, repairService.getCompletionDate() != null ? 
+                    Timestamp.valueOf(repairService.getCompletionDate()) : null);
+            statement.setString(10, repairService.getStatus());
+            statement.setString(11, repairService.getNotes());
+            statement.setInt(12, repairService.getRepairServiceId());
             
             statement.executeUpdate();
             return repairService;
@@ -101,11 +105,11 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     }
     
     @Override
-    public boolean delete(String serviceId) {
-        String sql = "DELETE FROM RepairServices WHERE ServiceID = ?";
+    public boolean delete(Integer repairServiceId) {
+        String sql = "DELETE FROM RepairServices WHERE RepairID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, serviceId);
+            statement.setInt(1, repairServiceId);
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -114,15 +118,15 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     }
     
     @Override
-    public Optional<RepairService> findById(String serviceId) {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as TechnicianName " +
+    public Optional<RepairService> findById(Integer repairServiceId) {
+        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON rs.TechnicianID = e.EmployeeID " +
-                     "WHERE ServiceID = ?";
+                     "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
+                     "WHERE rs.RepairID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, serviceId);
+            statement.setInt(1, repairServiceId);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -136,10 +140,10 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     
     @Override
     public List<RepairService> findAll() {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as TechnicianName " +
+        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON rs.TechnicianID = e.EmployeeID";
+                     "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID";
                      
         List<RepairService> services = new ArrayList<>();
         
@@ -156,11 +160,11 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     }
     
     @Override
-    public boolean exists(String serviceId) {
-        String sql = "SELECT COUNT(*) FROM RepairServices WHERE ServiceID = ?";
+    public boolean exists(Integer repairServiceId) {
+        String sql = "SELECT COUNT(*) FROM RepairServices WHERE RepairID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, serviceId);
+            statement.setInt(1, repairServiceId);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -174,10 +178,10 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     
     // Tìm kiếm dịch vụ sửa chữa theo khách hàng
     public List<RepairService> findByCustomerId(String customerId) {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as TechnicianName " +
+        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON rs.TechnicianID = e.EmployeeID " +
+                     "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
                      "WHERE rs.CustomerID = ?";
                      
         List<RepairService> services = new ArrayList<>();
@@ -196,17 +200,17 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     }
     
     // Tìm kiếm dịch vụ sửa chữa theo trạng thái
-    public List<RepairService> findByStatus(RepairStatusEnum status) {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as TechnicianName " +
+    public List<RepairService> findByStatus(String status) {
+        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON rs.TechnicianID = e.EmployeeID " +
+                     "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
                      "WHERE rs.Status = ?";
                      
         List<RepairService> services = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, status.toString());
+            statement.setString(1, status);
             ResultSet resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
@@ -218,18 +222,18 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
         }
     }
     
-    // Tìm kiếm dịch vụ sửa chữa theo kỹ thuật viên
-    public List<RepairService> findByTechnician(String technicianId) {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as TechnicianName " +
+    // Tìm kiếm dịch vụ sửa chữa theo nhân viên kỹ thuật
+    public List<RepairService> findByEmployeeId(String employeeId) {
+        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON rs.TechnicianID = e.EmployeeID " +
-                     "WHERE rs.TechnicianID = ?";
+                     "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
+                     "WHERE rs.EmployeeID = ?";
                      
         List<RepairService> services = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, technicianId);
+            statement.setString(1, employeeId);
             ResultSet resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
@@ -237,17 +241,17 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
             }
             return services;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding repair services by technician ID", e);
+            throw new RuntimeException("Error finding repair services by employee ID", e);
         }
     }
     
-    // Tìm kiếm dịch vụ đến hạn trong ngày
+    // Tìm kiếm dịch vụ đến hạn hoàn thành trong ngày
     public List<RepairService> findDueToday() {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as TechnicianName " +
+        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON rs.TechnicianID = e.EmployeeID " +
-                     "WHERE DATE(rs.EstimatedCompletionDate) = CURRENT_DATE AND rs.Status != 'COMPLETED'";
+                     "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
+                     "WHERE DATE(rs.EstimatedCompletionDate) = CURRENT_DATE AND rs.Status != 'Completed' AND rs.Status != 'Cancelled'";
                      
         List<RepairService> services = new ArrayList<>();
         
@@ -264,13 +268,12 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     }
     
     // Cập nhật trạng thái dịch vụ
-    public boolean updateStatus(String serviceId, RepairStatusEnum status) {
-        String sql = "UPDATE RepairServices SET Status = ?, UpdatedAt = ? WHERE ServiceID = ?";
+    public boolean updateStatus(Integer repairServiceId, String status) {
+        String sql = "UPDATE RepairServices SET Status = ? WHERE RepairID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, status.toString());
-            statement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            statement.setString(3, serviceId);
+            statement.setString(1, status);
+            statement.setInt(2, repairServiceId);
             
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
@@ -280,17 +283,15 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     }
     
     // Hoàn thành dịch vụ sửa chữa
-    public boolean completeService(String serviceId, LocalDateTime completionDate, String notes, double finalCost) {
-        String sql = "UPDATE RepairServices SET Status = ?, ActualCompletionDate = ?, " +
-                     "Notes = ?, FinalCost = ?, UpdatedAt = ? WHERE ServiceID = ?";
+    public boolean completeService(Integer repairServiceId, LocalDateTime completionDate, String notes, double finalCost) {
+        String sql = "UPDATE RepairServices SET Status = 'Completed', ActualCompletionDate = ?, " +
+                     "Notes = ?, RepairCost = ? WHERE RepairID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, RepairStatusEnum.COMPLETED.toString());
-            statement.setTimestamp(2, Timestamp.valueOf(completionDate));
-            statement.setString(3, notes);
-            statement.setBigDecimal(4, java.math.BigDecimal.valueOf(finalCost));
-            statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-            statement.setString(6, serviceId);
+            statement.setTimestamp(1, Timestamp.valueOf(completionDate));
+            statement.setString(2, notes);
+            statement.setBigDecimal(3, java.math.BigDecimal.valueOf(finalCost));
+            statement.setInt(4, repairServiceId);
             
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
@@ -301,49 +302,52 @@ public class RepairServiceDAO implements DAO<RepairService, String> {
     
     private RepairService mapResultSetToRepairService(ResultSet resultSet) throws SQLException {
         RepairService service = new RepairService();
-        service.setId(resultSet.getString("ServiceID"));
-        service.setCustomerId(resultSet.getString("CustomerID"));
-        service.setProductDescription(resultSet.getString("ProductDescription"));
-        service.setIssueDescription(resultSet.getString("IssueDescription"));
-        service.setStatus(RepairStatusEnum.valueOf(resultSet.getString("Status")));
-        service.setEstimatedCost(resultSet.getBigDecimal("EstimatedCost"));
+        service.setRepairServiceId(resultSet.getInt("RepairID"));
         
-        Timestamp startDate = resultSet.getTimestamp("StartDate");
-        if (startDate != null) {
-            service.setStartDate(startDate.toLocalDateTime());
-        }
+        // Dữ liệu khách hàng và nhân viên sẽ được lấy từ service layer
+        // Ở đây chỉ lấy ID để tham chiếu
         
-        Timestamp estimatedDate = resultSet.getTimestamp("EstimatedCompletionDate");
-        if (estimatedDate != null) {
-            service.setEstimatedCompletionDate(estimatedDate.toLocalDateTime());
-        }
-        
-        Timestamp actualDate = resultSet.getTimestamp("ActualCompletionDate");
-        if (actualDate != null) {
-            service.setActualCompletionDate(actualDate.toLocalDateTime());
-        }
-        
-        service.setTechnicianId(resultSet.getString("TechnicianID"));
+        service.setDescription(resultSet.getString("DeviceDescription") + "\n" + 
+                              resultSet.getString("Problem"));
+        service.setDiagnosis(resultSet.getString("DiagnosisResult"));
+        service.setServiceFee(resultSet.getBigDecimal("RepairCost"));
+        service.setStatus(resultSet.getString("Status"));
         service.setNotes(resultSet.getString("Notes"));
-        service.setFinalCost(resultSet.getBigDecimal("FinalCost"));
         
-        // Additional data from joins
+        Timestamp receiveDate = resultSet.getTimestamp("ReceiveDate");
+        if (receiveDate != null) {
+            service.setReceiveDate(receiveDate.toLocalDateTime());
+        }
+        
+        Timestamp completionDate = resultSet.getTimestamp("ActualCompletionDate");
+        if (completionDate != null) {
+            service.setCompletionDate(completionDate.toLocalDateTime());
+        }
+        
+        // Lấy thông tin bổ sung nếu có join
         try {
-            service.setCustomerName(resultSet.getString("CustomerName"));
-            service.setTechnicianName(resultSet.getString("TechnicianName"));
+            String customerName = resultSet.getString("CustomerName");
+            String employeeName = resultSet.getString("EmployeeName");
+            
+            // Có thể lưu trữ tạm thời để hiển thị UI
+            // Đối tượng đầy đủ sẽ được thiết lập trong service layer
         } catch (SQLException e) {
-            // Ignore if these columns don't exist
+            // Bỏ qua nếu không có cột này
         }
         
-        // Get created and updated timestamps
-        Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
-        if (createdAt != null) {
-            service.setCreatedAt(createdAt.toLocalDateTime());
-        }
-        
-        Timestamp updatedAt = resultSet.getTimestamp("UpdatedAt");
-        if (updatedAt != null) {
-            service.setUpdatedAt(updatedAt.toLocalDateTime());
+        // Lấy thời gian tạo và cập nhật nếu có
+        try {
+            Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
+            if (createdAt != null) {
+                service.setCreatedAt(createdAt.toLocalDateTime());
+            }
+            
+            Timestamp updatedAt = resultSet.getTimestamp("UpdatedAt");
+            if (updatedAt != null) {
+                service.setUpdatedAt(updatedAt.toLocalDateTime());
+            }
+        } catch (SQLException e) {
+            // Bỏ qua nếu không có các cột này
         }
         
         return service;

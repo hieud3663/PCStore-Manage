@@ -96,28 +96,32 @@ public class DAOFactory {
     
     public UserDAO getUserDAO() {
         if (userDAO == null) {
-            userDAO = new UserDAO(connection, this);
+            // userDAO = new UserDAO(connection, this);
+            userDAO = new UserDAO(connection);
         }
         return userDAO;
     }
     
     public WarrantyDAO getWarrantyDAO() {
         if (warrantyDAO == null) {
-            warrantyDAO = new WarrantyDAO(connection, this);
+            // warrantyDAO = new WarrantyDAO(connection, this);
+            warrantyDAO = new WarrantyDAO(connection);
         }
         return warrantyDAO;
     }
     
     public RepairServiceDAO getRepairServiceDAO() {
         if (repairServiceDAO == null) {
-            repairServiceDAO = new RepairServiceDAO(connection, this);
+            // repairServiceDAO = new RepairServiceDAO(connection, this);
+            repairServiceDAO = new RepairServiceDAO(connection);
         }
         return repairServiceDAO;
     }
     
     public ReturnDAO getReturnDAO() {
         if (returnDAO == null) {
-            returnDAO = new ReturnDAO(connection, this);
+            // returnDAO = new ReturnDAO(connection, this);
+            returnDAO = new ReturnDAO(connection);
         }
         return returnDAO;
     }

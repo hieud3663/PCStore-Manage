@@ -11,7 +11,6 @@
       - Thêm mới sản phẩm
       - Xem danh sách/Tìm kiếm sản phẩm
       - Cập nhật thông tin sản phẩm
-      - Xem lịch sử giá bán
       - Xem chi tiết thông số kỹ thuật
       - Theo dõi số lượng tồn kho
       - Cảnh báo khi sắp hết hàng
@@ -29,7 +28,6 @@
       - Xem danh sách/Tìm kiếm nhà cung cấp
       - Cập nhật thông tin nhà cung cấp
       - Xem lịch sử giao dịch
-      - Đánh giá nhà cung cấp
 
 ## 2. QUẢN LÝ BÁN HÀNG (Hiếu)
    ### 2.1. Quản lý hóa đơn bán hàng
@@ -69,8 +67,7 @@
    ### 3.1. Quản lý bảo hành
       - Đăng ký bảo hành
       - Tra cứu thông tin bảo hành
-      - Cập nhật trạng thái bảo hành
-      - Thông báo khi hết hạn bảo hành
+      - Cập nhật trạng thái bảo hành ( Còn hay Hết hạn)
       - In phiếu bảo hành
 
    ### 3.2. Quản lý dịch vụ sửa chữa
@@ -79,7 +76,6 @@
       - Ghi nhận kết quả chẩn đoán
       - Báo giá sửa chữa
       - Cập nhật trạng thái sửa chữa
-      - Thông báo tiến độ cho khách hàng
       - In biên nhận/phiếu sửa chữa
       - Theo dõi lịch sử sửa chữa
 
@@ -89,7 +85,7 @@
       - Xác nhận tình trạng sản phẩm
       - Xử lý hoàn tiền/đổi sản phẩm
       - Cập nhật tồn kho sau đổi/trả
-      - Theo dõi trạng thái xử lý
+      - Trạng thái xử lý (Đã tiếp nhận, Đang xác nhận lý do, Hoàn Thành or Không đủ điều kiện)
       - In biên nhận đổi/trả hàng
 
 ## 4. QUẢN LÝ NHÂN VIÊN VÀ PHÂN QUYỀN (Hiếu)

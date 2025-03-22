@@ -1,4 +1,4 @@
-# MÔ HÌNH CHỨC NĂNG HỆ THỐNG QUẢN LÝ CỬA HÀNG MÁY TÍNH & LINH KIỆN
+# MÔ HÌNH CHỨC NĂNG HỆ THỐNG QUẢN LÝ CỬA HÀNG MÁY TÍNH
 
 ## 1. QUẢN LÝ SẢN PHẨM VÀ KHO HÀNG (Lộc)
    ### 1.1. Quản lý danh mục sản phẩm

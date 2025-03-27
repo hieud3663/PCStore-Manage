@@ -4,8 +4,6 @@
  */
 package com.pcstore.view;
 
-import java.lang.classfile.Signature;
-
 /**
  *
  * @author nloc2
@@ -33,13 +31,11 @@ public class Product extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
-        btnDelete = new com.k33ptoo.components.KButton();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         kPanelFieldSearch5 = new com.k33ptoo.components.KGradientPanel();
         jTextField6 = new javax.swing.JTextField();
         btnSearch = new com.k33ptoo.components.KButton();
-        btnEdit = new com.k33ptoo.components.KButton();
         btnAdd = new com.k33ptoo.components.KButton();
         jLabel2 = new javax.swing.JLabel();
 
@@ -50,23 +46,6 @@ public class Product extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -96,6 +75,7 @@ public class Product extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
+        jTable1.setRowHeight(32);
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
@@ -115,15 +95,7 @@ public class Product extends javax.swing.JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Tìm Kiếm Nâng Cao");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        btnDelete.setText(bundle.getString("btnDelete")); // NOI18N
-        btnDelete.setkBorderRadius(30);
-        btnDelete.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnDelete.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnDelete.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDelete.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "cccc" }));
 
         kPanelFieldSearch5.setBackground(new java.awt.Color(255, 255, 255));
         kPanelFieldSearch5.setkEndColor(new java.awt.Color(255, 255, 255));
@@ -133,7 +105,11 @@ public class Product extends javax.swing.JPanel {
         jTextField6.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jTextField6.setToolTipText("");
         jTextField6.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
-        
+        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField6ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout kPanelFieldSearch5Layout = new javax.swing.GroupLayout(kPanelFieldSearch5);
         kPanelFieldSearch5.setLayout(kPanelFieldSearch5Layout);
@@ -149,6 +125,7 @@ public class Product extends javax.swing.JPanel {
             .addComponent(jTextField6, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
         );
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnSearch.setText(bundle.getString("btnSearch")); // NOI18N
         btnSearch.setToolTipText("");
         btnSearch.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
@@ -201,19 +178,17 @@ public class Product extends javax.swing.JPanel {
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
 
-        btnEdit.setText(bundle.getString("btnEdit")); // NOI18N
-        btnEdit.setkBorderRadius(30);
-        btnEdit.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnEdit.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnEdit.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnEdit.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-
         btnAdd.setText(bundle.getString("btnAdd")); // NOI18N
         btnAdd.setkBorderRadius(30);
         btnAdd.setkEndColor(new java.awt.Color(102, 153, 255));
         btnAdd.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnAdd.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnAdd.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/exclamation.png"))); // NOI18N
         jLabel2.setText("Kiểm tra tồn kho trước khi thêm hoặc xóa sản phẩm !");
@@ -223,19 +198,14 @@ public class Product extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(627, 627, 627)
                         .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(23, 23, 23))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -258,12 +228,9 @@ public class Product extends javax.swing.JPanel {
                 .addGap(11, 11, 11)
                 .addComponent(kGradientPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -277,6 +244,15 @@ public class Product extends javax.swing.JPanel {
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {
+        // Tạo một JFrame mới để hiển thị form AddProductForm
+        javax.swing.JFrame frame = new javax.swing.JFrame("Thêm Sản Phẩm");
+        frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE); // Chỉ đóng form này khi tắt
+        frame.setContentPane(new AddProductForm()); // Đặt JPanel AddProductForm vào JFrame
+        frame.pack(); // Tự động điều chỉnh kích thước JFrame theo nội dung
+        frame.setLocationRelativeTo(null); // Hiển thị JFrame ở giữa màn hình
+        frame.setVisible(true); // Hiển thị JFrame
+    }
     public static void main(String[] args) {
         try {
             // Thiết lập giao diện Look and Feel của hệ thống
@@ -286,17 +262,18 @@ public class Product extends javax.swing.JPanel {
         }
     
         // Khởi chạy giao diện trên luồng sự kiện của Swing
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Product().setVisible(true); // Hiển thị giao diện
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            javax.swing.JFrame frame = new javax.swing.JFrame("Product Management");
+            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(new Product()); // Đặt JPanel Product vào JFrame
+            frame.pack(); // Tự động điều chỉnh kích thước JFrame theo nội dung
+            frame.setLocationRelativeTo(null); // Hiển thị JFrame ở giữa màn hình
+            frame.setVisible(true); // Hiển thị JFrame
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAdd;
-    private com.k33ptoo.components.KButton btnDelete;
-    private com.k33ptoo.components.KButton btnEdit;
     private com.k33ptoo.components.KButton btnSearch;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;

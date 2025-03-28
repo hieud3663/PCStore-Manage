@@ -8,12 +8,21 @@ package com.pcstore.view;
  *
  * @author MSII
  */
-public class PayForm extends javax.swing.JFrame {
+public class PayForm extends javax.swing.JDialog {
 
     /**
      * Creates new form PayForm
      */
+
+     public PayForm(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
+        setLocationRelativeTo(parent);
+    }
+    
+    // Giữ constructor cũ cho backward compatibility (tương thích ngược)
     public PayForm() {
+        super();
         initComponents();
     }
 
@@ -69,14 +78,12 @@ public class PayForm extends javax.swing.JFrame {
 
         kButton2.setText("kButton2");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModalExclusionType(null);
-        setUndecorated(true);
         setType(java.awt.Window.Type.POPUP);
 
         kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
         kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setOpaque(false);
 
         kGradientPanel2.setkBorderRadius(70);
         kGradientPanel2.setkFillBackground(false);
@@ -105,6 +112,7 @@ public class PayForm extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("titleBorderChoosePayment"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
 
         btnGroupPay.add(btnRadioPayCash);

@@ -6,9 +6,12 @@ package com.pcstore.view;
 
 import java.util.ResourceBundle;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  *
@@ -628,7 +631,19 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCancleActionPerformed
 
     private void btnPayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
-        new PayForm().setVisible(true);
+        Dashboard dashboard = Dashboard.getInstance();
+    
+        // Tạo dialog thanh toán với owner là dashboard và modal=true
+        PayForm payForm = new PayForm(dashboard, true);
+        
+        // Hiển thị dialog
+        payForm.setVisible(true);
+        
+        // Nếu cần lấy kết quả sau khi dialog đóng, đặt code ở đây
+        // Ví dụ: if (payForm.isPaymentSuccessful()) { ... }
+
+        
+            
     }//GEN-LAST:event_btnPayMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

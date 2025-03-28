@@ -37,7 +37,7 @@ BEGIN
 END;
 
 --Trigger cập nhật tồn kho sau khi bán hàng
-CREATE TRIGGER trg_UpdateInventoryAfterSale
+CREATE TRIGGER trg_UpdateWareHouseAfterSale
 ON InvoiceDetails
 AFTER INSERT
 AS
@@ -61,7 +61,7 @@ END;
 
 
 --Trigger cập nhật tồn kho sau khi nhập hàng
-CREATE TRIGGER trg_UpdateInventoryAfterPurchase
+CREATE TRIGGER trg_UpdateWareHouseAfterPurchase
 ON PurchaseOrderDetails
 AFTER INSERT
 AS

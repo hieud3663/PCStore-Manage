@@ -22,10 +22,23 @@ import com.k33ptoo.components.KGradientPanel;
  */
 public class Dashboard extends javax.swing.JFrame {
 
+    private static Dashboard instance;
+
+    public static Dashboard getInstance() {
+        if (instance == null) {
+            instance = new Dashboard();
+        }
+        return instance;
+    }
+
     private Home homPanel;
     private Sell sellPanel;
     private Product productPanel;
     private Employee employeePanel;
+    private WareHouse wareHousePanel;
+    // private Service servicePanel;
+    // private Report reportPanel;
+
     /**
      * Creates new form Menu
      */
@@ -36,6 +49,9 @@ public class Dashboard extends javax.swing.JFrame {
         sellPanel = new Sell();
         productPanel = new Product();
         employeePanel = new Employee();
+        wareHousePanel = new WareHouse();
+        // servicePanel = new Service();
+        // reportPanel = new Report();
         
         selectMenu(kPanelHome, lbMenuHome, activePanel);
     }
@@ -59,8 +75,8 @@ public class Dashboard extends javax.swing.JFrame {
         lbProductMenu = new javax.swing.JLabel();
         kPanelInvoice = new com.k33ptoo.components.KGradientPanel();
         lbMenuInvoice = new javax.swing.JLabel();
-        kPanelInventory = new com.k33ptoo.components.KGradientPanel();
-        lbMenuInventory = new javax.swing.JLabel();
+        kPanelWareHouse = new com.k33ptoo.components.KGradientPanel();
+        lbMenuWareHouse = new javax.swing.JLabel();
         kPanelEmployee = new com.k33ptoo.components.KGradientPanel();
         lbMenuEmployee = new javax.swing.JLabel();
         kPanelService = new com.k33ptoo.components.KGradientPanel();
@@ -243,40 +259,43 @@ public class Dashboard extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        kPanelInventory.setkBorderRadius(30);
-        kPanelInventory.setkEndColor(new java.awt.Color(255, 255, 255));
-        kPanelInventory.setkFillBackground(false);
-        kPanelInventory.setkStartColor(new java.awt.Color(255, 255, 255));
-        kPanelInventory.setOpaque(false);
+        kPanelWareHouse.setkBorderRadius(30);
+        kPanelWareHouse.setkEndColor(new java.awt.Color(255, 255, 255));
+        kPanelWareHouse.setkFillBackground(false);
+        kPanelWareHouse.setkStartColor(new java.awt.Color(255, 255, 255));
+        kPanelWareHouse.setOpaque(false);
 
-        lbMenuInventory.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lbMenuInventory.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuInventory.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grid_24px.png"))); // NOI18N
-        lbMenuInventory.setText(bundle.getString("txtMenuInventory")); // NOI18N
-        lbMenuInventory.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuInventory.addMouseListener(new java.awt.event.MouseAdapter() {
+        lbMenuWareHouse.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lbMenuWareHouse.setForeground(new java.awt.Color(255, 255, 255));
+        lbMenuWareHouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grid_24px.png"))); // NOI18N
+        lbMenuWareHouse.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
+        lbMenuWareHouse.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbMenuWareHouse.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbMenuWareHouseMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuInventoryMouseEntered(evt);
+                lbMenuWareHouseMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuInventoryMouseExited(evt);
+                lbMenuWareHouseMouseExited(evt);
             }
         });
 
-        javax.swing.GroupLayout kPanelInventoryLayout = new javax.swing.GroupLayout(kPanelInventory);
-        kPanelInventory.setLayout(kPanelInventoryLayout);
-        kPanelInventoryLayout.setHorizontalGroup(
-            kPanelInventoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kPanelInventoryLayout.createSequentialGroup()
+        javax.swing.GroupLayout kPanelWareHouseLayout = new javax.swing.GroupLayout(kPanelWareHouse);
+        kPanelWareHouse.setLayout(kPanelWareHouseLayout);
+        kPanelWareHouseLayout.setHorizontalGroup(
+            kPanelWareHouseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(kPanelWareHouseLayout.createSequentialGroup()
                 .addGap(15, 15, 15)
-                .addComponent(lbMenuInventory, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
+                .addComponent(lbMenuWareHouse, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        kPanelInventoryLayout.setVerticalGroup(
-            kPanelInventoryLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kPanelInventoryLayout.createSequentialGroup()
+        kPanelWareHouseLayout.setVerticalGroup(
+            kPanelWareHouseLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(kPanelWareHouseLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbMenuInventory, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addComponent(lbMenuWareHouse, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -413,7 +432,7 @@ public class Dashboard extends javax.swing.JFrame {
                                 .addComponent(kPanelProduct, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(kPanelInvoice, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(kPanelHome, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(kPanelInventory, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(kPanelWareHouse, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(kPanelEmployee, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(kPanelService, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(kPanelReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -445,7 +464,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(kPanelInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(kPanelInventory, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(kPanelWareHouse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(kPanelService, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -537,117 +556,121 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     private void lbMenuHomeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuHomeMouseEntered
-        // TODO add your handling code here: đổi màu nền
+         //đổi màu nền
         hoverPanel(kPanelHome, lbMenuHome);
         
         
     }//GEN-LAST:event_lbMenuHomeMouseEntered
 
     private void lbMenuHomeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuHomeMouseExited
-        // TODO add your handling code here: đổi màu nền
+         //đổi màu nền
         if(activePanel != kPanelHome)
             exitHoverPanel(kPanelHome, lbMenuHome);
     }//GEN-LAST:event_lbMenuHomeMouseExited
 
     private void lbSellMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbSellMouseEntered
-        // TODO add your handling code here:
+        
         hoverPanel(kPanelSell, lbSell);
 
     }//GEN-LAST:event_lbSellMouseEntered
 
     private void lbSellMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbSellMouseExited
-        // TODO add your handling code here:
+        
         if(activePanel != kPanelSell)
             exitHoverPanel(kPanelSell, lbSell);
     }//GEN-LAST:event_lbSellMouseExited
 
     private void lbProductMenuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMenuMouseEntered
-        // TODO add your handling code here:
+        
         
         hoverPanel(kPanelProduct, lbProductMenu);
     }//GEN-LAST:event_lbProductMenuMouseEntered
 
     private void lbProductMenuMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMenuMouseExited
-        // TODO add your handling code here:
+        
         if(activePanel != kPanelProduct)
         exitHoverPanel(kPanelProduct, lbProductMenu);
     }//GEN-LAST:event_lbProductMenuMouseExited
 
     private void lbMenuInvoiceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInvoiceMouseEntered
-        // TODO add your handling code here:
+        
         hoverPanel(kPanelInvoice, lbMenuInvoice);
     }//GEN-LAST:event_lbMenuInvoiceMouseEntered
 
     private void lbMenuInvoiceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInvoiceMouseExited
-        // TODO add your handling code here:
+        
         if(activePanel != kPanelInvoice)
             exitHoverPanel(kPanelInvoice, lbMenuInvoice);
     }//GEN-LAST:event_lbMenuInvoiceMouseExited
 
-    private void lbMenuInventoryMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInventoryMouseEntered
-        // TODO add your handling code here:
-        hoverPanel(kPanelInventory, lbMenuInventory);
-    }//GEN-LAST:event_lbMenuInventoryMouseEntered
+    private void lbMenuWareHouseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuWareHouseMouseEntered
+        
+        hoverPanel(kPanelWareHouse, lbMenuWareHouse);
+    }//GEN-LAST:event_lbMenuWareHouseMouseEntered
 
-    private void lbMenuInventoryMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInventoryMouseExited
-        // TODO add your handling code here:
-        if(activePanel != kPanelInventory)
-            exitHoverPanel(kPanelInventory, lbMenuInventory);
-    }//GEN-LAST:event_lbMenuInventoryMouseExited
+    private void lbMenuWareHouseMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuWareHouseMouseExited
+        
+        if(activePanel != kPanelWareHouse)
+            exitHoverPanel(kPanelWareHouse, lbMenuWareHouse);
+    }//GEN-LAST:event_lbMenuWareHouseMouseExited
 
     private void lbMenuServiceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuServiceMouseEntered
-        // TODO add your handling code here:
+        
 
         hoverPanel(kPanelService, lbMenuService);
     }//GEN-LAST:event_lbMenuServiceMouseEntered
 
     private void lbMenuServiceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuServiceMouseExited
-        // TODO add your handling code here:
+        
         if(activePanel != kPanelService)
             exitHoverPanel(kPanelService, lbMenuService);
     }//GEN-LAST:event_lbMenuServiceMouseExited
 
     private void lbMenuEmployeeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseEntered
-        // TODO add your handling code here:
+        
         hoverPanel(kPanelEmployee, lbMenuEmployee);
     }//GEN-LAST:event_lbMenuEmployeeMouseEntered
 
     private void lbMenuEmployeeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseExited
-        // TODO add your handling code here:
+        
         if(activePanel != kPanelEmployee)
             exitHoverPanel(kPanelEmployee, lbMenuEmployee);
     }//GEN-LAST:event_lbMenuEmployeeMouseExited
 
     private void lbMenuReportMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuReportMouseEntered
-        // TODO add your handling code here:
+        
         hoverPanel(kPanelReport, lbMenuReport);
     }//GEN-LAST:event_lbMenuReportMouseEntered
 
     private void lbMenuReportMouseExited(java.awt.event.MouseEvent evt) {                                         
-        // TODO add your handling code here:
+        
         if(activePanel != kPanelReport) 
             exitHoverPanel(kPanelReport, lbMenuReport);
     }                                                                                                        
-
+    // Event mở từng tab====================================================================
 
     private void lbMenuHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuHomeMouseClicked
-            // TODO add your handling code here:
+            
         selectMenu(kPanelHome, lbMenuHome, homPanel);
     }//GEN-LAST:event_lbMenuHomeMouseClicked
 
     private void lbSellMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbSellMouseClicked
-        // TODO add your handling code here:
+        
         selectMenu(kPanelSell, lbSell, sellPanel);
     }//GEN-LAST:event_lbSellMouseClicked
 
     private void lbProductMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMenuMouseClicked
-        // TODO add your handling code here:
+        
         selectMenu(kPanelProduct, lbProductMenu, productPanel);
     }//GEN-LAST:event_lbProductMenuMouseClicked
 
     private void lbMenuEmployeeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseClicked
         selectMenu(kPanelEmployee, lbMenuEmployee, employeePanel);
     }//GEN-LAST:event_lbMenuEmployeeMouseClicked
+
+    private void lbMenuWareHouseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuWareHouseMouseClicked
+        selectMenu(kPanelWareHouse, lbMenuWareHouse, wareHousePanel);        
+    }//GEN-LAST:event_lbMenuWareHouseMouseClicked
     
 
     /**
@@ -717,7 +740,8 @@ public class Dashboard extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Dashboard().setVisible(true);
+                Dashboard dashBoard = Dashboard.getInstance();
+                dashBoard.setVisible(true);
             }
         });
     }
@@ -734,7 +758,7 @@ public class Dashboard extends javax.swing.JFrame {
     private com.k33ptoo.components.KGradientPanel kMainPanel;
     private com.k33ptoo.components.KGradientPanel kPanelEmployee;
     private com.k33ptoo.components.KGradientPanel kPanelHome;
-    private com.k33ptoo.components.KGradientPanel kPanelInventory;
+    private com.k33ptoo.components.KGradientPanel kPanelWareHouse;
     private com.k33ptoo.components.KGradientPanel kPanelInvoice;
     private com.k33ptoo.components.KGradientPanel kPanelProduct;
     private com.k33ptoo.components.KGradientPanel kPanelReport;
@@ -742,7 +766,7 @@ public class Dashboard extends javax.swing.JFrame {
     private com.k33ptoo.components.KGradientPanel kPanelService;
     private javax.swing.JLabel lbMenuEmployee;
     private javax.swing.JLabel lbMenuHome;
-    private javax.swing.JLabel lbMenuInventory;
+    private javax.swing.JLabel lbMenuWareHouse;
     private javax.swing.JLabel lbMenuInvoice;
     private javax.swing.JLabel lbMenuReport;
     private javax.swing.JLabel lbMenuService;

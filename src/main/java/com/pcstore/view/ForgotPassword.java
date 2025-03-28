@@ -8,12 +8,20 @@ package com.pcstore.view;
  *
  * @author MSII
  */
-public class ForgotPassword extends javax.swing.JFrame {
+public class ForgotPassword extends javax.swing.JDialog {
 
     /**
      * Creates new form ForgotPassword
      */
+
+    public ForgotPassword(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
+        setLocationRelativeTo(parent);
+        initComponents();
+    }
+
     public ForgotPassword() {
+        super();
         initComponents();
     }
 
@@ -59,8 +67,8 @@ public class ForgotPassword extends javax.swing.JFrame {
 
         jLabel7.setText("jLabel7");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         setResizable(false);
         setType(java.awt.Window.Type.POPUP);
 
@@ -208,6 +216,7 @@ public class ForgotPassword extends javax.swing.JFrame {
         btnConfirm1.setFont(new java.awt.Font("Segoe UI", 1, 15)); // NOI18N
         btnConfirm1.setkBorderRadius(40);
         btnConfirm1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
         kGradientPanel1.setLayout(kGradientPanel1Layout);

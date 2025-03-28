@@ -141,7 +141,7 @@ public class InvoiceDetail extends BaseTimeEntity {
     }
 
     // Kiểm tra và cập nhật tồn kho khi tạo chi tiết hóa đơn
-    public void processInventory() {
+    public void processWareHouse() {
         if (product == null) {
             throw new IllegalStateException("Chưa có thông tin sản phẩm");
         }
@@ -154,7 +154,7 @@ public class InvoiceDetail extends BaseTimeEntity {
     }
 
     // Hoàn trả tồn kho khi hủy chi tiết hóa đơn
-    public void reverseInventory() {
+    public void reverseWareHouse() {
         if (product != null) {
             product.increaseStock(quantity);
         }

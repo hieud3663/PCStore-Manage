@@ -79,7 +79,7 @@
                                   <Component id="kPanelProduct" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                   <Component id="kPanelInvoice" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
                                   <Component id="kPanelHome" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelInventory" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="kPanelWareHouse" alignment="1" min="-2" max="-2" attributes="0"/>
                                   <Component id="kPanelEmployee" alignment="1" min="-2" max="-2" attributes="0"/>
                                   <Component id="kPanelService" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
@@ -118,7 +118,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="kPanelInvoice" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="kPanelInventory" min="-2" max="-2" attributes="0"/>
+                  <Component id="kPanelWareHouse" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="kPanelService" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -383,7 +383,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelInventory">
+        <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelWareHouse">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -401,7 +401,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
-                      <Component id="lbMenuInventory" pref="194" max="32767" attributes="0"/>
+                      <Component id="lbMenuWareHouse" pref="194" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -410,14 +410,14 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="lbMenuInventory" pref="28" max="32767" attributes="0"/>
+                      <Component id="lbMenuWareHouse" pref="28" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="lbMenuInventory">
+            <Component class="javax.swing.JLabel" name="lbMenuWareHouse">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Segoe UI" size="16" style="1"/>
@@ -429,15 +429,16 @@
                   <Image iconType="3" name="/com/pcstore/resources/icon/grid_24px.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuInventory" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuWareHouse" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
                   <Color id="Hand Cursor"/>
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuInventoryMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuInventoryMouseExited"/>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuWareHouseMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuWareHouseMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuWareHouseMouseExited"/>
               </Events>
             </Component>
           </SubComponents>

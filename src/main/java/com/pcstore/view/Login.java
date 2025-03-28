@@ -11,10 +11,11 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.pcstore.controller.PCrypt;
+import com.pcstore.controller.LoginController;
 import com.pcstore.dao.DatabaseConnection;
 import com.pcstore.dao.impl.UserDAO;
 import com.pcstore.model.User;
+import com.pcstore.utils.PCrypt;
 
 /**
  *
@@ -92,7 +93,7 @@ public class Login extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel1.setText("Username");
+        jLabel1.setText(bundle.getString("lbUsername")); // NOI18N
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         txtUsername.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
@@ -114,7 +115,7 @@ public class Login extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Password");
+        jLabel2.setText(bundle.getString("lbPassword")); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -278,29 +279,34 @@ public class Login extends javax.swing.JFrame {
     public void checkLogin(){
         String username = txtUsername.getText();
         String password = txtPassword.getText();
+
+        if(username.isEmpty() && password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+        }
+
+        LoginController loginController = new LoginController();
+
         try{
-            //lấy dữ liệu từ database
-            Connection conn = null;
-            DatabaseConnection db = new DatabaseConnection();
-            conn = db.getConnection();
-            UserDAO userDAO = new UserDAO(conn);
-
-            User user = userDAO.authenticate(username, password);
-
-            if(username.equals("") && password.equals("")){
-                JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            
+            User user = loginController.authenticate(username, password);
+            
+            if(user != null){
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            // Lưu thông tin người dùng vào session hoặc biến static để sử dụng sau này
+                // SessionManager.setCurrentUser(user);
+            
+            // Mở giao diện chính
+                Dashboard dashboard = new Dashboard();
+                dashboard.setVisible(true);
+                this.dispose();
             }else{
-                if(user != null){
-                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    this.dispose();
-                }else{
-                    JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
-
-            db.closeConnection();
+            
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Error " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            loginController.close();
         }
     }
 

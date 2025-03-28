@@ -4,7 +4,11 @@
  */
 package com.pcstore.view;
 
-import java.lang.classfile.Signature;
+
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+
+import com.formdev.flatlaf.FlatLightLaf;
 
 /**
  *
@@ -17,6 +21,7 @@ public class Product extends javax.swing.JPanel {
      */
     public Product() {
         initComponents();
+        
     }
 
     /**

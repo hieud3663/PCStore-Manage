@@ -5,11 +5,15 @@
 package com.pcstore.view;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Panel;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import com.k33ptoo.components.KGradientPanel;
 
 /**
@@ -21,6 +25,7 @@ public class Dashboard extends javax.swing.JFrame {
     private Home homPanel;
     private Sell sellPanel;
     private Product productPanel;
+    private Employee employeePanel;
     /**
      * Creates new form Menu
      */
@@ -30,6 +35,7 @@ public class Dashboard extends javax.swing.JFrame {
         homPanel = new Home();
         sellPanel = new Sell();
         productPanel = new Product();
+        employeePanel = new Employee();
         
         selectMenu(kPanelHome, lbMenuHome, activePanel);
     }
@@ -286,6 +292,9 @@ public class Dashboard extends javax.swing.JFrame {
         lbMenuEmployee.setText(bundle.getString("txtMenuIEmployee")); // NOI18N
         lbMenuEmployee.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuEmployee.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbMenuEmployeeMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lbMenuEmployeeMouseEntered(evt);
             }
@@ -443,7 +452,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(kPanelEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(kPanelReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
                 .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41))
         );
@@ -464,7 +473,7 @@ public class Dashboard extends javax.swing.JFrame {
         kGradientPanel2Layout.setHorizontalGroup(
             kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap(657, Short.MAX_VALUE)
+                .addContainerGap(885, Short.MAX_VALUE)
                 .addComponent(lbNameUser, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
         );
@@ -481,11 +490,11 @@ public class Dashboard extends javax.swing.JFrame {
         kMainPanel.setLayout(kMainPanelLayout);
         kMainPanelLayout.setHorizontalGroup(
             kMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 941, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         kMainPanelLayout.setVerticalGroup(
             kMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 724, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -635,6 +644,10 @@ public class Dashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         selectMenu(kPanelProduct, lbProductMenu, productPanel);
     }//GEN-LAST:event_lbProductMenuMouseClicked
+
+    private void lbMenuEmployeeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseClicked
+        selectMenu(kPanelEmployee, lbMenuEmployee, employeePanel);
+    }//GEN-LAST:event_lbMenuEmployeeMouseClicked
     
 
     /**
@@ -693,21 +706,10 @@ public class Dashboard extends javax.swing.JFrame {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        try{
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         //</editor-fold>
         //</editor-fold>

@@ -4,6 +4,13 @@
  */
 package com.pcstore.view;
 
+import java.util.ResourceBundle;
+
+import javax.swing.JTextField;
+
+import com.formdev.flatlaf.FlatClientProperties;
+import com.formdev.flatlaf.FlatPropertiesLaf;
+
 /**
  *
  * @author MSII
@@ -15,6 +22,17 @@ public class TextFieldSearch extends javax.swing.JPanel {
      */
     public TextFieldSearch() {
         initComponents();
+        setPlaceHolder();
+    }
+
+    private static void placeHolder(JTextField textField, String text) {
+        textField.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, text);
+        // Placeholder        
+    }
+    
+    private void setPlaceHolder(){
+        ResourceBundle bundle = ResourceBundle.getBundle("com.pcstore.resources.vi_VN");
+        placeHolder(txtSearchField, bundle.getString("txtSearchField"));
     }
 
     /**
@@ -27,7 +45,7 @@ public class TextFieldSearch extends javax.swing.JPanel {
     private void initComponents() {
 
         kPanelFieldSearch = new com.k33ptoo.components.KGradientPanel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearchField = new javax.swing.JTextField();
         btnSearch = new com.k33ptoo.components.KButton();
 
         kPanelFieldSearch.setBackground(new java.awt.Color(255, 255, 255));
@@ -35,12 +53,12 @@ public class TextFieldSearch extends javax.swing.JPanel {
         kPanelFieldSearch.setkStartColor(new java.awt.Color(255, 255, 255));
         kPanelFieldSearch.setOpaque(false);
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jTextField1.setToolTipText("");
-        jTextField1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtSearchField.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        txtSearchField.setToolTipText("");
+        txtSearchField.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
+        txtSearchField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtSearchFieldActionPerformed(evt);
             }
         });
 
@@ -50,12 +68,12 @@ public class TextFieldSearch extends javax.swing.JPanel {
             kPanelFieldSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kPanelFieldSearchLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                .addComponent(txtSearchField, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
                 .addContainerGap())
         );
         kPanelFieldSearchLayout.setVerticalGroup(
             kPanelFieldSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+            .addComponent(txtSearchField, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
         );
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
@@ -92,11 +110,11 @@ public class TextFieldSearch extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtSearchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchFieldActionPerformed
         // TODO add your handling code here:
-        System.out.println(jTextField1.getText());
+        System.out.println(txtSearchField.getText());
 
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtSearchFieldActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
@@ -105,7 +123,7 @@ public class TextFieldSearch extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnSearch;
-    private javax.swing.JTextField jTextField1;
     private com.k33ptoo.components.KGradientPanel kPanelFieldSearch;
+    private javax.swing.JTextField txtSearchField;
     // End of variables declaration//GEN-END:variables
 }

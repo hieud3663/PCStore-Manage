@@ -1,10 +1,11 @@
 package com.pcstore.dao.impl;
 
-import com.pcstore.controller.PCrypt;
 import com.pcstore.dao.DAO;
 import com.pcstore.dao.DAOFactory;
 import com.pcstore.model.Employee;
 import com.pcstore.model.User;
+import com.pcstore.utils.PCrypt;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

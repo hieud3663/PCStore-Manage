@@ -1,6 +1,7 @@
 package com.pcstore.controller;
 
 import com.pcstore.dao.DatabaseConnection;
+import com.pcstore.utils.PCrypt;
 
 public class test {
     public static void main(String[] args) {

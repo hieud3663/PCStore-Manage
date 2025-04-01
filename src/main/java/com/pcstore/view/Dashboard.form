@@ -74,23 +74,21 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                                  <Component id="kPanelSell" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelProduct" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelInvoice" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelHome" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelWareHouse" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelEmployee" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="kPanelService" alignment="1" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="kPanelReport" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelSell" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelProduct" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelInvoice" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelHome" linkSize="2" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelWareHouse" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelEmployee" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelService" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="kPanelCustomer" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel1" min="-2" pref="32" max="-2" attributes="0"/>
+                                  <Component id="lbMenu" min="-2" pref="32" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" attributes="0">
                                   <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
@@ -102,13 +100,18 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="kPanelReport" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel1" min="-2" pref="29" max="-2" attributes="0"/>
+                  <Component id="lbMenu" min="-2" pref="29" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                   <Component id="kPanelHome" linkSize="1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -124,8 +127,10 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="kPanelEmployee" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="kPanelCustomer" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="kPanelReport" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="167" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="kButton1" min="-2" pref="37" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
               </Group>
@@ -133,7 +138,7 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="jLabel1">
+        <Component class="javax.swing.JLabel" name="lbMenu">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/pcstore/resources/icon/icons8_menu_48px_1.png"/>
@@ -143,6 +148,9 @@
               <Color id="Hand Cursor"/>
             </Property>
           </Properties>
+          <Events>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuMouseClicked"/>
+          </Events>
         </Component>
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelHome">
           <Properties>
@@ -377,6 +385,7 @@
                 </Property>
               </Properties>
               <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuInvoiceMouseClicked"/>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuInvoiceMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuInvoiceMouseExited"/>
               </Events>
@@ -635,6 +644,66 @@
             </Property>
           </Properties>
         </Component>
+        <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelCustomer">
+          <Properties>
+            <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="kFillBackground" type="boolean" value="false"/>
+            <Property name="kStartColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                      <Component id="lbMenuCustomer" pref="194" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="lbMenuCustomer" pref="28" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="lbMenuCustomer">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Segoe UI" size="16" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="lbMenuCustomer" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+                  <Color id="Hand Cursor"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuCustomerMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuCustomerMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="lbMenuCustomerMouseExited"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
     <Container class="com.k33ptoo.components.KGradientPanel" name="kGradientPanel2">

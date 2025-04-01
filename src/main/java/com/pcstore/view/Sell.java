@@ -81,7 +81,7 @@ public class Sell extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         btnPay = new com.k33ptoo.components.KButton();
         btnCancle = new com.k33ptoo.components.KButton();
-        txtFieldSearch1 = new com.pcstore.view.TextFieldSearch();
+        textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
 
         javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
         kGradientPanel2.setLayout(kGradientPanel2Layout);
@@ -107,12 +107,14 @@ public class Sell extends javax.swing.JPanel {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
         kGradientPanel1.setAlignmentX(2.0F);
         kGradientPanel1.setAlignmentY(2.0F);
         kGradientPanel1.setkEndColor(new java.awt.Color(153, 255, 153));
         kGradientPanel1.setkFillBackground(false);
         kGradientPanel1.setkStartColor(new java.awt.Color(102, 153, 255));
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("titileBorderListProduct"))); // NOI18N
         jPanel1.setLayout(new java.awt.BorderLayout());
@@ -557,20 +559,19 @@ public class Sell extends javax.swing.JPanel {
                                 .addComponent(btnCancle, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(60, 60, 60)
                                 .addComponent(btnPay, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(19, 19, 19))))))
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(txtFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                                .addGap(19, 19, 19))))
+                    .addGroup(kGradientPanel1Layout.createSequentialGroup()
+                        .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         kGradientPanel1Layout.setVerticalGroup(
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(kGradientPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addGap(23, 23, 23)
+                .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(kGradientPanel1Layout.createSequentialGroup()
                         .addComponent(kGradientPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -677,8 +678,8 @@ public class Sell extends javax.swing.JPanel {
     private com.k33ptoo.components.KGradientPanel kGradientPanel5;
     private com.k33ptoo.components.KGradientPanel kGradientPanel6;
     private com.k33ptoo.components.KGradientPanel kGradientPanel7;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     private javax.swing.JTextField txtDiscountAmount;
-    private com.pcstore.view.TextFieldSearch txtFieldSearch1;
     private javax.swing.JTextField txtNameKH;
     private javax.swing.JTextField txtPhoneNumberKH;
     private javax.swing.JTextField txtPointKH;

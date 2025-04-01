@@ -28,7 +28,7 @@
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>23</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <exec.mainClass>com.pcstore.PCStoreManage</exec.mainClass>
     </properties>
     
@@ -83,5 +83,7 @@
             <artifactId>datechooser</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
+
+        
     </dependencies>
 </project>

@@ -27,6 +27,7 @@ public class Employee extends javax.swing.JPanel {
     private void initComponents() {
 
         dateChooserBirthday = new com.raven.datechooser.DateChooser();
+        btnGroupGender = new javax.swing.ButtonGroup();
         jLabel3 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -59,12 +60,17 @@ public class Employee extends javax.swing.JPanel {
         lbPassword = new javax.swing.JLabel();
         btnResetPassword = new javax.swing.JButton();
         txtPassword = new javax.swing.JTextField();
-        textFieldSearch1 = new com.pcstore.view.TextFieldSearch();
+        panelGender = new javax.swing.JPanel();
+        lbGender = new javax.swing.JLabel();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
         btnAddEmployee = new com.k33ptoo.components.KButton();
         jPanel9 = new javax.swing.JPanel();
         btnUpdateEmployee = new com.k33ptoo.components.KButton();
         btnDeleteEmployee = new com.k33ptoo.components.KButton();
         jLabel1 = new javax.swing.JLabel();
+        kButton1 = new com.k33ptoo.components.KButton();
+        textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
 
         dateChooserBirthday.setTextRefernce(txtBirthdayEmployee);
 
@@ -83,14 +89,14 @@ public class Employee extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Ảnh", "STT", "Mã nhân viên", "Họ và tên", "Chức vụ", "SĐT", "Email"
+                "Ảnh", "STT", "Mã nhân viên", "Họ và tên", "Giới tính", "Chức vụ", "SĐT", "Email"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -113,11 +119,13 @@ public class Employee extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(3).setResizable(false);
             jTable1.getColumnModel().getColumn(3).setPreferredWidth(20);
             jTable1.getColumnModel().getColumn(4).setResizable(false);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(15);
+            jTable1.getColumnModel().getColumn(4).setPreferredWidth(10);
             jTable1.getColumnModel().getColumn(5).setResizable(false);
-            jTable1.getColumnModel().getColumn(5).setPreferredWidth(10);
+            jTable1.getColumnModel().getColumn(5).setPreferredWidth(15);
             jTable1.getColumnModel().getColumn(6).setResizable(false);
-            jTable1.getColumnModel().getColumn(6).setPreferredWidth(30);
+            jTable1.getColumnModel().getColumn(6).setPreferredWidth(10);
+            jTable1.getColumnModel().getColumn(7).setResizable(false);
+            jTable1.getColumnModel().getColumn(7).setPreferredWidth(30);
         }
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -248,6 +256,28 @@ public class Employee extends javax.swing.JPanel {
         txtPassword.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelPassword.add(txtPassword, java.awt.BorderLayout.PAGE_END);
 
+        panelGender.setOpaque(false);
+        panelGender.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
+
+        lbGender.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        lbGender.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbGender.setText(bundle.getString("lbGender")); // NOI18N
+        lbGender.setToolTipText("");
+        panelGender.add(lbGender);
+
+        btnGroupGender.add(jRadioButton2);
+        jRadioButton2.setText(bundle.getString("btnRadioMale")); // NOI18N
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
+        panelGender.add(jRadioButton2);
+
+        btnGroupGender.add(jRadioButton1);
+        jRadioButton1.setText(bundle.getString("btnRadioFemale")); // NOI18N
+        panelGender.add(jRadioButton1);
+
         javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
         kGradientPanel2.setLayout(kGradientPanel2Layout);
         kGradientPanel2Layout.setHorizontalGroup(
@@ -274,7 +304,8 @@ public class Employee extends javax.swing.JPanel {
                                     .addComponent(paneIDEmployee, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
                                     .addComponent(panelEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(panelName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(panelPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(panelPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(panelGender, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(11, 11, 11))))
                     .addGroup(kGradientPanel2Layout.createSequentialGroup()
                         .addComponent(panelBirthdayEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -290,6 +321,8 @@ public class Employee extends javax.swing.JPanel {
                         .addComponent(paneIDEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(panelName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(panelGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(panelBirthdayEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -302,10 +335,8 @@ public class Employee extends javax.swing.JPanel {
                 .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(panelUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
-
-        textFieldSearch1.setOpaque(false);
 
         btnAddEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
         btnAddEmployee.setText(bundle.getString("btnAddEmployee")); // NOI18N
@@ -318,15 +349,24 @@ public class Employee extends javax.swing.JPanel {
 
         jPanel9.setLayout(new java.awt.GridLayout(1, 0, 50, 0));
 
+        btnUpdateEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-pen.png"))); // NOI18N
         btnUpdateEmployee.setText(bundle.getString("btnUpdateEmployee")); // NOI18N
         btnUpdateEmployee.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnUpdateEmployee.setIconTextGap(10);
         btnUpdateEmployee.setkBorderRadius(30);
         btnUpdateEmployee.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnUpdateEmployee.setkHoverStartColor(new java.awt.Color(51, 255, 0));
+        btnUpdateEmployee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateEmployeeActionPerformed(evt);
+            }
+        });
         jPanel9.add(btnUpdateEmployee);
 
+        btnDeleteEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-xmark.png"))); // NOI18N
         btnDeleteEmployee.setText(bundle.getString("btnDeleteEmployee")); // NOI18N
         btnDeleteEmployee.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnDeleteEmployee.setIconTextGap(15);
         btnDeleteEmployee.setkBackGroundColor(new java.awt.Color(255, 255, 255));
         btnDeleteEmployee.setkBorderRadius(30);
         btnDeleteEmployee.setkEndColor(new java.awt.Color(255, 0, 51));
@@ -336,29 +376,41 @@ public class Employee extends javax.swing.JPanel {
         btnDeleteEmployee.setkStartColor(new java.awt.Color(255, 153, 51));
         jPanel9.add(btnDeleteEmployee);
 
+        kButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        kButton1.setText(bundle.getString("btnRefresh")); // NOI18N
+        kButton1.setIconTextGap(10);
+        kButton1.setkHoverEndColor(new java.awt.Color(0, 102, 255));
+        kButton1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        kButton1.setkHoverStartColor(new java.awt.Color(0, 255, 102));
+        kButton1.setkStartColor(new java.awt.Color(0, 204, 255));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(69, 69, 69)
-                .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAddEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 76, 76))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(kGradientPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jLabel1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(kGradientPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(45, 45, 45)
+                        .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                        .addComponent(btnAddEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(707, Short.MAX_VALUE)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20))
             .addGroup(layout.createSequentialGroup()
                 .addGap(469, 469, 469)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -368,7 +420,9 @@ public class Employee extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGap(18, 18, 18)
+                .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAddEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -376,13 +430,13 @@ public class Employee extends javax.swing.JPanel {
                         .addComponent(kGradientPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(48, 48, 48)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(10, 10, 10)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -390,11 +444,20 @@ public class Employee extends javax.swing.JPanel {
         dateChooserBirthday.showPopup();
     }//GEN-LAST:event_btnChooseBirthdayMouseClicked
 
+    private void btnUpdateEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateEmployeeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUpdateEmployeeActionPerformed
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAddEmployee;
     private javax.swing.JButton btnChooseBirthday;
     private com.k33ptoo.components.KButton btnDeleteEmployee;
+    private javax.swing.ButtonGroup btnGroupGender;
     private javax.swing.JButton btnResetPassword;
     private com.k33ptoo.components.KButton btnUpdateEmployee;
     private com.raven.datechooser.DateChooser dateChooserBirthday;
@@ -402,12 +465,16 @@ public class Employee extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private com.k33ptoo.components.KButton kButton1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel2;
     private com.k33ptoo.components.KGradientPanel kPanelPictureEmployee;
     private javax.swing.JLabel lbBirthdayEmployee;
     private javax.swing.JLabel lbEmail;
+    private javax.swing.JLabel lbGender;
     private javax.swing.JLabel lbIDEmployee;
     private javax.swing.JLabel lbName;
     private javax.swing.JLabel lbPassword;
@@ -417,12 +484,13 @@ public class Employee extends javax.swing.JPanel {
     private javax.swing.JPanel paneIDEmployee;
     private javax.swing.JPanel panelBirthdayEmployee;
     private javax.swing.JPanel panelEmail;
+    private javax.swing.JPanel panelGender;
     private javax.swing.JPanel panelName;
     private javax.swing.JPanel panelPassword;
     private javax.swing.JPanel panelPhonenumber;
     private javax.swing.JPanel panelPosition;
     private javax.swing.JPanel panelUsername;
-    private com.pcstore.view.TextFieldSearch textFieldSearch1;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     private javax.swing.JTextField txtBirthdayEmployee;
     private javax.swing.JTextField txtEmailEmployee;
     private javax.swing.JTextField txtIDEmployee;

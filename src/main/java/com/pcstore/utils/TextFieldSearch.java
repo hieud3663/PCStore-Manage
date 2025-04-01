@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
-package com.pcstore.view;
+package com.pcstore.utils;
 
 import java.util.ResourceBundle;
 
@@ -48,6 +48,9 @@ public class TextFieldSearch extends javax.swing.JPanel {
         txtSearchField = new javax.swing.JTextField();
         btnSearch = new com.k33ptoo.components.KButton();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+        setOpaque(false);
+
         kPanelFieldSearch.setBackground(new java.awt.Color(255, 255, 255));
         kPanelFieldSearch.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelFieldSearch.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -55,7 +58,8 @@ public class TextFieldSearch extends javax.swing.JPanel {
 
         txtSearchField.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         txtSearchField.setToolTipText("");
-        txtSearchField.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
+        txtSearchField.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(51, 51, 51)));
+        txtSearchField.setOpaque(true);
         txtSearchField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSearchFieldActionPerformed(evt);

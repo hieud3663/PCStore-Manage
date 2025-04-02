@@ -38,6 +38,7 @@ public class Product extends javax.swing.JPanel {
         btnSearch = new com.k33ptoo.components.KButton();
         btnAdd = new com.k33ptoo.components.KButton();
         jLabel2 = new javax.swing.JLabel();
+        btnViewClassfication = new com.k33ptoo.components.KButton();
 
         kGradientPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Danh Sách Sản Phẩm", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel1.setkBorderRadius(20);
@@ -88,7 +89,7 @@ public class Product extends javax.swing.JPanel {
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 487, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 532, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -184,14 +185,27 @@ public class Product extends javax.swing.JPanel {
         btnAdd.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnAdd.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnAdd.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/exclamation.png"))); // NOI18N
         jLabel2.setText("Kiểm tra tồn kho trước khi thêm hoặc xóa sản phẩm !");
+
+        btnViewClassfication.setText(bundle.getString("btnViewClassfication")); // NOI18N
+        btnViewClassfication.setkBorderRadius(30);
+        btnViewClassfication.setkEndColor(new java.awt.Color(255, 255, 0));
+        btnViewClassfication.setkHoverEndColor(new java.awt.Color(255, 102, 102));
+        btnViewClassfication.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnViewClassfication.setkHoverStartColor(new java.awt.Color(255, 0, 102));
+        btnViewClassfication.setkStartColor(new java.awt.Color(153, 0, 153));
+        btnViewClassfication.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnViewClassficationMouseClicked(evt);
+            }
+        });
+        btnViewClassfication.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewClassficationActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -200,50 +214,70 @@ public class Product extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(627, 627, 627)
+                        .addGap(418, 418, 418)
                         .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(23, 23, 23))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 495, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(456, 456, 456))
-                            .addComponent(kGradientPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnViewClassfication, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel1)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(kGradientPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(7, 7, 7)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1))
-                .addGap(11, 11, 11)
                 .addComponent(kGradientPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnViewClassfication, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
                                 
 
-    // private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
-    //     // TODO add your handling code here:
-    //     System.out.println(jTextField1.getText());
-    // }//GEN-LAST:event_jTextField6ActionPerformed
+    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Xử lý sự kiện khi nhấn Enter trong jTextField6
+        String inputText = jTextField6.getText();
+        System.out.println("Nội dung nhập: " + inputText);
+        // Thêm logic xử lý khác nếu cần
+    }
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void btnViewClassficationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnViewClassficationMouseClicked
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnViewClassficationMouseClicked
+
+    private void btnViewClassficationActionPerformed(java.awt.event.ActionEvent evt) {
+        // Tạo và hiển thị form ClassficationProduct
+        ClassficationProduct dialog = new ClassficationProduct(null, true); // Tạo dialog với modal
+        dialog.setLocationRelativeTo(null); // Hiển thị dialog ở giữa màn hình
+        dialog.pack();
+        
+        dialog.setVisible(true); // Hiển thị dialog
+    }
+
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {
         // Tạo một JFrame mới để hiển thị form AddProductForm
         javax.swing.JFrame frame = new javax.swing.JFrame("Thêm Sản Phẩm");
@@ -275,6 +309,7 @@ public class Product extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAdd;
     private com.k33ptoo.components.KButton btnSearch;
+    private com.k33ptoo.components.KButton btnViewClassfication;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -287,34 +322,3 @@ public class Product extends javax.swing.JPanel {
     private com.k33ptoo.components.KGradientPanel kPanelFieldSearch5;
     // End of variables declaration//GEN-END:variables
 }
-// public class RoundedTextField extends JTextField {
-
-//     private int cornerRadius;
-
-//     public RoundedTextField(int cornerRadius) {
-//         super();
-//         this.cornerRadius = cornerRadius; // Đặt bán kính góc bo
-//         setOpaque(false); // Đảm bảo nền trong suốt để vẽ góc bo
-//     }
-
-//     @Override
-//     protected void paintComponent(Graphics g) {
-//         Graphics2D g2 = (Graphics2D) g.create();
-//         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-//         // Vẽ nền với góc bo tròn
-//         g2.setColor(getBackground());
-//         g2.fill(new RoundRectangle2D.Float(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius));
-
-//         // Vẽ viền
-//         g2.setColor(getForeground());
-//         g2.draw(new RoundRectangle2D.Float(0, 0, getWidth() - 1, getHeight() - 1, cornerRadius, cornerRadius));
-
-//         g2.dispose();
-//         super.paintComponent(g);
-//     }
-
-//     @Override
-//     protected void paintBorder(Graphics g) {
-//         // Không vẽ viền mặc định
-//     }

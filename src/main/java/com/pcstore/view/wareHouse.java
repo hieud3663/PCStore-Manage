@@ -152,9 +152,11 @@ public class WareHouse extends javax.swing.JPanel {
         btnHistoryStockIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/history.png"))); // NOI18N
         btnHistoryStockIn.setText(bundle.getString("btnHistoryofStockIn")); // NOI18N
         btnHistoryStockIn.setkBorderRadius(40);
-        btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnHistoryStockIn.setkEndColor(new java.awt.Color(255, 102, 0));
+        btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(255, 102, 102));
         btnHistoryStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(255, 102, 102));
+        btnHistoryStockIn.setkStartColor(new java.awt.Color(255, 153, 0));
         btnHistoryStockIn.setOpaque(true);
         btnHistoryStockIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

@@ -1,6 +1,6 @@
 package com.pcstore.controller;
 
-import com.pcstore.dao.DatabaseConnection;
+import com.pcstore.Repository.DatabaseConnection;
 import com.pcstore.utils.PCrypt;
 
 public class test {

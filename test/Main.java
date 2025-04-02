@@ -1,14 +1,14 @@
 package test;
 
 import test.controller.EmployeeController;
-import test.dao.EmployeeDAO;
+import test.Repository.EmployeeRepository;
 import test.view.EmployeeView;
 
 public class Main {
     public static void main(String[] args) {
-        EmployeeDAO employeeDAO = new EmployeeDAO();
+        EmployeeRepository employeeRepository = new EmployeeRepository();
         EmployeeView employeeView = new EmployeeView();
-        EmployeeController employeeController = new EmployeeController(employeeDAO, employeeView);
+        EmployeeController employeeController = new EmployeeController(employeeRepository, employeeView);
 
         // employeeController.initView();
         employeeView.setVisible(true);

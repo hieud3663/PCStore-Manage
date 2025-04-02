@@ -30,10 +30,10 @@ public class Customer extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
         jPanel5 = new javax.swing.JPanel();
-        kButton3 = new com.k33ptoo.components.KButton();
-        kButton1 = new com.k33ptoo.components.KButton();
-        kButton2 = new com.k33ptoo.components.KButton();
-        kButton4 = new com.k33ptoo.components.KButton();
+        btnAddCustomer = new com.k33ptoo.components.KButton();
+        btnUpdate = new com.k33ptoo.components.KButton();
+        btnDeleteCustomer = new com.k33ptoo.components.KButton();
+        btnRefresh = new com.k33ptoo.components.KButton();
         jPanel6 = new javax.swing.JPanel();
         btnExportExcel = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
@@ -93,61 +93,61 @@ public class Customer extends javax.swing.JPanel {
         jPanel5.setPreferredSize(new java.awt.Dimension(1197, 60));
         jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        kButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-add_2.png"))); // NOI18N
-        kButton3.setText(bundle.getString("btnAddCustomer")); // NOI18N
-        kButton3.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        kButton3.setIconTextGap(15);
-        kButton3.setkBorderRadius(30);
-        kButton3.setkEndColor(new java.awt.Color(0, 255, 51));
-        kButton3.setkHoverEndColor(new java.awt.Color(0, 204, 255));
-        kButton3.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton3.setkHoverStartColor(new java.awt.Color(0, 204, 255));
-        kButton3.setkStartColor(new java.awt.Color(0, 204, 255));
-        kButton3.setPreferredSize(new java.awt.Dimension(185, 35));
-        jPanel5.add(kButton3);
+        btnAddCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-add_2.png"))); // NOI18N
+        btnAddCustomer.setText(bundle.getString("btnAddCustomer")); // NOI18N
+        btnAddCustomer.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnAddCustomer.setIconTextGap(15);
+        btnAddCustomer.setkBorderRadius(30);
+        btnAddCustomer.setkEndColor(new java.awt.Color(0, 255, 51));
+        btnAddCustomer.setkHoverEndColor(new java.awt.Color(0, 204, 255));
+        btnAddCustomer.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAddCustomer.setkHoverStartColor(new java.awt.Color(0, 204, 255));
+        btnAddCustomer.setkStartColor(new java.awt.Color(0, 204, 255));
+        btnAddCustomer.setPreferredSize(new java.awt.Dimension(185, 35));
+        jPanel5.add(btnAddCustomer);
 
-        kButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-pen.png"))); // NOI18N
-        kButton1.setText(bundle.getString("btnUpdate")); // NOI18N
-        kButton1.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        kButton1.setIconTextGap(15);
-        kButton1.setkBorderRadius(30);
-        kButton1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton1.setkHoverStartColor(new java.awt.Color(102, 102, 255));
-        kButton1.setPreferredSize(new java.awt.Dimension(185, 35));
-        jPanel5.add(kButton1);
+        btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-pen.png"))); // NOI18N
+        btnUpdate.setText(bundle.getString("btnUpdate")); // NOI18N
+        btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnUpdate.setIconTextGap(15);
+        btnUpdate.setkBorderRadius(30);
+        btnUpdate.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnUpdate.setkHoverStartColor(new java.awt.Color(102, 102, 255));
+        btnUpdate.setPreferredSize(new java.awt.Dimension(185, 35));
+        jPanel5.add(btnUpdate);
 
-        kButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
-        kButton2.setText(bundle.getString("btnDeleteCustomer")); // NOI18N
-        kButton2.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        kButton2.setIconTextGap(15);
-        kButton2.setkBorderRadius(30);
-        kButton2.setkEndColor(new java.awt.Color(255, 102, 51));
-        kButton2.setkHoverEndColor(new java.awt.Color(255, 0, 51));
-        kButton2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton2.setkHoverStartColor(new java.awt.Color(255, 102, 0));
-        kButton2.setkStartColor(new java.awt.Color(255, 0, 51));
-        kButton2.setLabel(bundle.getString("btnDeleteCustomer")); // NOI18N
-        kButton2.setPreferredSize(new java.awt.Dimension(185, 35));
-        kButton2.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
-        jPanel5.add(kButton2);
+        btnDeleteCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
+        btnDeleteCustomer.setText(bundle.getString("btnDeleteCustomer")); // NOI18N
+        btnDeleteCustomer.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnDeleteCustomer.setIconTextGap(15);
+        btnDeleteCustomer.setkBorderRadius(30);
+        btnDeleteCustomer.setkEndColor(new java.awt.Color(255, 102, 51));
+        btnDeleteCustomer.setkHoverEndColor(new java.awt.Color(255, 0, 51));
+        btnDeleteCustomer.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnDeleteCustomer.setkHoverStartColor(new java.awt.Color(255, 102, 0));
+        btnDeleteCustomer.setkStartColor(new java.awt.Color(255, 0, 51));
+        btnDeleteCustomer.setLabel(bundle.getString("btnDeleteCustomer")); // NOI18N
+        btnDeleteCustomer.setPreferredSize(new java.awt.Dimension(185, 35));
+        btnDeleteCustomer.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
+        jPanel5.add(btnDeleteCustomer);
 
-        kButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
-        kButton4.setText(bundle.getString("btnRefresh")); // NOI18N
-        kButton4.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        kButton4.setIconTextGap(20);
-        kButton4.setkBorderRadius(30);
-        kButton4.setkEndColor(new java.awt.Color(0, 204, 255));
-        kButton4.setkHoverEndColor(new java.awt.Color(153, 255, 153));
-        kButton4.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton4.setkHoverStartColor(new java.awt.Color(102, 255, 0));
-        kButton4.setkStartColor(new java.awt.Color(0, 153, 255));
-        kButton4.setPreferredSize(new java.awt.Dimension(185, 35));
-        kButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        btnRefresh.setText(bundle.getString("btnRefresh")); // NOI18N
+        btnRefresh.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnRefresh.setIconTextGap(20);
+        btnRefresh.setkBorderRadius(30);
+        btnRefresh.setkEndColor(new java.awt.Color(0, 204, 255));
+        btnRefresh.setkHoverEndColor(new java.awt.Color(153, 255, 153));
+        btnRefresh.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnRefresh.setkHoverStartColor(new java.awt.Color(102, 255, 0));
+        btnRefresh.setkStartColor(new java.awt.Color(0, 153, 255));
+        btnRefresh.setPreferredSize(new java.awt.Dimension(185, 35));
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kButton4ActionPerformed(evt);
+                btnRefreshActionPerformed(evt);
             }
         });
-        jPanel5.add(kButton4);
+        jPanel5.add(btnRefresh);
 
         jPanel6.setBackground(new java.awt.Color(255, 255, 255));
         jPanel6.setOpaque(false);
@@ -176,7 +176,6 @@ public class Customer extends javax.swing.JPanel {
         jPanel2.setPreferredSize(new java.awt.Dimension(400, 200));
         jPanel2.setLayout(new java.awt.GridLayout(4, 3, 30, 23));
 
-        jPanel9.setBackground(null);
         jPanel9.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -195,7 +194,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel9);
 
-        jPanel8.setBackground(null);
         jPanel8.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -212,7 +210,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel8);
 
-        jPanel10.setBackground(null);
         jPanel10.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -229,7 +226,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel10);
 
-        jPanel11.setBackground(null);
         jPanel11.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -246,7 +242,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel11);
 
-        jPanel12.setBackground(null);
         jPanel12.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -263,7 +258,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel12);
 
-        jPanel13.setBackground(null);
         jPanel13.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -280,7 +274,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel13);
 
-        jPanel14.setBackground(null);
         jPanel14.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -297,7 +290,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel14);
 
-        jPanel15.setBackground(null);
         jPanel15.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -314,7 +306,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel15);
 
-        jPanel16.setBackground(null);
         jPanel16.setLayout(new java.awt.BorderLayout(15, 0));
         jPanel2.add(jPanel16);
 
@@ -392,9 +383,9 @@ public class Customer extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnExportExcelActionPerformed
 
-    private void kButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton4ActionPerformed
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_kButton4ActionPerformed
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnResetSortMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetSortMouseClicked
         cbbSortCustomer.setSelectedIndex(0);
@@ -403,8 +394,12 @@ public class Customer extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnAddCustomer;
+    private com.k33ptoo.components.KButton btnDeleteCustomer;
     private javax.swing.JButton btnExportExcel;
+    private com.k33ptoo.components.KButton btnRefresh;
     private javax.swing.JButton btnResetSort;
+    private com.k33ptoo.components.KButton btnUpdate;
     private javax.swing.JComboBox<String> cbbSort;
     private javax.swing.JComboBox<String> cbbSortCustomer;
     private javax.swing.JLabel jLabel1;
@@ -434,10 +429,6 @@ public class Customer extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private com.k33ptoo.components.KButton kButton1;
-    private com.k33ptoo.components.KButton kButton2;
-    private com.k33ptoo.components.KButton kButton3;
-    private com.k33ptoo.components.KButton kButton4;
     private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     private javax.swing.JTextField txtCreateAt;
     private javax.swing.JTextField txtCreateUpdate;

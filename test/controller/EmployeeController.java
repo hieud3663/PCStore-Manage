@@ -1,6 +1,6 @@
 package test.controller;
 
-import test.dao.EmployeeDAO;
+import test.Repository.EmployeeRepository;
 import test.model.Employee;
 import test.model.enums.EmployeePositionEnum;
 import test.view.EmployeeView;
@@ -11,11 +11,11 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 public class EmployeeController {
-    private EmployeeDAO employeeDAO;
+    private EmployeeRepository employeeRepository;
     private EmployeeView employeeView;
 
-    public EmployeeController(EmployeeDAO employeeDAO, EmployeeView employeeView) {
-        this.employeeDAO = employeeDAO;
+    public EmployeeController(EmployeeRepository employeeRepository, EmployeeView employeeView) {
+        this.employeeRepository = employeeRepository;
         this.employeeView = employeeView;
 
         this.employeeView.addAddButtonListener(new AddButtonListener());
@@ -27,7 +27,7 @@ public class EmployeeController {
     }
 
     private void loadEmployeeData() {
-        for (Employee employee : employeeDAO.getAllEmployees()) {
+        for (Employee employee : employeeRepository.getAllEmployees()) {
             employeeView.addEmployeeToTable(new Object[]{
                     employee.getEmployeeId(),
                     employee.getFullName(),
@@ -50,7 +50,7 @@ public class EmployeeController {
             employee.setAddress(employeeView.getAddress());
             employee.setPosition(EmployeePositionEnum.valueOf(employeeView.getPosition().toUpperCase().replace(" ", "_")));
 
-            employeeDAO.addEmployee(employee);
+            employeeRepository.addEmployee(employee);
             employeeView.addEmployeeToTable(new Object[]{
                     employee.getEmployeeId(),
                     employee.getFullName(),
@@ -80,7 +80,7 @@ public class EmployeeController {
             employee.setAddress(employeeView.getAddress());
             employee.setPosition(EmployeePositionEnum.valueOf(employeeView.getPosition().toUpperCase().replace(" ", "_")));
 
-            employeeDAO.updateEmployee(employee);
+            employeeRepository.updateEmployee(employee);
             employeeView.updateEmployeeInTable(selectedRow, new Object[]{
                     employee.getEmployeeId(),
                     employee.getFullName(),
@@ -103,7 +103,7 @@ public class EmployeeController {
             }
 
             String employeeId = (String) employeeView.getSelectedRowData()[0];
-            employeeDAO.deleteEmployee(employeeId);
+            employeeRepository.deleteEmployee(employeeId);
             employeeView.removeEmployeeFromTable(selectedRow);
             employeeView.clearForm();
         }

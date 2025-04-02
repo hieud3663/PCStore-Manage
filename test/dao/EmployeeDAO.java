@@ -1,10 +1,10 @@
-package test.dao;
+package test.Repository;
 
 import test.model.Employee;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeDAO {
+public class EmployeeRepository {
     private List<Employee> employees = new ArrayList<>();
 
     public List<Employee> getAllEmployees() {

@@ -632,7 +632,7 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCancleActionPerformed
 
     private void btnPayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
-        Dashboard dashboard = Dashboard.getInstance();
+        DashboardView dashboard = DashboardView.getInstance();
     
         // Tạo dialog thanh toán với owner là dashboard và modal=true
         PayForm payForm = new PayForm(dashboard, true);

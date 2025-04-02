@@ -1,4 +1,4 @@
-package com.pcstore.dao;
+package com.pcstore.Repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -46,8 +46,8 @@ public class DatabaseConnection {
         return instance;
     }
     
-    public static DAOFactory getDAOFactory() {
-        return new DAOFactory(getInstance().getConnection());
+    public static RepositoryFactory getRepositoryFactory() {
+        return new RepositoryFactory(getInstance().getConnection());
     }
     
     public void closeConnection() {

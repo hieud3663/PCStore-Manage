@@ -1,3 +1,22 @@
 {
-    "java.debug.settings.onBuildFailureProceed": true
+    "java.debug.settings.onBuildFailureProceed": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.edit.validateAllOpenBuffersOnChanges": true,
+    "java.jdt.ls.javac.enabled": "on",
+
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-1.8",
+            "path": "/path/to/jdk-8",
+        },
+        {
+            "name": "JavaSE-11",
+            "path": "/path/to/jdk-11",
+        },
+        {
+            "name": "JavaSE-17",
+            "path": "/path/to/jdk-17",
+            "default": true
+        },
+    ]
 }

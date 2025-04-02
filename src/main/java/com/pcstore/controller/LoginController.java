@@ -1,24 +1,18 @@
 package com.pcstore.controller;
 
-import java.sql.Connection;
+import com.pcstore.model.User;
+import com.pcstore.service.ServiceFactory;
+import com.pcstore.service.UserService;
 
 import javax.swing.JOptionPane;
 
-import com.pcstore.dao.DatabaseConnection;
-import com.pcstore.dao.impl.UserDAO;
-import com.pcstore.model.User;
-
 public class LoginController {
-     private UserDAO userDAO;
-    private Connection connection;
+    private UserService userService;
     
     public LoginController() {
         try {
-            DatabaseConnection db = new DatabaseConnection();
-            this.connection = db.getConnection();
-            this.userDAO = new UserDAO(this.connection);
+            this.userService = ServiceFactory.getUserService();
         } catch (Exception e) {
-            // e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi kết nối đến cơ sở dữ liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -31,7 +25,7 @@ public class LoginController {
      */
     public User authenticate(String username, String password) {
         try {
-            return userDAO.authenticate(username, password);
+            return userService.authenticate(username, password);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi xác thực người dùng", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return null;
@@ -43,9 +37,7 @@ public class LoginController {
      */
     public void close() {
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
+            ServiceFactory.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi đóng kết nối", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }

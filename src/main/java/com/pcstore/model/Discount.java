@@ -272,7 +272,7 @@ public class Discount extends BaseTimeEntity {
 
     /**
      * Thiết lập số lần đã sử dụng khuyến mãi
-     * Thường chỉ được gọi từ DAO hoặc service layer
+     * Thường chỉ được gọi từ Repository hoặc service layer
      * 
      * @param usageCount Số lần đã sử dụng
      */

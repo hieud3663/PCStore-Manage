@@ -111,7 +111,5 @@
             <artifactId>datechooser</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
-
-        
     </dependencies>
 </project>

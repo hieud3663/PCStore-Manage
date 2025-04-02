@@ -289,7 +289,7 @@ public class PurchaseOrder extends javax.swing.JPanel {
         }
     
         javax.swing.SwingUtilities.invokeLater(() -> {
-            javax.swing.JFrame frame = new javax.swing.JFrame("Warehouse Management");
+            javax.swing.JFrame frame = new javax.swing.JFrame("Nhập Hàng"); // Tạo JFrame mới có tiêu đề "Nhập Hàng"
             frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
             frame.add(new PurchaseOrder()); // Thêm JPanel WareHouse vào JFrame
             frame.setSize(1300, 720); // Thiết lập kích thước màn hình vừa đủ

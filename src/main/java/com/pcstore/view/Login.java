@@ -11,10 +11,11 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.pcstore.controller.PCrypt;
+import com.pcstore.controller.LoginController;
 import com.pcstore.dao.DatabaseConnection;
 import com.pcstore.dao.impl.UserDAO;
 import com.pcstore.model.User;
+import com.pcstore.utils.PCrypt;
 
 /**
  *
@@ -41,7 +42,7 @@ public class Login extends javax.swing.JFrame {
         kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
         kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
         kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
-        kButton1 = new com.k33ptoo.components.KButton();
+        btnLogin = new com.k33ptoo.components.KButton();
         jLabel1 = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         txtPassword = new javax.swing.JTextField();
@@ -76,23 +77,23 @@ public class Login extends javax.swing.JFrame {
         kGradientPanel3.setkTransparentControls(false);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        kButton1.setText(bundle.getString("btnLogin")); // NOI18N
-        kButton1.setkBorderRadius(40);
-        kButton1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnLogin.setText(bundle.getString("btnLogin")); // NOI18N
+        btnLogin.setkBorderRadius(40);
+        btnLogin.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                kButton1MouseClicked(evt);
+                btnLoginMouseClicked(evt);
             }
         });
-        kButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+        btnLogin.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                kButton1KeyPressed(evt);
+                btnLoginKeyPressed(evt);
             }
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel1.setText("Username");
+        jLabel1.setText(bundle.getString("lbUsername")); // NOI18N
 
         txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         txtUsername.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
@@ -114,7 +115,7 @@ public class Login extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel2.setText("Password");
+        jLabel2.setText(bundle.getString("lbPassword")); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -162,7 +163,7 @@ public class Login extends javax.swing.JFrame {
                 .addContainerGap(51, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(67, 67, 67))
         );
         kGradientPanel3Layout.setVerticalGroup(
@@ -181,7 +182,7 @@ public class Login extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
-                .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(80, 80, 80))
         );
 
@@ -224,7 +225,7 @@ public class Login extends javax.swing.JFrame {
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(66, 66, 66)
+                        .addGap(71, 71, 71)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(36, Short.MAX_VALUE))
         );
@@ -259,15 +260,15 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void kButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_kButton1KeyPressed
+    private void btnLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnLoginKeyPressed
         if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER){
             checkLogin();
         }
-    }//GEN-LAST:event_kButton1KeyPressed
+    }//GEN-LAST:event_btnLoginKeyPressed
 
-    private void kButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_kButton1MouseClicked
+    private void btnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseClicked
         checkLogin();
-    }//GEN-LAST:event_kButton1MouseClicked
+    }//GEN-LAST:event_btnLoginMouseClicked
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
          new ForgotPassword().setVisible(true);
@@ -278,29 +279,34 @@ public class Login extends javax.swing.JFrame {
     public void checkLogin(){
         String username = txtUsername.getText();
         String password = txtPassword.getText();
+
+        if(username.isEmpty() && password.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+        }
+
+        LoginController loginController = new LoginController();
+
         try{
-            //lấy dữ liệu từ database
-            Connection conn = null;
-            DatabaseConnection db = new DatabaseConnection();
-            conn = db.getConnection();
-            UserDAO userDAO = new UserDAO(conn);
-
-            User user = userDAO.authenticate(username, password);
-
-            if(username.equals("") && password.equals("")){
-                JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            
+            User user = loginController.authenticate(username, password);
+            
+            if(user != null){
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            // Lưu thông tin người dùng vào session hoặc biến static để sử dụng sau này
+                // SessionManager.setCurrentUser(user);
+            
+            // Mở giao diện chính
+                Dashboard dashboard = new Dashboard();
+                dashboard.setVisible(true);
+                this.dispose();
             }else{
-                if(user != null){
-                    JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    this.dispose();
-                }else{
-                    JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
-
-            db.closeConnection();
+            
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Error " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }finally{
+            loginController.close();
         }
     }
 
@@ -328,6 +334,7 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnLogin;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -335,7 +342,6 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField jTextField1;
-    private com.k33ptoo.components.KButton kButton1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel2;
     private com.k33ptoo.components.KGradientPanel kGradientPanel3;

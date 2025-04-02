@@ -23,12 +23,12 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author nloc2
  */
-public class wareHouse extends javax.swing.JPanel {
+public class WareHouse extends javax.swing.JPanel {
 
     /**
      * Creates new form PurchaseOder
      */
-    public wareHouse() {
+    public WareHouse() {
         initComponents();
     }
 
@@ -100,8 +100,6 @@ public class wareHouse extends javax.swing.JPanel {
             }
         });
         jTable1.setRowHeight(32);
-        jTable1.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer());
-        jTable1.getColumnModel().getColumn(0).setCellEditor(new ButtonEditor(jTable1));
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clButton")); // NOI18N
@@ -154,9 +152,11 @@ public class wareHouse extends javax.swing.JPanel {
         btnHistoryStockIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/history.png"))); // NOI18N
         btnHistoryStockIn.setText(bundle.getString("btnHistoryofStockIn")); // NOI18N
         btnHistoryStockIn.setkBorderRadius(40);
-        btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnHistoryStockIn.setkEndColor(new java.awt.Color(255, 102, 0));
+        btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(255, 102, 102));
         btnHistoryStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(255, 102, 102));
+        btnHistoryStockIn.setkStartColor(new java.awt.Color(255, 153, 0));
         btnHistoryStockIn.setOpaque(true);
         btnHistoryStockIn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -309,26 +309,6 @@ public class wareHouse extends javax.swing.JPanel {
         }
     }
     
-    public static void main(String[] args) {
-        try {
-            // Thiết lập giao diện Look and Feel của hệ thống
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace(); // In lỗi nếu không thể thiết lập Look and Feel
-        }
-    
-        // Khởi chạy giao diện trên luồng sự kiện của Swing
-      java.awt.EventQueue.invokeLater(() -> {
-    javax.swing.JFrame frame = new javax.swing.JFrame("Purchase Order");
-    frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-    frame.setContentPane(new wareHouse()); // Đặt JPanel PurchaseOder vào JFrame
-    frame.pack(); // Tự động điều chỉnh kích thước JFrame theo nội dung
-    frame.setLocationRelativeTo(null); // Hiển thị JFrame ở giữa màn hình
-    frame.setVisible(true); // Hiển thị JFrame
-});
-    }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
     public com.k33ptoo.components.KButton btnHistoryStockIn;

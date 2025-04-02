@@ -18,39 +18,6 @@ public class WarrantyService extends javax.swing.JPanel {
     public WarrantyService() {
         initComponents();
     }
-public static void main(String[] args) {
-        // Set Look and Feel
-        setLookAndFeel();
-
-        // Launch the application
-        javax.swing.SwingUtilities.invokeLater(() -> {
-            javax.swing.JFrame frame = new javax.swing.JFrame("Warranty Service");
-            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            frame.setSize(940, 610); // Set the frame size
-            frame.setLocationRelativeTo(null); // Center the frame on the screen
-
-            WarrantyService warrantyServicePanel = new WarrantyService();
-            frame.add(warrantyServicePanel);
-
-            frame.setVisible(true);
-        });
-    }
-
-    private static void setLookAndFeel() {
-        try {
-            // Set to Nimbus Look and Feel
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    return;
-                }
-            }
-            // If Nimbus is not available, fall back to the system default Look and Feel
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -60,30 +27,59 @@ public static void main(String[] args) {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         btnWarrantyRegistration = new com.k33ptoo.components.KButton();
+        jPanel3 = new javax.swing.JPanel();
+        btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
+        jTextField1 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
-        btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
+        jPanel4 = new javax.swing.JPanel();
+        btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
 
-        setPreferredSize(new java.awt.Dimension(940, 610));
+        setMaximumSize(new java.awt.Dimension(1153, 713));
+        setMinimumSize(new java.awt.Dimension(1153, 713));
+        setPreferredSize(new java.awt.Dimension(1153, 713));
+
+        jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanel2.setMaximumSize(new java.awt.Dimension(2147483647, 150));
+        jPanel2.setMinimumSize(new java.awt.Dimension(1000, 150));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        btnDetailWarrantyCard.setText(bundle.getString("btnDetailWarrantyCard")); // NOI18N
-        btnDetailWarrantyCard.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnDetailWarrantyCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnDetailWarrantyCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDetailWarrantyCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnDetailWarrantyCard.setkStartColor(new java.awt.Color(102, 153, 255));
-
         btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
         btnWarrantyRegistration.setkEndColor(new java.awt.Color(102, 153, 255));
         btnWarrantyRegistration.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnWarrantyRegistration.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnWarrantyRegistration.setkStartColor(new java.awt.Color(102, 153, 255));
+        jPanel2.add(btnWarrantyRegistration, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
+        jPanel3.setPreferredSize(new java.awt.Dimension(425, 65));
+        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        btnWarrantyInformationLookup.setText(bundle.getString("btnWarrantyInformationLookup")); // NOI18N
+        btnWarrantyInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnWarrantyInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnWarrantyInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        jPanel3.add(btnWarrantyInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 20, 105, 32));
+
+        jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
+        jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 292, 30));
+
+        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, -1, 60));
+
+        jPanel5.add(jPanel2);
+
+        jScrollPane1.setAlignmentY(5.0F);
+        jScrollPane1.setMaximumSize(new java.awt.Dimension(32767, 300));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -98,83 +94,41 @@ public static void main(String[] args) {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
+        jPanel5.add(jScrollPane1);
 
-        jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
+        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 20));
 
-        btnWarrantyInformationLookup.setText(bundle.getString("btnWarrantyInformationLookup")); // NOI18N
-        btnWarrantyInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarrantyInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarrantyInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        btnDetailWarrantyCard.setText(bundle.getString("btnDetailWarrantyCard")); // NOI18N
+        btnDetailWarrantyCard.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnDetailWarrantyCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnDetailWarrantyCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnDetailWarrantyCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnDetailWarrantyCard.setkStartColor(new java.awt.Color(102, 153, 255));
+        jPanel4.add(btnDetailWarrantyCard);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnWarrantyInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(11, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(btnWarrantyInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 5, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(1, 1, 1)
-                .addComponent(jTextField1)
-                .addContainerGap())
-        );
+        jPanel5.add(jPanel4);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(btnWarrantyRegistration, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(472, 472, 472)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1030, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(910, 910, 910)
-                .addComponent(btnDetailWarrantyCard, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(0, 1153, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 1111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(btnWarrantyRegistration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 610, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(20, 20, 20)
-                .addComponent(btnDetailWarrantyCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGap(0, 713, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 664, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
-
-        jScrollPane1.getAccessibleContext().setAccessibleName("");
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -182,6 +136,9 @@ public static void main(String[] args) {
     private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
     private com.k33ptoo.components.KButton btnWarrantyRegistration;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;

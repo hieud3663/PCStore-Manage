@@ -15,7 +15,6 @@ import java.awt.Panel;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.k33ptoo.components.KGradientPanel;
-
 /**
  *
  * @author MSII
@@ -38,8 +37,8 @@ public class Dashboard extends javax.swing.JFrame {
     private WareHouse wareHousePanel;
     private Invoice invoicePanel;
     private Customer customerPanel;
-    // private Service servicePanel;
-    // private Report reportPanel;
+    private MainWarrantyService servicePanel;
+    private RevenueDaily reportPanel;
 
     /**
      * Creates new form Menu
@@ -54,8 +53,8 @@ public class Dashboard extends javax.swing.JFrame {
         invoicePanel = new Invoice();
         wareHousePanel = new WareHouse();
         customerPanel = new Customer();
-        // servicePanel = new Service();
-        // reportPanel = new Report();
+        servicePanel = new MainWarrantyService();
+        reportPanel = new RevenueDaily();
         
         selectMenu(kPanelHome, lbMenuHome, activePanel);
     }
@@ -360,6 +359,9 @@ public class Dashboard extends javax.swing.JFrame {
         lbMenuService.setText(bundle.getString("txtMenuIService")); // NOI18N
         lbMenuService.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuService.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbMenuServiceMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lbMenuServiceMouseEntered(evt);
             }
@@ -397,6 +399,9 @@ public class Dashboard extends javax.swing.JFrame {
         lbMenuReport.setText(bundle.getString("txtMenuIReport")); // NOI18N
         lbMenuReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuReport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbMenuReportMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lbMenuReportMouseEntered(evt);
             }
@@ -742,6 +747,15 @@ public class Dashboard extends javax.swing.JFrame {
         if(activePanel != kPanelCustomer)
             exitHoverPanel(kPanelCustomer, lbMenuCustomer);
     }//GEN-LAST:event_lbMenuCustomerMouseExited
+    
+    private void lbMenuServiceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuServiceMouseClicked
+        selectMenu(kPanelService, lbMenuService, servicePanel);
+    }//GEN-LAST:event_lbMenuServiceMouseClicked
+
+    private void lbMenuReportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuReportMouseClicked
+       selectMenu(kPanelReport, lbMenuReport, reportPanel);
+    }//GEN-LAST:event_lbMenuReportMouseClicked
+    
     
 
     /**

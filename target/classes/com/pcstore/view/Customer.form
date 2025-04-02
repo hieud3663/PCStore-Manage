@@ -71,7 +71,7 @@
         <Property name="alignment" type="int" value="0"/>
       </Layout>
       <SubComponents>
-        <Component class="com.k33ptoo.components.KButton" name="kButton3">
+        <Component class="com.k33ptoo.components.KButton" name="btnAddCustomer">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/pcstore/resources/icon/user-add_2.png"/>
@@ -104,7 +104,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="com.k33ptoo.components.KButton" name="kButton1">
+        <Component class="com.k33ptoo.components.KButton" name="btnUpdate">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/pcstore/resources/icon/user-pen.png"/>
@@ -128,7 +128,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="com.k33ptoo.components.KButton" name="kButton2">
+        <Component class="com.k33ptoo.components.KButton" name="btnDeleteCustomer">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/pcstore/resources/icon/trash.png"/>
@@ -167,7 +167,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="com.k33ptoo.components.KButton" name="kButton4">
+        <Component class="com.k33ptoo.components.KButton" name="btnRefresh">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/com/pcstore/resources/icon/refresh.png"/>
@@ -200,7 +200,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="kButton4ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRefreshActionPerformed"/>
           </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel6">
@@ -276,11 +276,6 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JPanel" name="jPanel9">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -331,11 +326,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel8">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -382,11 +372,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel10">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -433,11 +418,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel11">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -484,11 +464,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel12">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -535,11 +510,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel13">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -586,11 +556,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel14">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -637,11 +602,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel15">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>
@@ -688,11 +648,6 @@
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel16">
-          <Properties>
-            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color type="null"/>
-            </Property>
-          </Properties>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout">
             <Property name="horizontalGap" type="int" value="15"/>

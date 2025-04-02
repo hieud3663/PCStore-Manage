@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author MSII
  */
-public class Employee extends javax.swing.JPanel {
+public class EmployeeLayout extends javax.swing.JPanel {
 
     /**
      * Creates new form Employee
      */
-    public Employee() {
+    public EmployeeLayout() {
         initComponents();
     }
 

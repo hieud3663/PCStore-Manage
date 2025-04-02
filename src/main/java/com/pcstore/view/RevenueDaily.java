@@ -26,31 +26,79 @@ public class RevenueDaily extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        lbRevenueDaily = new javax.swing.JLabel();
+        lbRevenueMonthly = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         Date = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         Revenue = new javax.swing.JLabel();
         btnExportReport = new com.k33ptoo.components.KButton();
+        jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("RevenueDaily"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16))); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("Revenue"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        jPanel1.setMaximumSize(new java.awt.Dimension(32767, 200));
+        jPanel1.setMinimumSize(new java.awt.Dimension(327, 70));
+        jPanel1.setPreferredSize(new java.awt.Dimension(390, 45));
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 0));
+
+        lbRevenueDaily.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbRevenueDaily.setText(bundle.getString("RevenueDaily")); // NOI18N
+        lbRevenueDaily.setPreferredSize(new java.awt.Dimension(165, 30));
+        lbRevenueDaily.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbRevenueDailyMouseClicked(evt);
+            }
+        });
+        jPanel1.add(lbRevenueDaily);
+
+        lbRevenueMonthly.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbRevenueMonthly.setText(bundle.getString("RevenueMonthly")); // NOI18N
+        lbRevenueMonthly.setMaximumSize(new java.awt.Dimension(119, 40));
+        lbRevenueMonthly.setMinimumSize(new java.awt.Dimension(119, 40));
+        lbRevenueMonthly.setPreferredSize(new java.awt.Dimension(165, 30));
+        lbRevenueMonthly.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbRevenueMonthlyMouseClicked(evt);
+            }
+        });
+        jPanel1.add(lbRevenueMonthly);
+
+        add(jPanel1);
+
+        jPanel2.setMinimumSize(new java.awt.Dimension(354, 45));
+        jPanel2.setPreferredSize(new java.awt.Dimension(980, 65));
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 100, 10));
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton1.setText(bundle.getString("Date")); // NOI18N
+        jPanel4.add(jButton1);
 
         Date.setText("                                  ");
+        Date.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        jPanel4.add(Date);
+
+        jPanel2.add(jPanel4);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Doanh Thu:");
+        jPanel5.add(jLabel2);
 
         Revenue.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Revenue.setText("                     ");
         Revenue.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
+        jPanel5.add(Revenue);
+
+        jPanel2.add(jPanel5);
 
         btnExportReport.setText(bundle.getString("btnExportreport")); // NOI18N
         btnExportReport.setkBorderRadius(30);
@@ -64,6 +112,9 @@ public class RevenueDaily extends javax.swing.JPanel {
                 btnExportReportMouseClicked(evt);
             }
         });
+        jPanel2.add(btnExportReport);
+
+        add(jPanel2);
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnSalesStatistics"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
 
@@ -79,50 +130,38 @@ public class RevenueDaily extends javax.swing.JPanel {
             }
         ));
         jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clSTT")); // NOI18N
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("cl1ProductCode")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clUnitPrice")); // NOI18N
-            jTable1.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clMoney")); // NOI18N
-        }
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Date)
-                .addGap(94, 94, 94)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Revenue)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 315, Short.MAX_VALUE)
-                .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 980, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 968, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(Date)
-                    .addComponent(jLabel2)
-                    .addComponent(Revenue)
-                    .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 466, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 990, 610));
+        add(jPanel3);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void lbRevenueMonthlyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRevenueMonthlyMouseClicked
+        
+    }//GEN-LAST:event_lbRevenueMonthlyMouseClicked
+
+    private void lbRevenueDailyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRevenueDailyMouseClicked
+       
+    }//GEN-LAST:event_lbRevenueDailyMouseClicked
 
     private void btnExportReportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportReportMouseClicked
         // TODO add your handling code here:
@@ -135,8 +174,14 @@ public class RevenueDaily extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnExportReport;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lbRevenueDaily;
+    private javax.swing.JLabel lbRevenueMonthly;
     // End of variables declaration//GEN-END:variables
 }

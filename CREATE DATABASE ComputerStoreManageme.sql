@@ -231,7 +231,7 @@ CREATE TABLE Warranties (
 
     CHECK (EndDate > StartDate)
 );
-
+d
 
 
 -- Bảng khuyến mãi và giảm giá

@@ -10,9 +10,17 @@ import java.util.regex.Pattern;
  * Class biểu diễn khách hàng
  */
 public class Customer extends BasePerson {
+
+    public Customer(String fullName, String phoneNumber, String email) {
+        super(fullName, phoneNumber, email);
+        //TODO Auto-generated constructor stub
+    }
+
+    public Customer() {
+        super();
+    }
+
     private String customerId; // Định dạng: KH01, KH02...
-    private List<Invoice> invoices = new ArrayList<>(); // Quan hệ 1-n với hóa đơn
-    private List<RepairService> repairServices = new ArrayList<>(); // Quan hệ 1-n với dịch vụ sửa chữa
 
     @Override
     public Object getId() {
@@ -33,69 +41,6 @@ public class Customer extends BasePerson {
         this.customerId = customerId;
     }
     
-    public List<Invoice> getInvoices() {
-        return invoices;
-    }
-    
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
-    }
-    
-    public void addInvoice(Invoice invoice) {
-        if (invoice == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Hóa đơn"));
-        }
-        this.invoices.add(invoice);
-        invoice.setCustomer(this);
-    }
-
-    public void removeInvoice(Invoice invoice) {
-        if (this.invoices.remove(invoice)) {
-            invoice.setCustomer(null);
-        }
-    }
-    
-    public List<RepairService> getRepairServices() {
-        return repairServices;
-    }
-    
-    public void setRepairServices(List<RepairService> repairServices) {
-        this.repairServices = repairServices;
-    }
-    
-    public void addRepairService(RepairService repairService) {
-        if (repairService == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Dịch vụ sửa chữa"));
-        }
-        this.repairServices.add(repairService);
-        repairService.setCustomer(this);
-    }
-
-    public void removeRepairService(RepairService repairService) {
-        if (this.repairServices.remove(repairService)) {
-            repairService.setCustomer(null);
-        }
-    }
-
-    @Override
-    public boolean isValidEmail() {
-        if (email == null || email.trim().isEmpty()) {
-            return true; // Email không bắt buộc với khách hàng
-        }
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        return pattern.matcher(email).matches();
-    }
-
-    @Override
-    public boolean isValidPhoneNumber(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Số điện thoại"));
-        }
-        String phoneRegex = "^\\d{10,11}$";
-        Pattern pattern = Pattern.compile(phoneRegex);
-        return pattern.matcher(phoneNumber).matches();
-    }
 
     @Override
     public void setPhoneNumber(String phoneNumber) {
@@ -134,12 +79,9 @@ public class Customer extends BasePerson {
 
     // Factory method để tạo khách hàng mới
     public static Customer createNew(String customerId, String fullName, 
-                                   String phoneNumber, String address) {
-        Customer customer = new Customer();
+                                   String phoneNumber) {
+        Customer customer = new Customer(fullName, phoneNumber, null);
         customer.setCustomerId(customerId);
-        customer.setFullName(fullName);
-        customer.setPhoneNumber(phoneNumber);
-        customer.setAddress(address);
         return customer;
     }
 

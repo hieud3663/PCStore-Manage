@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.repository.RepositoryFactory;
+import com.pcstore.utils.DatabaseConnection;
 
 /**
  * Factory class để tạo và quản lý các Service trong hệ thống
@@ -33,18 +34,8 @@ public class ServiceFactory {
      * @throws SQLException Nếu không thể kết nối đến database
      */
     private ServiceFactory() throws SQLException {
-        // Thiết lập kết nối database
-        // Thay thế thông tin kết nối tùy theo cấu hình thực tế
-        String url = "jdbc:mysql://localhost:3306/ComputerStoreManagement";
-        String user = "root";
-        String password = "";
-        
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection(url, user, password);
-        } catch (ClassNotFoundException e) {
-            throw new SQLException("MySQL JDBC Driver không tìm thấy", e);
-        }
+        connection = DatabaseConnection.getInstance().getConnection();
+        repositoryFactory = new RepositoryFactory(connection);
     }
     
     /**

@@ -3,7 +3,8 @@ package com.pcstore.model.enums;
 public enum EmployeePositionEnum {
     MANAGER("Manager"),
     SALES("Sales"),
-    STOCK_KEEPER("Stock Keeper");
+    STOCK_KEEPER("Stock Keeper"),
+    ADMIN("Admin");
     
     private final String displayName;
     

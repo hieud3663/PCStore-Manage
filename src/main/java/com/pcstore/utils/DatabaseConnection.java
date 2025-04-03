@@ -52,13 +52,14 @@ public class DatabaseConnection {
     }
     
     public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
+        if (connection != null) {
+            try {
                 connection.close();
-                // System.out.println("Đã đóng kết nối CSDL");
+                System.out.println("Database connection closed successfully");
+                instance = null; // Reset instance để lần sau sẽ tạo kết nối mới
+            } catch (SQLException e) {
+                System.err.println("Lỗi khi đóng kết nối database: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi đóng kết nối CSDL: " + e.getMessage());
         }
     }
 }

@@ -10,10 +10,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 /**
  * Repository implementation cho User entity
@@ -31,15 +34,15 @@ public class UserRepository implements Repository<User, String> {
 
     @Override
     public User add(User user) {
-        String sql = "INSERT INTO Users (Username, Password, RoleID, EmployeeID, Status) " +
-                     "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (Username, PasswordHash, EmployeeID, isActive) " +
+                     "VALUES (?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
-            statement.setString(2, user.getPassword());
-            statement.setInt(3, user.getRoleID());
-            statement.setString(4, user.getEmployeeId());
-            statement.setBoolean(5, user.getStatus());
+            statement.setString(2, PCrypt.hashPassword(user.getPassword()));
+            // statement.setInt(3, user.getRoleID());
+            statement.setString(3, user.getEmployeeId());
+            statement.setBoolean(4, user.getIsActive());
             
             statement.executeUpdate();
             
@@ -47,29 +50,56 @@ public class UserRepository implements Repository<User, String> {
             user.setCreatedAt(now);
             user.setUpdatedAt(now);
             
+
+            String sql2 = "INSERT INTO UserRoles (UserID, RoleID) " +
+                     "VALUES (?, ?)";
+
+            try (PreparedStatement statement2 = connection.prepareStatement(sql2)) {
+                statement2.setString(1, user.getUserId());
+                statement2.setInt(2, user.getRoleID());
+                statement2.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error adding user role", e);
+            }
             return user;
         } catch (SQLException e) {
             throw new RuntimeException("Error adding user", e);
         }
+
+        
     }
     
     @Override
     public User update(User user) {
-        String sql = "UPDATE Users SET Password = ?, RoleID = ?, Status = ? " +
+        String sql = "UPDATE Users SET PasswordHash = ?, isActive = ?, LastLogin = ? " +
                     "WHERE Username = ?";
                     
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getPassword());
-            statement.setInt(2, user.getRoleID());
-            statement.setBoolean(3, user.getStatus());
+            // statement.setString(2, user.getRoleName());
+            statement.setBoolean(2, user.getIsActive());
+            // statement.setDate(4, user.getLastLogin());
+
+
+             // Xử lý LocalDateTime - chuyển đổi thành Timestamp
+            LocalDateTime lastLogin = user.getLastLogin();
+            if (lastLogin != null) {
+                statement.setTimestamp(3, Timestamp.valueOf(lastLogin));
+            } else {
+                statement.setNull(3, Types.TIMESTAMP);
+            }
+
+            // System.out.println("Thời gian đăng nhập cuối: " + user.getLastLogin());
+            // System.out.println("Thời gian đăng nhập cuối: " + Timestamp.valueOf(lastLogin));
+
             statement.setString(4, user.getUsername());
-            
+
             statement.executeUpdate();
             
             user.setUpdatedAt(LocalDateTime.now());
             return user;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating user", e);
+            throw new RuntimeException("Error updating user" + e.getMessage());
         }
     }
     
@@ -146,12 +176,12 @@ public class UserRepository implements Repository<User, String> {
     
     // Xác thực người dùng đăng nhập
     public User authenticate(String username, String password) {
-        String sql = "SELECT u.*, r.RoleName, e.FullName as EmployeeName " +
+        String sql = "SELECT u.*, r.RoleID, r.RoleName, e.FullName as EmployeeName " +
                      "FROM Users u " +
                      "join UserRoles ur on u.UserID = ur.UserID "+
                      "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
                      "LEFT JOIN Employees e ON u.EmployeeID = e.EmployeeID " +
-                     "WHERE u.Username =  ? AND u.IsActive = 1";
+                     "WHERE u.Username =  ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
@@ -175,12 +205,7 @@ public class UserRepository implements Repository<User, String> {
                     fullName = "Admin";
                 }
 
-                Employee employee = new Employee();
-                employee.setEmployeeId(EmployeeId);
-                employee.setFullName(fullName);
-
                 User user = mapResultSetToUser(resultSet);
-                user.setEmployee(employee);
                 
                 return user;
                 
@@ -269,11 +294,12 @@ public class UserRepository implements Repository<User, String> {
     
     private User mapResultSetToUser(ResultSet resultSet) throws SQLException {
         User user = new User();
+        user.setUserId(resultSet.getString("UserID"));
         user.setUsername(resultSet.getString("Username"));
         user.setPassword(resultSet.getString("PasswordHash"));
-        // user.setRoleID(resultSet.getInt("RoleID"));
+        user.setRoleID(resultSet.getInt("RoleID"));
         user.setRoleName(resultSet.getString("RoleName"));
-
+        user.setIsActive(resultSet.getBoolean("isActive"));
         String EmployeeId = resultSet.getString("EmployeeID");
 
         // user.setStatus(resultSet.getBoolean("Status"));
@@ -285,7 +311,11 @@ public class UserRepository implements Repository<User, String> {
             if (rs.next()) {
                 String employeeId = rs.getString("EmployeeID");
                 String fullName = rs.getString("FullName");
+                String phoneNumber = rs.getString("PhoneNumber");
+                String email = rs.getString("Email");
                 String position = rs.getString("Position");
+
+                user.setEmployee(new Employee(employeeId, fullName, phoneNumber, email, position));
                 
             }
         } catch (SQLException e) {

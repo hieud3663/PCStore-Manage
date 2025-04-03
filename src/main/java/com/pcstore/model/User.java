@@ -7,16 +7,14 @@ import java.time.LocalDateTime;
  * Class biểu diễn thông tin tài khoản người dùng
  */
 public class User extends BaseTimeEntity {
-    private Integer userId;
+    private String userId;
     private String username;
     private String password;
-    private boolean isActive;
-    private LocalDateTime lastLogin;
-    // private Set<String> roles = new HashSet<>();
     private Integer roleID;
     private String roleName;
     private Employee employee;
-    private boolean status;
+    private boolean isActive;
+    private LocalDateTime lastLogin;
 
     
 
@@ -25,11 +23,11 @@ public class User extends BaseTimeEntity {
         return userId;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -61,6 +59,15 @@ public class User extends BaseTimeEntity {
         this.password = password;
     }
 
+
+    public Integer getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(Integer roleID) {
+        this.roleID = roleID;
+    }
+
     public boolean isActive() {
         return isActive;
     }
@@ -77,27 +84,14 @@ public class User extends BaseTimeEntity {
         this.lastLogin = lastLogin;
     }
 
-    
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
 
     public Employee getEmployee() {
         return employee;
     }
 
-    public void setEmployee(Employee employee) {
-        // Xử lý mối quan hệ hai chiều
-        if (this.employee != employee) {
-            Employee oldEmployee = this.employee;
-            this.employee = employee;
-            
-            if (oldEmployee != null) {
-                oldEmployee.setUser(null);
-            }
-            
-            if (employee != null) {
-                employee.setUser(this);
-            }
-        }
-    }
 
     public String getFullName() {
         return employee != null ? employee.getFullName() : null;
@@ -138,22 +132,14 @@ public class User extends BaseTimeEntity {
         this.setUpdatedAt(LocalDateTime.now());
     }
 
-    public Integer getRoleID() {
-        return roleID;
+
+    public boolean getIsActive() {
+        return isActive;
     }
 
-    public void setRoleID(Integer roleID) {
-        this.roleID = roleID;
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
-
-    public boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     public String getEmployeeId() {
         return employee.getEmployeeId();
     }

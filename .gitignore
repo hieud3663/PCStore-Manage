@@ -1,0 +1,35 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.project
+nbproject/
+nb-configuration.xml
+nbactions.xml
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+
+# Java specific
+hs_err_pid*
+
+# OS specific files
+.DS_Store
+Thumbs.db

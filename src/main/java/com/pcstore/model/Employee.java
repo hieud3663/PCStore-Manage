@@ -3,8 +3,6 @@ package com.pcstore.model;
 import com.pcstore.model.base.BasePerson;
 import com.pcstore.model.enums.EmployeePositionEnum;
 import com.pcstore.utils.ErrorMessage;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -13,10 +11,30 @@ import java.util.regex.Pattern;
 public class Employee extends BasePerson {
     private String employeeId;
     private EmployeePositionEnum position;
-    private List<Invoice> invoices = new ArrayList<>(); // Nhân viên lập nhiều hóa đơn
-    private List<PurchaseOrder> purchaseOrders = new ArrayList<>(); // Nhân viên lập nhiều phiếu nhập hàng
-    private List<RepairService> repairServices = new ArrayList<>(); // Nhân viên phụ trách nhiều dịch vụ sửa chữa
-    private User user; // Một nhân viên có thể có một tài khoản
+    
+    private static String currentID;
+
+    public Employee(String employeeId, String fullName, String phoneNumber, String email,
+            EmployeePositionEnum position) {
+        super(fullName, phoneNumber, email);
+        currentID = employeeId;
+        this.employeeId = employeeId;
+        this.position = position;
+    }
+
+
+    public Employee(String employeeId, String fullName, String phoneNumber, String email,
+            String position) {
+        super(fullName, phoneNumber, email);
+        currentID = employeeId;
+        this.employeeId = employeeId;
+        this.setPosition(position);
+    }
+
+    public Employee() {
+        //TODO Auto-generated constructor stub
+    }
+
 
     @Override
     public Object getId() {
@@ -47,92 +65,19 @@ public class Employee extends BasePerson {
         }
         this.position = position;
     }
-    
-    public List<Invoice> getInvoices() {
-        return invoices;
-    }
-    
-    public void setInvoices(List<Invoice> invoices) {
-        this.invoices = invoices;
-    }
-    
-    public void addInvoice(Invoice invoice) {
-        if (invoice == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Hóa đơn"));
+
+
+    public void setPosition(String position) {
+        if (position == null || position.trim().isEmpty()) {
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chức vụ"));
         }
-        this.invoices.add(invoice);
-        invoice.setEmployee(this);
-    }
-    
-    public void removeInvoice(Invoice invoice) {
-        if (this.invoices.remove(invoice)) {
-            invoice.setEmployee(null);
+        try {
+            this.position = EmployeePositionEnum.valueOf(position.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(ErrorMessage.INVALID_EMPLOYEE_POSITION);
         }
     }
     
-    public List<PurchaseOrder> getPurchaseOrders() {
-        return purchaseOrders;
-    }
-    
-    public void setPurchaseOrders(List<PurchaseOrder> purchaseOrders) {
-        this.purchaseOrders = purchaseOrders;
-    }
-    
-    public void addPurchaseOrder(PurchaseOrder purchaseOrder) {
-        if (purchaseOrder == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Đơn nhập hàng"));
-        }
-        this.purchaseOrders.add(purchaseOrder);
-        purchaseOrder.setEmployee(this);
-    }
-    
-    public void removePurchaseOrder(PurchaseOrder purchaseOrder) {
-        if (this.purchaseOrders.remove(purchaseOrder)) {
-            purchaseOrder.setEmployee(null);
-        }
-    }
-    
-    public List<RepairService> getRepairServices() {
-        return repairServices;
-    }
-    
-    public void setRepairServices(List<RepairService> repairServices) {
-        this.repairServices = repairServices;
-    }
-    
-    public void addRepairService(RepairService repairService) {
-        if (repairService == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Dịch vụ sửa chữa"));
-        }
-        this.repairServices.add(repairService);
-        repairService.setEmployee(this);
-    }
-    
-    public void removeRepairService(RepairService repairService) {
-        if (this.repairServices.remove(repairService)) {
-            repairService.setEmployee(null);
-        }
-    }
-    
-    public User getUser() {
-        return user;
-    }
-    
-    public void setUser(User user) {
-        // Xử lý mối quan hệ hai chiều
-        if (this.user != user) {
-            User oldUser = this.user;
-            this.user = user;
-            
-            if (oldUser != null) {
-                oldUser.setEmployee(null);
-            }
-            
-            if (user != null && user.getEmployee() != this) {
-                user.setEmployee(this);
-            }
-        }
-    }
 
     @Override
     public boolean isValidEmail() {
@@ -191,15 +136,8 @@ public class Employee extends BasePerson {
 
     // Factory method để tạo nhân viên mới
     public static Employee createNew(String employeeId, String fullName, 
-                                   String phoneNumber, String email, 
-                                   String address, EmployeePositionEnum position) {
-        Employee employee = new Employee();
-        employee.setEmployeeId(employeeId);
-        employee.setFullName(fullName);
-        employee.setPhoneNumber(phoneNumber);
-        employee.setEmail(email);
-        employee.setAddress(address);
-        employee.setPosition(position);
+                                   String phoneNumber, String email, EmployeePositionEnum position) {
+        Employee employee = new Employee(email, email, email, email, position);
         return employee;
     }
 }

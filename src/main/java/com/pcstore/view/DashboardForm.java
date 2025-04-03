@@ -11,6 +11,7 @@ import java.awt.event.*;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
 import com.k33ptoo.components.*;
+import com.pcstore.utils.DatabaseConnection;
 
 /**
  *
@@ -35,7 +36,7 @@ public class DashboardForm extends JFrame {
     private InvoiceForm invoiceForm;
     private CustomerForm customerForm;
     private ServiceForm serviceForm;
-    // private ReportForm reportPanel;
+    private ReportForm reportForm;
 
     /**
      * Creates new form Menu
@@ -51,10 +52,19 @@ public class DashboardForm extends JFrame {
         wareHouseForm = new WareHouseForm();
         customerForm = new CustomerForm();
         serviceForm = new ServiceForm();
-        // reportPanel = new Report();
+        reportForm = new ReportForm();
         
         initializeHoverEffects();
         selectMenu(kPanelHome, lbMenuHome, activePanel);
+
+        // Thêm sự kiện window listener để xử lý đóng cửa sổ
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                // Đóng kết nối khi đóng cửa sổ
+                DatabaseConnection.getInstance().closeConnection();
+            }
+        });
     }
 
     /**
@@ -336,13 +346,13 @@ public class DashboardForm extends JFrame {
         KGradientPanel[] panels = {
             kPanelHome, kPanelSell, kPanelProduct, kPanelInvoice, 
             kPanelWareHouse, kPanelEmployee, kPanelService, 
-            kPanelReport, kPanelCustomer, kPanelService
+            kPanelReport, kPanelCustomer, kPanelService, kPanelReport
         };
         
         JLabel[] labels = {
             lbMenuHome, lbSell, lbProductMenu, lbMenuInvoice, 
             lbMenuWareHouse, lbMenuEmployee, lbMenuService, 
-            lbMenuReport, lbMenuCustomer, lbMenuService
+            lbMenuReport, lbMenuCustomer, lbMenuService, lbMenuReport
         };
         
         // Sử dụng vòng lặp để đặt các MouseListener cho tất cả panel và label
@@ -393,8 +403,8 @@ public class DashboardForm extends JFrame {
         } else if (panel == kPanelService) {
             selectMenu(panel, label, serviceForm);
         } else if (panel == kPanelReport) {
-            selectMenu(panel, label, null); // Chưa có component cho Report
-        } 
+            selectMenu(panel, label, reportForm); // Chưa có component cho Report
+        }
         // Bổ sung các xử lý cho Service và Report khi có component tương ứng
     }
     /**

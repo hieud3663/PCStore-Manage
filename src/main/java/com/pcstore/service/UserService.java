@@ -36,18 +36,12 @@ public class UserService {
      * @return User nếu xác thực thành công, null nếu thất bại
      */
     public User authenticate(String username, String password) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên đăng nhập không được để trống");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Mật khẩu không được để trống");
-        }
-        
         User user = userRepository.authenticate(username, password);
         if (user != null) {
             // Cập nhật thời gian đăng nhập cuối cùng
             user.updateLastLogin();
             userRepository.update(user);
+            
         }
         
         return user;

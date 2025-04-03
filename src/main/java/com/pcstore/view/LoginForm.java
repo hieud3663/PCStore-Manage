@@ -6,9 +6,10 @@ package com.pcstore.view;
 
 import java.sql.Connection;
 
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.pcstore.controller.LoginController;
@@ -21,13 +22,22 @@ import com.pcstore.utils.PCrypt;
  *
  * @author MSII
  */
-public class LoginForm extends javax.swing.JFrame {
+public class LoginForm extends JFrame {
 
     /**
      * Creates new form testLogin
      */
     public LoginForm() {
         initComponents();
+        // Thêm sự kiện window listener để xử lý đóng cửa sổ
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                // Đóng kết nối khi đóng cửa sổ
+                DatabaseConnection.getInstance().closeConnection();
+            }
+        });
+
     }
 
     /**
@@ -38,219 +48,219 @@ public class LoginForm extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
         PanelMainLogin = new com.k33ptoo.components.KGradientPanel();
-        PanelContentLogin = new javax.swing.JPanel();
-        title1 = new javax.swing.JLabel();
-        title2 = new javax.swing.JLabel();
-        lbPicture = new javax.swing.JLabel();
+        PanelContentLogin = new JPanel();
+        title1 = new JLabel();
+        title2 = new JLabel();
+        lbPicture = new JLabel();
         PanelLogin = new com.k33ptoo.components.KGradientPanel();
         btnLogin = new com.k33ptoo.components.KButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtUsername = new javax.swing.JTextField();
-        txtPassword = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jLabel1 = new JLabel();
+        txtUsername = new JTextField();
+        txtPassword = new JTextField();
+        jLabel2 = new JLabel();
+        jLabel4 = new JLabel();
+        jTextField1 = new JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
         setResizable(false);
 
-        PanelMainLogin.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 100, 20, 100));
-        PanelMainLogin.setkEndColor(new java.awt.Color(102, 153, 255));
+        PanelMainLogin.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
+        PanelMainLogin.setkEndColor(new Color(102, 153, 255));
         PanelMainLogin.setkGradientFocus(100);
-        PanelMainLogin.setkStartColor(new java.awt.Color(153, 255, 153));
-        PanelMainLogin.setMinimumSize(new java.awt.Dimension(1060, 521));
+        PanelMainLogin.setkStartColor(new Color(153, 255, 153));
+        PanelMainLogin.setMinimumSize(new Dimension(1060, 521));
         PanelMainLogin.setOpaque(false);
-        PanelMainLogin.setPreferredSize(new java.awt.Dimension(1100, 522));
-        PanelMainLogin.setLayout(new java.awt.GridLayout(1, 2, 60, 0));
+        PanelMainLogin.setPreferredSize(new Dimension(1100, 522));
+        PanelMainLogin.setLayout(new GridLayout(1, 2, 60, 0));
 
         PanelContentLogin.setOpaque(false);
-        PanelContentLogin.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 20));
+        PanelContentLogin.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
 
-        title1.setFont(new java.awt.Font("Segoe UI", 1, 23)); // NOI18N
-        title1.setForeground(new java.awt.Color(255, 255, 255));
+        title1.setFont(new Font("Segoe UI", 1, 23)); // NOI18N
+        title1.setForeground(new Color(255, 255, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         title1.setText(bundle.getString("titleName")); // NOI18N
         PanelContentLogin.add(title1);
 
-        title2.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        title2.setForeground(new java.awt.Color(255, 255, 255));
+        title2.setFont(new Font("Segoe UI", 1, 20)); // NOI18N
+        title2.setForeground(new Color(255, 255, 255));
         title2.setText(bundle.getString("titleWelcome")); // NOI18N
         PanelContentLogin.add(title2);
 
-        lbPicture.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbPicture.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grap.png"))); // NOI18N
+        lbPicture.setHorizontalAlignment(SwingConstants.CENTER);
+        lbPicture.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grap.png"))); // NOI18N
         PanelContentLogin.add(lbPicture);
 
         PanelMainLogin.add(PanelContentLogin);
 
         PanelLogin.setkBorderRadius(30);
-        PanelLogin.setkEndColor(new java.awt.Color(255, 255, 255));
-        PanelLogin.setkStartColor(new java.awt.Color(255, 255, 255));
+        PanelLogin.setkEndColor(new Color(255, 255, 255));
+        PanelLogin.setkStartColor(new Color(255, 255, 255));
         PanelLogin.setkTransparentControls(false);
         PanelLogin.setOpaque(false);
-        PanelLogin.setPreferredSize(new java.awt.Dimension(335, 459));
-        PanelLogin.setLayout(new java.awt.GridBagLayout());
+        PanelLogin.setPreferredSize(new Dimension(335, 459));
+        PanelLogin.setLayout(new GridBagLayout());
 
         btnLogin.setText(bundle.getString("btnLogin")); // NOI18N
-        btnLogin.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLogin.setFont(new Font("Segoe UI", 0, 14)); // NOI18N
         btnLogin.setkBorderRadius(40);
-        btnLogin.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnLogin.setMaximumSize(new java.awt.Dimension(200, 45));
-        btnLogin.setMinimumSize(new java.awt.Dimension(185, 45));
-        btnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        btnLogin.setkHoverForeGround(new Color(255, 255, 255));
+        btnLogin.setMaximumSize(new Dimension(200, 45));
+        btnLogin.setMinimumSize(new Dimension(185, 45));
+        btnLogin.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 btnLoginMouseClicked(evt);
             }
         });
-        btnLogin.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
+        btnLogin.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
                 btnLoginKeyPressed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.ipadx = 30;
         gridBagConstraints.ipady = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        gridBagConstraints.anchor = GridBagConstraints.NORTH;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        gridBagConstraints.insets = new Insets(10, 10, 10, 10);
         PanelLogin.add(btnLogin, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel1.setFont(new Font("Segoe UI", 0, 13)); // NOI18N
+        jLabel1.setForeground(new Color(102, 102, 102));
         jLabel1.setText(bundle.getString("lbUsername")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.ipadx = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(28, 48, 0, 0);
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(28, 48, 0, 0);
         PanelLogin.add(jLabel1, gridBagConstraints);
 
-        txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txtUsername.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
-        txtUsername.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtUsername.setFont(new Font("Segoe UI", 0, 13)); // NOI18N
+        txtUsername.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(204, 204, 204)));
+        txtUsername.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        txtUsername.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 txtUsernameActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.ipadx = 182;
         gridBagConstraints.ipady = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 48, 0, 51);
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(12, 48, 0, 51);
         PanelLogin.add(txtUsername, gridBagConstraints);
 
-        txtPassword.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        txtPassword.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
-        txtPassword.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        txtPassword.setFont(new Font("Segoe UI", 0, 13)); // NOI18N
+        txtPassword.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(204, 204, 204)));
+        txtPassword.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        txtPassword.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 txtPasswordActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.ipadx = 182;
         gridBagConstraints.ipady = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(12, 48, 0, 51);
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(12, 48, 0, 51);
         PanelLogin.add(txtPassword, gridBagConstraints);
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(102, 102, 102));
+        jLabel2.setFont(new Font("Segoe UI", 0, 13)); // NOI18N
+        jLabel2.setForeground(new Color(102, 102, 102));
         jLabel2.setText(bundle.getString("lbPassword")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.ipadx = 31;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(24, 48, 0, 0);
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(24, 48, 0, 0);
         PanelLogin.add(jLabel2, gridBagConstraints);
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/login.png"))); // NOI18N
+        jLabel4.setFont(new Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel4.setHorizontalAlignment(SwingConstants.CENTER);
+        jLabel4.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/login.png"))); // NOI18N
         jLabel4.setText(bundle.getString("titleLogin")); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.ipadx = -93;
         gridBagConstraints.ipady = -109;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 100, 0, 0);
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(6, 100, 0, 0);
         PanelLogin.add(jLabel4, gridBagConstraints);
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextField1.setForeground(new java.awt.Color(0, 153, 255));
+        jTextField1.setFont(new Font("Segoe UI", 0, 14)); // NOI18N
+        jTextField1.setForeground(new Color(0, 153, 255));
         jTextField1.setText(bundle.getString("lbForgetPassword")); // NOI18N
         jTextField1.setBorder(null);
-        jTextField1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jTextField1.setCursor(new Cursor(Cursor.HAND_CURSOR));
         jTextField1.setRequestFocusEnabled(false);
-        jTextField1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        jTextField1.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 jTextField1MouseClicked(evt);
             }
         });
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jTextField1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.ipadx = 55;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 44, 0, 51);
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(6, 44, 0, 51);
         PanelLogin.add(jTextField1, gridBagConstraints);
 
         PanelMainLogin.add(PanelLogin);
 
-        getContentPane().add(PanelMainLogin, java.awt.BorderLayout.CENTER);
+        getContentPane().add(PanelMainLogin, BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
+    private void txtUsernameActionPerformed(ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsernameActionPerformed
 
-    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+    private void txtPasswordActionPerformed(ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPasswordActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void jTextField1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void btnLoginKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnLoginKeyPressed
-        if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER){
+    private void btnLoginKeyPressed(KeyEvent evt) {//GEN-FIRST:event_btnLoginKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
             checkLogin();
         }
     }//GEN-LAST:event_btnLoginKeyPressed
 
-    private void btnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseClicked
+    private void btnLoginMouseClicked(MouseEvent evt) {//GEN-FIRST:event_btnLoginMouseClicked
         checkLogin();
     }//GEN-LAST:event_btnLoginMouseClicked
 
-    private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
+    private void jTextField1MouseClicked(MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
          new ForgotPasswordForm().setVisible(true);
 
     }//GEN-LAST:event_jTextField1MouseClicked
@@ -282,6 +292,8 @@ public class LoginForm extends javax.swing.JFrame {
             }else{
                 JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
+
+            
             
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Error " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -303,7 +315,7 @@ public class LoginForm extends javax.swing.JFrame {
             
 
             /* Create and display the form */
-            java.awt.EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     new LoginForm().setVisible(true);
                 }
@@ -314,18 +326,18 @@ public class LoginForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel PanelContentLogin;
+    private JPanel PanelContentLogin;
     private com.k33ptoo.components.KGradientPanel PanelLogin;
     private com.k33ptoo.components.KGradientPanel PanelMainLogin;
     private com.k33ptoo.components.KButton btnLogin;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JLabel lbPicture;
-    private javax.swing.JLabel title1;
-    private javax.swing.JLabel title2;
-    private javax.swing.JTextField txtPassword;
-    private javax.swing.JTextField txtUsername;
+    private JLabel jLabel1;
+    private JLabel jLabel2;
+    private JLabel jLabel4;
+    private JTextField jTextField1;
+    private JLabel lbPicture;
+    private JLabel title1;
+    private JLabel title2;
+    private JTextField txtPassword;
+    private JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

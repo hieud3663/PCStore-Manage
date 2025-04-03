@@ -1,6 +1,6 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
+import com.pcstore.repository.Repository;
 import com.pcstore.model.Return;
 import com.pcstore.model.InvoiceDetail;
 

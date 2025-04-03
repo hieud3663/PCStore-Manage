@@ -2,10 +2,14 @@ package com.pcstore.service;
 
 import com.pcstore.model.PurchaseOrder;
 import com.pcstore.model.Product;
-import com.pcstore.repository.iPurchaseOrderRepository;
-import com.pcstore.repository.iProductRepository;
+import com.pcstore.repository.impl.PurchaseOrderRepository;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
+import com.pcstore.repository.impl.ProductRepository;
 
+import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,15 +17,25 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến đơn đặt hàng
  */
 public class PurchaseOrderService {
-    private final iPurchaseOrderRepository purchaseOrderRepository;
-    private final iProductRepository productRepository;
+    private final PurchaseOrderRepository purchaseOrderRepository;
+    private final ProductRepository productRepository;
     
+    /**
+     * Khởi tạo service với csdl
+     * @param connection Kết nối csdl
+     */
+    public PurchaseOrderService(Connection connection, RepositoryFactory repositoryFactory) {
+        // Khởi tạo repository với kết nối csdl
+        this.purchaseOrderRepository = new PurchaseOrderRepository(connection, repositoryFactory);
+        this.productRepository = new ProductRepository(connection);
+    }
+
     /**
      * Khởi tạo service với repository
      * @param purchaseOrderRepository Repository đơn đặt hàng
      * @param productRepository Repository sản phẩm
      */
-    public PurchaseOrderService(iPurchaseOrderRepository purchaseOrderRepository, iProductRepository productRepository) {
+    public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, ProductRepository productRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.productRepository = productRepository;
     }
@@ -99,7 +113,7 @@ public class PurchaseOrderService {
      * @param endDate Ngày kết thúc
      * @return Danh sách đơn đặt hàng trong khoảng thời gian
      */
-    public List<PurchaseOrder> findPurchaseOrdersByDateRange(LocalDate startDate, LocalDate endDate) {
+    public List<PurchaseOrder> findPurchaseOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         return purchaseOrderRepository.findByDateRange(startDate, endDate);
     }
     
@@ -109,28 +123,32 @@ public class PurchaseOrderService {
      * @param status Trạng thái mới
      * @return true nếu cập nhật thành công, ngược lại là false
      */
-    public boolean updatePurchaseOrderStatus(String purchaseOrderId, String status) {
-        // Nếu trạng thái là "Đã nhận", cập nhật số lượng sản phẩm trong kho
-        if ("Đã nhận".equals(status)) {
-            Optional<PurchaseOrder> orderOpt = purchaseOrderRepository.findById(purchaseOrderId);
-            if (orderOpt.isPresent()) {
-                PurchaseOrder order = orderOpt.get();
-                // Cập nhật kho cho từng chi tiết đơn hàng
-                order.getOrderDetails().forEach(detail -> {
-                    productRepository.updateStock(detail.getProduct().getProductId(), detail.getQuantity());
-                });
-            }
-        }
+
+     // Nếu dùng thì bỏ comment ở đây, nhưng phải sửa lại trong PurchaseOrderRepository bởi vì không có order.getOrderDetails() - Hơi rối đấy nha :() ♥♥♥
+
+    // public boolean updatePurchaseOrderStatus(String purchaseOrderId, String status) {
+    //     // Nếu trạng thái là "Completed", cập nhật số lượng sản phẩm trong kho
+    //     if ("Completed".equals(status)) {
+    //         Optional<PurchaseOrder> orderOpt = purchaseOrderRepository.findById(purchaseOrderId);
+    //         if (orderOpt.isPresent()) {
+    //             PurchaseOrder order = orderOpt.get();
+    //             // Cập nhật kho cho từng chi tiết đơn hàng
+    //             order.getOrderDetails().forEach(detail -> {
+    //                 productRepository.updateStock(detail.getProduct().getProductId(), detail.getQuantity());
+    //             });
+    //         }
+    //     }
         
-        return purchaseOrderRepository.updateStatus(purchaseOrderId, status);
-    }
+    //     return purchaseOrderRepository.updateStatus(purchaseOrderId, status);
+    // }
+    
     
     /**
      * Kiểm tra đơn đặt hàng có tồn tại không
      * @param purchaseOrderId ID của đơn đặt hàng
      * @return true nếu đơn đặt hàng tồn tại, ngược lại là false
      */
-    public boolean purchaseOrderExists(String purchaseOrderId) {
+    public boolean purchaseOrderExists(Integer purchaseOrderId) {
         return purchaseOrderRepository.exists(purchaseOrderId);
     }
 }

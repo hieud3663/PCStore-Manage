@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author DUC ANH
  */
-public class RevenueMonthly extends javax.swing.JPanel {
+public class RevenueMonthlyForm extends javax.swing.JPanel {
 
     /**
      * Creates new form RevenueDaily
      */
-    public RevenueMonthly() {
+    public RevenueMonthlyForm() {
         initComponents();
     }
 

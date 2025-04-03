@@ -1,7 +1,7 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
-import com.pcstore.Repository.RepositoryFactory;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.model.PurchaseOrder;
 import com.pcstore.model.PurchaseOrderDetail;
 import com.pcstore.model.Supplier;
@@ -53,12 +53,12 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
             
             statement.executeUpdate();
             
-            // Lấy ID được tự động tạo
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                int generatedId = generatedKeys.getInt(1);
-                purchaseOrder.setPurchaseOrderId(generatedId);
-            }
+            // // Lấy ID được tự động tạo
+            // ResultSet generatedKeys = statement.getGeneratedKeys();
+            // if (generatedKeys.next()) {
+            //     int generatedId = generatedKeys.getInt(1);
+            //     purchaseOrder.setPurchaseOrderId(generatedId);
+            // }
             
             LocalDateTime now = LocalDateTime.now();
             purchaseOrder.setCreatedAt(now);
@@ -93,7 +93,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
             statement.setBigDecimal(4, purchaseOrder.getTotalAmount() != null ? 
                     purchaseOrder.getTotalAmount() : BigDecimal.ZERO);
             statement.setString(5, purchaseOrder.getStatus());
-            statement.setInt(6, purchaseOrder.getPurchaseOrderId());
+            statement.setString(6, purchaseOrder.getPurchaseOrderId());
             
             statement.executeUpdate();
             
@@ -104,8 +104,8 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         }
     }
     
-    @Override
-    public boolean delete(Integer id) {
+    // @Override
+    public boolean delete(String id) {
         // Trước khi xóa đơn nhập hàng, cần xóa tất cả chi tiết đơn hàng liên quan
         String sqlDeleteDetails = "DELETE FROM PurchaseOrderDetails WHERE PurchaseOrderID = ?";
         String sqlDeleteOrder = "DELETE FROM PurchaseOrders WHERE PurchaseOrderID = ?";
@@ -117,10 +117,10 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
             try (PreparedStatement stmtDeleteDetails = connection.prepareStatement(sqlDeleteDetails);
                  PreparedStatement stmtDeleteOrder = connection.prepareStatement(sqlDeleteOrder)) {
                      
-                stmtDeleteDetails.setInt(1, id);
+                stmtDeleteDetails.setString(1, id);
                 stmtDeleteDetails.executeUpdate();
                 
-                stmtDeleteOrder.setInt(1, id);
+                stmtDeleteOrder.setString(1, id);
                 int rowsAffected = stmtDeleteOrder.executeUpdate();
                 
                 connection.commit();
@@ -136,8 +136,8 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         }
     }
     
-    @Override
-    public Optional<PurchaseOrder> findById(Integer id) {
+    // Dùng id: String
+    public Optional<PurchaseOrder> findById(String id) {
         String sql = "SELECT po.*, s.Name as SupplierName, e.FullName as EmployeeName " +
                     "FROM PurchaseOrders po " +
                     "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
@@ -145,7 +145,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
                     "WHERE po.PurchaseOrderID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
+            statement.setString(1, id);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -296,7 +296,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
     }
     
     // Cập nhật tổng tiền đơn nhập hàng
-    public void updateTotalAmount(int purchaseOrderId) {
+    public void updateTotalAmount(String purchaseOrderId) {
         String sql = "UPDATE PurchaseOrders SET TotalAmount = (" +
                     "SELECT SUM(Quantity * UnitPrice) " +
                     "FROM PurchaseOrderDetails " +
@@ -304,8 +304,8 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
                     "WHERE PurchaseOrderID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, purchaseOrderId);
-            statement.setInt(2, purchaseOrderId);
+            statement.setString(1, purchaseOrderId);
+            statement.setString(2, purchaseOrderId);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error updating purchase order total", e);
@@ -313,7 +313,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
     }
     
     // Hoàn thành đơn nhập hàng (cập nhật tồn kho sản phẩm)
-    public void completePurchaseOrder(int purchaseOrderId) {
+    public void completePurchaseOrder(String purchaseOrderId) {
         Optional<PurchaseOrder> orderOpt = findById(purchaseOrderId);
         if (!orderOpt.isPresent()) {
             throw new RuntimeException("Purchase order not found");
@@ -332,7 +332,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
                 // Cập nhật trạng thái đơn nhập hàng thành "Completed"
                 String sql = "UPDATE PurchaseOrders SET Status = 'Completed' WHERE PurchaseOrderID = ?";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                    statement.setInt(1, purchaseOrderId);
+                    statement.setString(1, purchaseOrderId);
                     statement.executeUpdate();
                 }
                 
@@ -356,7 +356,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
     
     private PurchaseOrder mapResultSetToPurchaseOrder(ResultSet resultSet) throws SQLException {
         PurchaseOrder purchaseOrder = new PurchaseOrder();
-        purchaseOrder.setPurchaseOrderId(resultSet.getInt("PurchaseOrderID"));
+        purchaseOrder.setPurchaseOrderId(resultSet.getString("PurchaseOrderID"));
         purchaseOrder.setOrderDate(resultSet.getObject("OrderDate", LocalDateTime.class));
         purchaseOrder.setTotalAmount(resultSet.getBigDecimal("TotalAmount"));
         purchaseOrder.setStatus(resultSet.getString("Status"));
@@ -380,5 +380,17 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         }
         
         return purchaseOrder;
+    }
+
+    @Override
+    public Optional<PurchaseOrder> findById(Integer id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+    }
+
+    @Override
+    public boolean delete(Integer id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
 }

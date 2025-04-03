@@ -1,10 +1,14 @@
 package com.pcstore.service;
 
 import com.pcstore.model.Invoice;
-import com.pcstore.repository.iInvoiceRepository;
-import com.pcstore.repository.iProductRepository;
+import com.pcstore.repository.RepositoryFactory;
+import com.pcstore.repository.impl.InvoiceRepository;
+import com.pcstore.repository.impl.ProductRepository;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,15 +16,25 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến hóa đơn
  */
 public class InvoiceService {
-    private final iInvoiceRepository invoiceRepository;
-    private final iProductRepository productRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final ProductRepository productRepository;
     
+    /**
+     * Repository cho hóa đơn
+     * @param connection Kết nối đến cơ sở dữ liệu
+     * @param invoiceRepository Repository hóa đơn
+     */
+    public InvoiceService(Connection connection, RepositoryFactory repositoryFactory) {
+        this.invoiceRepository = new InvoiceRepository(connection, repositoryFactory);
+        this.productRepository = new ProductRepository(connection); 
+    }
+
     /**
      * Khởi tạo service với repository
      * @param invoiceRepository Repository hóa đơn
      * @param productRepository Repository sản phẩm để cập nhật tồn kho
      */
-    public InvoiceService(iInvoiceRepository invoiceRepository, iProductRepository productRepository) {
+    public InvoiceService(InvoiceRepository invoiceRepository, ProductRepository productRepository) {
         this.invoiceRepository = invoiceRepository;
         this.productRepository = productRepository;
     }
@@ -34,7 +48,7 @@ public class InvoiceService {
         // Cập nhật số lượng tồn kho khi tạo hóa đơn
         invoice.getInvoiceDetails().forEach(detail -> {
             // Giảm số lượng tồn kho với số lượng âm
-            productRepository.updateStock(detail.getProduct().getProductId(), -detail.getQuantity());
+            productRepository.updateStockQuantity(detail.getProduct().getProductId(), -detail.getQuantity());
         });
         
         return invoiceRepository.add(invoice);
@@ -48,12 +62,19 @@ public class InvoiceService {
     public Invoice updateInvoice(Invoice invoice) {
         // Đây là một hành động phức tạp, cần xử lý cẩn thận về tồn kho
         // Nên lấy hóa đơn cũ để so sánh thay đổi và điều chỉnh tồn kho phù hợp
-        Optional<Invoice> oldInvoiceOpt = invoiceRepository.findWithDetails(invoice.getInvoiceId());
+        Optional<Invoice> oldInvoiceOpt = invoiceRepository.findById(invoice.getInvoiceId());
         if (oldInvoiceOpt.isPresent()) {
             Invoice oldInvoice = oldInvoiceOpt.get();
             
-            // TODO: Xử lý cập nhật tồn kho khi có thay đổi chi tiết hóa đơn
-            // Điều này phức tạp và cần được xử lý cẩn thận, có thể cần bổ sung logic
+            // Hoàn trả số lượng sản phẩm của hóa đơn cũ vào kho
+            oldInvoice.getInvoiceDetails().forEach(detail -> {
+                productRepository.updateStockQuantity(detail.getProduct().getProductId(), detail.getQuantity());
+            });
+            
+            // Trừ số lượng sản phẩm của hóa đơn mới từ kho
+            invoice.getInvoiceDetails().forEach(detail -> {
+                productRepository.updateStockQuantity(detail.getProduct().getProductId(), -detail.getQuantity());
+            });
         }
         
         return invoiceRepository.update(invoice);
@@ -64,16 +85,16 @@ public class InvoiceService {
      * @param invoiceId ID của hóa đơn
      * @return true nếu xóa thành công, ngược lại là false
      */
-    public boolean deleteInvoice(String invoiceId) {
+    public boolean deleteInvoice(Integer invoiceId) {
         // Đây có thể là một hành động nhạy cảm, cần cân nhắc xử lý tồn kho và các vấn đề liên quan
         // Có thể cần kiểm tra xem hóa đơn này đã được thanh toán chưa, có liên quan đến bảo hành không, v.v.
-        Optional<Invoice> invoiceOpt = invoiceRepository.findWithDetails(invoiceId);
+        Optional<Invoice> invoiceOpt = invoiceRepository.findById(invoiceId);
         if (invoiceOpt.isPresent()) {
             Invoice invoice = invoiceOpt.get();
             
             // Hoàn trả số lượng tồn kho
             invoice.getInvoiceDetails().forEach(detail -> {
-                productRepository.updateStock(detail.getProduct().getProductId(), detail.getQuantity());
+                productRepository.updateStockQuantity(detail.getProduct().getProductId(), detail.getQuantity());
             });
             
             return invoiceRepository.delete(invoiceId);
@@ -87,18 +108,10 @@ public class InvoiceService {
      * @param invoiceId ID của hóa đơn
      * @return Optional chứa hóa đơn nếu tìm thấy
      */
-    public Optional<Invoice> findInvoiceById(String invoiceId) {
+    public Optional<Invoice> findInvoiceById(Integer invoiceId) {
         return invoiceRepository.findById(invoiceId);
     }
     
-    /**
-     * Tìm hóa đơn và chi tiết theo ID
-     * @param invoiceId ID của hóa đơn
-     * @return Optional chứa hóa đơn và chi tiết nếu tìm thấy
-     */
-    public Optional<Invoice> findInvoiceWithDetails(String invoiceId) {
-        return invoiceRepository.findWithDetails(invoiceId);
-    }
     
     /**
      * Lấy danh sách tất cả hóa đơn
@@ -132,7 +145,7 @@ public class InvoiceService {
      * @param endDate Ngày kết thúc
      * @return Danh sách hóa đơn trong khoảng thời gian
      */
-    public List<Invoice> findInvoicesByDateRange(LocalDate startDate, LocalDate endDate) {
+    public List<Invoice> findInvoicesByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         return invoiceRepository.findByDateRange(startDate, endDate);
     }
     
@@ -141,7 +154,7 @@ public class InvoiceService {
      * @param invoiceId ID của hóa đơn
      * @return true nếu hóa đơn tồn tại, ngược lại là false
      */
-    public boolean invoiceExists(String invoiceId) {
+    public boolean invoiceExists(Integer invoiceId) {
         return invoiceRepository.exists(invoiceId);
     }
     
@@ -151,10 +164,10 @@ public class InvoiceService {
      * @param endDate Ngày kết thúc
      * @return Tổng doanh thu
      */
-    public double calculateRevenue(LocalDate startDate, LocalDate endDate) {
+    public BigDecimal calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
         List<Invoice> invoices = invoiceRepository.findByDateRange(startDate, endDate);
         return invoices.stream()
-                .mapToDouble(Invoice::getTotalAmount)
-                .sum();
+                .map(Invoice::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

@@ -104,9 +104,7 @@ public class Discount extends BaseTimeEntity {
      * 
      * @return Số tiền giảm giá cố định (có thể null nếu khuyến mãi theo phần trăm)
      */
-    public BigDecimal getDiscountAmount() {
-        return discountAmount;
-    }
+    
 
     /**
      * Thiết lập số tiền giảm giá cố định
@@ -498,5 +496,9 @@ public class Discount extends BaseTimeEntity {
         discount.setUsageLimit(0); // Không giới hạn
         discount.setUsageCount(0);
         return discount;
+    }
+
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
     }
 }

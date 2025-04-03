@@ -4,16 +4,19 @@
  */
 package com.pcstore.view;
 
+import javax.swing.JFrame;
+
 /**
  *
  * @author nloc2
  */
-public class StockInConfirm extends javax.swing.JPanel {
+public class StockInConfirmForm extends javax.swing.JDialog {
 
     /**
      * Creates new form DeleteProductForm
      */
-    public StockInConfirm() {
+    public StockInConfirmForm(JFrame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
     }
 
@@ -31,10 +34,12 @@ public class StockInConfirm extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnExportPDF = new com.k33ptoo.components.KButton();
-        btnClose1 = new com.k33ptoo.components.KButton();
+        btnClose = new com.k33ptoo.components.KButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         kGradientPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Phiếu Nhập Hàng", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.TOP, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel1.setkFillBackground(false);
@@ -61,15 +66,15 @@ public class StockInConfirm extends javax.swing.JPanel {
         btnExportPDF.setkHoverStartColor(new java.awt.Color(255, 153, 153));
         btnExportPDF.setkStartColor(new java.awt.Color(255, 153, 153));
 
-        btnClose1.setText(bundle.getString("btnClose")); // NOI18N
-        btnClose1.setkBorderRadius(30);
-        btnClose1.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnClose1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnClose1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnClose1.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnClose1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnClose.setText(bundle.getString("btnClose")); // NOI18N
+        btnClose.setkBorderRadius(30);
+        btnClose.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnClose.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnClose.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnClose.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnClose.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnClose1MouseClicked(evt);
+                btnCloseMouseClicked(evt);
             }
         });
 
@@ -98,7 +103,7 @@ public class StockInConfirm extends javax.swing.JPanel {
                         .addGap(17, 17, 17)
                         .addComponent(btnExportPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnClose1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(kGradientPanel1Layout.createSequentialGroup()
                         .addGap(51, 51, 51)
                         .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -124,15 +129,15 @@ public class StockInConfirm extends javax.swing.JPanel {
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(66, 66, 66)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                 .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnExportPDF, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClose1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnExportPDF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(kGradientPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -143,34 +148,13 @@ public class StockInConfirm extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnClose1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnClose1MouseClicked
-        // Đóng JFrame chứa form StockInConfirm
-        java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
-        if (window != null) {
-            window.dispose(); // Chỉ đóng cửa sổ hiện tại
-        }
-    }//GEN-LAST:event_btnClose1MouseClicked
-    public static void main(String[] args) {
-        try {
-            // Thiết lập giao diện Look and Feel của hệ thống
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace(); // In lỗi nếu không thể thiết lập Look and Feel
-        }
-    
-        // Khởi chạy giao diện trên luồng sự kiện của Swing
-        java.awt.EventQueue.invokeLater(() -> {
-            javax.swing.JFrame frame = new javax.swing.JFrame("Delete Product Form");
-            frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new StockInConfirm()); // Đặt JPanel DeleteProductForm vào JFrame
-            frame.pack(); // Tự động điều chỉnh kích thước JFrame theo nội dung
-            frame.setLocationRelativeTo(null); // Hiển thị JFrame ở giữa màn hình
-            frame.setVisible(true); // Hiển thị JFrame
-        });
-    }
+    private void btnCloseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCloseMouseClicked
+        this.dispose();
+    }//GEN-LAST:event_btnCloseMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnClose1;
+    private com.k33ptoo.components.KButton btnClose;
     private com.k33ptoo.components.KButton btnExportPDF;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

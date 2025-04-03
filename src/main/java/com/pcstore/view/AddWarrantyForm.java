@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author DUC ANH
  */
-public class AddWarranty extends javax.swing.JPanel {
+public class AddWarrantyForm extends javax.swing.JPanel {
 
     /**
      * Creates new form AddWarranty
      */
-    public AddWarranty() {
+    public AddWarrantyForm() {
         initComponents();
     }
 

@@ -1,9 +1,10 @@
 package com.pcstore.service;
 
 import com.pcstore.model.Return;
-import com.pcstore.repository.iReturnRepository;
-import com.pcstore.repository.iProductRepository;
+import com.pcstore.repository.impl.ReturnRepository;
+import com.pcstore.repository.impl.ProductRepository;
 
+import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,15 +13,24 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến đơn trả hàng
  */
 public class ReturnService {
-    private final iReturnRepository returnRepository;
-    private final iProductRepository productRepository;
+    private final ReturnRepository returnRepository;
+    private final ProductRepository productRepository;
     
+    /**
+     * Khởi tạo service với csdl
+     * @param connection Kết nối csdl
+     */
+    public ReturnService(Connection connection) {
+        this.returnRepository = new ReturnRepository(connection);
+        this.productRepository = new ProductRepository(connection);
+    }
+
     /**
      * Khởi tạo service với repository
      * @param returnRepository Repository đơn trả hàng
      * @param productRepository Repository sản phẩm để cập nhật tồn kho
      */
-    public ReturnService(iReturnRepository returnRepository, iProductRepository productRepository) {
+    public ReturnService(ReturnRepository returnRepository, ProductRepository productRepository) {
         this.returnRepository = returnRepository;
         this.productRepository = productRepository;
     }
@@ -179,14 +189,17 @@ public class ReturnService {
         if (!"Đang xử lý".equals(currentStatus)) {
             throw new IllegalStateException("Chỉ có thể phê duyệt đơn trả hàng ở trạng thái đang xử lý");
         }
+
+        // Cái này là để xử lý cập nhật tồn kho khi đơn trả hàng được phê duyệt 
+        // Nhưng đang bị lỗi Return trả về Hóa đơn chứ không phải sản phẩm
         
         // Xử lý cập nhật tồn kho khi đơn trả hàng được phê duyệt
-        Return returnRequest = existingReturn.get();
-        String productId = returnRequest.getProduct().getProductId();
-        int quantity = returnRequest.getQuantity();
+        // Return returnRequest = existingReturn.get();
+        // String productId = returnRequest.getProduct().getProductId();
+        // int quantity = returnRequest.getQuantity();
         
-        // Tăng số lượng tồn kho khi phê duyệt trả hàng
-        productRepository.updateStock(productId, quantity);
+        // // Tăng số lượng tồn kho khi phê duyệt trả hàng
+        // productRepository.updateStock(productId, quantity);
         
         return returnRepository.approveReturn(returnId, processorId, notes);
     }

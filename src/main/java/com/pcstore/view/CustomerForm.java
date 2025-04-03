@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author MSII
  */
-public class Customer extends javax.swing.JPanel {
+public class CustomerForm extends javax.swing.JPanel {
 
     /**
      * Creates new form Customer
      */
-    public Customer() {
+    public CustomerForm() {
         initComponents();
     }
 
@@ -28,7 +28,6 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
         jPanel5 = new javax.swing.JPanel();
         btnAddCustomer = new com.k33ptoo.components.KButton();
         btnUpdate = new com.k33ptoo.components.KButton();
@@ -87,7 +86,6 @@ public class Customer extends javax.swing.JPanel {
         jPanel3.add(jLabel1, java.awt.BorderLayout.CENTER);
 
         add(jPanel3);
-        add(textFieldSearch1);
 
         jPanel5.setOpaque(false);
         jPanel5.setPreferredSize(new java.awt.Dimension(1197, 60));
@@ -176,6 +174,7 @@ public class Customer extends javax.swing.JPanel {
         jPanel2.setPreferredSize(new java.awt.Dimension(400, 200));
         jPanel2.setLayout(new java.awt.GridLayout(4, 3, 30, 23));
 
+        jPanel9.setOpaque(false);
         jPanel9.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -194,6 +193,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel9);
 
+        jPanel8.setOpaque(false);
         jPanel8.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -210,6 +210,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel8);
 
+        jPanel10.setOpaque(false);
         jPanel10.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -226,6 +227,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel10);
 
+        jPanel11.setOpaque(false);
         jPanel11.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -242,6 +244,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel11);
 
+        jPanel12.setOpaque(false);
         jPanel12.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -258,6 +261,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel12);
 
+        jPanel13.setOpaque(false);
         jPanel13.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -274,6 +278,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel13);
 
+        jPanel14.setOpaque(false);
         jPanel14.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -290,6 +295,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel14);
 
+        jPanel15.setOpaque(false);
         jPanel15.setLayout(new java.awt.BorderLayout(15, 0));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -306,6 +312,7 @@ public class Customer extends javax.swing.JPanel {
 
         jPanel2.add(jPanel15);
 
+        jPanel16.setOpaque(false);
         jPanel16.setLayout(new java.awt.BorderLayout(15, 0));
         jPanel2.add(jPanel16);
 
@@ -429,7 +436,6 @@ public class Customer extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     private javax.swing.JTextField txtCreateAt;
     private javax.swing.JTextField txtCreateUpdate;
     private javax.swing.JTextField txtCustomerEmail;

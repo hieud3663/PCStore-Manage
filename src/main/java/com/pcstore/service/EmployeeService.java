@@ -1,8 +1,9 @@
 package com.pcstore.service;
 
 import com.pcstore.model.Employee;
-import com.pcstore.repository.iEmployeeRepository;
+import com.pcstore.repository.impl.EmployeeRepository;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,13 +11,21 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến nhân viên
  */
 public class EmployeeService {
-    private final iEmployeeRepository employeeRepository;
+    private final EmployeeRepository employeeRepository;
     
+    /**
+     * Khởi tạo service với csdl
+     * @param connection Kết nối csdl
+     */
+    public EmployeeService(Connection connection) {
+        this.employeeRepository = new EmployeeRepository(connection);
+    }
+
     /**
      * Khởi tạo service với repository
      * @param employeeRepository Repository nhân viên
      */
-    public EmployeeService(iEmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
     
@@ -59,16 +68,16 @@ public class EmployeeService {
      * @param employeeId ID của nhân viên
      * @return true nếu nhân viên tồn tại, ngược lại là false
      */
-    public boolean employeeExists(String employeeId) {
-        return employeeRepository.existsById(employeeId);
-    }
+    // public boolean employeeExists(String employeeId) {
+    //     return employeeRepository.existsById(employeeId);
+    // }
     
     /**
      * Xóa nhân viên theo ID
      * @param employeeId ID của nhân viên
      */
     public void deleteEmployee(String employeeId) {
-        employeeRepository.deleteById(employeeId);
+        employeeRepository.delete(employeeId);
     }
     
     /**
@@ -104,7 +113,7 @@ public class EmployeeService {
      * @return Danh sách nhân viên phù hợp
      */
     public List<Employee> searchEmployees(String searchTerm) {
-        return employeeRepository.findBySearchTerm(searchTerm);
+        return employeeRepository.search(searchTerm);
     }
     
     /**

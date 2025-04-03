@@ -2,28 +2,28 @@ package com.pcstore.controller;
 
 import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.model.User;
-import com.pcstore.util.SessionManager;
 import com.pcstore.utils.SessionManager;
-import com.pcstore.view.DashboardView;
-import com.pcstore.view.LoginView;
+import com.pcstore.view.DashboardForm;
+import com.pcstore.view.LoginForm;
 
 import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 /**
  * Controller điều khiển màn hình Dashboard và phân quyền người dùng
  */
 public class DashboardController {
-    private DashboardView dashboardView;
+    private DashboardForm dashboardForm;
     private SessionManager sessionManager;
     
     /**
      * Khởi tạo controller cho Dashboard
      * @param dashboardView View dashboard cần điều khiển
      */
-    public DashboardController(DashboardView dashboardView) {
-        this.dashboardView = dashboardView;
+    public DashboardController(DashboardForm dashboardView) {
+        this.dashboardForm = dashboardView;
         this.sessionManager = SessionManager.getInstance();
         
         // Kiểm tra người dùng đã đăng nhập chưa
@@ -48,10 +48,10 @@ public class DashboardController {
      */
     private void configureUIBasedOnRole() {
         User currentUser = sessionManager.getCurrentUser();
-        String role = currentUser.getRole();
+        String role = currentUser.getRoleName();
         
         // Hiển thị thông tin người dùng đăng nhập
-        dashboardView.getLbNameUser().setText(currentUser.getFullName());
+        dashboardForm.getLbNameUser().setText(currentUser.getFullName());
         
         // Thiết lập hiển thị các menu dựa trên vai trò
         configureMenuVisibility(role);
@@ -63,30 +63,30 @@ public class DashboardController {
      */
     private void configureMenuVisibility(String role) {
         // Tất cả vai trò đều có thể xem trang chủ và bán hàng
-        showPanel(dashboardView.getkPanelHome(), true);
-        showPanel(dashboardView.getkPanelSell(), true);
+        showPanel(dashboardForm.getkPanelHome(), true);
+        showPanel(dashboardForm.getkPanelSell(), true);
         
         // Tất cả vai trò đều có thể xem sản phẩm, nhưng chỉ ADMIN và MANAGER có thể thêm/sửa/xóa
-        showPanel(dashboardView.getkPanelProduct(), true);
+        showPanel(dashboardForm.getkPanelProduct(), true);
         
         // Phân quyền cho menu hóa đơn
-        showPanel(dashboardView.getkPanelInvoice(), true); // Tất cả đều có thể xem hóa đơn
+        showPanel(dashboardForm.getkPanelInvoice(), true); // Tất cả đều có thể xem hóa đơn
         
         // ADMIN và MANAGER có quyền quản lý kho hàng
         boolean canManageWarehouse = role.equals("ADMIN") || role.equals("MANAGER");
-        showPanel(dashboardView.getkPanelWareHouse(), canManageWarehouse);
+        showPanel(dashboardForm.getkPanelWareHouse(), canManageWarehouse);
         
         // Chỉ ADMIN mới được quản lý nhân viên
-        showPanel(dashboardView.getkPanelEmployee(), role.equals("ADMIN"));
+        showPanel(dashboardForm.getkPanelEmployee(), role.equals("ADMIN"));
         
         // ADMIN và MANAGER có quyền xem báo cáo
-        showPanel(dashboardView.getkPanelReport(), role.equals("ADMIN") || role.equals("MANAGER"));
+        showPanel(dashboardForm.getkPanelReport(), role.equals("ADMIN") || role.equals("MANAGER"));
         
         // Tất cả vai trò có thể xem khách hàng nhưng chỉ ADMIN và MANAGER có thể thêm/sửa/xóa
-        showPanel(dashboardView.getkPanelCustomer(), true);
+        showPanel(dashboardForm.getkPanelCustomer(), true);
         
         // Tùy chỉnh quyền cho dịch vụ - giả sử chỉ ADMIN và MANAGER quản lý dịch vụ
-        showPanel(dashboardView.getkPanelService(), role.equals("ADMIN") || role.equals("MANAGER"));
+        showPanel(dashboardForm.getkPanelService(), role.equals("ADMIN") || role.equals("MANAGER"));
     }
     
     /**
@@ -104,7 +104,7 @@ public class DashboardController {
      * Đăng ký xử lý sự kiện đăng xuất
      */
     private void registerLogoutHandler() {
-        dashboardView.getBtnSignOut().addActionListener(new ActionListener() {
+        dashboardForm.getBtnSignOut().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 logout();
@@ -117,7 +117,7 @@ public class DashboardController {
      */
     private void logout() {
         int confirm = JOptionPane.showConfirmDialog(
-            dashboardView,
+            dashboardForm,
             "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?",
             "Xác nhận đăng xuất",
             JOptionPane.YES_NO_OPTION
@@ -128,7 +128,7 @@ public class DashboardController {
             sessionManager.logout();
             
             // Đóng cửa sổ dashboard
-            dashboardView.dispose();
+            dashboardForm.dispose();
             
             // Mở form đăng nhập
             redirectToLogin();
@@ -137,11 +137,22 @@ public class DashboardController {
     
     /**
      * Chuyển hướng về trang đăng nhập
+     * @throws SQLException 
      */
     private void redirectToLogin() {
-        LoginView loginView = new LoginView();
-        LoginController loginController = new LoginController(loginView);
-        loginView.setVisible(true);
+        LoginForm loginView = new LoginForm();
+        try {
+            loginView.setLocationRelativeTo(null);
+            loginView.setVisible(true);
+            loginView.setDefaultCloseOperation(LoginForm.DISPOSE_ON_CLOSE);
+            LoginController loginController = new LoginController(loginView);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(dashboardForm, 
+                "Đã xảy ra lỗi khi mở trang đăng nhập: " + e.getMessage(), 
+                "Lỗi", 
+                JOptionPane.ERROR_MESSAGE);
+        }
+        
     }
     
     /**

@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author MSII
  */
-public class EmployeeLayout extends javax.swing.JPanel {
+public class EmployeeForm extends javax.swing.JPanel {
 
     /**
      * Creates new form Employee
      */
-    public EmployeeLayout() {
+    public EmployeeForm() {
         initComponents();
     }
 
@@ -28,18 +28,24 @@ public class EmployeeLayout extends javax.swing.JPanel {
 
         dateChooserBirthday = new com.raven.datechooser.DateChooser();
         btnGroupGender = new javax.swing.ButtonGroup();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        lbTitle = new javax.swing.JLabel();
+        panelSearch = new javax.swing.JPanel();
+        textFieldSearch = new com.pcstore.utils.TextFieldSearch();
+        btnReferesh = new com.k33ptoo.components.KButton();
+        panelBody = new javax.swing.JPanel();
+        panelTableInfo = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
+        tableListEmployee = new javax.swing.JTable();
+        panelRight = new javax.swing.JPanel();
+        btnAddEmployee = new com.k33ptoo.components.KButton();
+        panelInfoDetail = new com.k33ptoo.components.KGradientPanel();
         kPanelPictureEmployee = new com.k33ptoo.components.KGradientPanel();
-        panelName = new javax.swing.JPanel();
-        lbName = new javax.swing.JLabel();
-        txtNameEmployee = new javax.swing.JTextField();
         paneIDEmployee = new javax.swing.JPanel();
         lbIDEmployee = new javax.swing.JLabel();
         txtIDEmployee = new javax.swing.JTextField();
+        panelName = new javax.swing.JPanel();
+        lbName = new javax.swing.JLabel();
+        txtNameEmployee = new javax.swing.JTextField();
         panelPhonenumber = new javax.swing.JPanel();
         lbPhonenumber = new javax.swing.JLabel();
         txtPhonenumberEmployee = new javax.swing.JTextField();
@@ -53,6 +59,10 @@ public class EmployeeLayout extends javax.swing.JPanel {
         lbBirthdayEmployee = new javax.swing.JLabel();
         txtBirthdayEmployee = new javax.swing.JTextField();
         btnChooseBirthday = new javax.swing.JButton();
+        panelGender = new javax.swing.JPanel();
+        lbGender = new javax.swing.JLabel();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton1 = new javax.swing.JRadioButton();
         panelUsername = new javax.swing.JPanel();
         lbUsername = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
@@ -60,31 +70,48 @@ public class EmployeeLayout extends javax.swing.JPanel {
         lbPassword = new javax.swing.JLabel();
         btnResetPassword = new javax.swing.JButton();
         txtPassword = new javax.swing.JTextField();
-        panelGender = new javax.swing.JPanel();
-        lbGender = new javax.swing.JLabel();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        btnAddEmployee = new com.k33ptoo.components.KButton();
-        jPanel9 = new javax.swing.JPanel();
+        panelGroupBtnUD = new javax.swing.JPanel();
         btnUpdateEmployee = new com.k33ptoo.components.KButton();
         btnDeleteEmployee = new com.k33ptoo.components.KButton();
-        jLabel1 = new javax.swing.JLabel();
-        kButton1 = new com.k33ptoo.components.KButton();
-        textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
 
         dateChooserBirthday.setTextRefernce(txtBirthdayEmployee);
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(102, 0, 204));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        setMinimumSize(new java.awt.Dimension(1153, 713));
+        setPreferredSize(new java.awt.Dimension(1153, 713));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
+
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        lbTitle.setForeground(new java.awt.Color(102, 0, 204));
+        lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel3.setText(bundle.getString("txtMenuIEmployee")); // NOI18N
-        jLabel3.setToolTipText(bundle.getString("txtMenuSell")); // NOI18N
+        lbTitle.setText(bundle.getString("txtMenuIEmployee")); // NOI18N
+        lbTitle.setToolTipText(bundle.getString("txtMenuSell")); // NOI18N
+        lbTitle.setPreferredSize(new java.awt.Dimension(172, 60));
+        add(lbTitle);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), bundle.getString("txtBorderTitleListEmployee"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        panelSearch.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 1, 10, 1));
+        panelSearch.setPreferredSize(new java.awt.Dimension(886, 50));
+        panelSearch.add(textFieldSearch);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        btnReferesh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        btnReferesh.setText(bundle.getString("btnRefresh")); // NOI18N
+        btnReferesh.setIconTextGap(10);
+        btnReferesh.setkHoverEndColor(new java.awt.Color(0, 102, 255));
+        btnReferesh.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnReferesh.setkHoverStartColor(new java.awt.Color(0, 255, 102));
+        btnReferesh.setkStartColor(new java.awt.Color(0, 204, 255));
+        btnReferesh.setPreferredSize(new java.awt.Dimension(100, 36));
+        panelSearch.add(btnReferesh);
+
+        add(panelSearch);
+
+        panelBody.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
+
+        panelTableInfo.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true), bundle.getString("txtBorderTitleListEmployee"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelTableInfo.setPreferredSize(new java.awt.Dimension(700, 520));
+        panelTableInfo.setLayout(new java.awt.BorderLayout());
+
+        tableListEmployee.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -107,35 +134,52 @@ public class EmployeeLayout extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(10);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setPreferredWidth(3);
-            jTable1.getColumnModel().getColumn(2).setResizable(false);
-            jTable1.getColumnModel().getColumn(2).setPreferredWidth(5);
-            jTable1.getColumnModel().getColumn(3).setResizable(false);
-            jTable1.getColumnModel().getColumn(3).setPreferredWidth(20);
-            jTable1.getColumnModel().getColumn(4).setResizable(false);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(10);
-            jTable1.getColumnModel().getColumn(5).setResizable(false);
-            jTable1.getColumnModel().getColumn(5).setPreferredWidth(15);
-            jTable1.getColumnModel().getColumn(6).setResizable(false);
-            jTable1.getColumnModel().getColumn(6).setPreferredWidth(10);
-            jTable1.getColumnModel().getColumn(7).setResizable(false);
-            jTable1.getColumnModel().getColumn(7).setPreferredWidth(30);
+        tableListEmployee.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tableListEmployee);
+        if (tableListEmployee.getColumnModel().getColumnCount() > 0) {
+            tableListEmployee.getColumnModel().getColumn(0).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(0).setPreferredWidth(10);
+            tableListEmployee.getColumnModel().getColumn(1).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(1).setPreferredWidth(3);
+            tableListEmployee.getColumnModel().getColumn(2).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(2).setPreferredWidth(5);
+            tableListEmployee.getColumnModel().getColumn(3).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(3).setPreferredWidth(20);
+            tableListEmployee.getColumnModel().getColumn(4).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(4).setPreferredWidth(10);
+            tableListEmployee.getColumnModel().getColumn(5).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(5).setPreferredWidth(15);
+            tableListEmployee.getColumnModel().getColumn(6).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(6).setPreferredWidth(10);
+            tableListEmployee.getColumnModel().getColumn(7).setResizable(false);
+            tableListEmployee.getColumnModel().getColumn(7).setPreferredWidth(30);
         }
 
-        jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        panelTableInfo.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        kGradientPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        kGradientPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
-        kGradientPanel2.setkBorderRadius(15);
-        kGradientPanel2.setkEndColor(new java.awt.Color(0, 0, 0));
-        kGradientPanel2.setkFillBackground(false);
-        kGradientPanel2.setkStartColor(new java.awt.Color(0, 0, 0));
+        panelBody.add(panelTableInfo);
+
+        panelRight.setLayout(new javax.swing.BoxLayout(panelRight, javax.swing.BoxLayout.Y_AXIS));
+
+        btnAddEmployee.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        btnAddEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        btnAddEmployee.setText(bundle.getString("btnAddEmployee")); // NOI18N
+        btnAddEmployee.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        btnAddEmployee.setkBorderRadius(30);
+        btnAddEmployee.setkEndColor(new java.awt.Color(153, 255, 153));
+        btnAddEmployee.setkHoverEndColor(new java.awt.Color(0, 153, 153));
+        btnAddEmployee.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAddEmployee.setkHoverStartColor(new java.awt.Color(0, 255, 0));
+        panelRight.add(btnAddEmployee);
+
+        panelInfoDetail.setBackground(new java.awt.Color(255, 255, 255));
+        panelInfoDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelInfoDetail.setkBorderRadius(15);
+        panelInfoDetail.setkEndColor(new java.awt.Color(0, 0, 0));
+        panelInfoDetail.setkFillBackground(false);
+        panelInfoDetail.setkStartColor(new java.awt.Color(0, 0, 0));
+        panelInfoDetail.setPreferredSize(new java.awt.Dimension(400, 420));
+        panelInfoDetail.setLayout(new java.awt.GridLayout(6, 2, 50, 15));
 
         kPanelPictureEmployee.setkFillBackground(false);
 
@@ -143,12 +187,29 @@ public class EmployeeLayout extends javax.swing.JPanel {
         kPanelPictureEmployee.setLayout(kPanelPictureEmployeeLayout);
         kPanelPictureEmployeeLayout.setHorizontalGroup(
             kPanelPictureEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 198, Short.MAX_VALUE)
+            .addGap(0, 180, Short.MAX_VALUE)
         );
         kPanelPictureEmployeeLayout.setVerticalGroup(
             kPanelPictureEmployeeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 213, Short.MAX_VALUE)
+            .addGap(0, 53, Short.MAX_VALUE)
         );
+
+        panelInfoDetail.add(kPanelPictureEmployee);
+
+        paneIDEmployee.setOpaque(false);
+        paneIDEmployee.setLayout(new java.awt.GridLayout(2, 0));
+
+        lbIDEmployee.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        lbIDEmployee.setText(bundle.getString("lbIDEmployee")); // NOI18N
+        paneIDEmployee.add(lbIDEmployee);
+
+        txtIDEmployee.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        txtIDEmployee.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        txtIDEmployee.setDisabledTextColor(new java.awt.Color(51, 51, 51));
+        txtIDEmployee.setEnabled(false);
+        paneIDEmployee.add(txtIDEmployee);
+
+        panelInfoDetail.add(paneIDEmployee);
 
         panelName.setOpaque(false);
         panelName.setLayout(new java.awt.BorderLayout(0, 1));
@@ -161,20 +222,10 @@ public class EmployeeLayout extends javax.swing.JPanel {
         txtNameEmployee.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelName.add(txtNameEmployee, java.awt.BorderLayout.PAGE_END);
 
-        paneIDEmployee.setOpaque(false);
-        paneIDEmployee.setLayout(new java.awt.GridLayout(1, 0));
-
-        lbIDEmployee.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        lbIDEmployee.setText(bundle.getString("lbIDEmployee")); // NOI18N
-        paneIDEmployee.add(lbIDEmployee);
-
-        txtIDEmployee.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        txtIDEmployee.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
-        txtIDEmployee.setDisabledTextColor(new java.awt.Color(51, 51, 51));
-        txtIDEmployee.setEnabled(false);
-        paneIDEmployee.add(txtIDEmployee);
+        panelInfoDetail.add(panelName);
 
         panelPhonenumber.setOpaque(false);
+        panelPhonenumber.setPreferredSize(new java.awt.Dimension(64, 35));
         panelPhonenumber.setLayout(new java.awt.BorderLayout(0, 1));
 
         lbPhonenumber.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -184,6 +235,8 @@ public class EmployeeLayout extends javax.swing.JPanel {
         txtPhonenumberEmployee.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtPhonenumberEmployee.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelPhonenumber.add(txtPhonenumberEmployee, java.awt.BorderLayout.CENTER);
+
+        panelInfoDetail.add(panelPhonenumber);
 
         panelEmail.setOpaque(false);
         panelEmail.setLayout(new java.awt.BorderLayout(0, 1));
@@ -196,6 +249,8 @@ public class EmployeeLayout extends javax.swing.JPanel {
         txtEmailEmployee.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelEmail.add(txtEmailEmployee, java.awt.BorderLayout.PAGE_END);
 
+        panelInfoDetail.add(panelEmail);
+
         panelPosition.setOpaque(false);
         panelPosition.setLayout(new java.awt.BorderLayout(0, 1));
 
@@ -206,6 +261,8 @@ public class EmployeeLayout extends javax.swing.JPanel {
         lbPosition.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         lbPosition.setText(bundle.getString("lbPosition")); // NOI18N
         panelPosition.add(lbPosition, java.awt.BorderLayout.PAGE_START);
+
+        panelInfoDetail.add(panelPosition);
 
         panelBirthdayEmployee.setOpaque(false);
         panelBirthdayEmployee.setLayout(new java.awt.BorderLayout(2, 1));
@@ -229,32 +286,7 @@ public class EmployeeLayout extends javax.swing.JPanel {
         });
         panelBirthdayEmployee.add(btnChooseBirthday, java.awt.BorderLayout.LINE_END);
 
-        panelUsername.setOpaque(false);
-        panelUsername.setLayout(new java.awt.BorderLayout(0, 1));
-
-        lbUsername.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        lbUsername.setForeground(new java.awt.Color(255, 0, 51));
-        lbUsername.setText(bundle.getString("lbUsername")); // NOI18N
-        panelUsername.add(lbUsername, java.awt.BorderLayout.CENTER);
-
-        txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        txtUsername.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
-        panelUsername.add(txtUsername, java.awt.BorderLayout.PAGE_END);
-
-        panelPassword.setOpaque(false);
-        panelPassword.setLayout(new java.awt.BorderLayout(0, 1));
-
-        lbPassword.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        lbPassword.setForeground(new java.awt.Color(255, 0, 0));
-        lbPassword.setText(bundle.getString("lbPassword")); // NOI18N
-        panelPassword.add(lbPassword, java.awt.BorderLayout.CENTER);
-
-        btnResetPassword.setText("Reset");
-        panelPassword.add(btnResetPassword, java.awt.BorderLayout.LINE_END);
-
-        txtPassword.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        txtPassword.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
-        panelPassword.add(txtPassword, java.awt.BorderLayout.PAGE_END);
+        panelInfoDetail.add(panelBirthdayEmployee);
 
         panelGender.setOpaque(false);
         panelGender.setLayout(new java.awt.GridLayout(1, 0, 5, 0));
@@ -278,76 +310,43 @@ public class EmployeeLayout extends javax.swing.JPanel {
         jRadioButton1.setText(bundle.getString("btnRadioFemale")); // NOI18N
         panelGender.add(jRadioButton1);
 
-        javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
-        kGradientPanel2.setLayout(kGradientPanel2Layout);
-        kGradientPanel2Layout.setHorizontalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(kPanelPictureEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(panelUsername, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, kGradientPanel2Layout.createSequentialGroup()
-                            .addGap(6, 6, 6)
-                            .addComponent(panelPhonenumber, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18)
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                                .addComponent(panelPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel2Layout.createSequentialGroup()
-                                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(paneIDEmployee, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
-                                    .addComponent(panelEmail, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(panelName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(panelPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(panelGender, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(11, 11, 11))))
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addComponent(panelBirthdayEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
-        kGradientPanel2Layout.setVerticalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(kPanelPictureEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addComponent(paneIDEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(panelName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(panelGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(panelBirthdayEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(panelPosition, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panelPhonenumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(panelUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
-        );
+        panelInfoDetail.add(panelGender);
 
-        btnAddEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
-        btnAddEmployee.setText(bundle.getString("btnAddEmployee")); // NOI18N
-        btnAddEmployee.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        btnAddEmployee.setkBorderRadius(30);
-        btnAddEmployee.setkEndColor(new java.awt.Color(153, 255, 153));
-        btnAddEmployee.setkHoverEndColor(new java.awt.Color(0, 153, 153));
-        btnAddEmployee.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAddEmployee.setkHoverStartColor(new java.awt.Color(0, 255, 0));
+        panelUsername.setOpaque(false);
+        panelUsername.setLayout(new java.awt.BorderLayout(0, 1));
 
-        jPanel9.setLayout(new java.awt.GridLayout(1, 0, 50, 0));
+        lbUsername.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        lbUsername.setForeground(new java.awt.Color(255, 0, 51));
+        lbUsername.setText(bundle.getString("lbUsername")); // NOI18N
+        panelUsername.add(lbUsername, java.awt.BorderLayout.CENTER);
+
+        txtUsername.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        txtUsername.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        panelUsername.add(txtUsername, java.awt.BorderLayout.PAGE_END);
+
+        panelInfoDetail.add(panelUsername);
+
+        panelPassword.setOpaque(false);
+        panelPassword.setLayout(new java.awt.BorderLayout(0, 1));
+
+        lbPassword.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        lbPassword.setForeground(new java.awt.Color(255, 0, 0));
+        lbPassword.setText(bundle.getString("lbPassword")); // NOI18N
+        panelPassword.add(lbPassword, java.awt.BorderLayout.CENTER);
+
+        btnResetPassword.setText("Reset");
+        panelPassword.add(btnResetPassword, java.awt.BorderLayout.LINE_END);
+
+        txtPassword.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        txtPassword.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        panelPassword.add(txtPassword, java.awt.BorderLayout.PAGE_END);
+
+        panelInfoDetail.add(panelPassword);
+
+        panelRight.add(panelInfoDetail);
+
+        panelGroupBtnUD.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        panelGroupBtnUD.setLayout(new java.awt.GridLayout(1, 0, 50, 0));
 
         btnUpdateEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-pen.png"))); // NOI18N
         btnUpdateEmployee.setText(bundle.getString("btnUpdateEmployee")); // NOI18N
@@ -361,7 +360,7 @@ public class EmployeeLayout extends javax.swing.JPanel {
                 btnUpdateEmployeeActionPerformed(evt);
             }
         });
-        jPanel9.add(btnUpdateEmployee);
+        panelGroupBtnUD.add(btnUpdateEmployee);
 
         btnDeleteEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-xmark.png"))); // NOI18N
         btnDeleteEmployee.setText(bundle.getString("btnDeleteEmployee")); // NOI18N
@@ -374,70 +373,13 @@ public class EmployeeLayout extends javax.swing.JPanel {
         btnDeleteEmployee.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnDeleteEmployee.setkHoverStartColor(new java.awt.Color(255, 102, 102));
         btnDeleteEmployee.setkStartColor(new java.awt.Color(255, 153, 51));
-        jPanel9.add(btnDeleteEmployee);
+        panelGroupBtnUD.add(btnDeleteEmployee);
 
-        kButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
-        kButton1.setText(bundle.getString("btnRefresh")); // NOI18N
-        kButton1.setIconTextGap(10);
-        kButton1.setkHoverEndColor(new java.awt.Color(0, 102, 255));
-        kButton1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton1.setkHoverStartColor(new java.awt.Color(0, 255, 102));
-        kButton1.setkStartColor(new java.awt.Color(0, 204, 255));
+        panelRight.add(panelGroupBtnUD);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 672, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(kGradientPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(45, 45, 45)
-                        .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
-                        .addComponent(btnAddEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(469, 469, 469)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAddEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(kGradientPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(48, 48, 48)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(kButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        panelBody.add(panelRight);
+
+        add(panelBody);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnChooseBirthdayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnChooseBirthdayMouseClicked
@@ -458,19 +400,13 @@ public class EmployeeLayout extends javax.swing.JPanel {
     private javax.swing.JButton btnChooseBirthday;
     private com.k33ptoo.components.KButton btnDeleteEmployee;
     private javax.swing.ButtonGroup btnGroupGender;
+    private com.k33ptoo.components.KButton btnReferesh;
     private javax.swing.JButton btnResetPassword;
     private com.k33ptoo.components.KButton btnUpdateEmployee;
     private com.raven.datechooser.DateChooser dateChooserBirthday;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private com.k33ptoo.components.KButton kButton1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
     private com.k33ptoo.components.KGradientPanel kPanelPictureEmployee;
     private javax.swing.JLabel lbBirthdayEmployee;
     private javax.swing.JLabel lbEmail;
@@ -480,17 +416,25 @@ public class EmployeeLayout extends javax.swing.JPanel {
     private javax.swing.JLabel lbPassword;
     private javax.swing.JLabel lbPhonenumber;
     private javax.swing.JLabel lbPosition;
+    private javax.swing.JLabel lbTitle;
     private javax.swing.JLabel lbUsername;
     private javax.swing.JPanel paneIDEmployee;
     private javax.swing.JPanel panelBirthdayEmployee;
+    private javax.swing.JPanel panelBody;
     private javax.swing.JPanel panelEmail;
     private javax.swing.JPanel panelGender;
+    private javax.swing.JPanel panelGroupBtnUD;
+    private com.k33ptoo.components.KGradientPanel panelInfoDetail;
     private javax.swing.JPanel panelName;
     private javax.swing.JPanel panelPassword;
     private javax.swing.JPanel panelPhonenumber;
     private javax.swing.JPanel panelPosition;
+    private javax.swing.JPanel panelRight;
+    private javax.swing.JPanel panelSearch;
+    private javax.swing.JPanel panelTableInfo;
     private javax.swing.JPanel panelUsername;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch1;
+    private javax.swing.JTable tableListEmployee;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch;
     private javax.swing.JTextField txtBirthdayEmployee;
     private javax.swing.JTextField txtEmailEmployee;
     private javax.swing.JTextField txtIDEmployee;

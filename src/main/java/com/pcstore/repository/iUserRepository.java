@@ -7,7 +7,7 @@ import java.util.Optional;
 /**
  * Repository interface for User entity operations
  */
-public interface UserRepository {
+public interface iUserRepository {
     User save(User user);
     Optional<User> findById(String username);
     List<User> findAll();

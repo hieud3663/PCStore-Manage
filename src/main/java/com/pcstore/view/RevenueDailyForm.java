@@ -4,16 +4,27 @@
  */
 package com.pcstore.view;
 
+import javax.swing.JLabel;
+
+import com.k33ptoo.components.KGradientPanel;
+
 /**
  *
  * @author DUC ANH
  */
-public class RevenueDaily extends javax.swing.JPanel {
+public class RevenueDailyForm extends javax.swing.JPanel {
+
+
+    // private KGradientPanel activePanel = null;
+    // private JLabel activeLabel = null;
+
+    // private RevenueMonthlyForm revenueMonthlyForm = null;
+    // private RevenueDailyForm revenueDailyForm = null;
 
     /**
      * Creates new form RevenueDaily
      */
-    public RevenueDaily() {
+    public RevenueDailyForm() {
         initComponents();
     }
 

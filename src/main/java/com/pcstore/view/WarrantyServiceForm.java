@@ -10,12 +10,12 @@ import javax.swing.UIManager;
  *
  * @author DUC ANH
  */
-public class WarrantyService extends javax.swing.JPanel {
+public class WarrantyServiceForm extends javax.swing.JPanel {
 
     /**
      * Creates new form Service
      */
-    public WarrantyService() {
+    public WarrantyServiceForm() {
         initComponents();
     }
     /**
@@ -29,38 +29,30 @@ public class WarrantyService extends javax.swing.JPanel {
 
         jPanel5 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        btnWarrantyRegistration = new com.k33ptoo.components.KButton();
         jPanel3 = new javax.swing.JPanel();
         btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
         jTextField1 = new javax.swing.JTextField();
+        btnWarrantyRegistration = new com.k33ptoo.components.KButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
 
+        setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
         setMaximumSize(new java.awt.Dimension(1153, 713));
         setMinimumSize(new java.awt.Dimension(1153, 713));
         setPreferredSize(new java.awt.Dimension(1153, 713));
+        setLayout(new java.awt.BorderLayout());
 
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel2.setMaximumSize(new java.awt.Dimension(2147483647, 150));
-        jPanel2.setMinimumSize(new java.awt.Dimension(1000, 150));
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
-        btnWarrantyRegistration.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyRegistration.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarrantyRegistration.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarrantyRegistration.setkStartColor(new java.awt.Color(102, 153, 255));
-        jPanel2.add(btnWarrantyRegistration, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 250, 5));
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
         jPanel3.setPreferredSize(new java.awt.Dimension(425, 65));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnWarrantyInformationLookup.setText(bundle.getString("btnWarrantyInformationLookup")); // NOI18N
         btnWarrantyInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
         btnWarrantyInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
@@ -74,12 +66,22 @@ public class WarrantyService extends javax.swing.JPanel {
         jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
         jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 292, 30));
 
-        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 10, -1, 60));
+        jPanel2.add(jPanel3);
+
+        btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
+        btnWarrantyRegistration.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyRegistration.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnWarrantyRegistration.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnWarrantyRegistration.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyRegistration.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnWarrantyRegistrationMouseClicked(evt);
+            }
+        });
+        jPanel2.add(btnWarrantyRegistration);
 
         jPanel5.add(jPanel2);
-
-        jScrollPane1.setAlignmentY(5.0F);
-        jScrollPane1.setMaximumSize(new java.awt.Dimension(32767, 300));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -108,27 +110,12 @@ public class WarrantyService extends javax.swing.JPanel {
 
         jPanel5.add(jPanel4);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1153, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 1111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 713, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 664, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
+        add(jPanel5, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnWarrantyRegistrationMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWarrantyRegistrationMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnWarrantyRegistrationMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

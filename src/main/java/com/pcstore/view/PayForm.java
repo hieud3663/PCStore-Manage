@@ -14,6 +14,7 @@ public class PayForm extends javax.swing.JDialog {
      * Creates new form PayForm
      */
 
+     
      public PayForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();

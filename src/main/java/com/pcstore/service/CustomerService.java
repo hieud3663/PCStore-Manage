@@ -2,7 +2,9 @@ package com.pcstore.service;
 
 import com.pcstore.model.Customer;
 import com.pcstore.repository.iCustomerRepository;
+import com.pcstore.repository.impl.CustomerRepository;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,13 +12,24 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến khách hàng
  */
 public class CustomerService {
-    private final iCustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
     
+    /**
+     * Khởi tạo service với csd
+     * @param Connection CSDL
+     * 
+     */
+
+    public CustomerService(Connection connection) {
+        this.customerRepository = new CustomerRepository(connection);
+    }
+
+
     /**
      * Khởi tạo service với repository
      * @param customerRepository Repository khách hàng
      */
-    public CustomerService(iCustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
     
@@ -35,7 +48,7 @@ public class CustomerService {
         }
         
         if (customer.getPhoneNumber() != null && !customer.getPhoneNumber().isEmpty()) {
-            Optional<Customer> existingByPhone = customerRepository.findByPhone(customer.getPhoneNumber());
+            Optional<Customer> existingByPhone = customerRepository.findByPhoneNumber(customer.getPhoneNumber());
             if (existingByPhone.isPresent()) {
                 throw new IllegalArgumentException("Số điện thoại đã được sử dụng bởi khách hàng khác");
             }
@@ -64,7 +77,7 @@ public class CustomerService {
         }
         
         if (customer.getPhoneNumber() != null && !customer.getPhoneNumber().isEmpty()) {
-            Optional<Customer> existingByPhone = customerRepository.findByPhone(customer.getPhoneNumber());
+            Optional<Customer> existingByPhone = customerRepository.findByPhoneNumber(customer.getPhoneNumber());
             if (existingByPhone.isPresent() && !existingByPhone.get().getCustomerId().equals(customer.getCustomerId())) {
                 throw new IllegalArgumentException("Số điện thoại đã được sử dụng bởi khách hàng khác");
             }
@@ -105,7 +118,7 @@ public class CustomerService {
      * @return Danh sách khách hàng có tên trùng khớp
      */
     public List<Customer> findCustomersByName(String name) {
-        return customerRepository.findByName(name);
+        return customerRepository.searchByName(name);
     }
     
     /**
@@ -114,7 +127,7 @@ public class CustomerService {
      * @return Optional chứa khách hàng nếu tìm thấy
      */
     public Optional<Customer> findCustomerByPhone(String phone) {
-        return customerRepository.findByPhone(phone);
+        return customerRepository.findByPhoneNumber(phone);
     }
     
     /**

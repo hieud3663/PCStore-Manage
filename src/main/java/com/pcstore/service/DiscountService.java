@@ -1,10 +1,11 @@
 package com.pcstore.service;
 
 import com.pcstore.model.Discount;
-import com.pcstore.repository.iDiscountRepository;
+import com.pcstore.repository.impl.DiscountRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,13 +13,13 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến khuyến mãi và giảm giá
  */
 public class DiscountService {
-    private final iDiscountRepository discountRepository;
+    private final DiscountRepository discountRepository;
     
     /**
      * Khởi tạo service với repository
      * @param discountRepository Repository khuyến mãi
      */
-    public DiscountService(iDiscountRepository discountRepository) {
+    public DiscountService(DiscountRepository discountRepository) {
         this.discountRepository = discountRepository;
     }
     
@@ -28,10 +29,10 @@ public class DiscountService {
      * @return Khuyến mãi đã được tạo
      */
     public Discount createDiscount(Discount discount) {
-        // Thiết lập mặc định nếu cần
-        if (discount.getCreatedDate() == null) {
-            discount.setCreatedDate(LocalDate.now());
-        }
+        // // Thiết lập mặc định nếu cần
+        // if (discount.getCreatedAt() == null) {
+        //     discount.setCreatedAt(LocalDate.now());
+        // }
         
         return discountRepository.add(discount);
     }
@@ -50,7 +51,7 @@ public class DiscountService {
      * @param discountId ID của khuyến mãi
      * @return true nếu xóa thành công, ngược lại là false
      */
-    public boolean deleteDiscount(String discountId) {
+    public boolean deleteDiscount(Integer discountId) {
         return discountRepository.delete(discountId);
     }
     
@@ -59,7 +60,7 @@ public class DiscountService {
      * @param discountId ID của khuyến mãi
      * @return Optional chứa khuyến mãi nếu tìm thấy
      */
-    public Optional<Discount> findDiscountById(String discountId) {
+    public Optional<Discount> findDiscountById(Integer discountId) {
         return discountRepository.findById(discountId);
     }
     
@@ -71,21 +72,13 @@ public class DiscountService {
         return discountRepository.findAll();
     }
     
-    /**
-     * Tìm khuyến mãi theo tên
-     * @param name Tên khuyến mãi
-     * @return Danh sách khuyến mãi có tên tương ứng
-     */
-    public List<Discount> findDiscountsByName(String name) {
-        return discountRepository.findByName(name);
-    }
     
     /**
      * Lấy danh sách khuyến mãi đang hoạt động
      * @return Danh sách khuyến mãi đang hoạt động
      */
     public List<Discount> findActiveDiscounts() {
-        return discountRepository.findActive();
+        return discountRepository.findActiveDiscounts();
     }
     
     /**
@@ -112,9 +105,9 @@ public class DiscountService {
      * @param categoryId ID của danh mục
      * @return Danh sách khuyến mãi áp dụng cho danh mục
      */
-    public List<Discount> findDiscountsByCategoryId(int categoryId) {
-        return discountRepository.findByCategoryId(categoryId);
-    }
+    // public List<Discount> findDiscountsByCategoryId(int categoryId) {
+    //     return discountRepository.findByCategoryId(categoryId);
+    // }
     
     /**
      * Tìm các khuyến mãi có thể áp dụng cho sản phẩm và giá
@@ -168,11 +161,11 @@ public class DiscountService {
         BigDecimal discountAmount;
         if (discount.isPercentage()) {
             // Nếu là giảm giá theo phần trăm
-            BigDecimal discountPercent = new BigDecimal(discount.getDiscountValue());
+            BigDecimal discountPercent = new BigDecimal(discount.getDiscountPercentage());
             discountAmount = originalPrice.multiply(discountPercent).divide(new BigDecimal("100"));
         } else {
             // Nếu là giảm giá theo số tiền cụ thể
-            discountAmount = new BigDecimal(discount.getDiscountValue());
+            discountAmount = discount.getDiscountAmount() != null ? discount.getDiscountAmount() : BigDecimal.ZERO;
         }
         
         // Đảm bảo giá sau khuyến mãi không âm
@@ -186,10 +179,10 @@ public class DiscountService {
      * @return true nếu khuyến mãi còn hiệu lực, ngược lại là false
      */
     public boolean isDiscountValid(Discount discount) {
-        LocalDate now = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
         return discount.isActive() && 
                !now.isBefore(discount.getStartDate()) && 
                !now.isAfter(discount.getEndDate()) &&
-               (discount.getMaxUsage() == 0 || discount.getUsageCount() < discount.getMaxUsage());
+               (discount.getUsageCount() < discount.getUsageLimit());
     }
 }

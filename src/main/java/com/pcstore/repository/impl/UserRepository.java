@@ -1,9 +1,8 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
-import com.pcstore.Repository.RepositoryFactory;
 import com.pcstore.model.Employee;
 import com.pcstore.model.User;
+import com.pcstore.repository.Repository;
 import com.pcstore.utils.PCrypt;
 
 import java.sql.Connection;

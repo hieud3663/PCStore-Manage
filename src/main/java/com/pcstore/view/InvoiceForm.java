@@ -15,12 +15,12 @@ import com.pcstore.utils.TableActionCellComponent;
  *
  * @author MSII
  */
-public class Invoice extends javax.swing.JPanel  {
+public class InvoiceForm extends javax.swing.JPanel  {
 
     /**
      * Creates new form Invoice
      */
-    public Invoice() {
+    public InvoiceForm() {
         initComponents();
     }
     
@@ -49,18 +49,21 @@ public class Invoice extends javax.swing.JPanel  {
         kButton1 = new com.k33ptoo.components.KButton();
         btnDeleteInvoice = new com.k33ptoo.components.KButton();
 
-        setLayout(new java.awt.BorderLayout(0, 5));
+        setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(1153, 676));
+        setPreferredSize(new java.awt.Dimension(1153, 699));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         jLabel1.setText(bundle.getString("txtMenuInvoice")); // NOI18N
-        jLabel1.setMaximumSize(new java.awt.Dimension(37, 60));
-        jLabel1.setMinimumSize(new java.awt.Dimension(37, 60));
-        jLabel1.setPreferredSize(new java.awt.Dimension(37, 50));
-        add(jLabel1, java.awt.BorderLayout.PAGE_START);
+        jLabel1.setFocusable(false);
+        jLabel1.setPreferredSize(new java.awt.Dimension(1173, 50));
+        add(jLabel1);
 
+        jPanel2.setOpaque(false);
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 50, 5));
         jPanel2.add(textFieldSearch1);
 
@@ -77,7 +80,7 @@ public class Invoice extends javax.swing.JPanel  {
         });
         jPanel2.add(btnExportExcel);
 
-        add(jPanel2, java.awt.BorderLayout.CENTER);
+        add(jPanel2);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setMaximumSize(new java.awt.Dimension(99999999, 99999999));
@@ -117,6 +120,7 @@ public class Invoice extends javax.swing.JPanel  {
         jPanel1.add(jPanel3, java.awt.BorderLayout.CENTER);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtInvoice"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16))); // NOI18N
+        jPanel4.setOpaque(false);
         jPanel4.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setBorder(null);
@@ -176,7 +180,7 @@ public class Invoice extends javax.swing.JPanel  {
 
         jPanel1.add(jPanel4, java.awt.BorderLayout.PAGE_START);
 
-        add(jPanel1, java.awt.BorderLayout.PAGE_END);
+        add(jPanel1);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportExcelActionPerformed

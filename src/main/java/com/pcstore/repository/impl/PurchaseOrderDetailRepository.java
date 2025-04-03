@@ -1,7 +1,7 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
-import com.pcstore.Repository.RepositoryFactory;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.model.Product;
 import com.pcstore.model.PurchaseOrder;
 import com.pcstore.model.PurchaseOrderDetail;
@@ -35,7 +35,7 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
                     "VALUES (?, ?, ?, ?)";
                     
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setInt(1, detail.getPurchaseOrder().getPurchaseOrderId());
+            statement.setString(1, detail.getPurchaseOrder().getPurchaseOrderId());
             statement.setString(2, detail.getProduct().getProductId());
             statement.setInt(3, detail.getQuantity());
             statement.setBigDecimal(4, detail.getUnitPrice());
@@ -115,7 +115,7 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
         }
         
         PurchaseOrderDetail detail = detailOpt.get();
-        int purchaseOrderId = detail.getPurchaseOrder().getPurchaseOrderId();
+        String purchaseOrderId = detail.getPurchaseOrder().getPurchaseOrderId();
         
         String sql = "DELETE FROM PurchaseOrderDetails WHERE PurchaseOrderDetailID = ?";
         
@@ -197,7 +197,7 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
     }
     
     // Tìm chi tiết đơn nhập hàng theo đơn nhập hàng
-    public List<PurchaseOrderDetail> findByPurchaseOrderId(Integer purchaseOrderId) {
+    public List<PurchaseOrderDetail> findByPurchaseOrderId(String purchaseOrderId) {
         String sql = "SELECT pod.*, p.ProductName " +
                     "FROM PurchaseOrderDetails pod " +
                     "JOIN Products p ON pod.ProductID = p.ProductID " +
@@ -205,7 +205,7 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
         List<PurchaseOrderDetail> details = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, purchaseOrderId);
+            statement.setString(1, purchaseOrderId);
             ResultSet resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
@@ -214,6 +214,19 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
             return details;
         } catch (SQLException e) {
             throw new RuntimeException("Error finding purchase order details by purchase order ID", e);
+        }
+    }
+
+    //Xóa chi tiết đơn nhập hàng theo đơn nhập hàng
+    public boolean deleteByPurchaseOrderId(String purchaseOrderId) {
+        String sql = "DELETE FROM PurchaseOrderDetails WHERE PurchaseOrderID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, purchaseOrderId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting purchase order details by purchase order ID", e);
         }
     }
     
@@ -269,7 +282,7 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
         
         // Tạo đối tượng PurchaseOrder giả lập chỉ với ID
         PurchaseOrder order = new PurchaseOrder();
-        order.setPurchaseOrderId(resultSet.getInt("PurchaseOrderID"));
+        order.setPurchaseOrderId(resultSet.getString("PurchaseOrderID"));
         detail.setPurchaseOrder(order);
         
         // Tạo đối tượng Product giả lập với ID và tên

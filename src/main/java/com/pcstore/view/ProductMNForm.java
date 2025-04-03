@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author nloc2
  */
-public class ProductMNM extends javax.swing.JPanel {
+public class ProductMNForm extends javax.swing.JPanel {
 
     /**
      * Creates new form ProductMNM
      */
-    public ProductMNM() {
+    public ProductMNForm() {
         initComponents();
     }
 

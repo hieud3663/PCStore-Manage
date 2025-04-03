@@ -1,7 +1,7 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
-import com.pcstore.Repository.RepositoryFactory;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.model.Customer;
 import com.pcstore.model.Employee;
 import com.pcstore.model.Invoice;

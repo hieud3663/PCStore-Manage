@@ -17,12 +17,13 @@ import com.formdev.flatlaf.FlatLightLaf;
  *
  * @author MSII
  */
-public class Sell extends javax.swing.JPanel {
+public class SellForm extends javax.swing.JPanel {
 
     /**
      * Creates new form Sell
      */
-    public Sell() {
+    
+    public SellForm() {
         initComponents();
         // setPlaceHolder();
     }
@@ -632,7 +633,7 @@ public class Sell extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCancleActionPerformed
 
     private void btnPayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
-        DashboardView dashboard = DashboardView.getInstance();
+        DashboardForm dashboard = DashboardForm.getInstance();
     
         // Tạo dialog thanh toán với owner là dashboard và modal=true
         PayForm payForm = new PayForm(dashboard, true);
@@ -642,9 +643,6 @@ public class Sell extends javax.swing.JPanel {
         
         // Nếu cần lấy kết quả sau khi dialog đóng, đặt code ở đây
         // Ví dụ: if (payForm.isPaymentSuccessful()) { ... }
-
-        
-            
     }//GEN-LAST:event_btnPayMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

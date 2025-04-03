@@ -1,6 +1,6 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
+import com.pcstore.repository.Repository;
 import com.pcstore.model.Discount;
 import com.pcstore.model.Category;
 import com.pcstore.model.Product;
@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -597,5 +598,10 @@ public class DiscountRepository implements Repository<Discount, Integer> {
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi lấy khuyến mãi sắp hết hạn", e);
         }
+    }
+
+    public List<Discount> findByDateRange(LocalDate startDate, LocalDate endDate) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'findByDateRange'");
     }
 }

@@ -1,6 +1,6 @@
 package com.pcstore.service;
 
-import com.pcstore.Repository.impl.RepairServiceRepository;
+import com.pcstore.repository.impl.RepairServiceRepository;
 import com.pcstore.model.Customer;
 import com.pcstore.model.Employee;
 import com.pcstore.model.RepairService;

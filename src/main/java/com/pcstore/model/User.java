@@ -99,6 +99,9 @@ public class User extends BaseTimeEntity {
         }
     }
 
+    public String getFullName() {
+        return employee != null ? employee.getFullName() : null;
+    }
 
 
     // Phương thức kiểm tra tài khoản có thể đăng nhập không

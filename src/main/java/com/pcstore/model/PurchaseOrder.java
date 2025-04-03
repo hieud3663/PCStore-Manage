@@ -10,7 +10,7 @@ import java.util.List;
  * Class biểu diễn đơn nhập hàng
  */
 public class PurchaseOrder extends BaseTimeEntity {
-    private Integer purchaseOrderId;
+    private String purchaseOrderId;
     private LocalDateTime orderDate;
     private Supplier supplier;
     private Employee employee;
@@ -24,11 +24,11 @@ public class PurchaseOrder extends BaseTimeEntity {
         return purchaseOrderId;
     }
 
-    public Integer getPurchaseOrderId() {
+    public String getPurchaseOrderId() {
         return purchaseOrderId;
     }
 
-    public void setPurchaseOrderId(Integer purchaseOrderId) {
+    public void setPurchaseOrderId(String purchaseOrderId) {
         this.purchaseOrderId = purchaseOrderId;
     }
 

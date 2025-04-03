@@ -4,60 +4,56 @@
  */
 package com.pcstore.view;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Panel;
+import java.awt.*;
+import java.awt.event.*;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.k33ptoo.components.KButton;
-import com.k33ptoo.components.KGradientPanel;
+import javax.swing.*;
+import com.k33ptoo.components.*;
 
 /**
  *
  * @author MSII
  */
-public class DashboardView extends javax.swing.JFrame {
+public class DashboardForm extends JFrame {
 
-    private static DashboardView instance;
+    private static DashboardForm instance;
 
-    public static DashboardView getInstance() {
+    public static DashboardForm getInstance() {
         if (instance == null) {
-            instance = new DashboardView();
+            instance = new DashboardForm();
         }
         return instance;
     }
 
-    private Home homPanel;
-    private Sell sellPanel;
-    private Product productPanel;
-    private Employee employeePanel;
-    private WareHouse wareHousePanel;
-    private Invoice invoicePanel;
-    private Customer customerPanel;
-    // private Service servicePanel;
-    // private Report reportPanel;
+    private HomeForm homForm;
+    private SellForm sellForm;
+    private ProductForm productForm;
+    private EmployeeForm employeeForm;
+    private WareHouseForm wareHouseForm;
+    private InvoiceForm invoiceForm;
+    private CustomerForm customerForm;
+    private ServiceForm serviceForm;
+    // private ReportForm reportPanel;
 
     /**
      * Creates new form Menu
      */
-    public DashboardView() {
+    public DashboardForm() {
         initComponents();
 
-        homPanel = new Home();
-        sellPanel = new Sell();
-        productPanel = new Product();
-        employeePanel = new Employee();
-        invoicePanel = new Invoice();
-        wareHousePanel = new WareHouse();
-        customerPanel = new Customer();
-        // servicePanel = new Service();
+        homForm = new HomeForm();
+        sellForm = new SellForm();
+        productForm = new ProductForm();
+        employeeForm = new EmployeeForm();
+        invoiceForm = new InvoiceForm();
+        wareHouseForm = new WareHouseForm();
+        customerForm = new CustomerForm();
+        serviceForm = new ServiceForm();
         // reportPanel = new Report();
         
+        initializeHoverEffects();
         selectMenu(kPanelHome, lbMenuHome, activePanel);
     }
 
@@ -91,9 +87,7 @@ public class DashboardView extends javax.swing.JFrame {
         kPanelCustomer = new com.k33ptoo.components.KGradientPanel();
         lbMenuCustomer = new javax.swing.JLabel();
         PanelNavigation = new com.k33ptoo.components.KGradientPanel();
-        jPanel1 = new javax.swing.JPanel();
-        kButton2 = new com.k33ptoo.components.KButton();
-        kButton3 = new com.k33ptoo.components.KButton();
+        panelLanguage = new javax.swing.JPanel();
         lbNameUser = new javax.swing.JLabel();
         btnSignOut = new com.k33ptoo.components.KButton();
         kMainPanel = new com.k33ptoo.components.KGradientPanel();
@@ -129,17 +123,6 @@ public class DashboardView extends javax.swing.JFrame {
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lbMenuHome.setText(bundle.getString("txtMenuHome")); // NOI18N
         lbMenuHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuHome.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbMenuHomeMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuHomeMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuHomeMouseExited(evt);
-            }
-        });
         kPanelHome.add(lbMenuHome);
 
         PanelMenu.add(kPanelHome);
@@ -159,17 +142,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbSell.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/shopping_cart_24px.png"))); // NOI18N
         lbSell.setText(bundle.getString("txtMenuSell")); // NOI18N
         lbSell.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbSell.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbSellMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbSellMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbSellMouseExited(evt);
-            }
-        });
         kPanelSell.add(lbSell);
 
         PanelMenu.add(kPanelSell);
@@ -187,17 +159,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbProductMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/categorize_24px.png"))); // NOI18N
         lbProductMenu.setText(bundle.getString("txtMenuProduct")); // NOI18N
         lbProductMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbProductMenu.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbProductMenuMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbProductMenuMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbProductMenuMouseExited(evt);
-            }
-        });
         kPanelProduct.add(lbProductMenu);
 
         PanelMenu.add(kPanelProduct);
@@ -215,17 +176,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbMenuInvoice.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/google_forms_24px.png"))); // NOI18N
         lbMenuInvoice.setText(bundle.getString("txtMenuInvoice")); // NOI18N
         lbMenuInvoice.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuInvoice.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbMenuInvoiceMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuInvoiceMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuInvoiceMouseExited(evt);
-            }
-        });
         kPanelInvoice.add(lbMenuInvoice);
 
         PanelMenu.add(kPanelInvoice);
@@ -243,17 +193,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbMenuWareHouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grid_24px.png"))); // NOI18N
         lbMenuWareHouse.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
         lbMenuWareHouse.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuWareHouse.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbMenuWareHouseMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuWareHouseMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuWareHouseMouseExited(evt);
-            }
-        });
         kPanelWareHouse.add(lbMenuWareHouse);
 
         PanelMenu.add(kPanelWareHouse);
@@ -271,17 +210,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbMenuEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
         lbMenuEmployee.setText(bundle.getString("txtMenuIEmployee")); // NOI18N
         lbMenuEmployee.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuEmployee.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbMenuEmployeeMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuEmployeeMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuEmployeeMouseExited(evt);
-            }
-        });
         kPanelEmployee.add(lbMenuEmployee);
 
         PanelMenu.add(kPanelEmployee);
@@ -299,14 +227,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbMenuService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
         lbMenuService.setText(bundle.getString("txtMenuIService")); // NOI18N
         lbMenuService.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuService.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuServiceMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuServiceMouseExited(evt);
-            }
-        });
         kPanelService.add(lbMenuService);
 
         PanelMenu.add(kPanelService);
@@ -324,14 +244,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/account_24px.png"))); // NOI18N
         lbMenuReport.setText(bundle.getString("txtMenuIReport")); // NOI18N
         lbMenuReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuReport.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuReportMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuReportMouseExited(evt);
-            }
-        });
         kPanelReport.add(lbMenuReport);
 
         PanelMenu.add(kPanelReport);
@@ -351,17 +263,6 @@ public class DashboardView extends javax.swing.JFrame {
         lbMenuCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
         lbMenuCustomer.setText(bundle.getString("lbMenuCustomer")); // NOI18N
         lbMenuCustomer.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuCustomer.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbMenuCustomerMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbMenuCustomerMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbMenuCustomerMouseExited(evt);
-            }
-        });
         kPanelCustomer.add(lbMenuCustomer);
 
         PanelMenu.add(kPanelCustomer);
@@ -372,31 +273,11 @@ public class DashboardView extends javax.swing.JFrame {
         PanelNavigation.setkStartColor(new java.awt.Color(153, 255, 153));
         PanelNavigation.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 30, 5));
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setOpaque(false);
-        jPanel1.setPreferredSize(new java.awt.Dimension(1050, 45));
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
-        kButton2.setText("VI");
-        kButton2.setkBorderRadius(30);
-        kButton2.setkEndColor(new java.awt.Color(204, 204, 204));
-        kButton2.setkStartColor(new java.awt.Color(153, 153, 153));
-        kButton2.setPreferredSize(new java.awt.Dimension(100, 35));
-        kButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(kButton2);
-
-        kButton3.setText("EN");
-        kButton3.setkBorderRadius(30);
-        kButton3.setkEndColor(new java.awt.Color(204, 204, 204));
-        kButton3.setkStartColor(new java.awt.Color(153, 153, 153));
-        kButton3.setPreferredSize(new java.awt.Dimension(100, 35));
-        jPanel1.add(kButton3);
-
-        PanelNavigation.add(jPanel1);
+        panelLanguage.setBackground(new java.awt.Color(255, 255, 255));
+        panelLanguage.setOpaque(false);
+        panelLanguage.setPreferredSize(new java.awt.Dimension(1050, 45));
+        panelLanguage.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        PanelNavigation.add(panelLanguage);
 
         lbNameUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbNameUser.setForeground(new java.awt.Color(255, 255, 255));
@@ -425,6 +306,15 @@ public class DashboardView extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+
+
+    //getter and setter
+    
+
+    public JLabel getLbNameUser() {
+        return lbNameUser;
+    }
+
     // Start Hover=====================================================
     private void hoverPanel(KGradientPanel panel, JLabel label) {
         panel.kFillBackground = true;
@@ -438,145 +328,75 @@ public class DashboardView extends javax.swing.JFrame {
         panel.repaint();
     }
 
-    private void lbMenuHomeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuHomeMouseEntered
-         //đổi màu nền
-        hoverPanel(kPanelHome, lbMenuHome);
+        /**
+     * Khởi tạo tất cả hiệu ứng hover cho các menu
+     */
+    private void initializeHoverEffects() {
+        // Tạo mảng các cặp panel-label để xử lý một lần
+        KGradientPanel[] panels = {
+            kPanelHome, kPanelSell, kPanelProduct, kPanelInvoice, 
+            kPanelWareHouse, kPanelEmployee, kPanelService, 
+            kPanelReport, kPanelCustomer, kPanelService
+        };
         
+        JLabel[] labels = {
+            lbMenuHome, lbSell, lbProductMenu, lbMenuInvoice, 
+            lbMenuWareHouse, lbMenuEmployee, lbMenuService, 
+            lbMenuReport, lbMenuCustomer, lbMenuService
+        };
         
-    }//GEN-LAST:event_lbMenuHomeMouseEntered
-
-    private void lbMenuHomeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuHomeMouseExited
-         //đổi màu nền
-        if(activePanel != kPanelHome)
-            exitHoverPanel(kPanelHome, lbMenuHome);
-    }//GEN-LAST:event_lbMenuHomeMouseExited
-
-    private void lbSellMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbSellMouseEntered
-        
-        hoverPanel(kPanelSell, lbSell);
-
-    }//GEN-LAST:event_lbSellMouseEntered
-
-    private void lbSellMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbSellMouseExited
-        
-        if(activePanel != kPanelSell)
-            exitHoverPanel(kPanelSell, lbSell);
-    }//GEN-LAST:event_lbSellMouseExited
-
-    private void lbProductMenuMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMenuMouseEntered
-        
-        
-        hoverPanel(kPanelProduct, lbProductMenu);
-    }//GEN-LAST:event_lbProductMenuMouseEntered
-
-    private void lbProductMenuMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMenuMouseExited
-        
-        if(activePanel != kPanelProduct)
-        exitHoverPanel(kPanelProduct, lbProductMenu);
-    }//GEN-LAST:event_lbProductMenuMouseExited
-
-    private void lbMenuInvoiceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInvoiceMouseEntered
-        
-        hoverPanel(kPanelInvoice, lbMenuInvoice);
-    }//GEN-LAST:event_lbMenuInvoiceMouseEntered
-
-    private void lbMenuInvoiceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInvoiceMouseExited
-        
-        if(activePanel != kPanelInvoice)
-            exitHoverPanel(kPanelInvoice, lbMenuInvoice);
-    }//GEN-LAST:event_lbMenuInvoiceMouseExited
-
-    private void lbMenuWareHouseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuWareHouseMouseEntered
-        
-        hoverPanel(kPanelWareHouse, lbMenuWareHouse);
-    }//GEN-LAST:event_lbMenuWareHouseMouseEntered
-
-    private void lbMenuWareHouseMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuWareHouseMouseExited
-        
-        if(activePanel != kPanelWareHouse)
-            exitHoverPanel(kPanelWareHouse, lbMenuWareHouse);
-    }//GEN-LAST:event_lbMenuWareHouseMouseExited
-
-    private void lbMenuServiceMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuServiceMouseEntered
-        
-
-        hoverPanel(kPanelService, lbMenuService);
-    }//GEN-LAST:event_lbMenuServiceMouseEntered
-
-    private void lbMenuServiceMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuServiceMouseExited
-        
-        if(activePanel != kPanelService)
-            exitHoverPanel(kPanelService, lbMenuService);
-    }//GEN-LAST:event_lbMenuServiceMouseExited
-
-    private void lbMenuEmployeeMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseEntered
-        
-        hoverPanel(kPanelEmployee, lbMenuEmployee);
-    }//GEN-LAST:event_lbMenuEmployeeMouseEntered
-
-    private void lbMenuEmployeeMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseExited
-        
-        if(activePanel != kPanelEmployee)
-            exitHoverPanel(kPanelEmployee, lbMenuEmployee);
-    }//GEN-LAST:event_lbMenuEmployeeMouseExited
-
-    private void lbMenuReportMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuReportMouseEntered
-        
-        hoverPanel(kPanelReport, lbMenuReport);
-    }//GEN-LAST:event_lbMenuReportMouseEntered
-
-    private void lbMenuReportMouseExited(java.awt.event.MouseEvent evt) {                                         
-        
-        if(activePanel != kPanelReport) 
-            exitHoverPanel(kPanelReport, lbMenuReport);
-    }                                                                                                        
-    // Event mở từng tab====================================================================
-
-    private void lbMenuHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuHomeMouseClicked
+        // Sử dụng vòng lặp để đặt các MouseListener cho tất cả panel và label
+        for (int i = 0; i < panels.length; i++) {
+            final KGradientPanel panel = panels[i];
+            final JLabel label = labels[i];
             
-        selectMenu(kPanelHome, lbMenuHome, homPanel);
-    }//GEN-LAST:event_lbMenuHomeMouseClicked
-
-    private void lbSellMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbSellMouseClicked
-        
-        selectMenu(kPanelSell, lbSell, sellPanel);
-    }//GEN-LAST:event_lbSellMouseClicked
-
-    private void lbProductMenuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbProductMenuMouseClicked
-        
-        selectMenu(kPanelProduct, lbProductMenu, productPanel);
-    }//GEN-LAST:event_lbProductMenuMouseClicked
-
-    private void lbMenuEmployeeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuEmployeeMouseClicked
-        selectMenu(kPanelEmployee, lbMenuEmployee, employeePanel);
-    }//GEN-LAST:event_lbMenuEmployeeMouseClicked
-
-    private void lbMenuWareHouseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuWareHouseMouseClicked
-        selectMenu(kPanelWareHouse, lbMenuWareHouse, wareHousePanel);        
-    }//GEN-LAST:event_lbMenuWareHouseMouseClicked
-
-    private void lbMenuInvoiceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuInvoiceMouseClicked
-        selectMenu(kPanelInvoice, lbMenuInvoice, invoicePanel);
-    }//GEN-LAST:event_lbMenuInvoiceMouseClicked
-
-    private void lbMenuCustomerMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuCustomerMouseClicked
-        selectMenu(kPanelCustomer, lbMenuCustomer, customerPanel);
-    }//GEN-LAST:event_lbMenuCustomerMouseClicked
-
-    private void lbMenuCustomerMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuCustomerMouseEntered
-        hoverPanel(kPanelCustomer, lbMenuCustomer);
-    }//GEN-LAST:event_lbMenuCustomerMouseEntered
-
-    private void lbMenuCustomerMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbMenuCustomerMouseExited
-        if(activePanel != kPanelCustomer)
-            exitHoverPanel(kPanelCustomer, lbMenuCustomer);
-    }//GEN-LAST:event_lbMenuCustomerMouseExited
-
-    private void kButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_kButton2ActionPerformed
+            // Sử dụng lambda expression để tạo MouseListener gọn hơn
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent evt) {
+                    hoverPanel(panel, label);
+                }
+                
+                @Override
+                public void mouseExited(MouseEvent evt) {
+                    if (activePanel != panel) {
+                        exitHoverPanel(panel, label);
+                    }
+                }
+                
+                @Override
+                public void mouseClicked(MouseEvent evt) {
+                    handleMenuClick(panel, label);
+                }
+            });
+        }
+    }
     
-
+    /**
+     * Xử lý khi người dùng click vào menu
+     */
+    private void handleMenuClick(KGradientPanel panel, JLabel label) {
+        if (panel == kPanelHome) {
+            selectMenu(panel, label, homForm);
+        } else if (panel == kPanelSell) {
+            selectMenu(panel, label, sellForm);
+        } else if (panel == kPanelProduct) {
+            selectMenu(panel, label, productForm);
+        } else if (panel == kPanelInvoice) {
+            selectMenu(panel, label, invoiceForm);
+        } else if (panel == kPanelWareHouse) {
+            selectMenu(panel, label, wareHouseForm);
+        } else if (panel == kPanelEmployee) {
+            selectMenu(panel, label, employeeForm);
+        } else if (panel == kPanelCustomer) {
+            selectMenu(panel, label, customerForm);
+        } else if (panel == kPanelService) {
+            selectMenu(panel, label, serviceForm);
+        } else if (panel == kPanelReport) {
+            selectMenu(panel, label, null); // Chưa có component cho Report
+        } 
+        // Bổ sung các xử lý cho Service và Report khi có component tương ứng
+    }
     /**
      * Xử lý khi một menu được chọn
      * @param panel Panel menu được chọn
@@ -617,7 +437,7 @@ public class DashboardView extends javax.swing.JFrame {
             kMainPanel.add((JPanel)component, BorderLayout.CENTER);
         } else {
             // Thêm homPanel mặc định nếu component không phải JPanel
-            kMainPanel.add(homPanel, BorderLayout.CENTER);
+            kMainPanel.add(homForm, BorderLayout.CENTER);
         }
 
         kMainPanel.repaint();
@@ -688,9 +508,10 @@ public class DashboardView extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /* Create and display the form */
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                DashboardView dashBoard = DashboardView.getInstance();
+                DashboardForm dashBoard = DashboardForm.getInstance();
                 dashBoard.setVisible(true);
             }
         });
@@ -704,9 +525,6 @@ public class DashboardView extends javax.swing.JFrame {
     private com.k33ptoo.components.KGradientPanel PanelMenu;
     private com.k33ptoo.components.KGradientPanel PanelNavigation;
     private com.k33ptoo.components.KButton btnSignOut;
-    private javax.swing.JPanel jPanel1;
-    private com.k33ptoo.components.KButton kButton2;
-    private com.k33ptoo.components.KButton kButton3;
     private com.k33ptoo.components.KGradientPanel kMainPanel;
     private com.k33ptoo.components.KGradientPanel kPanelCustomer;
     private com.k33ptoo.components.KGradientPanel kPanelEmployee;
@@ -728,5 +546,6 @@ public class DashboardView extends javax.swing.JFrame {
     private javax.swing.JLabel lbNameUser;
     private javax.swing.JLabel lbProductMenu;
     private javax.swing.JLabel lbSell;
+    private javax.swing.JPanel panelLanguage;
     // End of variables declaration//GEN-END:variables
 }

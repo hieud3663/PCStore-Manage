@@ -1,7 +1,7 @@
 package com.pcstore.service;
 
-import com.pcstore.Repository.Repository;
-import com.pcstore.Repository.impl.SupplierRepository;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.impl.SupplierRepository;
 import com.pcstore.model.Supplier;
 import java.sql.Connection;
 import java.util.List;

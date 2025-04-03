@@ -1,7 +1,7 @@
 package com.pcstore.service;
 
 import com.pcstore.model.Product;
-import com.pcstore.repository.iProductRepository;
+import com.pcstore.repository.impl.ProductRepository;
 
 import java.sql.Connection;
 import java.util.List;
@@ -11,13 +11,21 @@ import java.util.Optional;
  * Service xử lý logic nghiệp vụ liên quan đến sản phẩm
  */
 public class ProductService {
-    private final iProductRepository productRepository;
+    private final ProductRepository productRepository;
     
+    /**
+     * Khởi tạo service với kết nối cơ sở dữ liệu
+     * @param connection Kết nối cơ sở dữ liệu
+     */
+    public ProductService(Connection connection) {
+        this.productRepository = new ProductRepository(connection);
+    }
+
     /**
      * Khởi tạo service với repository
      * @param productRepository Repository sản phẩm
      */
-    public ProductService(iProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
     
@@ -79,7 +87,7 @@ public class ProductService {
      * @param categoryId ID của danh mục
      * @return Danh sách sản phẩm thuộc danh mục
      */
-    public List<Product> findProductsByCategory(String categoryId) {
+    public List<Product> findProductsByCategory(Integer categoryId) {
         return productRepository.findByCategory(categoryId);
     }
     
@@ -107,9 +115,10 @@ public class ProductService {
      * @param maxPrice Giá tối đa
      * @return Danh sách sản phẩm trong khoảng giá
      */
-    public List<Product> findProductsByPriceRange(double minPrice, double maxPrice) {
-        return productRepository.findByPriceRange(minPrice, maxPrice);
-    }
+    // Cần dùng phương thức này nếu có yêu cầu tìm kiếm theo khoảng giá
+    // public List<Product> findProductsByPriceRange(double minPrice, double maxPrice) {
+    //     return productRepository.findByPriceRange(minPrice, maxPrice);
+    // }
     
     /**
      * Cập nhật số lượng tồn kho của sản phẩm
@@ -118,7 +127,7 @@ public class ProductService {
      * @return true nếu cập nhật thành công, ngược lại là false
      */
     public boolean updateProductStock(String productId, int quantity) {
-        return productRepository.updateStock(productId, quantity);
+        return productRepository.updateStockQuantity(productId, quantity);
     }
     
     /**

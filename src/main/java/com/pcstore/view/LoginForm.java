@@ -12,8 +12,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import com.pcstore.controller.LoginController;
-import com.pcstore.Repository.DatabaseConnection;
-import com.pcstore.Repository.impl.UserRepository;
+import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.repository.impl.UserRepository;
 import com.pcstore.model.User;
 import com.pcstore.utils.PCrypt;
 
@@ -21,12 +21,12 @@ import com.pcstore.utils.PCrypt;
  *
  * @author MSII
  */
-public class LoginView extends javax.swing.JFrame {
+public class LoginForm extends javax.swing.JFrame {
 
     /**
      * Creates new form testLogin
      */
-    public LoginView() {
+    public LoginForm() {
         initComponents();
     }
 
@@ -251,7 +251,7 @@ public class LoginView extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLoginMouseClicked
 
     private void jTextField1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTextField1MouseClicked
-         new ForgotPassword().setVisible(true);
+         new ForgotPasswordForm().setVisible(true);
 
     }//GEN-LAST:event_jTextField1MouseClicked
 
@@ -276,7 +276,7 @@ public class LoginView extends javax.swing.JFrame {
                 // SessionManager.setCurrentUser(user);
             
             // Mở giao diện chính
-                DashboardView dashboard = new DashboardView();
+                DashboardForm dashboard = new DashboardForm();
                 dashboard.setVisible(true);
                 this.dispose();
             }else{
@@ -305,11 +305,11 @@ public class LoginView extends javax.swing.JFrame {
             /* Create and display the form */
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    new LoginView().setVisible(true);
+                    new LoginForm().setVisible(true);
                 }
             });
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(LoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
 

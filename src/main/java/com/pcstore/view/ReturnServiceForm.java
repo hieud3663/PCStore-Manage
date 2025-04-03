@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author DUC ANH
  */
-public class ReturnService extends javax.swing.JPanel {
+public class ReturnServiceForm extends javax.swing.JPanel {
 
     /**
      * Creates new form ReturnService
      */
-    public ReturnService() {
+    public ReturnServiceForm() {
         initComponents();
     }
 

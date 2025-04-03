@@ -1,6 +1,6 @@
 package com.pcstore.service;
 
-import com.pcstore.Repository.impl.WarrantyRepository;
+import com.pcstore.repository.impl.WarrantyRepository;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Warranty;
 import java.sql.Connection;

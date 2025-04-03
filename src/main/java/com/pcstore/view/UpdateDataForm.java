@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author nloc2
  */
-public class UpdateData extends javax.swing.JPanel {
+public class UpdateDataForm extends javax.swing.JPanel {
 
     /**
      * Creates new form UpdateData
      */
-    public UpdateData() {
+    public UpdateDataForm() {
         initComponents();
     }
 
@@ -163,7 +163,7 @@ public class UpdateData extends javax.swing.JPanel {
         java.awt.EventQueue.invokeLater(() -> {
             javax.swing.JFrame frame = new javax.swing.JFrame("Update Data");
             frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new UpdateData()); // Đặt JPanel UpdateData vào JFrame
+            frame.setContentPane(new UpdateDataForm()); // Đặt JPanel UpdateDataForm vào JFrame
             frame.pack(); // Tự động điều chỉnh kích thước JFrame theo nội dung
             frame.setLocationRelativeTo(null); // Hiển thị JFrame ở giữa màn hình
             frame.setVisible(true); // Hiển thị JFrame

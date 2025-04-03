@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author nloc2
  */
-public class EditQuantity extends javax.swing.JFrame {
+public class EditQuantityForm extends javax.swing.JFrame {
 
     /**
      * Creates new form EditQuantity1
      */
-    public EditQuantity() {
+    public EditQuantityForm() {
         initComponents();
     }
 
@@ -143,13 +143,13 @@ public class EditQuantity extends javax.swing.JFrame {
 //                }
 //            }
 //        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(EditQuantity.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.util.logging.Logger.getLogger(EditQuantityForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(EditQuantity.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.util.logging.Logger.getLogger(EditQuantityForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(EditQuantity.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.util.logging.Logger.getLogger(EditQuantityForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(EditQuantity.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//            java.util.logging.Logger.getLogger(EditQuantityForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 //        }
 //        //</editor-fold>
 //        //</editor-fold>
@@ -157,7 +157,7 @@ public class EditQuantity extends javax.swing.JFrame {
 //        /* Create and display the form */
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //            public void run() {
-//                new EditQuantity().setVisible(true);
+//                new EditQuantityForm().setVisible(true);
 //            }
 //        });
 //    }

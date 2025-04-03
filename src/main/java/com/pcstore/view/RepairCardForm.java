@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author DUC ANH
  */
-public class RepairCard extends javax.swing.JPanel {
+public class RepairCardForm extends javax.swing.JPanel {
 
     /**
      * Creates new form RepairCard
      */
-    public RepairCard() {
+    public RepairCardForm() {
         initComponents();
     }
 

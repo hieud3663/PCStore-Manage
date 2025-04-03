@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author DUC ANH
  */
-public class ReturnCard extends javax.swing.JPanel {
+public class ReturnCardForm extends javax.swing.JPanel {
 
     /**
      * Creates new form ReturnCard
      */
-    public ReturnCard() {
+    public ReturnCardForm() {
         initComponents();
     }
 

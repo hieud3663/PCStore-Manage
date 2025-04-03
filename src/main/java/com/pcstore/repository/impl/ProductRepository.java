@@ -1,6 +1,6 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
+import com.pcstore.repository.Repository;
 import com.pcstore.model.Product;
 
 import java.sql.Connection;
@@ -113,7 +113,36 @@ public class ProductRepository implements Repository<Product, String> {
             throw new RuntimeException("Error finding product by ID", e);
         }
     }
-    
+
+
+    /**
+     * Tìm sản phẩm theo tên
+     * @param name tên sản phẩm
+     * @return danh sách sản phẩm tìm thấy
+     */
+    // @Override
+    public List<Product> findByName(String name) {
+        String sql = "SELECT * FROM Products WHERE ProductName LIKE ?";
+        List<Product> products = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + name + "%");
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                products.add(mapResultSetToProduct(resultSet));
+            }
+            return products;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding product by name", e);
+        }
+    }
+
+
+    /**
+     * Tìm tất cả sản phẩm trong cơ sở dữ liệu
+     * @return danh sách sản phẩm
+     */   
     @Override
     public List<Product> findAll() {
         String sql = "SELECT * FROM Products";
@@ -199,6 +228,20 @@ public class ProductRepository implements Repository<Product, String> {
             return products;
         } catch (SQLException e) {
             throw new RuntimeException("Error finding low stock products", e);
+        }
+    }
+
+    // Cập nhật số lượng tồn kho của sản phẩm
+    public boolean updateStockQuantity(String productId, int quantity) {
+        String sql = "UPDATE Products SET StockQuantity = ? WHERE ProductID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, quantity);
+            statement.setString(2, productId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating stock quantity", e);
         }
     }
     

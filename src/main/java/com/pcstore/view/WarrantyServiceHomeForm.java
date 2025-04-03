@@ -12,22 +12,22 @@ import javax.swing.JPanel;
  *
  * @author DUC ANH
  */
-public class MainWarrantyService extends javax.swing.JPanel {
+public class WarrantyServiceHomeForm extends javax.swing.JPanel {
 
     private Component returnServicePanel;
-    private WarrantyService warrantyServicePanel;
-    private RepairService repairServicePanel;
+    private WarrantyServiceForm warrantyServicePanel;
+    private RepairServiceForm repairServicePanel;
 
     /**
      * Creates new form WarrantyService1
      */
     
-    public MainWarrantyService() {
+    public WarrantyServiceHomeForm() {
         initComponents();
         
-        returnServicePanel = new ReturnService();
-        warrantyServicePanel = new WarrantyService();
-        repairServicePanel = new RepairService();
+        returnServicePanel = new ReturnServiceForm();
+        warrantyServicePanel = new WarrantyServiceForm();
+        repairServicePanel = new RepairServiceForm();
         
     }
 
@@ -185,7 +185,7 @@ public class MainWarrantyService extends javax.swing.JPanel {
     private void lbReturnServiceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbReturnServiceMouseClicked
        jPanel5.removeAll();
 
-       // Thêm ReturnService panel vào jPanel1
+       // Thêm ReturnServiceForm panel vào jPanel1
        jPanel5.setLayout(new java.awt.BorderLayout());
        jPanel5.add(returnServicePanel, java.awt.BorderLayout.CENTER);
    
@@ -197,7 +197,7 @@ public class MainWarrantyService extends javax.swing.JPanel {
     private void lbWarrantyServiceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbWarrantyServiceMouseClicked
         jPanel5.removeAll();
 
-       // Thêm ReturnService panel vào jPanel1
+       // Thêm ReturnServiceForm panel vào jPanel1
        jPanel5.setLayout(new java.awt.BorderLayout());
        jPanel5.add(warrantyServicePanel, java.awt.BorderLayout.CENTER);
    
@@ -209,7 +209,7 @@ public class MainWarrantyService extends javax.swing.JPanel {
     private void lbRepairServiceMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRepairServiceMouseClicked
       jPanel5.removeAll();
 
-       // Thêm ReturnService panel vào jPanel1
+       // Thêm ReturnServiceForm panel vào jPanel1
        jPanel5.setLayout(new java.awt.BorderLayout());
        jPanel5.add(repairServicePanel, java.awt.BorderLayout.CENTER);
    

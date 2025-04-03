@@ -11,12 +11,12 @@ import javax.swing.SwingUtilities;
  *
  * @author DUC ANH
  */
-public class WarrantyCard extends javax.swing.JPanel {
+public class WarrantyCardForm extends javax.swing.JPanel {
 
     /**
      * Creates new form WarrantyCard
      */
-    public WarrantyCard() {
+    public WarrantyCardForm() {
         initComponents();
     }
 
@@ -249,7 +249,7 @@ public static void main(String[] args) {
             frame.setSize(900, 600); // Set the frame size
             frame.setLocationRelativeTo(null); // Center the frame on the screen
 
-            WarrantyCard warrantyCardPanel = new WarrantyCard();
+            WarrantyCardForm warrantyCardPanel = new WarrantyCardForm();
             frame.add(warrantyCardPanel);
 
             frame.setVisible(true);

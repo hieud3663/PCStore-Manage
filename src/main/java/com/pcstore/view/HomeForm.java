@@ -8,12 +8,12 @@ package com.pcstore.view;
  *
  * @author MSII
  */
-public class Home extends javax.swing.JPanel {
+public class HomeForm extends javax.swing.JPanel {
 
     /**
      * Creates new form Home
      */
-    public Home() {
+    public HomeForm() {
         initComponents();
     }
 

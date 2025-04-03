@@ -1,6 +1,6 @@
-package com.pcstore.Repository.impl;
+package com.pcstore.repository.impl;
 
-import com.pcstore.Repository.Repository;
+import com.pcstore.repository.Repository;
 import com.pcstore.model.Employee;
 import com.pcstore.model.enums.EmployeePositionEnum;
 import java.sql.Connection;
@@ -21,6 +21,15 @@ public class EmployeeRepository implements Repository<Employee, String> {
     
     public EmployeeRepository(Connection connection) {
         this.connection = connection;
+    }
+
+    public Employee save(Employee employee) {
+        Optional<Employee> existingEmployee = findById(employee.getEmployeeId());
+        if (existingEmployee.isPresent()) {
+            return update(employee);
+        } else {
+            return add(employee);
+        }
     }
     
     @Override
@@ -200,6 +209,54 @@ public class EmployeeRepository implements Repository<Employee, String> {
             return String.format("NV%02d", maxId + 1);
         } catch (SQLException e) {
             throw new RuntimeException("Error generating employee ID", e);
+        }
+    }
+
+
+     /**
+     * Tìm nhân viên theo chức vụ
+     * @param position Chức vụ cần tìm
+     * @return Danh sách nhân viên có chức vụ trùng khớp
+     */
+    public List<Employee> findByPosition(String position) {
+        String sql = "SELECT * FROM Employees WHERE Position = ?";
+        List<Employee> employees = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, position);
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                employees.add(mapResultSetToEmployee(resultSet));
+            }
+            return employees;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding employees by position", e);
+        }
+    }
+
+
+    /**
+     * Tìm kiếm nhân viên theo từ khóa
+     * @param searchTerm Từ khóa tìm kiếm
+     * @return Danh sách nhân viên phù hợp
+     */
+    public List<Employee> search(String searchTerm) {
+        String sql = "SELECT * FROM Employees WHERE FullName LIKE ? OR EmployeeID LIKE ?";
+        List<Employee> employees = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            String searchPattern = "%" + searchTerm + "%";
+            statement.setString(1, searchPattern);
+            statement.setString(2, searchPattern);
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                employees.add(mapResultSetToEmployee(resultSet));
+            }
+            return employees;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching employees", e);
         }
     }
     

@@ -1,7 +1,0 @@
-{
-    "java.debug.settings.onBuildFailureProceed": true,
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "java.edit.validateAllOpenBuffersOnChanges": true,
-    "java.jdt.ls.javac.enabled": "on",
-    "java.jdt.ls.java.home": "C:\\Program Files\\Java\\jdk-24"
-}

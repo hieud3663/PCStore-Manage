@@ -4,6 +4,18 @@
 
 package com.pcstore;
 
+import java.sql.SQLException;
+
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.apache.commons.logging.Log;
+
+import com.formdev.flatlaf.FlatLightLaf;
+import com.pcstore.controller.LoginController;
+import com.pcstore.view.LoginForm;
+
 /**
  *
  * @author MSII
@@ -11,6 +23,19 @@ package com.pcstore;
 public class PCStoreManage {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        SwingUtilities.invokeLater(() -> {
+
+        LoginForm loginForm = new LoginForm();
+        loginForm.setVisible(true);       
+        // DashboardForm sẽ được tạo sau khi đăng nhập thành công
+        // trong LoginController
+    });
     }
 }

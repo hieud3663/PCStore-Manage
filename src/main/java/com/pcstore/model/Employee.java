@@ -68,11 +68,17 @@ public class Employee extends BasePerson {
 
 
     public void setPosition(String position) {
+        // System.out.println("Position: " + position);
         if (position == null || position.trim().isEmpty()) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chức vụ"));
         }
         try {
-            this.position = EmployeePositionEnum.valueOf(position.toUpperCase());
+            for (EmployeePositionEnum pos : EmployeePositionEnum.values()) {
+                if (pos.name().equalsIgnoreCase(position)) {
+                    this.position = pos;
+                    return;
+                }
+            }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_EMPLOYEE_POSITION);
         }

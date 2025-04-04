@@ -28,11 +28,19 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
+        kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
+        textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
+        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        cbbSortCustomer = new javax.swing.JComboBox<>();
+        cbbSort = new javax.swing.JComboBox<>();
+        btnResetSort = new javax.swing.JButton();
         panelBody = new javax.swing.JPanel();
         kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
+        panelDetails = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -58,6 +66,10 @@ public class ProductForm extends javax.swing.JPanel {
         jPanel12 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jTextField8 = new javax.swing.JTextField();
+        panelDetail = new javax.swing.JPanel();
+        jLabel11 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         kButton3 = new com.k33ptoo.components.KButton();
         kButton2 = new com.k33ptoo.components.KButton();
@@ -70,19 +82,64 @@ public class ProductForm extends javax.swing.JPanel {
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
-        jLabel2.setText("jLabel2");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        jLabel2.setText(bundle.getString("txtMenuProduct")); // NOI18N
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel2.setMaximumSize(new java.awt.Dimension(99999, 1600000));
+        jLabel2.setMaximumSize(new java.awt.Dimension(32828, 1600000));
+        jLabel2.setMinimumSize(new java.awt.Dimension(850, 34));
         jLabel2.setName(""); // NOI18N
-        jLabel2.setPreferredSize(new java.awt.Dimension(800, 30));
+        jLabel2.setPreferredSize(new java.awt.Dimension(900, 30));
         add(jLabel2);
 
         jPanel4.setBackground(new java.awt.Color(153, 255, 0));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Panel Cái này để tìm kiếm"));
-        jPanel4.setMaximumSize(new java.awt.Dimension(1153, 50));
-        jPanel4.setMinimumSize(new java.awt.Dimension(223, 30));
-        jPanel4.setPreferredSize(new java.awt.Dimension(771, 50));
-        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel4.setMaximumSize(new java.awt.Dimension(328791, 1000));
+        jPanel4.setMinimumSize(new java.awt.Dimension(771, 50));
+        jPanel4.setOpaque(false);
+        jPanel4.setPreferredSize(new java.awt.Dimension(771, 80));
+        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.LINE_AXIS));
+
+        kGradientPanel3.setkFillBackground(false);
+        kGradientPanel3.setMaximumSize(new java.awt.Dimension(100, 200));
+        kGradientPanel3.setMinimumSize(new java.awt.Dimension(100, 41));
+        kGradientPanel3.setOpaque(false);
+
+        textFieldSearch1.setPreferredSize(new java.awt.Dimension(650, 31));
+        kGradientPanel3.add(textFieldSearch1);
+
+        jPanel4.add(kGradientPanel3);
+
+        kGradientPanel2.setkFillBackground(false);
+        kGradientPanel2.setLayout(new java.awt.BorderLayout());
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setPreferredSize(new java.awt.Dimension(500, 70));
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel12.setText(bundle.getString("lbSort")); // NOI18N
+        jPanel5.add(jLabel12);
+
+        cbbSortCustomer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<Không>", "Tên khách hàng", "Điểm" }));
+        cbbSortCustomer.setPreferredSize(new java.awt.Dimension(150, 30));
+        jPanel5.add(cbbSortCustomer);
+
+        cbbSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<Không>", "Tăng dần", "Giảm giần" }));
+        cbbSort.setPreferredSize(new java.awt.Dimension(100, 30));
+        jPanel5.add(cbbSort);
+
+        btnResetSort.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        btnResetSort.setPreferredSize(new java.awt.Dimension(50, 25));
+        btnResetSort.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnResetSortMouseClicked(evt);
+            }
+        });
+        jPanel5.add(btnResetSort);
+
+        kGradientPanel2.add(jPanel5, java.awt.BorderLayout.PAGE_START);
+
+        jPanel4.add(kGradientPanel2);
+
         add(jPanel4);
 
         panelBody.setBackground(new java.awt.Color(255, 255, 255));
@@ -138,21 +195,22 @@ public class ProductForm extends javax.swing.JPanel {
 
         panelBody.add(kGradientPanel1);
 
-        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Cái này để hiển thị thông tin chi tiết"));
-        jPanel5.setPreferredSize(new java.awt.Dimension(450, 470));
-        jPanel5.setLayout(new java.awt.BorderLayout());
+        panelDetails.setBackground(new java.awt.Color(255, 255, 255));
+        panelDetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Cái này để hiển thị thông tin chi tiết"));
+        panelDetails.setPreferredSize(new java.awt.Dimension(450, 470));
+        panelDetails.setLayout(new java.awt.BorderLayout());
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel2.setLayout(new java.awt.GridLayout(6, 2, 40, 50));
+        jPanel2.setMinimumSize(new java.awt.Dimension(230, 400));
+        jPanel2.setPreferredSize(new java.awt.Dimension(400, 400));
+        jPanel2.setLayout(new java.awt.GridLayout(5, 2, 40, 40));
 
         jPanel6.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel6.setLayout(new java.awt.GridLayout(2, 0));
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         jLabel3.setText(bundle.getString("lbProductName")); // NOI18N
         jLabel3.setOpaque(true);
         jPanel6.add(jLabel3);
@@ -244,21 +302,46 @@ public class ProductForm extends javax.swing.JPanel {
 
         jPanel2.add(jPanel12);
 
-        jPanel5.add(jPanel2, java.awt.BorderLayout.CENTER);
+        panelDetails.add(jPanel2, java.awt.BorderLayout.CENTER);
 
-        panelBody.add(jPanel5);
+        panelDetail.setMinimumSize(new java.awt.Dimension(200, 80));
+        panelDetail.setPreferredSize(new java.awt.Dimension(300, 100));
+        panelDetail.setLayout(new javax.swing.BoxLayout(panelDetail, javax.swing.BoxLayout.Y_AXIS));
+
+        jLabel11.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel11.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel11.setOpaque(true);
+        panelDetail.add(jLabel11);
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(16, 50));
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane2.setViewportView(jTextArea1);
+
+        panelDetail.add(jScrollPane2);
+
+        panelDetails.add(panelDetail, java.awt.BorderLayout.PAGE_END);
+
+        panelBody.add(panelDetails);
 
         add(panelBody);
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        kButton3.setText("kButton3");
+        kButton3.setText("Xuất Excel");
+        kButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kButton3ActionPerformed(evt);
+            }
+        });
         jPanel1.add(kButton3);
 
-        kButton2.setText("kButton2");
+        kButton2.setText("Xóa");
         jPanel1.add(kButton2);
 
-        kButton1.setText("kButton1");
+        kButton1.setText("Cập nhật");
         jPanel1.add(kButton1);
 
         btnAdd3.setText(bundle.getString("btnAddProduct")); // NOI18N
@@ -289,9 +372,23 @@ public class ProductForm extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAdd3ActionPerformed
 
+    private void kButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_kButton3ActionPerformed
+
+    private void btnResetSortMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetSortMouseClicked
+        cbbSortCustomer.setSelectedIndex(0);
+        cbbSort.setSelectedIndex(0);
+    }//GEN-LAST:event_btnResetSortMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAdd3;
+    private javax.swing.JButton btnResetSort;
+    private javax.swing.JComboBox<String> cbbSort;
+    private javax.swing.JComboBox<String> cbbSortCustomer;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -313,7 +410,9 @@ public class ProductForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
@@ -326,6 +425,11 @@ public class ProductForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton kButton2;
     private com.k33ptoo.components.KButton kButton3;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
+    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
+    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
     private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelDetail;
+    private javax.swing.JPanel panelDetails;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     // End of variables declaration//GEN-END:variables
 }

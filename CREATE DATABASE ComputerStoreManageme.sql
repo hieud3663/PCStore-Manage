@@ -322,3 +322,10 @@ CREATE TABLE Returns (
         ON UPDATE CASCADE
 );
 
+-- Thêm trường giới tính trong nhân viên
+ALTER TABLE Employees
+ADD Gender NVARCHAR(10) CHECK (Gender IN ('Male', 'Female', 'Other'));
+
+-- Thêm trường point cho khách hàng
+ALTER TABLE Customers
+ADD Point INT DEFAULT 0 CHECK (Point >= 0);

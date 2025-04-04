@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import javax.xml.crypto.Data;
+
 import com.pcstore.model.Invoice;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.repository.RepositoryFactory;
@@ -200,6 +202,14 @@ public class ServiceFactory {
      * @return Connection đến cơ sở dữ liệu
      */
     public Connection getConnection() {
+        // Kiểm tra xem kết nối đã được khởi tạo chưa
+        if (connection == null) {
+            try {
+                connection = DatabaseConnection.getInstance().getConnection();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return connection;
     }
 }

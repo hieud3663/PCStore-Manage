@@ -322,3 +322,21 @@ CREATE TABLE Returns (
         ON UPDATE CASCADE
 );
 
+-- Thêm trường giới tính trong nhân viên
+ALTER TABLE Employees
+ADD Gender NVARCHAR(10) CHECK (Gender IN ('Male', 'Female', 'Other'));
+
+-- Thêm trường point cho khách hàng
+ALTER TABLE Customers
+ADD Point INT DEFAULT 0 CHECK (Point >= 0);
+
+--Thêm trường CreatedAt, UpdatedAt cho bảng Products
+ALTER TABLE Products
+ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo sản phẩm
+    UpdatedAt DATETIME DEFAULT GETDATE(); -- Ngày cập nhật sản phẩm
+-- Cập nhật trường UpdatedAt mỗi khi có thay đổi
+
+--thêm dữ liệu thời gian tạo và cập nhật cho bảng Products
+UPDATE Products
+SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
+WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;

@@ -21,7 +21,7 @@ public class RepositoryFactory {
     private PurchaseOrderRepository purchaseOrderRepository;
     private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     private UserRepository userRepository;
-//    private WarrantyRepository warrantyRepository;
+    private WarrantyRepository warrantyRepository;
     private RepairServiceRepository repairServiceRepository;
     private ReturnRepository returnRepository;
     private DiscountRepository discountRepository;
@@ -103,13 +103,13 @@ public class RepositoryFactory {
         return userRepository;
     }
     
-//    public WarrantyRepository getWarrantyRepository() {
-//        if (warrantyRepository == null) {
-//            // warrantyRepository = new WarrantyRepository(connection, this);
-//            warrantyRepository = new WarrantyRepository(connection);
-//        }
-//        return warrantyRepository;
-//    }
+   public WarrantyRepository getWarrantyRepository() {
+       if (warrantyRepository == null) {
+           // warrantyRepository = new WarrantyRepository(connection, this);
+           warrantyRepository = new WarrantyRepository(connection);
+       }
+       return warrantyRepository;
+   }
     
     public RepairServiceRepository getRepairServiceRepository() {
         if (repairServiceRepository == null) {

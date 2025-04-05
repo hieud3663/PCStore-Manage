@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
  */
 public class Customer extends BasePerson {
 
+    private Integer points;
+    
     public Customer(String fullName, String phoneNumber, String email) {
         super(fullName, phoneNumber, email);
         //TODO Auto-generated constructor stub
@@ -83,6 +85,14 @@ public class Customer extends BasePerson {
         Customer customer = new Customer(fullName, phoneNumber, null);
         customer.setCustomerId(customerId);
         return customer;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
     }
 
 }

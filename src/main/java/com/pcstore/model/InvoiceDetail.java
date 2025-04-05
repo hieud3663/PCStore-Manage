@@ -18,6 +18,23 @@ public class InvoiceDetail extends BaseTimeEntity {
     private BigDecimal discountAmount;
     private String notes;
 
+    public InvoiceDetail(Integer invoiceDetailId, Invoice invoice, Product product, Warranty warranty, int quantity,
+            BigDecimal unitPrice, BigDecimal discountAmount, String notes) {
+        this.invoiceDetailId = invoiceDetailId;
+        this.invoice = invoice;
+        this.product = product;
+        this.warranty = warranty;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+        this.discountAmount = discountAmount;
+        this.notes = notes;
+    }
+
+    
+    public InvoiceDetail() {
+    }
+
+
     @Override
     public Object getId() {
         return invoiceDetailId;

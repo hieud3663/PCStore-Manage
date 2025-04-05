@@ -105,12 +105,7 @@ public class SupplierService {
         if (!supplier.isPresent()) {
             throw new IllegalArgumentException("Nhà cung cấp với mã " + supplierId + " không tồn tại");
         }
-        
-        // Kiểm tra xem có thể xóa không
-        if (!supplier.get().canDelete()) {
-            throw new IllegalStateException("Không thể xóa nhà cung cấp đang có đơn nhập hàng đang xử lý");
-        }
-        
+                
         // Kiểm tra xem có sản phẩm liên quan không
         int productCount = supplierRepository.getProductCountBySupplier(supplierId);
         if (productCount > 0) {

@@ -125,6 +125,32 @@ public class TextFieldSearch extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSearchActionPerformed
 
 
+    public JTextField getTxtSearchField() {
+        return txtSearchField;
+    }
+    public void setTxtSearchField(JTextField txtSearchField) {
+        this.txtSearchField = txtSearchField;
+    }
+    public com.k33ptoo.components.KButton getBtnSearch() {
+        return btnSearch;
+    }
+    public void setBtnSearch(com.k33ptoo.components.KButton btnSearch) {
+        this.btnSearch = btnSearch;
+    }
+    public com.k33ptoo.components.KGradientPanel getkPanelFieldSearch() {
+        return kPanelFieldSearch;
+    }
+    public void setkPanelFieldSearch(com.k33ptoo.components.KGradientPanel kPanelFieldSearch) {
+        this.kPanelFieldSearch = kPanelFieldSearch;
+    }
+    
+//    public void setPlaceHolder(String text) {
+//        placeHolder(txtSearchField, text);
+//    }
+
+
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnSearch;
     private com.k33ptoo.components.KGradientPanel kPanelFieldSearch;

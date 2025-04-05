@@ -1,7 +1,9 @@
 package com.pcstore.repository.impl;
 
 import com.pcstore.repository.Repository;
+import com.pcstore.model.Category;
 import com.pcstore.model.Product;
+import com.pcstore.model.Supplier;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,28 +28,24 @@ public class ProductRepository implements Repository<Product, String> {
     
     @Override
     public Product add(Product product) {
-        String sql = "INSERT INTO Products (ProductID, ProductName, Description, UnitPrice, " +
-                     "QuantityInStock, CategoryID, SupplierID, WarrantyPeriod) " +
+        String sql = "INSERT INTO Products (ProductID, ProductName, CategoryID, SupplierID, Price, " +
+                     "StockQuantity, Specifications, Description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, product.getProductId());
             statement.setString(2, product.getProductName());
-            statement.setBigDecimal(3, product.getPrice());
-            statement.setInt(4, product.getStockQuantity());
-            statement.setString(5, product.getSpecifications());
-            statement.setString(6, product.getDescription());
-            statement.setInt(7, product.getCategory() != null ? 
-                    (Integer) product.getCategory().getId() : null);
-            statement.setString(8, product.getSupplier() != null ? 
+            statement.setString(3, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+            statement.setString(4, product.getSupplier() != null ? 
                     (String) product.getSupplier().getId() : null);
+            statement.setBigDecimal(5, product.getPrice());
+            statement.setInt(6, product.getStockQuantity());
+            statement.setString(7, product.getSpecifications());
+            statement.setString(8, product.getDescription());
             
             LocalDateTime now = LocalDateTime.now();
             product.setCreatedAt(now);
             product.setUpdatedAt(now);
-            
-            statement.setObject(9, product.getCreatedAt());
-            statement.setObject(10, product.getUpdatedAt());
             
             statement.executeUpdate();
             return product;
@@ -68,8 +66,7 @@ public class ProductRepository implements Repository<Product, String> {
             statement.setInt(3, product.getStockQuantity());
             statement.setString(4, product.getSpecifications());
             statement.setString(5, product.getDescription());
-            statement.setInt(6, product.getCategory() != null ? 
-                    (Integer) product.getCategory().getId() : null);
+            statement.setString(6, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
             statement.setString(7, product.getSupplier() != null ? 
                     (String) product.getSupplier().getId() : null);
             
@@ -231,6 +228,25 @@ public class ProductRepository implements Repository<Product, String> {
         }
     }
 
+    //TÌm kiếm theo giá trị Id hoặc tên sản phẩm
+    public List<Product> findByIdOrName(String idOrName) {
+        String sql = "SELECT * FROM Products WHERE ProductID LIKE ? OR ProductName LIKE ?";
+        List<Product> products = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + idOrName + "%");
+            statement.setString(2, "%" + idOrName + "%");
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                products.add(mapResultSetToProduct(resultSet));
+            }
+            return products;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding product by ID or name", e);
+        }
+    }
+
     // Cập nhật số lượng tồn kho của sản phẩm
     public boolean updateStockQuantity(String productId, int quantity) {
         String sql = "UPDATE Products SET StockQuantity = ? WHERE ProductID = ?";
@@ -250,15 +266,49 @@ public class ProductRepository implements Repository<Product, String> {
         Product product = new Product();
         product.setProductId(resultSet.getString("ProductID"));
         product.setProductName(resultSet.getString("ProductName"));
+        // product.setCategory(resultSet.getString("CategoryID"));
         product.setPrice(resultSet.getBigDecimal("Price"));
         product.setStockQuantity(resultSet.getInt("StockQuantity"));
         product.setSpecifications(resultSet.getString("Specifications"));
         product.setDescription(resultSet.getString("Description"));
         product.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
         product.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
+
+        String categoryId = resultSet.getString("CategoryID");
+        String supplierId = resultSet.getString("SupplierID");
+
+        if (!categoryId.isEmpty()) {
+
+            String sqlCategory = "SELECT * FROM Categories WHERE CategoryID = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sqlCategory)) {
+                statement.setString(1, categoryId);
+                ResultSet rsCategory = statement.executeQuery();
+                if (rsCategory.next()) {
+                    product.setCategory(new Category(categoryId, rsCategory.getString("CategoryName"))); // Chỉ cần ID và tên
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error finding category by ID", e);
+            }
+        } else {
+            product.setCategory(null); // Hoặc có thể ném ngoại lệ nếu cần
+        }
+
+        if (!supplierId.isEmpty()) {
+            String sqlSupplier = "SELECT * FROM Suppliers WHERE SupplierID = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sqlSupplier)) {
+                statement.setString(1, supplierId);
+                ResultSet rsSupplier = statement.executeQuery();
+                if (rsSupplier.next()) {
+                    product.setSupplier(new Supplier(supplierId, rsSupplier.getString("Name"), rsSupplier.getString("PhoneNumber"), rsSupplier.getString("Email"), rsSupplier.getString("Address"))); // Chỉ cần ID và tên
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException("Error finding supplier by ID", e);
+            }
+        } else {
+            product.setSupplier(null); // Hoặc có thể ném ngoại lệ nếu cần
+        }
         
-        // Lưu ý: Category và Supplier sẽ được load riêng hoặc lazy load
-        
+        // Lưu ý: Category và Supplier sẽ được load riêng hoặc lazy loaded;
         return product;
     }
 }

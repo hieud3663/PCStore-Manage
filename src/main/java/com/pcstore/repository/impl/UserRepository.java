@@ -200,13 +200,8 @@ public class UserRepository implements Repository<User, String> {
                     EmployeeId = "NV000";
                 }
 
-                String fullName = resultSet.getString("EmployeeName");
-                if (fullName == null) {
-                    fullName = "Admin";
-                }
-
                 User user = mapResultSetToUser(resultSet);
-                
+
                 return user;
                 
             }
@@ -314,6 +309,10 @@ public class UserRepository implements Repository<User, String> {
                 String phoneNumber = rs.getString("PhoneNumber");
                 String email = rs.getString("Email");
                 String position = rs.getString("Position");
+
+                if (user.getRoleID() == 1) {
+                    fullName = "Admin";
+                }
 
                 user.setEmployee(new Employee(employeeId, fullName, phoneNumber, email, position));
                 

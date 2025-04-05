@@ -143,13 +143,11 @@ public class TextFieldSearch extends javax.swing.JPanel {
     public void setkPanelFieldSearch(com.k33ptoo.components.KGradientPanel kPanelFieldSearch) {
         this.kPanelFieldSearch = kPanelFieldSearch;
     }
-    public void setPlaceHolder(String text) {
-        placeHolder(txtSearchField, text);
-    }
+    
+//    public void setPlaceHolder(String text) {
+//        placeHolder(txtSearchField, text);
+//    }
 
-    public void setPlaceHolder(String text, String text2) {
-        placeHolder(txtSearchField, text);
-    }
 
 
 

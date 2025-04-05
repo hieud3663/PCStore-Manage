@@ -172,9 +172,24 @@ BEGIN
     FROM @InsertedEmployees;
 END;
 
---Trigger tự động tạo mã sản phẩm (SP001, SP002...)
-CREATE TRIGGER trg_GenerateProductID
-ON Products
+USE [ComputerStoreManagement]
+GO
+/****** Object:  Trigger [dbo].[trg_GenerateProductID]    Script Date: 05/04/2025 1:57:31 CH ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+USE [ComputerStoreManagement]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Trigger tự động tạo mã sản phẩm theo danh mục (LAP001, LK002, PC001...)
+ALTER TRIGGER [dbo].[trg_GenerateProductID]
+ON [dbo].[Products]
 INSTEAD OF INSERT
 AS
 BEGIN
@@ -198,19 +213,43 @@ BEGIN
     SELECT ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description
     FROM inserted;
     
-    -- Lấy mã tiếp theo
-    DECLARE @NextProductID INT;
-    SELECT @NextProductID = ISNULL(MAX(CAST(SUBSTRING(ProductID, 3, LEN(ProductID)-2) AS INT)), 0) + 1
-    FROM Products;
+    -- Thêm sản phẩm với mã tự động cho từng danh mục
+    DECLARE @RowCount INT = (SELECT COUNT(*) FROM @InsertedProducts)
+    DECLARE @CurrentRow INT = 1
     
-    -- Thêm dữ liệu với mã đã tạo
-    INSERT INTO Products 
-    (ProductID, ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description)
-    SELECT 'SP' + RIGHT('000' + CAST((@NextProductID + RowNum - 1) AS VARCHAR(3)), 3),
-           ProductName, CategoryID, SupplierID, Price, 
-           ISNULL(StockQuantity, 0), 
-           Specifications, Description
-    FROM @InsertedProducts;
+    WHILE @CurrentRow <= @RowCount
+    BEGIN
+        DECLARE @CategoryID VARCHAR(10)
+        DECLARE @NextProductNumber INT
+        
+        -- Lấy CategoryID của dòng hiện tại
+        SELECT @CategoryID = CategoryID
+        FROM @InsertedProducts
+        WHERE RowNum = @CurrentRow
+        
+        -- Tìm số tiếp theo cho CategoryID cụ thể
+        SELECT @NextProductNumber = ISNULL(MAX(CAST(SUBSTRING(ProductID, LEN(@CategoryID) + 1, 
+                    LEN(ProductID) - LEN(@CategoryID)) AS INT)), 0) + 1
+        FROM Products 
+        WHERE ProductID LIKE @CategoryID + '%'
+        
+        -- Thêm sản phẩm với mã mới
+        INSERT INTO Products 
+        (ProductID, ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description)
+        SELECT 
+            @CategoryID + RIGHT('000' + CAST(@NextProductNumber AS VARCHAR(3)), 3),
+            ProductName, 
+            CategoryID, 
+            SupplierID, 
+            Price, 
+            ISNULL(StockQuantity, 0), 
+            Specifications, 
+            Description
+        FROM @InsertedProducts
+        WHERE RowNum = @CurrentRow
+        
+        SET @CurrentRow = @CurrentRow + 1
+    END
 END;
 
 --Trigger xử lý đổi/trả hàng

@@ -4,20 +4,33 @@
  */
 package com.pcstore.view;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import com.pcstore.model.Invoice;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.payment.Payment;
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author MSII
  */
 public class PayForm extends javax.swing.JDialog {
 
+    private Invoice currentInvoice;
+    private boolean paymentSuccessful = false;
+    private PaymentMethodEnum selectedPaymentMethod = PaymentMethodEnum.CASH;
+    private boolean  checkSelectedPaymentMethod = false;
 
-
-    
+    private Payment currentPayment;
     /**
      * Creates new form PayForm
-     */
-
-     
+     */     
     public PayForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -42,10 +55,9 @@ public class PayForm extends javax.swing.JDialog {
         btnGroupPay = new javax.swing.ButtonGroup();
         panelForm = new com.k33ptoo.components.KGradientPanel();
         panelHeader = new javax.swing.JPanel();
-        btnCancel = new com.k33ptoo.components.KButton();
         panelTitle = new com.k33ptoo.components.KGradientPanel();
         jLabel1 = new javax.swing.JLabel();
-        panelBody = new javax.swing.JPanel();
+        panelBody = new com.k33ptoo.components.KGradientPanel();
         btnRadioPayCash = new javax.swing.JRadioButton();
         btnRadioPayBank = new javax.swing.JRadioButton();
         btnRadioZaloPay = new javax.swing.JRadioButton();
@@ -53,6 +65,7 @@ public class PayForm extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         txtTotalAmount = new javax.swing.JLabel();
         btnPay = new com.k33ptoo.components.KButton();
+        btnCancel = new com.k33ptoo.components.KButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
@@ -60,40 +73,17 @@ public class PayForm extends javax.swing.JDialog {
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(450, 485));
         setModalExclusionType(null);
-        setPreferredSize(new java.awt.Dimension(450, 485));
         setType(java.awt.Window.Type.POPUP);
 
         panelForm.setBackground(new java.awt.Color(255, 255, 255));
-        panelForm.setkFillBackground(false);
+        panelForm.setkEndColor(new java.awt.Color(153, 255, 153));
+        panelForm.setkStartColor(new java.awt.Color(102, 153, 255));
         panelForm.setMinimumSize(new java.awt.Dimension(611, 485));
         panelForm.setLayout(new javax.swing.BoxLayout(panelForm, javax.swing.BoxLayout.Y_AXIS));
 
         panelHeader.setBackground(new java.awt.Color(255, 255, 255));
         panelHeader.setMinimumSize(new java.awt.Dimension(300, 55));
         panelHeader.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 30, 5));
-
-        btnCancel.setText(bundle.getString("btnCancle")); // NOI18N
-        btnCancel.setToolTipText("");
-        btnCancel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnCancel.setIconTextGap(3);
-        btnCancel.setkBorderRadius(20);
-        btnCancel.setkEndColor(new java.awt.Color(255, 102, 0));
-        btnCancel.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnCancel.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnCancel.setkStartColor(new java.awt.Color(255, 51, 51));
-        btnCancel.setMinimumSize(new java.awt.Dimension(65, 27));
-        btnCancel.setPreferredSize(new java.awt.Dimension(65, 45));
-        btnCancel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnCancelMouseClicked(evt);
-            }
-        });
-        btnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelActionPerformed(evt);
-            }
-        });
-        panelHeader.add(btnCancel);
 
         panelTitle.setBackground(new java.awt.Color(255, 255, 255));
         panelTitle.setkBorderRadius(70);
@@ -116,12 +106,22 @@ public class PayForm extends javax.swing.JDialog {
         panelForm.add(panelHeader);
 
         panelBody.setBackground(new java.awt.Color(255, 255, 255));
-        panelBody.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("titleBorderChoosePayment"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelBody.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("titleChoosePayment"))); // NOI18N
+        panelBody.setkBorderRadius(30);
+        panelBody.setkEndColor(new java.awt.Color(255, 255, 255));
+        panelBody.setkGradientFocus(900);
+        panelBody.setkStartColor(new java.awt.Color(255, 255, 255));
+        panelBody.setMinimumSize(new java.awt.Dimension(166, 231));
+        panelBody.setOpaque(false);
+        panelBody.setPreferredSize(new java.awt.Dimension(166, 231));
         panelBody.setLayout(new java.awt.GridLayout(4, 1, 30, 40));
 
         btnGroupPay.add(btnRadioPayCash);
         btnRadioPayCash.setText(bundle.getString("btnRadioPayCash")); // NOI18N
         btnRadioPayCash.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRadioPayCash.setIconTextGap(10);
+        btnRadioPayCash.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/cash.png"))); // NOI18N
+        btnRadioPayCash.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/cash.png"))); // NOI18N
         btnRadioPayCash.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRadioPayCashActionPerformed(evt);
@@ -132,11 +132,25 @@ public class PayForm extends javax.swing.JDialog {
         btnGroupPay.add(btnRadioPayBank);
         btnRadioPayBank.setText(bundle.getString("btnRadioPayBank")); // NOI18N
         btnRadioPayBank.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRadioPayBank.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/mobile-banking.png"))); // NOI18N
+        btnRadioPayBank.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/mobile-banking.png"))); // NOI18N
+        btnRadioPayBank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRadioPayBankActionPerformed(evt);
+            }
+        });
         panelBody.add(btnRadioPayBank);
 
         btnGroupPay.add(btnRadioZaloPay);
         btnRadioZaloPay.setText(bundle.getString("btnRadioZaloPay")); // NOI18N
         btnRadioZaloPay.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRadioZaloPay.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/zalopay.png"))); // NOI18N
+        btnRadioZaloPay.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/zalopay.png"))); // NOI18N
+        btnRadioZaloPay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRadioZaloPayActionPerformed(evt);
+            }
+        });
         panelBody.add(btnRadioZaloPay);
 
         panelForm.add(panelBody);
@@ -154,7 +168,7 @@ public class PayForm extends javax.swing.JDialog {
         txtTotalAmount.setText("0 đ");
         panelFooter.add(txtTotalAmount);
 
-        btnPay.setText(bundle.getString("btnPay")); // NOI18N
+        btnPay.setText(bundle.getString("btnPayConfirm")); // NOI18N
         btnPay.setToolTipText("");
         btnPay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPay.setIconTextGap(3);
@@ -163,7 +177,31 @@ public class PayForm extends javax.swing.JDialog {
         btnPay.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnPay.setkHoverStartColor(new java.awt.Color(0, 153, 153));
         btnPay.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnPay.setPreferredSize(new java.awt.Dimension(100, 45));
+        btnPay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnPayMouseClicked(evt);
+            }
+        });
         panelFooter.add(btnPay);
+
+        btnCancel.setText(bundle.getString("btnCancle")); // NOI18N
+        btnCancel.setToolTipText("");
+        btnCancel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnCancel.setIconTextGap(3);
+        btnCancel.setkBorderRadius(20);
+        btnCancel.setkEndColor(new java.awt.Color(255, 102, 0));
+        btnCancel.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnCancel.setkHoverStartColor(new java.awt.Color(0, 153, 153));
+        btnCancel.setkStartColor(new java.awt.Color(255, 51, 51));
+        btnCancel.setMinimumSize(new java.awt.Dimension(65, 27));
+        btnCancel.setPreferredSize(new java.awt.Dimension(65, 45));
+        btnCancel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCancelMouseClicked(evt);
+            }
+        });
+        panelFooter.add(btnCancel);
 
         panelForm.add(panelFooter);
 
@@ -174,18 +212,100 @@ public class PayForm extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelMouseClicked
-        this.setVisible(false);
+        this.dispose();
+        paymentSuccessful = false;
     }//GEN-LAST:event_btnCancelMouseClicked
 
     private void btnRadioPayCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioPayCashActionPerformed
-        // TODO add your handling code here:
+        selectedPaymentMethod = PaymentMethodEnum.CASH;
     }//GEN-LAST:event_btnRadioPayCashActionPerformed
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelActionPerformed
+    private void btnRadioPayBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioPayBankActionPerformed
+        selectedPaymentMethod = PaymentMethodEnum.BANK_TRANSFER;
+    }//GEN-LAST:event_btnRadioPayBankActionPerformed
 
-   
+    private void btnRadioZaloPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioZaloPayActionPerformed
+        selectedPaymentMethod = PaymentMethodEnum.ZALOPAY;
+    }//GEN-LAST:event_btnRadioZaloPayActionPerformed
+
+    private void btnPayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
+        if (!btnRadioPayCash.isSelected() && !btnRadioPayBank.isSelected() && !btnRadioZaloPay.isSelected()) {
+            btnRadioPayCash.setSelected(true);
+            selectedPaymentMethod = PaymentMethodEnum.CASH;
+        }
+        
+        // Hiển thị thông báo xác nhận dựa trên phương thức thanh toán
+        String message = "Xác nhận thanh toán bằng ";
+        
+        switch (selectedPaymentMethod) {
+            case CASH:
+                message += "Tiền mặt?";
+                break;
+            case BANK_TRANSFER:
+                message += "Chuyển khoản ngân hàng?";
+                break;
+            case ZALOPAY:
+                message += "Ví điện tử ZaloPay?";
+                break;
+            default:
+                message += "Tiền mặt?";
+                selectedPaymentMethod = PaymentMethodEnum.CASH;
+        }
+        
+        int option = JOptionPane.showConfirmDialog(
+            this,
+            message,
+            "Xác nhận thanh toán",
+            JOptionPane.YES_NO_OPTION
+        );
+        
+        if (option == JOptionPane.YES_OPTION) {
+            checkSelectedPaymentMethod = true;
+            //Thông báo Xác nhận đã thanh toán hay chưa?
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Xác nhận đã thanh toán thành công?",
+                "Xác nhận thanh toán",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Xử lý thanh toán thành công
+                paymentSuccessful = true;
+                this.dispose();
+            } else {
+                paymentSuccessful = false;
+            }
+        }else{
+            checkSelectedPaymentMethod = false;
+        }
+    }//GEN-LAST:event_btnPayMouseClicked
+    
+    public Invoice getCurrentInvoice() {
+        return currentInvoice;
+    }
+
+    public void setCurrentInvoice(Invoice currentInvoice) {
+        this.currentInvoice = currentInvoice;
+
+        NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+
+        this.txtTotalAmount.setText(formatter.format(currentInvoice.getTotalAmount()) + " đ");
+    }
+
+    public boolean isPaymentSuccessful() {
+        return paymentSuccessful;
+    }
+    
+    public PaymentMethodEnum getSelectedPaymentMethod() {
+        return selectedPaymentMethod;
+    }
+
+    public boolean isCheckSelectedPaymentMethod() {
+        return checkSelectedPaymentMethod;
+    }
+    public void setCheckSelectedPaymentMethod(boolean checkSelectedPaymentMethod) {
+        this.checkSelectedPaymentMethod = checkSelectedPaymentMethod;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnCancel;
@@ -196,7 +316,7 @@ public class PayForm extends javax.swing.JDialog {
     private javax.swing.JRadioButton btnRadioZaloPay;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel panelBody;
+    private com.k33ptoo.components.KGradientPanel panelBody;
     private javax.swing.JPanel panelFooter;
     private com.k33ptoo.components.KGradientPanel panelForm;
     private javax.swing.JPanel panelHeader;

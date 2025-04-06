@@ -32,6 +32,33 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         this.RepositoryFactory = RepositoryFactory;
     }
     
+    //Tạo id tự động cho hóa đơn
+    public int generateInvoiceId() {
+        String sql = "SELECT MAX(InvoiceID) AS MaxID FROM Invoices";
+        
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+             
+            if (resultSet.next()) {
+                return resultSet.getInt("MaxID") + 1;
+            }
+            return 1; // Nếu không có hóa đơn nào, bắt đầu từ 1
+        } catch (SQLException e) {
+            throw new RuntimeException("Error generating invoice ID", e);
+        }
+    }
+
+
+    public Invoice save(Invoice invoice){
+        Invoice existInvoice = findById(invoice.getInvoiceId()).orElse(null);
+        if (existInvoice == null) {
+            return add(invoice);
+        } else {
+            return update(invoice);
+        }
+    }
+
+
     @Override
     public Invoice add(Invoice invoice) {
         String sql = "INSERT INTO Invoices (CustomerID, EmployeeID, TotalAmount, InvoiceDate, StatusID, PaymentMethodID) " +
@@ -53,13 +80,14 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             statement.setObject(4, invoice.getInvoiceDate());
             
             // Chuyển đổi enum StatusID thành int
-            int statusId = 1; // Default: PENDING
+            int statusId = 0; // Default: Processing
             if (invoice.getStatus() != null) {
                 switch (invoice.getStatus()) {
-                    case PAID: statusId = 2; break;
-                    case CANCELLED: statusId = 3; break;
-                    case DELIVERED: statusId = 4; break;
-                    case PROCESSING: statusId = 5; break;
+                    case PAID: statusId = 1; break;
+                    case CANCELLED: statusId = 4; break;
+                    case DELIVERED: statusId = 5; break;
+                    case PROCESSING: statusId = 0; break;
+                    case COMPLETED: statusId = 3; break;
                 }
             }
             statement.setInt(5, statusId);
@@ -68,9 +96,11 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             int paymentMethodId = 1; // Default: CASH
             if (invoice.getPaymentMethod() != null) {
                 switch (invoice.getPaymentMethod()) {
-                    case CREDIT_CARD: paymentMethodId = 2; break;
-                    case BANK_TRANSFER: paymentMethodId = 3; break;
-                    case E_WALLET: paymentMethodId = 4; break;
+                    case CASH: paymentMethodId = 1; break;
+                    case ZALOPAY: paymentMethodId = 3; break;
+                    case MOMO: paymentMethodId = 2; break;
+                    case BANK_TRANSFER: paymentMethodId = 4; break;
+                    case CREDIT_CARD: paymentMethodId = 5; break;
                 }
             }
             statement.setInt(6, paymentMethodId);
@@ -82,14 +112,6 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             if (generatedKeys.next()) {
                 int generatedId = generatedKeys.getInt(1);
                 invoice.setInvoiceId(generatedId);
-            }
-            
-            // Lưu các chi tiết hóa đơn nếu có
-            if (invoice.getInvoiceDetails() != null && !invoice.getInvoiceDetails().isEmpty()) {
-                for (InvoiceDetail detail : invoice.getInvoiceDetails()) {
-                    detail.setInvoice(invoice);
-                    RepositoryFactory.getInvoiceDetailRepository().add(detail);
-                }
             }
             
             return invoice;
@@ -110,13 +132,14 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             statement.setObject(4, invoice.getInvoiceDate());
             
             // Chuyển đổi enum StatusID thành int
-            int statusId = 1; // Default: PENDING
+            int statusId = 0; // Default: Processing
             if (invoice.getStatus() != null) {
                 switch (invoice.getStatus()) {
-                    case PAID: statusId = 2; break;
-                    case CANCELLED: statusId = 3; break;
-                    case DELIVERED: statusId = 4; break;
-                    case PROCESSING: statusId = 5; break;
+                    case PAID: statusId = 1; break;
+                    case CANCELLED: statusId = 4; break;
+                    case DELIVERED: statusId = 5; break;
+                    case PROCESSING: statusId = 0; break;
+                    case COMPLETED: statusId = 3; break;
                 }
             }
             statement.setInt(5, statusId);
@@ -125,9 +148,11 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             int paymentMethodId = 1; // Default: CASH
             if (invoice.getPaymentMethod() != null) {
                 switch (invoice.getPaymentMethod()) {
-                    case CREDIT_CARD: paymentMethodId = 2; break;
-                    case BANK_TRANSFER: paymentMethodId = 3; break;
-                    case E_WALLET: paymentMethodId = 4; break;
+                    case CASH: paymentMethodId = 1; break;
+                    case ZALOPAY: paymentMethodId = 3; break;
+                    case MOMO: paymentMethodId = 2; break;
+                    case BANK_TRANSFER: paymentMethodId = 4; break;
+                    case CREDIT_CARD: paymentMethodId = 5; break;
                 }
             }
             statement.setInt(6, paymentMethodId);

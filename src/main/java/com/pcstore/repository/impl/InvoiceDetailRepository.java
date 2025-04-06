@@ -28,6 +28,19 @@ public class InvoiceDetailRepository implements Repository<InvoiceDetail, Intege
         this.connection = connection;
         this.RepositoryFactory = RepositoryFactory;
     }
+
+
+    public InvoiceDetail save(InvoiceDetail invoiceDetail) {
+
+        InvoiceDetail existingDetail = findById(invoiceDetail.getInvoiceDetailId()).orElse(null);
+        if (existingDetail != null) {
+            // Nếu đã tồn tại, cập nhật
+            return update(invoiceDetail);
+        } else {
+            // Nếu chưa tồn tại, thêm mới
+            return add(invoiceDetail);
+        }
+    }
     
     @Override
     public InvoiceDetail add(InvoiceDetail invoiceDetail) {

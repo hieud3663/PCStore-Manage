@@ -26,7 +26,7 @@ public class ServiceFactory {
     private static SupplierService supplierService;
     private static InvoiceService invoiceService; 
     private static PurchaseOrderService purchaseOrderService;
-    private static RepairServiceService repairServiceService;
+    private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
     // private static UserService userService;
@@ -141,9 +141,9 @@ public class ServiceFactory {
      * @return RepairServiceService instance
      * @throws SQLException Nếu có lỗi với kết nối database
      */
-    public static RepairServiceService getRepairServiceService() throws SQLException {
+    public static RepairService getRepairServiceService() throws SQLException {
         if (repairServiceService == null) {
-            repairServiceService = new RepairServiceService(getInstance().getConnection());
+            repairServiceService = new RepairService(getInstance().getConnection());
         }
         return repairServiceService;
     }

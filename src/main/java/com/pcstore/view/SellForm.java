@@ -4,31 +4,29 @@
  */
 package com.pcstore.view;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import com.k33ptoo.components.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
-import javax.swing.text.StyledEditorKit.BoldAction;
 
 import com.pcstore.controller.SellController;
 import com.pcstore.model.Customer;
+import com.pcstore.model.Employee;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.Product;
 import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.JDialogInputUtils;
+import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.SessionManager;
 import com.pcstore.utils.TextFieldSearch;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -42,7 +40,11 @@ public class SellForm extends JPanel {
     private Connection connection;
     private RepositoryFactory repositoryFactory;
 
+    private Employee employee;
+
     private List<String> listSelectProductIDs; // Danh sách tất cả sản phẩm
+
+    // private TextFieldSearch textFieldSearch = new TextFieldSearch();
     
     /**
      * Creates new form Sell
@@ -61,10 +63,10 @@ public class SellForm extends JPanel {
             sellController = new SellController(connection, repositoryFactory);
             
             // Khởi tạo một giao dịch mới với ID nhân viên hiện tại
-            String employeeId = SessionManager.getInstance().getCurrentUser().getEmployeeId();
+            Employee employee = SessionManager.getInstance().getCurrentUser().getEmployee();
             // String employeeId = "NV001";
 
-            sellController.initializeSale(employeeId);
+            sellController.initializeSale(employee);
             
             updateCartDisplay();
             
@@ -88,7 +90,9 @@ public class SellForm extends JPanel {
                 searchProducts();
             }
         });
-   
+        
+        employee = SessionManager.getInstance().getCurrentUser().getEmployee();
+        resetSaleForm();
     }
 
     /**
@@ -113,6 +117,8 @@ public class SellForm extends JPanel {
         panelCart = new com.k33ptoo.components.KGradientPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tableCart = new javax.swing.JTable();
+        panelDelete = new javax.swing.JPanel();
+        btnDeleteItemCart = new javax.swing.JButton();
         panelCustomerInfo = new com.k33ptoo.components.KGradientPanel();
         panelCustomerName = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -134,7 +140,7 @@ public class SellForm extends JPanel {
         jLabel6 = new javax.swing.JLabel();
         txtTotalAmount = new javax.swing.JTextField();
         panelButtonAction = new javax.swing.JPanel();
-        btnCancle = new com.k33ptoo.components.KButton();
+        btnReset = new com.k33ptoo.components.KButton();
         btnPay = new com.k33ptoo.components.KButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -232,6 +238,7 @@ public class SellForm extends JPanel {
 
         panelRight.setLayout(new javax.swing.BoxLayout(panelRight, javax.swing.BoxLayout.Y_AXIS));
 
+        panelCart.setBackground(new java.awt.Color(255, 255, 255));
         panelCart.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("lbCart"))); // NOI18N
         panelCart.setkFillBackground(false);
         panelCart.setOpaque(false);
@@ -293,6 +300,21 @@ public class SellForm extends JPanel {
 
         panelCart.add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
+        panelDelete.setBackground(new java.awt.Color(255, 255, 255));
+        panelDelete.setMinimumSize(new java.awt.Dimension(10, 20));
+        panelDelete.setPreferredSize(new java.awt.Dimension(100, 25));
+        panelDelete.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 0));
+
+        btnDeleteItemCart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png"))); // NOI18N
+        btnDeleteItemCart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDeleteItemCartMouseClicked(evt);
+            }
+        });
+        panelDelete.add(btnDeleteItemCart);
+
+        panelCart.add(panelDelete, java.awt.BorderLayout.PAGE_START);
+
         panelRight.add(panelCart);
 
         panelCustomerInfo.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("lbInfoInvoice"))); // NOI18N
@@ -315,6 +337,11 @@ public class SellForm extends JPanel {
         txtNameKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtNameKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtNameKH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
+        txtNameKH.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtNameKHFocusGained(evt);
+            }
+        });
         panelCustomerName.add(txtNameKH);
 
         panelCustomerInfo.add(panelCustomerName);
@@ -351,6 +378,7 @@ public class SellForm extends JPanel {
         btnApplyVoucher.setToolTipText("");
         btnApplyVoucher.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         btnApplyVoucher.setIconTextGap(3);
+        btnApplyVoucher.setkBorderRadius(45);
         btnApplyVoucher.setkEndColor(new java.awt.Color(153, 255, 153));
         btnApplyVoucher.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnApplyVoucher.setkHoverStartColor(new java.awt.Color(0, 153, 153));
@@ -368,6 +396,7 @@ public class SellForm extends JPanel {
         txtPointKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtPointKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtPointKH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
+        txtPointKH.setEnabled(false);
         panelCustomerPoint.add(txtPointKH);
 
         panelCustomerInfo.add(panelCustomerPoint);
@@ -412,22 +441,29 @@ public class SellForm extends JPanel {
         panelButtonAction.setOpaque(false);
         panelButtonAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 5));
 
-        btnCancle.setText(bundle.getString("btnCancle")); // NOI18N
-        btnCancle.setToolTipText("");
-        btnCancle.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnCancle.setIconTextGap(3);
-        btnCancle.setkBorderRadius(20);
-        btnCancle.setkEndColor(new java.awt.Color(255, 153, 0));
-        btnCancle.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnCancle.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnCancle.setkStartColor(new java.awt.Color(255, 51, 51));
-        panelButtonAction.add(btnCancle);
+        btnReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        btnReset.setText(bundle.getString("btnReset")); // NOI18N
+        btnReset.setToolTipText("");
+        btnReset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnReset.setIconTextGap(45);
+        btnReset.setInheritsPopupMenu(true);
+        btnReset.setkBorderRadius(40);
+        btnReset.setkEndColor(new java.awt.Color(0, 204, 0));
+        btnReset.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnReset.setkHoverStartColor(new java.awt.Color(0, 153, 153));
+        btnReset.setkStartColor(new java.awt.Color(102, 255, 0));
+        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnResetMouseClicked(evt);
+            }
+        });
+        panelButtonAction.add(btnReset);
 
-        btnPay.setText(bundle.getString("btnConfirm")); // NOI18N
+        btnPay.setText(bundle.getString("btnPay")); // NOI18N
         btnPay.setToolTipText("");
         btnPay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPay.setIconTextGap(3);
-        btnPay.setkBorderRadius(20);
+        btnPay.setkBorderRadius(45);
         btnPay.setkEndColor(new java.awt.Color(153, 255, 153));
         btnPay.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnPay.setkHoverStartColor(new java.awt.Color(0, 153, 153));
@@ -448,74 +484,10 @@ public class SellForm extends JPanel {
         add(kGradientPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnPayMouseClicked(MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
-            // Kiểm tra nếu giỏ hàng trống
-        if (sellController.getCartItems().isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.", 
-                "Thông báo", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        try {
-            // Lấy frame cha là DashboardForm
-            DashboardForm dashboard = DashboardForm.getInstance();
-            
-            // Tạo dialog thanh toán
-            PayForm payForm = new PayForm(dashboard, true);
-            
-            // // Thiết lập thông tin hóa đơn cho form thanh toán
-            // payForm.setInvoiceDetails(
-            //     sellController.getCurrentInvoice(), 
-            //     sellController.getCartItems(),
-            //     sellController.calculateTotal()
-            // );
-            
-            // // Hiển thị dialog và chờ kết quả
-            // payForm.setVisible(true);
-            
-            // // Sau khi dialog đóng, kiểm tra kết quả
-            // if (payForm.isPaymentSuccessful()) {
-            //     // Lấy phương thức thanh toán được chọn
-            //     PaymentMethodEnum paymentMethod = payForm.getSelectedPaymentMethod();
-                
-            //     // Hoàn thành giao dịch với phương thức thanh toán đã chọn
-            //     Invoice completedInvoice = sellController.completeSale(paymentMethod);
-                
-            //     if (completedInvoice != null) {
-            //         // Thông báo thành công
-            //         JOptionPane.showMessageDialog(this,
-            //             "Thanh toán thành công! Mã hóa đơn: " + completedInvoice.getInvoiceId(),
-            //             "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
-            //         // Hỏi người dùng có muốn in hóa đơn không
-            //         int option = JOptionPane.showConfirmDialog(this,
-            //             "Bạn có muốn in hóa đơn không?",
-            //             "In hóa đơn", JOptionPane.YES_NO_OPTION);
-                    
-            //         if (option == JOptionPane.YES_OPTION) {
-            //             // Triển khai chức năng in hóa đơn (nếu cần)
-            //             printReceipt(completedInvoice);
-            //         }
-                    
-            //         // Khởi tạo giao dịch mới
-            //         resetSaleForm();
-            //     } else {
-            //         JOptionPane.showMessageDialog(this,
-            //             "Lỗi khi hoàn thành giao dịch. Vui lòng thử lại.",
-            //             "Lỗi", JOptionPane.ERROR_MESSAGE);
-            //     }
-            //}
-            // Nếu người dùng hủy, không làm gì cả
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                "Lỗi khi xử lý thanh toán: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    
-        // Nếu cần lấy kết quả sau khi dialog đóng, đặt code ở đây
-        // Ví dụ: if (payForm.isPaymentSuccessful()) { ... }
+
+
+    private void btnPayMouseClicked(MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked    
+        saveInvoiceToPay();
     }//GEN-LAST:event_btnPayMouseClicked
 
     private void tableListProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListProductMouseClicked
@@ -537,7 +509,79 @@ public class SellForm extends JPanel {
                 listSelectProductIDs.add(productId);
             }
         }
+
+        //Nếu click duoble thì sửa số lượng sản phẩm
+        if (evt.getClickCount() == 2) {
+            int selectedRow = tableCart.getSelectedRow();
+            if (selectedRow >= 0) {
+                String productId = tableCart.getValueAt(selectedRow, 2).toString();
+                Integer quantity = JDialogInputUtils.showInputDialogInt(this, 
+                    "Nhập số lượng sản phẩm:", 
+                    String.valueOf(tableCart.getValueAt(selectedRow, 4)));
+                sellController.updateProductQuantityInCart(productId, quantity);
+                
+
+                // Cập nhật số lượng trong controller
+                boolean updated = sellController.updateProductQuantityInCart(productId, quantity);
+                        
+                if (updated) {
+                    updateCartDisplay();
+                } else {
+                    JOptionPane.showMessageDialog(SellForm.this,
+                        "Không thể cập nhật số lượng. Số lượng vượt quá tồn kho hoặc có lỗi khác.",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    
+                    updateCartDisplay();
+                }
+            }
+        }
     }//GEN-LAST:event_tableCartMouseClicked
+
+    private void btnDeleteItemCartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteItemCartMouseClicked
+        // Xóa sản phẩm đã chọn trong giỏ hàng
+        if (listSelectProductIDs.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng chọn sản phẩm để xóa khỏi giỏ hàng.", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Bạn có chắc chắn muốn xóa sản phẩm đã chọn khỏi giỏ hàng không?", 
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            for (String productId : listSelectProductIDs) {
+                
+                sellController.removeProductFromCart(productId);
+
+                // listSelectProductIDs.remove(productId);
+            }
+            listSelectProductIDs.clear();
+        }
+
+        updateCartDisplay();
+    }//GEN-LAST:event_btnDeleteItemCartMouseClicked
+
+    private void txtNameKHFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNameKHFocusGained
+        Customer customer = sellController.searchCustomerByPhone(txtPhoneNumberKH.getText().trim());
+        if (customer != null) {
+            txtNameKH.setText(customer.getFullName());
+            txtPointKH.setText(String.valueOf(customer.getPoints()));
+            sellController.addCustomerToSale(customer); // Lưu khách hàng hiện tại vào controller
+        } else {
+            txtNameKH.setText("Khách vãng lai");
+            txtPointKH.setText("0");
+        }
+    }//GEN-LAST:event_txtNameKHFocusGained
+
+    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+        int confirm = JOptionPane.showConfirmDialog(this,"Bạn có chắc chắn muốn làm mới giỏ hàng không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) 
+            resetSaleForm();
+
+    }//GEN-LAST:event_btnResetMouseClicked
 
 
 
@@ -558,38 +602,16 @@ public class SellForm extends JPanel {
             e.printStackTrace();
         }
         
-        // Cập nhật tổng số tiền
-        txtTotalAmount.setText(sellController.calculateTotal().toString() + " đ");
-        
-        // Cập nhật thông tin khách hàng nếu có
-        Invoice currentInvoice = sellController.getCurrentInvoice();
-        if (currentInvoice != null) {
-            Customer customer = currentInvoice.getCustomer();
-            if (customer != null && !customer.getCustomerId().equals("GUEST")) {
-                txtNameKH.setText(customer.getFullName());
-                txtPhoneNumberKH.setText(customer.getPhoneNumber());
-                txtPointKH.setText(String.valueOf(customer.getPoints()));
-            } else {
-                // Nếu là khách vãng lai
-                txtNameKH.setText("Khách vãng lai");
-                txtPhoneNumberKH.setText("");
-                txtPointKH.setText("0");
-            }
-        } else {
-            // Nếu chưa có hóa đơn
-            txtNameKH.setText("");
-            txtPhoneNumberKH.setText("");
-            txtPointKH.setText("");
-        }
+        // Sử dụng LocaleManager
+        NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+        BigDecimal total = sellController.calculateTotal();
+        txtTotalAmount.setText(formatter.format(total) + " đ");
     }
 
-
-    // Thêm vào lớp SellForm
     private void searchProducts() {
         String query = textFieldSearch.getTxtSearchField().getText().trim();
         List<Product> products = sellController.searchProducts(query);
         
-        // Hiển thị sản phẩm trong bảng sản phẩm (tableListProduct)
         updateProductTable(products);
     }
 
@@ -648,6 +670,141 @@ public class SellForm extends JPanel {
     }
 
 
+
+    private Customer insertCustomer(String FullNameCustomer, String PhoneNumberCustomer) {
+        // Kiểm tra xem khách hàng đã tồn tại trong cơ sở dữ liệu chưa
+        Customer existingCustomer = sellController.searchCustomerByPhone(PhoneNumberCustomer);
+        if (existingCustomer != null) {
+            return existingCustomer;
+        }
+
+        // Nếu chưa có khách hàng, thì tạo khách hàng mới nhé
+        Customer customer = new Customer();
+        if (FullNameCustomer.isEmpty() || FullNameCustomer.equalsIgnoreCase("Khách vãng lai")) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng nhập tên khách hàng", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+        
+        customer.setFullName(FullNameCustomer);
+        customer.setPhoneNumber(PhoneNumberCustomer);
+        customer.setPoints(0); // Hoặc lấy từ cơ sở dữ liệu nếu cần
+        return customer;
+    }
+
+    private void saveInvoiceToPay(){
+        // Kiểm tra nếu giỏ hàng trống
+        if (sellController.getCartItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try {
+
+            boolean checkUpdateInvoive = sellController.updateCurrentInvoice();
+            if (!checkUpdateInvoive) {
+                JOptionPane.showMessageDialog(this, 
+                    "Lỗi cập nhật hóa đơn. Vui lòng thử lại.", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            //===================Lưu thông tin khách hàng=========================
+            String FullNameCustomer = txtNameKH.getText().trim();
+            String PhoneNumberCustomer = txtPhoneNumberKH.getText().trim();
+
+            if(!PhoneNumberCustomer.isEmpty()) {
+                Customer customer = insertCustomer(FullNameCustomer, PhoneNumberCustomer);
+                if (customer == null) {
+                    return; // Nếu không thể tạo khách hàng, thoát khỏi phương thức
+                }
+                sellController.addCustomerToSale(customer);
+            }
+            //====================================================================
+
+            DashboardForm dashboard = DashboardForm.getInstance();
+            PayForm payForm = new PayForm(dashboard, true);
+            Invoice invoice = sellController.getCurrentInvoice();
+            payForm.setCurrentInvoice(invoice);
+
+            PaymentMethodEnum paymentMethod = payForm.getSelectedPaymentMethod();      
+            
+        /////////////Xác nhận lưu hóa đơn====================================
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Bạn có chắc chắn muốn thanh toán hóa đơn không?", 
+                "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) {
+                return; // Nếu không xác nhận, thoát khỏi phương thức
+            }
+
+            Invoice saveInvoice = sellController.saveInvoice(paymentMethod);
+            if (saveInvoice != null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Lưu hóa đơn thành công! ID: " + saveInvoice.getInvoiceId(), 
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Lỗi khi lưu hóa đơn. Vui lòng thử lại.", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        //-================================================================
+            payForm.setVisible(true);
+            // Lấy phương thức thanh toán được chọn
+            if(payForm.isCheckSelectedPaymentMethod()) {
+                Invoice invoice2 = sellController.saveInvoice(payForm.getSelectedPaymentMethod());
+            }
+
+
+            // Sau khi dialog đóng, kiểm tra kết quả
+            if (payForm.isPaymentSuccessful()) {
+
+                sellController.completeSale(saveInvoice);
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Thanh toán thành công!", 
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                resetSaleForm();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Thanh toán không thành công!", 
+                    "Thất bại", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                "Lỗi khi xử lý thanh toán: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void resetSaleForm() {
+
+        boolean check = sellController.initializeSale(employee);
+        if (!check) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khởi tạo hóa đơn mới. Vui lòng thử lại.", 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // Xóa giỏ hàng
+        sellController.clearCart();
+        
+        loadAllProducts();
+
+        // Cập nhật hiển thị giỏ hàng
+        updateCartDisplay();
+        
+        // Xóa thông tin khách hàng
+        txtNameKH.setText("Khách vãng lai");
+        txtPhoneNumberKH.setText("");
+        txtPointKH.setText("0");
+        txtDiscountAmount.setText("0 đ");
+    }
+
+
     // private void btnApplyVoucherActionPerformed(java.awt.event.ActionEvent evt) {
     //     String discountCode = JOptionPane.showInputDialog(this, 
     //         "Nhập mã giảm giá:",
@@ -677,8 +834,9 @@ public class SellForm extends JPanel {
     // }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnApplyVoucher;
-    private com.k33ptoo.components.KButton btnCancle;
+    private javax.swing.JButton btnDeleteItemCart;
     private com.k33ptoo.components.KButton btnPay;
+    private com.k33ptoo.components.KButton btnReset;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
@@ -700,6 +858,7 @@ public class SellForm extends JPanel {
     private javax.swing.JPanel panelCustomerPoint;
     private javax.swing.JPanel panelCustomerPromotion;
     private javax.swing.JPanel panelCustomerTotalAmount;
+    private javax.swing.JPanel panelDelete;
     private javax.swing.JPanel panelListProduct;
     private javax.swing.JPanel panelNav;
     private javax.swing.JPanel panelRight;

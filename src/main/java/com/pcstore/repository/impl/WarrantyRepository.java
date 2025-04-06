@@ -6,7 +6,7 @@ import com.pcstore.model.Warranty;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Customer;
 import com.pcstore.model.Product;
-import com.pcstore.model.RepairService;
+import com.pcstore.model.Repair;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

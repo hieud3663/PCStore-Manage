@@ -12,17 +12,20 @@ import java.util.regex.Pattern;
 public class Customer extends BasePerson {
 
     private Integer points;
-    
+    private String customerId; // Định dạng: KH01, KH02...
+
+
     public Customer(String fullName, String phoneNumber, String email) {
         super(fullName, phoneNumber, email);
+        points = 0;
         //TODO Auto-generated constructor stub
     }
 
     public Customer() {
         super();
+        points = 0;
     }
-
-    private String customerId; // Định dạng: KH01, KH02...
+    
 
     @Override
     public Object getId() {
@@ -34,29 +37,27 @@ public class Customer extends BasePerson {
     }
 
     public void setCustomerId(String customerId) {
+        
         if (customerId == null || customerId.trim().isEmpty()) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Mã khách hàng"));
         }
-        if (!customerId.matches("KH\\d+")) {
-            throw new IllegalArgumentException(ErrorMessage.CUSTOMER_ID_FORMAT);
+
+        if (customerId.equalsIgnoreCase("GUEST")) {
+            this.customerId = customerId;
+            return;
         }
+
         this.customerId = customerId;
     }
     
-
-    @Override
     public void setPhoneNumber(String phoneNumber) {
-        if (!isValidPhoneNumber(phoneNumber)) {
+        if(!isValidPhoneNumber(phoneNumber)) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_PHONE_NUMBER);
         }
         this.phoneNumber = phoneNumber;
     }
 
-    @Override
     public void setEmail(String email) {
-        if (email != null && !email.trim().isEmpty() && !isValidEmail()) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL);
-        }
         this.email = email;
     }
 
@@ -73,9 +74,6 @@ public class Customer extends BasePerson {
 
     @Override
     public void setAddress(String address) {
-        if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Địa chỉ"));
-        }
         this.address = address;
     }
 

@@ -22,7 +22,7 @@ public class RepositoryFactory {
     private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     private UserRepository userRepository;
     private WarrantyRepository warrantyRepository;
-    private RepairServiceRepository repairServiceRepository;
+    private RepairRepository repairServiceRepository;
     private ReturnRepository returnRepository;
     private DiscountRepository discountRepository;
     
@@ -111,10 +111,10 @@ public class RepositoryFactory {
        return warrantyRepository;
    }
     
-    public RepairServiceRepository getRepairServiceRepository() {
+    public RepairRepository getRepairServiceRepository() {
         if (repairServiceRepository == null) {
             // repairServiceRepository = new RepairServiceRepository(connection, this);
-            repairServiceRepository = new RepairServiceRepository(connection);
+            repairServiceRepository = new RepairRepository(connection);
         }
         return repairServiceRepository;
     }

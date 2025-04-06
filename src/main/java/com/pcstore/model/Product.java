@@ -19,11 +19,23 @@ public class Product extends BaseTimeEntity {
     private Category category;
     private Supplier supplier;
     
-    // Một sản phẩm xuất hiện trong nhiều chi tiết hóa đơn
-    private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+
     
-    // Một sản phẩm xuất hiện trong nhiều chi tiết nhập hàng
-    private List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
+
+    public Product(String productId, String productName, BigDecimal price, int stockQuantity, String specifications,
+            String description, Category category, Supplier supplier) {
+        this.productId = productId;
+        this.productName = productName;
+        this.price = price;
+        this.stockQuantity = stockQuantity;
+        this.specifications = specifications;
+        this.description = description;
+        this.category = category;
+        this.supplier = supplier;
+    }
+
+    public Product() {
+    }
 
     @Override
     public Object getId() {
@@ -116,51 +128,7 @@ public class Product extends BaseTimeEntity {
         }
         this.supplier = supplier;
     }
-
-    public List<InvoiceDetail> getInvoiceDetails() {
-        return invoiceDetails;
-    }
-
-    public void setInvoiceDetails(List<InvoiceDetail> invoiceDetails) {
-        this.invoiceDetails = invoiceDetails;
-    }
-    
-    public void addInvoiceDetail(InvoiceDetail invoiceDetail) {
-        if (invoiceDetail == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chi tiết hóa đơn"));
-        }
-        this.invoiceDetails.add(invoiceDetail);
-        invoiceDetail.setProduct(this);
-    }
-
-    public void removeInvoiceDetail(InvoiceDetail invoiceDetail) {
-        if (this.invoiceDetails.remove(invoiceDetail)) {
-            invoiceDetail.setProduct(null);
-        }
-    }
-
-    public List<PurchaseOrderDetail> getPurchaseOrderDetails() {
-        return purchaseOrderDetails;
-    }
-
-    public void setPurchaseOrderDetails(List<PurchaseOrderDetail> purchaseOrderDetails) {
-        this.purchaseOrderDetails = purchaseOrderDetails;
-    }
-    
-    public void addPurchaseOrderDetail(PurchaseOrderDetail detail) {
-        if (detail == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chi tiết đơn nhập hàng"));
-        }
-        this.purchaseOrderDetails.add(detail);
-        detail.setProduct(this);
-    }
-
-    public void removePurchaseOrderDetail(PurchaseOrderDetail detail) {
-        if (this.purchaseOrderDetails.remove(detail)) {
-            detail.setProduct(null);
-        }
-    }
-    
+   
     // Phương thức kiểm tra xem có đủ số lượng tồn kho không
     public boolean hasEnoughStock(int quantity) {
         return this.stockQuantity >= quantity;
@@ -208,11 +176,7 @@ public class Product extends BaseTimeEntity {
         return product;
     }
     
-    // Phương thức kiểm tra xem sản phẩm có thể xóa không
-    public boolean canDelete() {
-        return (invoiceDetails == null || invoiceDetails.isEmpty()) &&
-               (purchaseOrderDetails == null || purchaseOrderDetails.isEmpty());
-    }
+    
     
     // Phương thức kiểm tra tồn kho tối thiểu
     public boolean isLowStock(int minimumStock) {

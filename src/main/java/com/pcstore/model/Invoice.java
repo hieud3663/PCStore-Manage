@@ -22,6 +22,8 @@ public class Invoice extends BaseTimeEntity {
     private PaymentMethodEnum paymentMethod;
     private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
 
+
+
     @Override
     public Object getId() {
         return invoiceId;
@@ -90,9 +92,9 @@ public class Invoice extends BaseTimeEntity {
         if (status == null) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Trạng thái hóa đơn"));
         }
-        if (!canChangeStatus(status)) {
-            throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
-        }
+        // if (!canChangeStatus(status)) {
+        //     throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
+        // }
         this.status = status;
     }
 
@@ -180,14 +182,23 @@ public class Invoice extends BaseTimeEntity {
         if (status == null) {
             return true;
         }
+
+        // System.out.println("Current status: " + status + ", New status: " + newStatus);
         
         switch (status) {
             case PENDING:
-                return newStatus == InvoiceStatusEnum.PROCESSING || 
-                       newStatus == InvoiceStatusEnum.CANCELLED;
+                return  newStatus == InvoiceStatusEnum.PROCESSING || 
+                        newStatus == InvoiceStatusEnum.CANCELLED ||
+                        newStatus == InvoiceStatusEnum.PAID;
             case PROCESSING:
-                return newStatus == InvoiceStatusEnum.COMPLETED || 
-                       newStatus == InvoiceStatusEnum.CANCELLED;
+                return  newStatus == InvoiceStatusEnum.COMPLETED || 
+                        newStatus == InvoiceStatusEnum.CANCELLED ||
+                        newStatus == InvoiceStatusEnum.PAID;
+            case PAID:
+                return  newStatus == InvoiceStatusEnum.DELIVERED || 
+                        newStatus == InvoiceStatusEnum.CANCELLED ||
+                        newStatus == InvoiceStatusEnum.RETURNED ||
+                        newStatus == InvoiceStatusEnum.COMPLETED;
             case COMPLETED:
             case CANCELLED:
                 return false;

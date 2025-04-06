@@ -3,7 +3,6 @@ package com.pcstore.model;
 import com.pcstore.model.base.BasePerson;
 import com.pcstore.model.enums.EmployeePositionEnum;
 import com.pcstore.utils.ErrorMessage;
-import java.util.regex.Pattern;
 
 /**
  * Class biểu diễn nhân viên
@@ -85,25 +84,6 @@ public class Employee extends BasePerson {
     }
     
 
-    @Override
-    public boolean isValidEmail() {
-        if (email == null || email.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Email"));
-        }
-        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        return pattern.matcher(email).matches();
-    }
-
-    @Override
-    public boolean isValidPhoneNumber(String phoneNumber){
-        if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Số điện thoại"));
-        }
-        String phoneRegex = "^\\d{10,11}$";
-        Pattern pattern = Pattern.compile(phoneRegex);
-        return pattern.matcher(phoneNumber).matches();
-    }
 
     @Override
     public void setPhoneNumber(String phoneNumber) {
@@ -115,7 +95,7 @@ public class Employee extends BasePerson {
 
     @Override
     public void setEmail(String email) {
-        if (!isValidEmail()) {
+        if (!isValidEmail(email)) {
             throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL);
         }
         this.email = email;

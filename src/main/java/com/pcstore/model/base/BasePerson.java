@@ -63,7 +63,7 @@ public abstract class BasePerson extends BaseTimeEntity {
         this.address = address;
     }
     
-   public boolean isValidEmail() {
+   public boolean isValidEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
             return true; // Email không bắt buộc với khách hàng
         }

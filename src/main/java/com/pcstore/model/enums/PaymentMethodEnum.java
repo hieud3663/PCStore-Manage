@@ -4,8 +4,9 @@ public enum PaymentMethodEnum {
     CASH("Tiền mặt"),
     CREDIT_CARD("Thẻ tín dụng"),
     BANK_TRANSFER("Chuyển khoản"),
-    E_WALLET("Ví điện tử");
-    
+    E_WALLET("Ví điện tử"),
+    ZALOPAY("ZaloPay"),
+    MOMO("Momo");
     private final String displayName;
     
     PaymentMethodEnum(String displayName) {

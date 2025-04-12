@@ -1,14 +1,5 @@
 package com.pcstore.repository.impl;
 
-import com.pcstore.repository.Repository;
-import com.pcstore.repository.RepositoryFactory;
-import com.pcstore.model.Customer;
-import com.pcstore.model.Employee;
-import com.pcstore.model.Invoice;
-import com.pcstore.model.InvoiceDetail;
-import com.pcstore.model.enums.InvoiceStatusEnum;
-import com.pcstore.model.enums.PaymentMethodEnum;
-
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,6 +10,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.pcstore.model.Customer;
+import com.pcstore.model.Employee;
+import com.pcstore.model.Invoice;
+import com.pcstore.model.enums.InvoiceStatusEnum;
+import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
 
 /**
  * Repository implementation cho Invoice entity
@@ -26,6 +27,7 @@ import java.util.Optional;
 public class InvoiceRepository implements Repository<Invoice, Integer> {
     private Connection connection;
     private RepositoryFactory RepositoryFactory;
+    private static final Logger logger = Logger.getLogger(InvoiceRepository.class.getName());
     
     public InvoiceRepository(Connection connection, RepositoryFactory RepositoryFactory) {
         this.connection = connection;
@@ -247,29 +249,38 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         }
     }
     
-    // Tìm hóa đơn theo khách hàng
+    /**
+     * Tìm hóa đơn theo mã khách hàng
+     * @param customerId Mã khách hàng
+     * @return Danh sách hóa đơn
+     */
     public List<Invoice> findByCustomerId(String customerId) {
-        String sql = "SELECT i.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
+        String sql = "SELECT i.*, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "s.StatusName as StatusName, p.MethodName as PaymentMethodName " +
                      "FROM Invoices i " +
                      "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
-                     "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
+                     "LEFT JOIN InvoiceStatus s ON i.StatusID = s.StatusID " +
+                     "LEFT JOIN PaymentMethods p ON i.PaymentMethodID = p.PaymentMethodID " +
                      "WHERE i.CustomerID = ? " +
                      "ORDER BY i.InvoiceDate DESC";
+        
         List<Invoice> invoices = new ArrayList<>();
         
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, customerId);
-            ResultSet resultSet = statement.executeQuery();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, customerId);
             
-            while (resultSet.next()) {
-                Invoice invoice = mapResultSetToInvoice(resultSet);
-                invoices.add(invoice);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Invoice invoice = mapResultSetToInvoice(rs);
+                    invoices.add(invoice);
+                }
             }
-            
-            return invoices;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding invoices by customer", e);
+            logger.log(Level.SEVERE, "Error finding invoices by customer ID: " + customerId, e);
+            throw new RuntimeException("Database error when finding invoices by customer", e);
         }
+        
+        return invoices;
     }
     
     // Tìm hóa đơn theo nhân viên

@@ -1,16 +1,17 @@
 package com.pcstore.service;
 
-import com.pcstore.repository.impl.RepairRepository;
-import com.pcstore.model.Customer;
-import com.pcstore.model.Employee;
-import com.pcstore.model.Repair;
-import com.pcstore.model.Warranty;
-import com.pcstore.model.enums.RepairEnum;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import com.pcstore.model.Customer;
+import com.pcstore.model.Employee;
+import com.pcstore.model.Repair;
+import com.pcstore.model.Warranty;
+import com.pcstore.model.enums.RepairEnum;
+import com.pcstore.repository.impl.RepairRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến dịch vụ sửa chữa
@@ -168,32 +169,40 @@ public class RepairService {
      * @return Danh sách dịch vụ sửa chữa với thông tin đầy đủ
      */
     public List<Repair> getAllRepairServicesWithFullInfo() {
-        List<Repair> repairServices = repairServiceRepository.findAll();
-        
-        // Kiểm tra trường hợp customerService và employeeService chưa được thiết lập
-        if (customerService == null || employeeService == null) {
-            throw new IllegalStateException("CustomerService và EmployeeService phải được khởi tạo để lấy thông tin đầy đủ");
-        }
-        
-        // Lặp qua từng dịch vụ để lấy thông tin đầy đủ
-        for (Repair repairService : repairServices) {
-            // Lấy thông tin đầy đủ của Customer
-            if (repairService.getCustomer() != null) {
-                String customerId = repairService.getCustomer().getCustomerId();
-                customerService.findCustomerById(customerId).ifPresent(customer -> {
-                    repairService.setCustomer(customer);
-                });
+        try {
+            System.out.println("RepairService: Đang tải danh sách dịch vụ sửa chữa...");
+            List<Repair> repairs = repairServiceRepository.findAll();
+            System.out.println("RepairService: Đã tìm thấy " + repairs.size() + " dịch vụ");
+            
+            // Load thông tin đầy đủ cho mỗi dịch vụ
+            for (Repair repair : repairs) {
+                try {
+                    // Tải thông tin khách hàng
+                    if (repair.getCustomer() != null) {
+                        String customerId = repair.getCustomer().getCustomerId();
+                        customerService.findCustomerById(customerId).ifPresent(customer -> {
+                            repair.setCustomer(customer);
+                        });
+                    }
+                    
+                    // Tải thông tin nhân viên
+                    if (repair.getEmployee() != null) {
+                        String employeeId = repair.getEmployee().getEmployeeId();
+                        employeeService.findEmployeeById(employeeId).ifPresent(employee -> {
+                            repair.setEmployee(employee);
+                        });
+                    }
+                } catch (Exception e) {
+                    System.err.println("RepairService: Lỗi khi tải thông tin chi tiết: " + e.getMessage());
+                }
             }
             
-            // Lấy thông tin đầy đủ của Employee
-            if (repairService.getEmployee() != null) {
-                String employeeId = repairService.getEmployee().getEmployeeId();
-                employeeService.findEmployeeById(employeeId).ifPresent(employee -> {
-                    repairService.setEmployee(employee);
-                });
-            }
+            return repairs;
+        } catch (Exception e) {
+            System.err.println("RepairService: Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error getting all repair services with full info", e);
         }
-        return repairServices;
     }
     
     /**

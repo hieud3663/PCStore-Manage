@@ -37,9 +37,6 @@ public class RevenueDailyForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        lbRevenueDaily = new javax.swing.JLabel();
-        lbRevenueMonthly = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
@@ -55,36 +52,6 @@ public class RevenueDailyForm extends javax.swing.JPanel {
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("Revenue"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
-        jPanel1.setMaximumSize(new java.awt.Dimension(32767, 200));
-        jPanel1.setMinimumSize(new java.awt.Dimension(327, 70));
-        jPanel1.setPreferredSize(new java.awt.Dimension(390, 45));
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 0));
-
-        lbRevenueDaily.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbRevenueDaily.setText(bundle.getString("RevenueDaily")); // NOI18N
-        lbRevenueDaily.setPreferredSize(new java.awt.Dimension(165, 30));
-        lbRevenueDaily.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbRevenueDailyMouseClicked(evt);
-            }
-        });
-        jPanel1.add(lbRevenueDaily);
-
-        lbRevenueMonthly.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        lbRevenueMonthly.setText(bundle.getString("RevenueMonthly")); // NOI18N
-        lbRevenueMonthly.setMaximumSize(new java.awt.Dimension(119, 40));
-        lbRevenueMonthly.setMinimumSize(new java.awt.Dimension(119, 40));
-        lbRevenueMonthly.setPreferredSize(new java.awt.Dimension(165, 30));
-        lbRevenueMonthly.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbRevenueMonthlyMouseClicked(evt);
-            }
-        });
-        jPanel1.add(lbRevenueMonthly);
-
-        add(jPanel1);
 
         jPanel2.setMinimumSize(new java.awt.Dimension(354, 45));
         jPanel2.setPreferredSize(new java.awt.Dimension(980, 65));
@@ -155,7 +122,7 @@ public class RevenueDailyForm extends javax.swing.JPanel {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 466, Short.MAX_VALUE)
+            .addGap(0, 490, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -165,14 +132,6 @@ public class RevenueDailyForm extends javax.swing.JPanel {
 
         add(jPanel3);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void lbRevenueMonthlyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRevenueMonthlyMouseClicked
-        
-    }//GEN-LAST:event_lbRevenueMonthlyMouseClicked
-
-    private void lbRevenueDailyMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbRevenueDailyMouseClicked
-       
-    }//GEN-LAST:event_lbRevenueDailyMouseClicked
 
     private void btnExportReportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportReportMouseClicked
         // TODO add your handling code here:
@@ -185,14 +144,11 @@ public class RevenueDailyForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnExportReport;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JLabel lbRevenueDaily;
-    private javax.swing.JLabel lbRevenueMonthly;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,13 +1,5 @@
 package com.pcstore.repository.impl;
 
-import com.pcstore.repository.Repository;
-import com.pcstore.repository.RepositoryFactory;
-import com.pcstore.model.Warranty;
-import com.pcstore.model.InvoiceDetail;
-import com.pcstore.model.Customer;
-import com.pcstore.model.Product;
-import com.pcstore.model.Repair;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,21 +10,24 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Warranty;
+import com.pcstore.repository.Repository;
 
 /**
  * Repository implementation cho Warranty entity
  */
 public class WarrantyRepository implements Repository<Warranty, Integer> {
     private Connection connection;
+    private static final Logger logger = Logger.getLogger(WarrantyRepository.class.getName());
     
     public WarrantyRepository(Connection connection) {
         this.connection = connection;
     }
     
-    // public WarrantyRepository(Connection connection2, RepositoryFactory RepositoryFactory) {
-    //     //TODO Auto-generated constructor stub
-    // }
-
     @Override
     public Warranty add(Warranty warranty) {
         String sql = "INSERT INTO Warranties (InvoiceDetailID, StartDate, EndDate, WarrantyTerms) " +
@@ -87,10 +82,15 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
     
     @Override
     public boolean delete(Integer warrantyId) {
+        return delete(warrantyId.toString());
+    }
+
+    // Thêm phương thức delete mới nhận vào String
+    public boolean delete(String warrantyId) {
         String sql = "DELETE FROM Warranties WHERE WarrantyID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, warrantyId);
+            statement.setString(1, warrantyId);
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -100,20 +100,43 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
     
     @Override
     public Optional<Warranty> findById(Integer warrantyId) {
-        String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
-                     "p.ProductName, " +
-                     "inv.CustomerID, c.FullName as CustomerName, " +
-                     "rs.RepairID, rs.Status as RepairStatus " +
+        // Sửa câu truy vấn để sử dụng CAST hoặc CONVERT nếu cần thiết
+        String sql = "SELECT w.*, id.InvoiceDetailID, c.CustomerID, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "p.ProductID, p.ProductName " +
                      "FROM Warranties w " +
-                     "JOIN InvoiceDetails i ON w.InvoiceDetailID = i.InvoiceDetailID " +
-                     "JOIN Products p ON i.ProductID = p.ProductID " +
-                     "JOIN Invoices inv ON i.InvoiceID = inv.InvoiceID " +
-                     "LEFT JOIN Customers c ON inv.CustomerID = c.CustomerID " +
-                     "LEFT JOIN RepairServices rs ON rs.WarrantyID = w.WarrantyID " +
+                     "LEFT JOIN InvoiceDetails id ON w.InvoiceDetailID = id.InvoiceDetailID " +
+                     "LEFT JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Products p ON id.ProductID = p.ProductID " +
                      "WHERE w.WarrantyID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, warrantyId);
+            // Có thể warrantyId là String hoặc Integer, xử lý cả hai trường hợp
+            statement.setString(1, warrantyId.toString());
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (resultSet.next()) {
+                return Optional.of(mapResultSetToWarranty(resultSet));
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi tìm bảo hành theo ID", e);
+        }
+    }
+
+    // Thêm phương thức findById mới nhận vào String
+    public Optional<Warranty> findById(String warrantyId) {
+        String sql = "SELECT w.*, id.InvoiceDetailID, c.CustomerID, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "p.ProductID, p.ProductName " +
+                     "FROM Warranties w " +
+                     "LEFT JOIN InvoiceDetails id ON w.InvoiceDetailID = id.InvoiceDetailID " +
+                     "LEFT JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Products p ON id.ProductID = p.ProductID " +
+                     "WHERE w.WarrantyID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, warrantyId);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -127,16 +150,15 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
     
     @Override
     public List<Warranty> findAll() {
-        String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
-                     "p.ProductName, " +
-                     "inv.CustomerID, c.FullName as CustomerName, " +
-                     "rs.RepairID, rs.Status as RepairStatus " +
+        // Sửa tên cột để khớp với cấu trúc DB
+        String sql = "SELECT w.*, id.InvoiceDetailID, c.CustomerID, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "p.ProductID, p.ProductName " +
                      "FROM Warranties w " +
-                     "JOIN InvoiceDetails i ON w.InvoiceDetailID = i.InvoiceDetailID " +
-                     "JOIN Products p ON i.ProductID = p.ProductID " +
-                     "JOIN Invoices inv ON i.InvoiceID = inv.InvoiceID " +
-                     "LEFT JOIN Customers c ON inv.CustomerID = c.CustomerID " +
-                     "LEFT JOIN RepairServices rs ON rs.WarrantyID = w.WarrantyID";
+                     "LEFT JOIN InvoiceDetails id ON w.InvoiceDetailID = id.InvoiceDetailID " +
+                     "LEFT JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Products p ON id.ProductID = p.ProductID " +
+                     "ORDER BY w.StartDate DESC";
                      
         List<Warranty> warranties = new ArrayList<>();
         
@@ -148,16 +170,22 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
             }
             return warranties;
         } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error fetching all warranties", e);
             throw new RuntimeException("Lỗi khi lấy tất cả bảo hành", e);
         }
     }
     
     @Override
     public boolean exists(Integer warrantyId) {
+        return exists(warrantyId.toString());
+    }
+
+    // Thêm phương thức exists mới nhận vào String
+    public boolean exists(String warrantyId) {
         String sql = "SELECT COUNT(*) FROM Warranties WHERE WarrantyID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, warrantyId);
+            statement.setString(1, warrantyId);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -169,7 +197,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành theo chi tiết hóa đơn
     public Optional<Warranty> findByInvoiceDetailId(Integer invoiceDetailId) {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -196,7 +223,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành theo khách hàng
     public List<Warranty> findByCustomerId(String customerId) {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -225,7 +251,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành theo sản phẩm
     public List<Warranty> findByProductId(String productId) {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -254,7 +279,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành còn hiệu lực
     public List<Warranty> findActiveWarranties() {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -283,7 +307,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành hết hạn
     public List<Warranty> findExpiredWarranties() {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -311,7 +334,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành sắp hết hạn
     public List<Warranty> findWarrantiesAboutToExpire(int daysThreshold) {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -341,7 +363,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Tìm bảo hành đã sử dụng
     public List<Warranty> findUsedWarranties() {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -368,7 +389,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Phương thức liên kết bảo hành với dịch vụ sửa chữa
     public boolean linkToRepairService(Integer warrantyId, Integer repairServiceId) {
         String sql = "UPDATE RepairServices SET WarrantyID = ? WHERE RepairID = ?";
         
@@ -383,7 +403,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Phương thức hủy liên kết bảo hành với dịch vụ sửa chữa
     public boolean unlinkFromRepairService(Integer repairServiceId) {
         String sql = "UPDATE RepairServices SET WarrantyID = NULL WHERE RepairID = ?";
         
@@ -397,12 +416,15 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Phương thức kiểm tra bảo hành có đang được sử dụng không
     public boolean isUsed(Integer warrantyId) {
+        return isUsed(warrantyId.toString());
+    }
+
+    public boolean isUsed(String warrantyId) {
         String sql = "SELECT COUNT(*) FROM RepairServices WHERE WarrantyID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, warrantyId);
+            statement.setString(1, warrantyId);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -414,7 +436,6 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Phương thức lấy tất cả bảo hành liên quan đến dịch vụ sửa chữa
     public List<Warranty> findByRepairServiceId(Integer repairServiceId) {
         String sql = "SELECT w.*, i.InvoiceID, i.ProductID, i.UnitPrice, " +
                      "p.ProductName, " +
@@ -443,74 +464,146 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
         }
     }
     
-    // Phương thức chuyển đổi từ ResultSet sang đối tượng Warranty
-    private Warranty mapResultSetToWarranty(ResultSet resultSet) throws SQLException {
-        Warranty warranty = new Warranty();
-        warranty.setWarrantyId(resultSet.getString("WarrantyID"));
+    /**
+     * Tìm kiếm bảo hành theo từ khóa
+     * @param keyword Từ khóa tìm kiếm
+     * @return Danh sách bảo hành phù hợp với từ khóa
+     */
+    public List<Warranty> search(String keyword) {
+        List<Warranty> warranties = new ArrayList<>();
         
-        // Thiết lập thời gian bảo hành
-        Timestamp startDate = resultSet.getTimestamp("StartDate");
-        if (startDate != null) {
-            warranty.setStartDate(startDate.toLocalDateTime());
-        }
+        // Sửa tên cột để khớp với cấu trúc DB
+        String sql = "SELECT w.*, id.InvoiceDetailID, c.CustomerID, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "p.ProductID, p.ProductName " +
+                     "FROM Warranties w " +
+                     "LEFT JOIN InvoiceDetails id ON w.InvoiceDetailID = id.InvoiceDetailID " +
+                     "LEFT JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Products p ON id.ProductID = p.ProductID " +
+                     "WHERE w.WarrantyID LIKE ? " +
+                     "OR c.FullName LIKE ? " +
+                     "OR c.PhoneNumber LIKE ? " +
+                     "OR p.ProductID LIKE ? " +
+                     "OR p.ProductName LIKE ? " +
+                     "ORDER BY w.StartDate DESC";
         
-        Timestamp endDate = resultSet.getTimestamp("EndDate");
-        if (endDate != null) {
-            warranty.setEndDate(endDate.toLocalDateTime());
-        }
-        
-        warranty.setWarrantyTerms(resultSet.getString("WarrantyTerms"));
-        
-        // Thiết lập chi tiết hóa đơn với thông tin cơ bản
-        InvoiceDetail invoiceDetail = new InvoiceDetail();
-        invoiceDetail.setInvoiceDetailId(resultSet.getInt("InvoiceDetailID"));
-        
-        // Thiết lập sản phẩm cơ bản cho chi tiết hóa đơn
-        Product product = new Product();
-        product.setProductId(resultSet.getString("ProductID"));
-        product.setProductName(resultSet.getString("ProductName"));
-        
-        invoiceDetail.setProduct(product);
-        warranty.setInvoiceDetail(invoiceDetail);
-        
-        // Lưu trữ thông tin hiển thị cho UI
-        try {
-            warranty.setProductName(resultSet.getString("ProductName"));
-            warranty.setCustomerName(resultSet.getString("CustomerName"));
-        } catch (SQLException e) {
-            // Bỏ qua nếu không có cột này
-        }
-        
-        // Thiết lập trạng thái đã sử dụng bảo hành và thông tin dịch vụ sửa chữa
-        try {
-            int repairId = resultSet.getInt("RepairID");
-            if (repairId > 0) {
-                warranty.setUsed(true);
-                warranty.setRepairServiceId(repairId);
-                warranty.setRepairStatus(resultSet.getString("RepairStatus"));
-            } else {
-                warranty.setUsed(false);
-            }
-        } catch (SQLException e) {
-            // Bỏ qua nếu không có cột này
-            warranty.setUsed(false);
-        }
-        
-        // Lấy thời gian tạo và cập nhật nếu có
-        try {
-            Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
-            if (createdAt != null) {
-                warranty.setCreatedAt(createdAt.toLocalDateTime());
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            String searchPattern = "%" + keyword + "%";
+            for (int i = 1; i <= 5; i++) {
+                stmt.setString(i, searchPattern);
             }
             
-            Timestamp updatedAt = resultSet.getTimestamp("UpdatedAt");
-            if (updatedAt != null) {
-                warranty.setUpdatedAt(updatedAt.toLocalDateTime());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    warranties.add(mapResultSetToWarranty(rs));
+                }
             }
         } catch (SQLException e) {
-            // Bỏ qua nếu không có các cột này
+            logger.log(Level.SEVERE, "Error searching warranties with keyword: " + keyword, e);
+            throw new RuntimeException("Database error when searching warranties", e);
+        }
+        
+        return warranties;
+    }
+    
+    private Warranty mapResultSetToWarranty(ResultSet rs) throws SQLException {
+        Warranty warranty = new Warranty();
+        
+        try {
+            // Các trường cơ bản của Warranty - Sử dụng getString thay vì getInt để tránh lỗi chuyển đổi
+            warranty.setWarrantyId(rs.getString("WarrantyID"));
+            
+            if (rs.getTimestamp("StartDate") != null) {
+                warranty.setStartDate(rs.getTimestamp("StartDate").toLocalDateTime());
+            }
+            
+            if (rs.getTimestamp("EndDate") != null) {
+                warranty.setEndDate(rs.getTimestamp("EndDate").toLocalDateTime());
+            }
+            
+            if (hasColumn(rs, "WarrantyTerms")) {
+                warranty.setWarrantyTerms(rs.getString("WarrantyTerms"));
+            }
+            
+            // Trường is_used có thể không tồn tại trong DB
+            try {
+                if (hasColumn(rs, "is_used")) {
+                    warranty.setUsed(rs.getBoolean("is_used"));
+                } else if (hasColumn(rs, "IsUsed")) {
+                    warranty.setUsed(rs.getBoolean("IsUsed"));
+                } else {
+                    warranty.setUsed(false); // Giá trị mặc định
+                }
+            } catch (SQLException e) {
+                warranty.setUsed(false);
+                logger.warning("Could not find IsUsed column: " + e.getMessage());
+            }
+            
+            // Thông tin invoice detail - Lấy dưới dạng String để tránh lỗi chuyển đổi
+            InvoiceDetail invoiceDetail = new InvoiceDetail();
+            try {
+                invoiceDetail.setInvoiceDetailId(rs.getInt("InvoiceDetailID"));
+                warranty.setInvoiceDetail(invoiceDetail);
+            } catch (SQLException e) {
+                logger.warning("Error getting InvoiceDetailID: " + e.getMessage());
+                // Thử lại với kiểu VARCHAR
+                try {
+                    String idStr = rs.getString("InvoiceDetailID");
+                    if (idStr != null && !idStr.isEmpty()) {
+                        try {
+                            invoiceDetail.setInvoiceDetailId(Integer.parseInt(idStr));
+                        } catch (NumberFormatException nfe) {
+                            logger.warning("Cannot parse InvoiceDetailID: " + idStr);
+                        }
+                    }
+                    warranty.setInvoiceDetail(invoiceDetail);
+                } catch (SQLException e2) {
+                    logger.warning("Could not find InvoiceDetailID column: " + e2.getMessage());
+                }
+            }
+            
+            // Thông tin bổ sung từ join (nếu có)
+            if (hasColumn(rs, "CustomerName")) {
+                warranty.setCustomerName(rs.getString("CustomerName"));
+            }
+            
+            if (hasColumn(rs, "CustomerPhone")) {
+                warranty.setCustomerPhone(rs.getString("CustomerPhone"));
+            } else if (hasColumn(rs, "PhoneNumber")) {
+                warranty.setCustomerPhone(rs.getString("PhoneNumber"));
+            }
+            
+            if (hasColumn(rs, "ProductName")) {
+                warranty.setProductName(rs.getString("ProductName"));
+            }
+            
+            if (hasColumn(rs, "CustomerID")) {
+                warranty.setCustomerId(rs.getString("CustomerID"));
+            }
+            
+            if (hasColumn(rs, "ProductID")) {
+                warranty.setProductId(rs.getString("ProductID"));
+            }
+        } catch (SQLException e) {
+            logger.log(Level.WARNING, "Error mapping ResultSet to Warranty: " + e.getMessage(), e);
+            throw e;
         }
         
         return warranty;
+    }
+
+    /**
+     * Kiểm tra xem ResultSet có chứa cột với tên cụ thể không
+     * @param rs ResultSet cần kiểm tra
+     * @param columnName Tên cột cần tìm
+     * @return true nếu có cột, false nếu không có
+     */
+    private boolean hasColumn(ResultSet rs, String columnName) {
+        try {
+            rs.findColumn(columnName);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }

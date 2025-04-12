@@ -4,17 +4,31 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.controller.WarrantyController;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Warranty;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 /**
  *
  * @author DUC ANH
  */
 public class AddWarrantyForm extends javax.swing.JPanel {
+    private WarrantyController controller;
+    private List<InvoiceDetail> currentInvoiceDetails;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
      * Creates new form AddWarranty
      */
-    public AddWarrantyForm() {
+    public AddWarrantyForm(WarrantyController controller) {
+        this.controller = controller;
         initComponents();
+        setupListeners();
     }
 
     /**
@@ -170,6 +184,97 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    private void setupListeners() {
+        btnReturnInformationLookup.addActionListener(evt -> searchProductsByPhone());
+        btnWarranty.addActionListener(evt -> createWarranty());
+    }
+
+    private void searchProductsByPhone() {
+        String phoneNumber = jTextField1.getText().trim();
+
+        if (phoneNumber.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Vui lòng nhập số điện thoại khách hàng",
+                "Thông báo",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // Gọi controller để tìm kiếm sản phẩm đã mua
+        List<InvoiceDetail> invoiceDetails = controller.findPurchasedProductsByPhone(phoneNumber);
+
+        if (invoiceDetails.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Không tìm thấy sản phẩm nào đã mua với số điện thoại này",
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+
+        // Cập nhật bảng
+        updateProductTable(invoiceDetails);
+    }
+
+    private void updateProductTable(List<InvoiceDetail> invoiceDetails) {
+        this.currentInvoiceDetails = invoiceDetails;
+
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+        for (InvoiceDetail detail : invoiceDetails) {
+            model.addRow(new Object[]{
+                detail.getProduct().getProductId(),
+                detail.getProduct().getProductName(),
+                detail.getProduct().getSupplier() != null ? detail.getProduct().getSupplier() : "N/A",
+                detail.getCreatedAt() != null ? detail.getCreatedAt().format(dateFormatter) : "",
+                detail.getWarranty() != null && detail.getWarranty().getEndDate() != null ? 
+                detail.getWarranty().getEndDate().format(dateFormatter) : "12 tháng",
+                detail.getInvoice().getCustomer().getFullName(),
+                detail.getInvoice().getCustomer().getPhoneNumber()
+            });
+        }
+    }
+
+    private void createWarranty() {
+        int selectedRow = jTable1.getSelectedRow();
+
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Vui lòng chọn sản phẩm để đăng ký bảo hành",
+                "Thông báo",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        InvoiceDetail selectedDetail = currentInvoiceDetails.get(selectedRow);
+
+        try {
+            // Gọi controller để tạo phiếu bảo hành
+            Warranty warranty = controller.createWarrantyFromInvoiceDetail(selectedDetail);
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Đã đăng ký bảo hành thành công với mã: " + warranty.getWarrantyId(),
+                "Thành công",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+
+            // Đóng form sau khi đăng ký thành công
+            javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                this, 
+                "Lỗi khi đăng ký bảo hành: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnReturnInformationLookup;

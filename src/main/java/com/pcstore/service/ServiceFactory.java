@@ -1,13 +1,8 @@
 package com.pcstore.service;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.xml.crypto.Data;
-
-import com.pcstore.model.Invoice;
-import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.utils.DatabaseConnection;
 
@@ -29,6 +24,7 @@ public class ServiceFactory {
     private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
+    private static InvoiceDetailService invoiceDetailService;  // Thay vì InvoiceDetail
     // private static UserService userService;
     
     /**
@@ -86,6 +82,23 @@ public class ServiceFactory {
             customerService = new CustomerService(getInstance().getConnection());
         }
         return customerService;
+    }
+    
+    /**
+     * Lấy InvoiceDetailService
+     * @return InvoiceDetailService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
+        if (invoiceDetailService == null) {
+            RepositoryFactory repoFactory = new RepositoryFactory(getInstance().getConnection());
+            invoiceDetailService = new InvoiceDetailService(
+                repoFactory.getInvoiceDetailRepository(),
+                repoFactory.getProductRepository(),
+                repoFactory.getInvoiceRepository() // Thêm InvoiceRepository
+            );
+        }
+        return invoiceDetailService;
     }
     
     /**

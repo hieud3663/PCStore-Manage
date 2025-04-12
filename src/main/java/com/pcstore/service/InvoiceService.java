@@ -1,16 +1,15 @@
 package com.pcstore.service;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import com.pcstore.model.Invoice;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.InvoiceRepository;
 import com.pcstore.repository.impl.ProductRepository;
-
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến hóa đơn

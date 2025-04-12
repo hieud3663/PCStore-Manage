@@ -1,8 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.pcstore.view;
+
+import com.pcstore.controller.ReturnController;
+import com.pcstore.controller.InvoiceController;
+import com.pcstore.model.Invoice;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Return;
+import com.pcstore.service.ServiceFactory;
+
+import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -10,11 +19,249 @@ package com.pcstore.view;
  */
 public class AddReturnProductForm extends javax.swing.JPanel {
 
+    private ReturnController returnController;
+    private InvoiceController invoiceController;
+    private DefaultTableModel invoiceTableModel;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    private ReturnServiceForm parentForm;
+
     /**
      * Creates new form AddReapairProduct
      */
     public AddReturnProductForm() {
         initComponents();
+        initControllers();
+        setupTable();
+    }
+
+    /**
+     * Constructor để truyền form cha vào để cập nhật dữ liệu
+     */
+    public AddReturnProductForm(ReturnServiceForm parent) {
+        this();
+        this.parentForm = parent;
+    }
+
+    private void initControllers() {
+        try {
+            // Khởi tạo các controller cần thiết
+            returnController = new ReturnController(
+                ServiceFactory.getInstance().getConnection(),
+                ServiceFactory.getInvoiceService(),
+                ServiceFactory.getProductService()
+            );
+            
+            invoiceController = new InvoiceController(
+                ServiceFactory.getInstance().getConnection()
+            );
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage(),
+                "Lỗi kết nối", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void setupTable() {
+        // Thiết lập table model cho bảng hiển thị sản phẩm
+        invoiceTableModel = (DefaultTableModel) jTable2.getModel();
+        invoiceTableModel.setRowCount(0);
+        
+        // Thiết lập các tiêu đề cột
+        String[] columnNames = {
+            "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn Giá", "Số Lượng", "Ngày Mua", "Tên Khách Hàng", "SĐT"
+        };
+        
+        invoiceTableModel.setColumnIdentifiers(columnNames);
+    }
+    
+    /**
+     * Tìm kiếm hóa đơn theo số điện thoại khách hàng
+     */
+    private void searchByPhoneNumber() {
+        String phoneNumber = jTextField1.getText().trim();
+        if (phoneNumber.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng nhập số điện thoại khách hàng để tìm kiếm", 
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        try {
+            // Tìm hóa đơn theo SĐT khách hàng
+            List<Invoice> invoices = invoiceController.getInvoicesByCustomerPhone(phoneNumber);
+            
+            if (invoices.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Không tìm thấy hóa đơn nào cho khách hàng với số điện thoại: " + phoneNumber, 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                invoiceTableModel.setRowCount(0);
+                return;
+            }
+            
+            // Hiển thị thông tin các sản phẩm trong hóa đơn
+            displayInvoiceDetails(invoices);
+            
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi tìm kiếm hóa đơn: " + ex.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    /**
+     * Hiển thị chi tiết các hóa đơn
+     */
+    private void displayInvoiceDetails(List<Invoice> invoices) {
+        invoiceTableModel.setRowCount(0);
+        
+        for (Invoice invoice : invoices) {
+            try {
+                List<InvoiceDetail> details = invoiceController.getInvoiceDetails(invoice.getInvoiceId());
+                
+                for (InvoiceDetail detail : details) {
+                    try {
+                        // Kiểm tra xem sản phẩm này đã được trả hết chưa
+                        int remainingQuantity = detail.getQuantity();
+                        
+                        // Tìm các đơn trả hàng hiện có cho sản phẩm này
+                        List<Return> existingReturns = returnController.getReturnsByInvoiceDetail(
+                            detail.getInvoiceDetailId());
+                        
+                        for (Return returnObj : existingReturns) {
+                            // Chỉ tính những đơn ở trạng thái Approved hoặc Completed
+                            if ("Approved".equals(returnObj.getStatus()) || 
+                                "Completed".equals(returnObj.getStatus())) {
+                                remainingQuantity -= returnObj.getQuantity();
+                            }
+                        }
+                        
+                        // Nếu còn số lượng có thể trả, hiển thị
+                        if (remainingQuantity > 0) {
+                            Object[] rowData = {
+                                detail.getInvoiceDetailId(), // ID chi tiết hóa đơn ở cột đầu tiên (ẩn)
+                                detail.getProduct().getProductId(),
+                                detail.getProduct().getProductName(),
+                                detail.getUnitPrice(),
+                                remainingQuantity,  // Chỉ hiển thị số lượng còn có thể trả
+                                invoice.getInvoiceDate().format(dateFormatter),
+                                invoice.getCustomer() != null ? invoice.getCustomer().getFullName() : "Khách lẻ",
+                                invoice.getCustomer() != null ? invoice.getCustomer().getPhoneNumber() : ""
+                            };
+                            invoiceTableModel.addRow(rowData);
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi tính số lượng có thể trả: " + e.getMessage());
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Lỗi khi lấy chi tiết hóa đơn: " + e.getMessage());
+            }
+        }
+        
+        // Cập nhật các tiêu đề cột
+        if (jTable2.getColumnCount() >= 8) {
+            invoiceTableModel.setColumnIdentifiers(new String[] {
+                "ID Chi tiết", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn Giá", 
+                "Số Lượng Có Thể Trả", "Ngày Mua", "Tên Khách Hàng", "SĐT"
+            });
+            
+            // Ẩn cột ID chi tiết hóa đơn
+            jTable2.getColumnModel().getColumn(0).setMinWidth(0);
+            jTable2.getColumnModel().getColumn(0).setMaxWidth(0);
+            jTable2.getColumnModel().getColumn(0).setWidth(0);
+        }
+    }
+    
+    /**
+     * Xử lý chức năng trả hàng
+     */
+    private void createReturn() {
+        int selectedRow = jTable2.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng chọn một sản phẩm để trả", 
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        try {
+            // Lấy thông tin từ dòng được chọn
+            Integer invoiceDetailId = (Integer) invoiceTableModel.getValueAt(selectedRow, 0);
+            String productId = invoiceTableModel.getValueAt(selectedRow, 1).toString();
+            String productName = invoiceTableModel.getValueAt(selectedRow, 2).toString();
+            double unitPrice = Double.parseDouble(invoiceTableModel.getValueAt(selectedRow, 3).toString());
+            int availableQuantity = Integer.parseInt(invoiceTableModel.getValueAt(selectedRow, 4).toString());
+            
+            // Hiển thị dialog để nhập thông tin trả hàng
+            String input = JOptionPane.showInputDialog(this, 
+                "Nhập số lượng sản phẩm muốn trả (tối đa " + availableQuantity + "):", 
+                "1");
+            
+            if (input == null || input.trim().isEmpty()) {
+                return; // Người dùng đã hủy
+            }
+            
+            int returnQuantity = Integer.parseInt(input);
+            
+            if (returnQuantity <= 0 || returnQuantity > availableQuantity) {
+                JOptionPane.showMessageDialog(this, 
+                    "Số lượng không hợp lệ. Vui lòng nhập số từ 1 đến " + availableQuantity, 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Hiển thị dialog nhập lý do trả hàng
+            String reason = JOptionPane.showInputDialog(this, 
+                "Nhập lý do trả hàng:", 
+                "Lý do trả hàng");
+                
+            if (reason == null || reason.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Vui lòng nhập lý do trả hàng", 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Tạo đơn trả hàng
+            Return returnObj = returnController.createReturn(
+                invoiceDetailId, 
+                returnQuantity, 
+                reason, 
+                null // Không có ghi chú bổ sung
+            );
+            
+            if (returnObj != null) {
+                // Hiển thị thông báo thành công với mã đơn trả
+                JOptionPane.showMessageDialog(this, 
+                    "Đã tạo đơn trả hàng thành công!\nMã đơn: " + returnObj.getReturnId(), 
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                
+                // Nếu có form cha, cập nhật dữ liệu ở form đó
+                if (parentForm != null) {
+                    parentForm.loadAllReturns();
+                }
+                
+                // Đóng form sau khi tạo đơn thành công
+                if (getParent() instanceof javax.swing.JDialog) {
+                    ((javax.swing.JDialog) getParent()).dispose();
+                }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "Số lượng không hợp lệ. Vui lòng nhập một số nguyên.", 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi tạo đơn trả hàng: " + ex.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Thêm xử lý sự kiện cho các nút trong form
+    private void addListeners() {
+        btnReturnInformationLookup.addActionListener(e -> searchByPhoneNumber());
+        btnWarranty.addActionListener(e -> createReturn());
+        btnWarranty1.addActionListener(e -> createReturn());
     }
 
     /**
@@ -160,15 +407,14 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(kGradientPanel3Layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(kGradientPanel3Layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnWarranty1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(76, 76, 76))))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(kGradientPanel3Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnWarranty1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(76, 76, 76))
         );
         kGradientPanel3Layout.setVerticalGroup(
             kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -187,8 +433,9 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
                 .addComponent(kGradientPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,9 +444,15 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
+        searchByPhoneNumber();
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        // Đảm bảo listeners được thêm sau khi form đã được khởi tạo đầy đủ
+        addListeners();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnReturnInformationLookup;

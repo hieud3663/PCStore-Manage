@@ -2,9 +2,6 @@ package com.pcstore.model;
 
 import com.pcstore.model.base.BasePerson;
 import com.pcstore.utils.ErrorMessage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Class biểu diễn khách hàng
@@ -20,7 +17,7 @@ public class Customer extends BasePerson {
         points = 0;
         //TODO Auto-generated constructor stub
     }
-
+    
     public Customer() {
         super();
         points = 0;

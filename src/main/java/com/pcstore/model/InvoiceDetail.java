@@ -1,9 +1,10 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
+
+import com.pcstore.model.base.BaseTimeEntity;
 
 /**
  * Class biểu diễn chi tiết hóa đơn
@@ -17,6 +18,16 @@ public class InvoiceDetail extends BaseTimeEntity {
     private BigDecimal unitPrice;
     private BigDecimal discountAmount;
     private String notes;
+
+    // Thêm các trường bổ sung
+    // private String customerName;
+    // private String customerPhone;
+    // private String customerId;
+    // private LocalDateTime purchaseDate;
+    // private String productName;
+    // private String manufacturer;
+    // private LocalDateTime warrantyEndDate; // Ngày kết thúc bảo hành
+    // private String productId;
 
     public InvoiceDetail(Integer invoiceDetailId, Invoice invoice, Product product, Warranty warranty, int quantity,
             BigDecimal unitPrice, BigDecimal discountAmount, String notes) {
@@ -128,6 +139,87 @@ public class InvoiceDetail extends BaseTimeEntity {
         this.notes = notes;
     }
 
+    // public String getCustomerName() {
+    //     return customerName;
+    // }
+
+    // public void setCustomerName(String customerName) {
+    //     this.customerName = customerName;
+    // }
+
+    // public String getCustomerPhone() {
+    //     return customerPhone;
+    // }
+
+    // public void setCustomerPhone(String customerPhone) {
+    //     this.customerPhone = customerPhone;
+    // }
+
+    // public String getCustomerId() {
+    //     return customerId;
+    // }
+
+    // public void setCustomerId(String customerId) {
+    //     this.customerId = customerId;
+    // }
+
+    // public LocalDateTime getPurchaseDate() {
+    //     return purchaseDate;
+    // }
+
+    // public void setPurchaseDate(LocalDateTime purchaseDate) {
+    //     this.purchaseDate = purchaseDate;
+    // }
+
+    // public String getProductName() {
+    //     return productName;
+    // }
+
+    // public void setProductName(String productName) {
+    //     this.productName = productName;
+    // }
+
+    // public String getManufacturer() {
+    //     return manufacturer;
+    // }
+
+    // public void setManufacturer(String manufacturer) {
+    //     this.manufacturer = manufacturer;
+    // }
+
+    // public LocalDateTime getWarrantyEndDate() {
+    //     return warrantyEndDate;
+    // }
+
+    // public void setWarrantyEndDate(LocalDateTime warrantyEndDate) {
+    //     this.warrantyEndDate = warrantyEndDate;
+    // }
+
+    /**
+     * Lấy mã sản phẩm
+     * @return Mã sản phẩm
+     */
+    // public String getProductId() {
+    //     // Nếu product không null thì lấy productId từ product
+    //     if (product != null) {
+    //         return product.getProductId();
+    //     }
+    //     // Nếu không thì trả về trường productId đã được set trực tiếp
+    //     return productId;
+    // }
+
+    // /**
+    //  * Đặt mã sản phẩm
+    //  * @param productId Mã sản phẩm
+    //  */
+    // public void setProductId(String productId) {
+    //     this.productId = productId;
+    //     // Nếu product đã tồn tại, cũng cập nhật productId của nó
+    //     if (product != null) {
+    //         product.setProductId(productId);
+    //     }
+    // }
+
     // Tính tổng tiền trước giảm giá
     public BigDecimal getSubtotal() {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
@@ -191,27 +283,23 @@ public class InvoiceDetail extends BaseTimeEntity {
         }
     }
 
-    // Kiểm tra xem có thể trả lại một số lượng sản phẩm không
-    public boolean canReturn(int returnQuantity) {
-        if (returnQuantity <= 0) {
-            return false;
-        }
+    /**
+     * Kiểm tra liệu chi tiết hóa đơn có thể trả lại với số lượng cho trước không
+     * @param quantityToReturn Số lượng muốn trả lại
+     * @return true nếu có thể trả với số lượng đó
+     */
+    public boolean canReturn(int quantityToReturn) {
+        // Nếu số lượng trả <= 0, không hợp lệ
+        if (quantityToReturn <= 0) return false;
         
-        // Kiểm tra xem số lượng trả có vượt quá số lượng đã mua không
-        if (returnQuantity > this.quantity) {
-            return false;
-        }
-        
-        // TODO: Kiểm tra các điều kiện khác nếu cần
-        // Ví dụ: thời gian trả hàng, tình trạng sản phẩm, chính sách của cửa hàng...
-        
-        return true;
+        // Mặc định, mọi chi tiết đều có thể trả lại
+        return quantityToReturn <= quantity;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != getClass()) return false;
         InvoiceDetail that = (InvoiceDetail) o;
         return Objects.equals(invoiceDetailId, that.invoiceDetailId);
     }

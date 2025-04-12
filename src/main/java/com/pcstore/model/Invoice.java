@@ -1,13 +1,14 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
-import com.pcstore.model.enums.InvoiceStatusEnum;
-import com.pcstore.model.enums.PaymentMethodEnum;
-import com.pcstore.utils.ErrorMessage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.pcstore.model.base.BaseTimeEntity;
+import com.pcstore.model.enums.InvoiceStatusEnum;
+import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Class biểu diễn hóa đơn
@@ -25,6 +26,7 @@ public class Invoice extends BaseTimeEntity {
 
 
     @Override
+    
     public Object getId() {
         return invoiceId;
     }
@@ -46,6 +48,10 @@ public class Invoice extends BaseTimeEntity {
             throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
         }
         this.customer = customer;
+    }
+
+    public String getCustomerId() {
+        return customer.getCustomerId() != null ? customer.getCustomerId() : "";
     }
 
     public Employee getEmployee() {

@@ -1,12 +1,5 @@
 package com.pcstore.repository.impl;
 
-import com.pcstore.repository.Repository;
-import com.pcstore.repository.RepositoryFactory;
-import com.pcstore.model.InvoiceDetail;
-import com.pcstore.model.Product;
-import com.pcstore.model.Invoice;
-
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +9,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.pcstore.model.Invoice;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Product;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
 
 /**
  * Repository implementation cho InvoiceDetail entity
@@ -23,10 +24,15 @@ import java.util.Optional;
 public class InvoiceDetailRepository implements Repository<InvoiceDetail, Integer> {
     private Connection connection;
     private RepositoryFactory RepositoryFactory;
+    private static final Logger logger = Logger.getLogger(InvoiceDetailRepository.class.getName());
     
     public InvoiceDetailRepository(Connection connection, RepositoryFactory RepositoryFactory) {
         this.connection = connection;
         this.RepositoryFactory = RepositoryFactory;
+    }
+
+    public InvoiceDetailRepository(com.sun.jdi.connect.spi.Connection connection) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
@@ -220,24 +226,34 @@ public class InvoiceDetailRepository implements Repository<InvoiceDetail, Intege
         }
     }
     
-    // Tìm chi tiết hóa đơn theo ID hóa đơn
-    public List<InvoiceDetail> findByInvoiceId(Integer invoiceId) {
-        String sql = "SELECT id.*, p.ProductName FROM InvoiceDetails id " +
-                    "JOIN Products p ON id.ProductID = p.ProductID " +
-                    "WHERE id.InvoiceID = ?";
-        List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+    /**
+     * Tìm chi tiết hóa đơn theo mã hóa đơn
+     * @param invoiceId Mã hóa đơn
+     * @return Danh sách chi tiết hóa đơn
+     */
+    public List<InvoiceDetail> findByInvoiceId(int invoiceId) {
+        String sql = "SELECT id.*, p.ProductName, p.Specifications " +
+                     "FROM InvoiceDetails id " +
+                     "LEFT JOIN Products p ON id.ProductID = p.ProductID " +
+                     "WHERE id.InvoiceID = ?";
         
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, invoiceId);
-            ResultSet resultSet = statement.executeQuery();
+        List<InvoiceDetail> details = new ArrayList<>();
+        
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, invoiceId);
             
-            while (resultSet.next()) {
-                invoiceDetails.add(mapResultSetToInvoiceDetail(resultSet));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    InvoiceDetail detail = mapResultSetToInvoiceDetail(rs);
+                    details.add(detail);
+                }
             }
-            return invoiceDetails;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding invoice details by invoice ID", e);
+            logger.log(Level.SEVERE, "Error finding invoice details by invoice ID: " + invoiceId, e);
+            throw new RuntimeException("Database error when finding invoice details", e);
         }
+        
+        return details;
     }
     
     // Tìm chi tiết hóa đơn theo ID sản phẩm

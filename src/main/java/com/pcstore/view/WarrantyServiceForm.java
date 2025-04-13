@@ -161,7 +161,6 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnWarrantyInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
-        btnWarrantyInformationLookup.setText(bundle.getString("")); // NOI18N
         btnWarrantyInformationLookup.setDisabledSelectedIcon(null);
         btnWarrantyInformationLookup.setEnabled(false);
         btnWarrantyInformationLookup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -181,6 +180,8 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel2.add(jPanel3);
 
         jPanel5.add(jPanel2);
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(452, 500));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -204,7 +205,40 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyRegistrationActionPerformed
-        // TODO add your handling code here:
+        try {
+            // Kiểm tra controller
+            if (controller == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Controller chưa được khởi tạo.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Tạo dialog mới
+            javax.swing.JDialog dialog = new javax.swing.JDialog();
+            dialog.setTitle("Đăng ký bảo hành mới");
+            dialog.setModal(true);
+            dialog.setSize(980, 650);
+            dialog.setLocationRelativeTo(this);
+            
+            // Tạo form đăng ký bảo hành và thêm vào dialog
+            AddWarrantyForm addWarrantyForm = new AddWarrantyForm(controller);
+            dialog.add(addWarrantyForm);
+            
+            // Hiển thị dialog
+            dialog.setVisible(true);
+            
+            // Sau khi dialog đóng, cập nhật lại danh sách bảo hành
+            controller.loadWarranties();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Lỗi khi mở form đăng ký bảo hành: " + e.getMessage(),
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnWarrantyRegistrationActionPerformed
 
     private void btnRemoveRepairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRemoveRepairMouseClicked

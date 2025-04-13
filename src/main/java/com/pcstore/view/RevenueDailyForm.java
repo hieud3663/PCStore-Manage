@@ -4,9 +4,12 @@
  */
 package com.pcstore.view;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTable;
 
-import com.k33ptoo.components.KGradientPanel;
+import com.k33ptoo.components.KButton;
+import com.pcstore.controller.RevenueController;
 
 /**
  *
@@ -14,13 +17,8 @@ import com.k33ptoo.components.KGradientPanel;
  */
 public class RevenueDailyForm extends javax.swing.JPanel {
 
-
-    // private KGradientPanel activePanel = null;
-    // private JLabel activeLabel = null;
-
-    // private RevenueMonthlyForm revenueMonthlyForm = null;
-    // private RevenueDailyForm revenueDailyForm = null;
-
+    private RevenueController controller;
+    
     /**
      * Creates new form RevenueDaily
      */
@@ -44,10 +42,10 @@ public class RevenueDailyForm extends javax.swing.JPanel {
         jPanel5 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         Revenue = new javax.swing.JLabel();
-        btnExportReport = new com.k33ptoo.components.KButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        btnExportReport = new com.k33ptoo.components.KButton();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("Revenue"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
@@ -78,20 +76,6 @@ public class RevenueDailyForm extends javax.swing.JPanel {
 
         jPanel2.add(jPanel5);
 
-        btnExportReport.setText(bundle.getString("btnExportreport")); // NOI18N
-        btnExportReport.setkBorderRadius(30);
-        btnExportReport.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnExportReport.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnExportReport.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnExportReport.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnExportReport.setkStartColor(new java.awt.Color(102, 153, 255));
-        btnExportReport.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnExportReportMouseClicked(evt);
-            }
-        });
-        jPanel2.add(btnExportReport);
-
         add(jPanel2);
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnSalesStatistics"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
@@ -109,11 +93,27 @@ public class RevenueDailyForm extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(jTable1);
 
+        btnExportReport.setText(bundle.getString("btnExportreport")); // NOI18N
+        btnExportReport.setkBorderRadius(30);
+        btnExportReport.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnExportReport.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnExportReport.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnExportReport.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnExportReport.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnExportReport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnExportReportMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 980, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(770, Short.MAX_VALUE)
+                .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
@@ -122,21 +122,74 @@ public class RevenueDailyForm extends javax.swing.JPanel {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 490, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(467, Short.MAX_VALUE)
+                .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17))
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel3Layout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addContainerGap(71, Short.MAX_VALUE)))
         );
 
         add(jPanel3);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExportReportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportReportMouseClicked
-        // TODO add your handling code here:
+        // Việc xử lý đã được chuyển sang controller
     }//GEN-LAST:event_btnExportReportMouseClicked
 
+    /**
+     * Thiết lập controller cho form
+     * @param controller Controller doanh thu
+     */
+    public void setController(RevenueController controller) {
+        this.controller = controller;
+        if (controller != null) {
+            controller.setRevenueDailyForm(this);
+        }
+    }
+    
+    /**
+     * Lấy label hiển thị ngày
+     * @return Label ngày
+     */
+    public JLabel getDateLabel() {
+        return Date;
+    }
+    
+    /**
+     * Lấy nút chọn ngày
+     * @return Nút ngày
+     */
+    public JButton getDateButton() {
+        return jButton1;
+    }
+    
+    /**
+     * Lấy label hiển thị doanh thu
+     * @return Label doanh thu
+     */
+    public JLabel getRevenueLabel() {
+        return Revenue;
+    }
+    
+    /**
+     * Lấy nút xuất báo cáo
+     * @return Nút xuất báo cáo
+     */
+    public KButton getExportButton() {
+        return btnExportReport;
+    }
+    
+    /**
+     * Lấy bảng thống kê doanh thu
+     * @return Bảng thống kê
+     */
+    public JTable getRevenueTable() {
+        return jTable1;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Date;

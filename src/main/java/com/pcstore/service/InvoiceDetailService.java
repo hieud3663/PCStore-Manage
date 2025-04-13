@@ -1,5 +1,6 @@
 package com.pcstore.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -235,5 +236,59 @@ public class InvoiceDetailService {
             e.printStackTrace(); // Thêm stack trace để debug
             return new ArrayList<>();
         }
+    }
+    
+    /**
+     * Tìm các chi tiết hóa đơn trong khoảng thời gian chỉ định
+     * 
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Danh sách chi tiết hóa đơn
+     */
+    public List<InvoiceDetail> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        List<InvoiceDetail> result = new ArrayList<>();
+        
+        try {
+            // Lấy danh sách hóa đơn trong khoảng thời gian
+            List<Invoice> invoices = invoiceRepository.findByDateRange(startDate, endDate);
+            
+            if (invoices.isEmpty()) {
+                return result;
+            }
+            
+            // Tạo danh sách các ID hóa đơn để tìm kiếm chi tiết
+            List<Integer> invoiceIds = new ArrayList<>();
+            for (Invoice invoice : invoices) {
+                invoiceIds.add(invoice.getInvoiceId());
+            }
+            
+            // Lấy chi tiết hóa đơn theo danh sách ID
+            List<InvoiceDetail> allDetails = invoiceDetailRepository.findByInvoiceIds(invoiceIds);
+            
+            // Thêm thông tin sản phẩm cho mỗi chi tiết
+            for (InvoiceDetail detail : allDetails) {
+                // Tìm hóa đơn tương ứng
+                for (Invoice invoice : invoices) {
+                    if (invoice.getInvoiceId().equals(detail.getInvoice().getInvoiceId())) {
+                        detail.setInvoice(invoice);
+                        break;
+                    }
+                }
+                
+                // Thêm thông tin sản phẩm
+                Optional<Product> productOpt = productRepository.findById(detail.getProduct().getProductId());
+                if (productOpt.isPresent()) {
+                    detail.setProduct(productOpt.get());
+                }
+                
+                result.add(detail);
+            }
+            
+        } catch (Exception e) {
+            logger.warning("Error finding invoice details by date range: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return result;
     }
 }

@@ -132,17 +132,17 @@ public class RepairServiceForm extends javax.swing.JPanel {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("RepairService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         setPreferredSize(new java.awt.Dimension(1153, 713));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        kGradientPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dịch Vụ Sửa Chữa", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel2.setkFillBackground(false);
-        kGradientPanel2.setPreferredSize(new java.awt.Dimension(1153, 713));
+        kGradientPanel2.setPreferredSize(new java.awt.Dimension(1120, 713));
         kGradientPanel2.setLayout(new javax.swing.BoxLayout(kGradientPanel2, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 15));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnAddRepair.setText(bundle.getString("btnAddRepair")); // NOI18N
         btnAddRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnAddRepair.setkBorderRadius(30);
@@ -271,7 +271,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(971, Short.MAX_VALUE)
+                .addContainerGap(973, Short.MAX_VALUE)
                 .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -280,12 +280,12 @@ public class RepairServiceForm extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         kGradientPanel2.add(jPanel2);
 
-        add(kGradientPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(17, 0, 1118, 628));
+        add(kGradientPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 28, 1110, 570));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddRepairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddRepairMouseClicked

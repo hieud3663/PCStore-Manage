@@ -61,7 +61,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
 
     private void setupTable() {
         // Thiết lập mô hình bảng
-        tableModel = (DefaultTableModel) jTable3.getModel();
+        tableModel = (DefaultTableModel) jTable1.getModel();
         tableModel.setRowCount(0);
         
         // Thiết lập tiêu đề cột
@@ -118,8 +118,8 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         // Cuộn đến dòng mới thêm vào
         int lastRow = tableModel.getRowCount() - 1;
         if (lastRow >= 0) {
-            jTable3.scrollRectToVisible(jTable3.getCellRect(lastRow, 0, true));
-            jTable3.setRowSelectionInterval(lastRow, lastRow);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(lastRow, 0, true));
+            jTable1.setRowSelectionInterval(lastRow, lastRow);
         }
     }
 
@@ -146,21 +146,21 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         }
         
         // Cập nhật lại kích thước của các cột để hiển thị tốt hơn
-        if (jTable3.getColumnCount() > 0) {
+        if (jTable1.getColumnCount() > 0) {
             // Đặt kích thước cột ID
-            jTable3.getColumnModel().getColumn(0).setPreferredWidth(70);
+            jTable1.getColumnModel().getColumn(0).setPreferredWidth(70);
             // Đặt kích thước cột ProductID
-            jTable3.getColumnModel().getColumn(1).setPreferredWidth(100);
+            jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
             // Đặt kích thước cột ProductName
-            jTable3.getColumnModel().getColumn(2).setPreferredWidth(200);
+            jTable1.getColumnModel().getColumn(2).setPreferredWidth(200);
             // Đặt kích thước cột Quantity
-            jTable3.getColumnModel().getColumn(3).setPreferredWidth(70);
+            jTable1.getColumnModel().getColumn(3).setPreferredWidth(70);
             // Đặt kích thước cột Reason (rộng hơn để hiển thị đủ lý do)
-            jTable3.getColumnModel().getColumn(4).setPreferredWidth(200);
+            jTable1.getColumnModel().getColumn(4).setPreferredWidth(200);
             // Đặt kích thước cột Date
-            jTable3.getColumnModel().getColumn(5).setPreferredWidth(150);
+            jTable1.getColumnModel().getColumn(5).setPreferredWidth(150);
             // Đặt kích thước cột Status
-            jTable3.getColumnModel().getColumn(6).setPreferredWidth(120);
+            jTable1.getColumnModel().getColumn(6).setPreferredWidth(120);
         }
     }
 
@@ -218,14 +218,14 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         javax.swing.JDialog dialog = new javax.swing.JDialog();
         dialog.setTitle("Thêm đơn trả hàng mới");
         dialog.setModal(true);
-        dialog.setSize(1040, 800);
+        dialog.setSize(1040, 700);
         dialog.setLocationRelativeTo(this);
         dialog.add(addForm);
         dialog.setVisible(true);
     }
 
     private void showReturnDetails() {
-        int selectedRow = jTable3.getSelectedRow();
+        int selectedRow = jTable1.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(this, 
                 "Vui lòng chọn một đơn trả hàng để xem chi tiết",
@@ -284,134 +284,13 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         
         addDetailRow(infoPanel, "Ghi chú:", returnObj.getNotes() != null ? returnObj.getNotes() : "");
         
-        // Thêm các nút thao tác
+        // Thêm panel chứa nút đóng
         javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
         buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        // Nút phê duyệt
-        javax.swing.JButton approveButton = new javax.swing.JButton("Phê duyệt");
-        approveButton.addActionListener(e -> {
-            if ("Pending".equals(returnObj.getStatus())) {
-                String processorId = "ADMIN"; // Thay bằng ID của người dùng đang đăng nhập
-                String notes = JOptionPane.showInputDialog(detailDialog, "Nhập ghi chú phê duyệt:");
-                if (notes != null) {
-                    try {
-                        boolean success = returnController.approveReturn(returnObj.getReturnId(), processorId, notes);
-                        if (success) {
-                            JOptionPane.showMessageDialog(detailDialog, "Đã phê duyệt đơn trả hàng thành công");
-                            detailDialog.dispose();
-                            loadAllReturns(); // Cập nhật lại bảng
-                        }
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(detailDialog, 
-                            "Lỗi khi phê duyệt: " + ex.getMessage(), 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(detailDialog, 
-                    "Chỉ có thể phê duyệt đơn trả hàng ở trạng thái Đang chờ xử lý", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        // Nút từ chối
-        javax.swing.JButton rejectButton = new javax.swing.JButton("Từ chối");
-        rejectButton.addActionListener(e -> {
-            if ("Pending".equals(returnObj.getStatus())) {
-                String processorId = "ADMIN"; // Thay bằng ID của người dùng đang đăng nhập
-                String notes = JOptionPane.showInputDialog(detailDialog, "Nhập lý do từ chối:");
-                if (notes != null) {
-                    try {
-                        boolean success = returnController.rejectReturn(returnObj.getReturnId(), processorId, notes);
-                        if (success) {
-                            JOptionPane.showMessageDialog(detailDialog, "Đã từ chối đơn trả hàng thành công");
-                            detailDialog.dispose();
-                            loadAllReturns(); // Cập nhật lại bảng
-                        }
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(detailDialog, 
-                            "Lỗi khi từ chối: " + ex.getMessage(), 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(detailDialog, 
-                    "Chỉ có thể từ chối đơn trả hàng ở trạng thái Đang chờ xử lý", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        // Nút hoàn thành
-        javax.swing.JButton completeButton = new javax.swing.JButton("Hoàn thành");
-        completeButton.addActionListener(e -> {
-            if ("Approved".equals(returnObj.getStatus())) {
-                String processorId = "ADMIN"; // Thay bằng ID của người dùng đang đăng nhập
-                String notes = JOptionPane.showInputDialog(detailDialog, "Nhập ghi chú hoàn thành:");
-                if (notes != null) {
-                    try {
-                        boolean success = returnController.completeReturn(returnObj.getReturnId(), processorId, notes);
-                        if (success) {
-                            JOptionPane.showMessageDialog(detailDialog, "Đã hoàn thành đơn trả hàng thành công");
-                            detailDialog.dispose();
-                            loadAllReturns(); // Cập nhật lại bảng
-                        }
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(detailDialog, 
-                            "Lỗi khi hoàn thành: " + ex.getMessage(), 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(detailDialog, 
-                    "Chỉ có thể hoàn thành đơn trả hàng ở trạng thái Đã phê duyệt", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
-        
-        // Nút xóa đơn trả hàng
-        javax.swing.JButton deleteButton = new javax.swing.JButton("Xóa");
-        deleteButton.addActionListener(e -> {
-            // Chỉ cho phép xóa đơn trả hàng ở trạng thái Đang chờ xử lý
-            if ("Pending".equals(returnObj.getStatus())) {
-                int confirm = JOptionPane.showConfirmDialog(
-                    detailDialog, 
-                    "Bạn có chắc chắn muốn xóa đơn trả hàng này không?", 
-                    "Xác nhận xóa", 
-                    JOptionPane.YES_NO_OPTION);
-                
-                if (confirm == JOptionPane.YES_OPTION) {
-                    try {
-                        boolean success = returnController.deleteReturn(returnObj.getReturnId());
-                        if (success) {
-                            JOptionPane.showMessageDialog(detailDialog, 
-                                "Đã xóa đơn trả hàng thành công", 
-                                "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                            detailDialog.dispose();
-                            loadAllReturns(); // Cập nhật lại bảng
-                        }
-                    } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(detailDialog, 
-                            "Lỗi khi xóa đơn trả hàng: " + ex.getMessage(), 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            } else {
-                JOptionPane.showMessageDialog(detailDialog, 
-                    "Chỉ có thể xóa đơn trả hàng ở trạng thái Đang chờ xử lý", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        });
         
         // Nút đóng dialog
         javax.swing.JButton closeButton = new javax.swing.JButton("Đóng");
         closeButton.addActionListener(e -> detailDialog.dispose());
-        
-        // Thêm các nút vào panel theo trạng thái hiện tại
-        buttonPanel.add(approveButton);
-        buttonPanel.add(rejectButton);
-        buttonPanel.add(completeButton);
-        buttonPanel.add(deleteButton);
         buttonPanel.add(closeButton);
         
         // Thêm các panel vào dialog
@@ -443,12 +322,13 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         jEditorPane1 = new javax.swing.JEditorPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
         btnDetailReturnCard = new com.k33ptoo.components.KButton();
         btnReturnProduct2 = new com.k33ptoo.components.KButton();
+        btnRemoveReturn = new com.k33ptoo.components.KButton();
 
         jScrollPane2.setViewportView(jEditorPane1);
 
@@ -461,7 +341,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
 
         jScrollPane1.setAutoscrolls(true);
 
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -472,7 +352,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
                 "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Lý Do", "Ngày Đổi/Trả", "Phân Loại", "Trạng Thái"
             }
         ));
-        jScrollPane1.setViewportView(jTable3);
+        jScrollPane1.setViewportView(jTable1);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
 
@@ -510,7 +390,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnReturnInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 4, Short.MAX_VALUE))
+                .addGap(0, 9, Short.MAX_VALUE))
         );
 
         btnDetailReturnCard.setText(bundle.getString("btnDetailReturnCard")); // NOI18N
@@ -522,47 +402,182 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         btnDetailReturnCard.setkStartColor(new java.awt.Color(102, 153, 255));
 
         btnReturnProduct2.setText(bundle.getString("btnReturnProduct")); // NOI18N
-        btnReturnProduct2.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnReturnProduct2.setkBorderRadius(30);
+        btnReturnProduct2.setkEndColor(new java.awt.Color(0, 255, 51));
         btnReturnProduct2.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnProduct2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnReturnProduct2.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnReturnProduct2.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnReturnProduct2.setkStartColor(new java.awt.Color(0, 204, 255));
+
+        btnRemoveReturn.setText(bundle.getString("btnRemoveRepair")); // NOI18N
+        btnRemoveReturn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnRemoveReturn.setkBorderRadius(30);
+        btnRemoveReturn.setkEndColor(new java.awt.Color(255, 102, 51));
+        btnRemoveReturn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnRemoveReturn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnRemoveReturn.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnRemoveReturn.setkStartColor(new java.awt.Color(255, 0, 51));
+        btnRemoveReturn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRemoveReturnMouseClicked(evt);
+            }
+        });
+        btnRemoveReturn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveReturnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 43, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnDetailReturnCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1030, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnDetailReturnCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnReturnProduct2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 410, Short.MAX_VALUE)
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(43, 43, 43))
+                        .addComponent(btnReturnProduct2, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRemoveReturn, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(232, 232, 232)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(27, 27, 27))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnReturnProduct2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnReturnProduct2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRemoveReturn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDetailReturnCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
 
-        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1110, 630));
+        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, 1110, 630));
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnRemoveReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveReturnActionPerformed
+        try {
+            // Kiểm tra xem có hàng nào được chọn không
+            int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow == -1) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một đơn trả hàng để xóa.",
+                    "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // Lấy ID của đơn trả hàng được chọn
+            Object returnIdObj = jTable1.getValueAt(selectedRow, 0);
+            if (returnIdObj == null || returnIdObj.toString().isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Đơn trả hàng không có ID hợp lệ.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Integer returnId;
+            try {
+                returnId = Integer.parseInt(returnIdObj.toString());
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "ID đơn trả hàng không hợp lệ: " + returnIdObj,
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Kiểm tra controller
+            if (returnController == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Không thể kết nối tới hệ thống. Vui lòng thử lại sau.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Kiểm tra trạng thái đơn trả hàng trước khi xóa
+            Optional<Return> returnOpt = returnController.getReturnById(returnId);
+            if (!returnOpt.isPresent()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Không tìm thấy đơn trả hàng với ID: " + returnId,
+                    "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            Return returnObj = returnOpt.get();
+            String status = returnObj.getStatus();
+            
+            // Chỉ cho phép xóa đơn trả hàng ở trạng thái "Pending" (Đang chờ xử lý)
+            if (!"Pending".equals(status)) {
+                String translatedStatus = statusTranslation.getOrDefault(status, status);
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Chỉ có thể xóa đơn trả hàng ở trạng thái 'Đang chờ xử lý'.\n" +
+                    "Đơn trả hàng hiện tại đang ở trạng thái: " + translatedStatus,
+                    "Không thể xóa",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Xác nhận trước khi xóa
+            int choice = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc chắn muốn xóa đơn trả hàng này không?\n" +
+                "Thông tin đơn trả hàng:\n" +
+                "- Mã đơn: " + returnId + "\n" +
+                "- Sản phẩm: " + returnObj.getInvoiceDetail().getProduct().getProductName() + "\n" +
+                "- Số lượng: " + returnObj.getQuantity() + "\n" +
+                "- Lý do trả: " + returnObj.getReason(),
+                "Xác nhận xóa",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+
+            if (choice != javax.swing.JOptionPane.YES_OPTION) {
+                return; // Người dùng đã hủy việc xóa
+            }
+
+            // Tiến hành xóa đơn trả hàng
+            boolean success = returnController.deleteReturn(returnId);
+
+            if (success) {
+                // Hiển thị thông báo thành công
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Đã xóa đơn trả hàng thành công!",
+                    "Thành công",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                // Cập nhật lại bảng
+                loadAllReturns();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Không thể xóa đơn trả hàng. Vui lòng thử lại sau.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Lỗi khi xóa đơn trả hàng: " + e.getMessage(),
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnRemoveReturnActionPerformed
+
+    private void btnRemoveReturnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRemoveReturnMouseClicked
+        // Gọi phương thức xử lý sự kiện action để tránh lặp code
+        btnRemoveReturnActionPerformed(null);
+    }//GEN-LAST:event_btnRemoveReturnMouseClicked
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         searchReturns();
@@ -593,6 +608,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnDetailReturnCard;
+    private com.k33ptoo.components.KButton btnRemoveReturn;
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private com.k33ptoo.components.KButton btnReturnProduct2;
     private javax.swing.JEditorPane jEditorPane1;
@@ -600,7 +616,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

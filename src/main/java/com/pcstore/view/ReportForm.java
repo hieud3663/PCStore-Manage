@@ -4,11 +4,20 @@
  */
 package com.pcstore.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import com.k33ptoo.components.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import com.k33ptoo.components.KGradientPanel;
+import com.pcstore.controller.RevenueController;
+import com.pcstore.utils.DatabaseConnection;
+
 /**
  *
  * @author DUC ANH
@@ -18,19 +27,54 @@ public class ReportForm extends javax.swing.JPanel {
     private JLabel activeLabel = null;
     private RevenueDailyForm revenueDailyForm;
     private RevenueMonthlyForm revenueMonthlyForm;
+    private RevenueController revenueController;
+    
     /**
-     * Creates new form RevenueForm
+     * Creates new form RevenueForm - Tự khởi tạo controller
      */
     public ReportForm() {
+        initComponents();
+        
+        // Khởi tạo các form con
         revenueDailyForm = new RevenueDailyForm();
         revenueMonthlyForm = new RevenueMonthlyForm();
-    
-        initComponents();
-        initializeHoverEffects();
-    
-        selectMenu(panelDaily, lbDaily, revenueDailyForm);
+        
+        // Tự động khởi tạo controller và thiết lập các thành phần
+        try {
+            // Lấy connection từ DatabaseConnection singleton
+            Connection connection = DatabaseConnection.getInstance().getConnection();
+            if (connection != null) {
+                // Khởi tạo controller
+                revenueController = new RevenueController(connection);
+                
+                // Thiết lập controller cho các form con
+                revenueDailyForm.setController(revenueController);
+                revenueMonthlyForm.setController(revenueController);
+                
+                // Khởi tạo hiệu ứng hover
+                initializeHoverEffects();
+                
+                // Chọn mặc định là form doanh thu theo ngày
+                selectMenu(panelDaily, lbDaily, revenueDailyForm);
+                
+                System.out.println("ReportForm: Khởi tạo controller thành công");
+            } else {
+                System.err.println("ReportForm: Không thể kết nối database");
+                JOptionPane.showMessageDialog(this, 
+                    "Không thể kết nối đến cơ sở dữ liệu", 
+                    "Lỗi kết nối", 
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("ReportForm: Lỗi khi khởi tạo controller - " + e.getMessage());
+            JOptionPane.showMessageDialog(this,
+                "Lỗi khởi tạo: " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+        }
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

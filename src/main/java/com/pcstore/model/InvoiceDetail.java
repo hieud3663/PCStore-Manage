@@ -6,9 +6,7 @@ import java.util.Objects;
 
 import com.pcstore.model.base.BaseTimeEntity;
 
-/**
- * Class biểu diễn chi tiết hóa đơn
- */
+
 public class InvoiceDetail extends BaseTimeEntity {
     private Integer invoiceDetailId;
     private Invoice invoice;
@@ -19,15 +17,6 @@ public class InvoiceDetail extends BaseTimeEntity {
     private BigDecimal discountAmount;
     private String notes;
 
-    // Thêm các trường bổ sung
-    // private String customerName;
-    // private String customerPhone;
-    // private String customerId;
-    // private LocalDateTime purchaseDate;
-    // private String productName;
-    // private String manufacturer;
-    // private LocalDateTime warrantyEndDate; // Ngày kết thúc bảo hành
-    // private String productId;
 
     public InvoiceDetail(Integer invoiceDetailId, Invoice invoice, Product product, Warranty warranty, int quantity,
             BigDecimal unitPrice, BigDecimal discountAmount, String notes) {
@@ -139,86 +128,6 @@ public class InvoiceDetail extends BaseTimeEntity {
         this.notes = notes;
     }
 
-    // public String getCustomerName() {
-    //     return customerName;
-    // }
-
-    // public void setCustomerName(String customerName) {
-    //     this.customerName = customerName;
-    // }
-
-    // public String getCustomerPhone() {
-    //     return customerPhone;
-    // }
-
-    // public void setCustomerPhone(String customerPhone) {
-    //     this.customerPhone = customerPhone;
-    // }
-
-    // public String getCustomerId() {
-    //     return customerId;
-    // }
-
-    // public void setCustomerId(String customerId) {
-    //     this.customerId = customerId;
-    // }
-
-    // public LocalDateTime getPurchaseDate() {
-    //     return purchaseDate;
-    // }
-
-    // public void setPurchaseDate(LocalDateTime purchaseDate) {
-    //     this.purchaseDate = purchaseDate;
-    // }
-
-    // public String getProductName() {
-    //     return productName;
-    // }
-
-    // public void setProductName(String productName) {
-    //     this.productName = productName;
-    // }
-
-    // public String getManufacturer() {
-    //     return manufacturer;
-    // }
-
-    // public void setManufacturer(String manufacturer) {
-    //     this.manufacturer = manufacturer;
-    // }
-
-    // public LocalDateTime getWarrantyEndDate() {
-    //     return warrantyEndDate;
-    // }
-
-    // public void setWarrantyEndDate(LocalDateTime warrantyEndDate) {
-    //     this.warrantyEndDate = warrantyEndDate;
-    // }
-
-    /**
-     * Lấy mã sản phẩm
-     * @return Mã sản phẩm
-     */
-    // public String getProductId() {
-    //     // Nếu product không null thì lấy productId từ product
-    //     if (product != null) {
-    //         return product.getProductId();
-    //     }
-    //     // Nếu không thì trả về trường productId đã được set trực tiếp
-    //     return productId;
-    // }
-
-    // /**
-    //  * Đặt mã sản phẩm
-    //  * @param productId Mã sản phẩm
-    //  */
-    // public void setProductId(String productId) {
-    //     this.productId = productId;
-    //     // Nếu product đã tồn tại, cũng cập nhật productId của nó
-    //     if (product != null) {
-    //         product.setProductId(productId);
-    //     }
-    // }
 
     // Tính tổng tiền trước giảm giá
     public BigDecimal getSubtotal() {

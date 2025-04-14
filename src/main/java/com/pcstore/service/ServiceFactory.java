@@ -1,11 +1,8 @@
 package com.pcstore.service;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.pcstore.model.Invoice;
-import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.utils.DatabaseConnection;
 
@@ -24,9 +21,10 @@ public class ServiceFactory {
     private static SupplierService supplierService;
     private static InvoiceService invoiceService; 
     private static PurchaseOrderService purchaseOrderService;
-    private static RepairServiceService repairServiceService;
+    private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
+    private static InvoiceDetailService invoiceDetailService;  // Thay vì InvoiceDetail
     // private static UserService userService;
     
     /**
@@ -87,6 +85,23 @@ public class ServiceFactory {
     }
     
     /**
+     * Lấy InvoiceDetailService
+     * @return InvoiceDetailService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
+        if (invoiceDetailService == null) {
+            RepositoryFactory repoFactory = new RepositoryFactory(getInstance().getConnection());
+            invoiceDetailService = new InvoiceDetailService(
+                repoFactory.getInvoiceDetailRepository(),
+                repoFactory.getProductRepository(),
+                repoFactory.getInvoiceRepository() // Thêm InvoiceRepository
+            );
+        }
+        return invoiceDetailService;
+    }
+    
+    /**
      * Lấy ProductService
      * @return ProductService instance
      * @throws SQLException Nếu có lỗi với kết nối database
@@ -139,9 +154,9 @@ public class ServiceFactory {
      * @return RepairServiceService instance
      * @throws SQLException Nếu có lỗi với kết nối database
      */
-    public static RepairServiceService getRepairServiceService() throws SQLException {
+    public static RepairService getRepairServiceService() throws SQLException {
         if (repairServiceService == null) {
-            repairServiceService = new RepairServiceService(getInstance().getConnection());
+            repairServiceService = new RepairService(getInstance().getConnection());
         }
         return repairServiceService;
     }
@@ -200,6 +215,14 @@ public class ServiceFactory {
      * @return Connection đến cơ sở dữ liệu
      */
     public Connection getConnection() {
+        // Kiểm tra xem kết nối đã được khởi tạo chưa
+        if (connection == null) {
+            try {
+                connection = DatabaseConnection.getInstance().getConnection();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return connection;
     }
 }

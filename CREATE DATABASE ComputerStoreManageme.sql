@@ -76,7 +76,7 @@ CREATE TABLE Customers (
     CustomerID VARCHAR(10) PRIMARY KEY, -- Mã KH01, KH02...
     FullName NVARCHAR(255) NOT NULL, -- Họ và tên
     PhoneNumber NVARCHAR(15) UNIQUE NOT NULL, -- Số điện thoại
-    Email NVARCHAR(255) UNIQUE NOT NULL, -- Email
+    Email NVARCHAR(255) NULL, -- Email
     Address NVARCHAR(MAX), -- Địa chỉ
     CreatedAt DATETIME DEFAULT GETDATE() -- Ngày đăng ký tài khoản
 );
@@ -255,7 +255,7 @@ CREATE TABLE RepairServices (
     RepairID INT IDENTITY(1,1) PRIMARY KEY,
     CustomerID VARCHAR(10) NOT NULL,
     EmployeeID VARCHAR(10) NULL, -- Nhân viên phụ trách
-    DeviceDescription NVARCHAR(255) NOT NULL, -- Mô tả thiết bị cần sửa
+    DeviceName NVARCHAR(255) NOT NULL, -- Mô tả thiết bị cần sửa
     Problem NVARCHAR(MAX) NOT NULL, -- Mô tả vấn đề
     DiagnosisResult NVARCHAR(MAX), -- Kết quả chẩn đoán
     RepairCost DECIMAL(10,2), -- Chi phí sửa chữa
@@ -321,4 +321,23 @@ CREATE TABLE Returns (
         ON DELETE NO ACTION
         ON UPDATE CASCADE
 );
+
+-- Thêm trường giới tính trong nhân viên
+ALTER TABLE Employees
+ADD Gender NVARCHAR(10) CHECK (Gender IN ('Male', 'Female', 'Other'));
+
+-- Thêm trường point cho khách hàng
+ALTER TABLE Customers
+ADD Point INT DEFAULT 0 CHECK (Point >= 0);
+
+--Thêm trường CreatedAt, UpdatedAt cho bảng Products
+ALTER TABLE Products
+ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo sản phẩm
+    UpdatedAt DATETIME DEFAULT GETDATE(); -- Ngày cập nhật sản phẩm
+-- Cập nhật trường UpdatedAt mỗi khi có thay đổi
+
+--thêm dữ liệu thời gian tạo và cập nhật cho bảng Products
+UPDATE Products
+SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
+WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
 

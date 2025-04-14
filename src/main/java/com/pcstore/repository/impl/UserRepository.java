@@ -200,13 +200,8 @@ public class UserRepository implements Repository<User, String> {
                     EmployeeId = "NV000";
                 }
 
-                String fullName = resultSet.getString("EmployeeName");
-                if (fullName == null) {
-                    fullName = "Admin";
-                }
-
                 User user = mapResultSetToUser(resultSet);
-                
+
                 return user;
                 
             }
@@ -303,7 +298,7 @@ public class UserRepository implements Repository<User, String> {
         String EmployeeId = resultSet.getString("EmployeeID");
 
         // user.setStatus(resultSet.getBoolean("Status"));
-
+        
         String sql = "SELECT * FROM Employees WHERE EmployeeID = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, EmployeeId);
@@ -314,15 +309,12 @@ public class UserRepository implements Repository<User, String> {
                 String phoneNumber = rs.getString("PhoneNumber");
                 String email = rs.getString("Email");
                 String position = rs.getString("Position");
-
                 user.setEmployee(new Employee(employeeId, fullName, phoneNumber, email, position));
                 
-            }
+            } 
         } catch (SQLException e) {
             throw new RuntimeException("Error finding employee by ID", e);
-        }
-        
-       
+        }   
         
         return user;
     }

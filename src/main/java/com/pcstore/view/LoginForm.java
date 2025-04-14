@@ -5,6 +5,7 @@
 package com.pcstore.view;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,11 +25,31 @@ import com.pcstore.utils.PCrypt;
  */
 public class LoginForm extends JFrame {
 
+    private LoginController loginController;
+
+    private static LoginForm instance;
+
+    public static LoginForm getInstance() {
+        if (instance == null) {
+            instance = new LoginForm();
+        }
+        return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
+    }
+
     /**
      * Creates new form testLogin
      */
     public LoginForm() {
+
+
         initComponents();
+       
+        loginController = new LoginController();
+        
         // Thêm sự kiện window listener để xử lý đóng cửa sổ
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -37,6 +58,8 @@ public class LoginForm extends JFrame {
                 DatabaseConnection.getInstance().closeConnection();
             }
         });
+
+        checkLogin(); //test login
 
     }
 
@@ -267,28 +290,26 @@ public class LoginForm extends JFrame {
 
 
     public void checkLogin(){
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
+        // String username = txtUsername.getText();
+        // String password = txtPassword.getText();
+
+        String username = "admin";
+        String password = "admin";
 
         if(username.isEmpty() && password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
         }
 
-        LoginController loginController = new LoginController();
 
         try{
-            
             User user = loginController.authenticate(username, password);
             
             if(user != null){
-                JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            // Lưu thông tin người dùng vào session hoặc biến static để sử dụng sau này
-                // SessionManager.setCurrentUser(user);
-            
-            // Mở giao diện chính
-                DashboardForm dashboard = new DashboardForm();
-                dashboard.setVisible(true);
                 this.dispose();
+
+                JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                
+                this.resetInstance();
             }else{
                 JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
@@ -297,33 +318,9 @@ public class LoginForm extends JFrame {
             
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Error " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }finally{
-            loginController.close();
         }
     }
 
-
-    /**
-     * @param args the command line arguments
-     * @throws UnsupportedLookAndFeelException 
-     */
-
-    public static void main(String args[]) {
-        try {
-            
-            UIManager.setLookAndFeel(new FlatLightLaf());
-            
-
-            /* Create and display the form */
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    new LoginForm().setVisible(true);
-                }
-            });
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(LoginForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JPanel PanelContentLogin;

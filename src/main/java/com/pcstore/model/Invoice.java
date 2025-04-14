@@ -1,13 +1,14 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
-import com.pcstore.model.enums.InvoiceStatusEnum;
-import com.pcstore.model.enums.PaymentMethodEnum;
-import com.pcstore.utils.ErrorMessage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.pcstore.model.base.BaseTimeEntity;
+import com.pcstore.model.enums.InvoiceStatusEnum;
+import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Class biểu diễn hóa đơn
@@ -22,7 +23,10 @@ public class Invoice extends BaseTimeEntity {
     private PaymentMethodEnum paymentMethod;
     private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
 
+
+
     @Override
+    
     public Object getId() {
         return invoiceId;
     }
@@ -44,6 +48,10 @@ public class Invoice extends BaseTimeEntity {
             throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
         }
         this.customer = customer;
+    }
+
+    public String getCustomerId() {
+        return customer.getCustomerId() != null ? customer.getCustomerId() : "";
     }
 
     public Employee getEmployee() {
@@ -90,9 +98,9 @@ public class Invoice extends BaseTimeEntity {
         if (status == null) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Trạng thái hóa đơn"));
         }
-        if (!canChangeStatus(status)) {
-            throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
-        }
+        // if (!canChangeStatus(status)) {
+        //     throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
+        // }
         this.status = status;
     }
 
@@ -180,14 +188,23 @@ public class Invoice extends BaseTimeEntity {
         if (status == null) {
             return true;
         }
+
+        // System.out.println("Current status: " + status + ", New status: " + newStatus);
         
         switch (status) {
             case PENDING:
-                return newStatus == InvoiceStatusEnum.PROCESSING || 
-                       newStatus == InvoiceStatusEnum.CANCELLED;
+                return  newStatus == InvoiceStatusEnum.PROCESSING || 
+                        newStatus == InvoiceStatusEnum.CANCELLED ||
+                        newStatus == InvoiceStatusEnum.PAID;
             case PROCESSING:
-                return newStatus == InvoiceStatusEnum.COMPLETED || 
-                       newStatus == InvoiceStatusEnum.CANCELLED;
+                return  newStatus == InvoiceStatusEnum.COMPLETED || 
+                        newStatus == InvoiceStatusEnum.CANCELLED ||
+                        newStatus == InvoiceStatusEnum.PAID;
+            case PAID:
+                return  newStatus == InvoiceStatusEnum.DELIVERED || 
+                        newStatus == InvoiceStatusEnum.CANCELLED ||
+                        newStatus == InvoiceStatusEnum.RETURNED ||
+                        newStatus == InvoiceStatusEnum.COMPLETED;
             case COMPLETED:
             case CANCELLED:
                 return false;

@@ -4,18 +4,34 @@
  */
 package com.pcstore.view;
 
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import com.pcstore.model.Invoice;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.payment.Payment;
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author MSII
  */
 public class PayForm extends javax.swing.JDialog {
 
+    private Invoice currentInvoice;
+    private boolean paymentSuccessful = false;
+    private PaymentMethodEnum selectedPaymentMethod = PaymentMethodEnum.CASH;
+    private boolean  checkSelectedPaymentMethod = false;
+
+    private Payment currentPayment;
     /**
      * Creates new form PayForm
-     */
-
-     
-     public PayForm(java.awt.Frame parent, boolean modal) {
+     */     
+    public PayForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
@@ -36,135 +52,123 @@ public class PayForm extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
-        kButton1 = new com.k33ptoo.components.KButton();
-        kButton2 = new com.k33ptoo.components.KButton();
         btnGroupPay = new javax.swing.ButtonGroup();
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
-        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
+        panelForm = new com.k33ptoo.components.KGradientPanel();
+        panelHeader = new javax.swing.JPanel();
+        panelTitle = new com.k33ptoo.components.KGradientPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        panelBody = new com.k33ptoo.components.KGradientPanel();
         btnRadioPayCash = new javax.swing.JRadioButton();
         btnRadioPayBank = new javax.swing.JRadioButton();
         btnRadioZaloPay = new javax.swing.JRadioButton();
+        panelFooter = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtTotalAmount = new javax.swing.JLabel();
         btnPay = new com.k33ptoo.components.KButton();
         btnCancel = new com.k33ptoo.components.KButton();
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        javax.swing.GroupLayout kGradientPanel3Layout = new javax.swing.GroupLayout(kGradientPanel3);
-        kGradientPanel3.setLayout(kGradientPanel3Layout);
-        kGradientPanel3Layout.setHorizontalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        kGradientPanel3Layout.setVerticalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        kButton1.setText("kButton1");
-
-        kButton2.setText("kButton2");
-
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        setTitle(bundle.getString("titleConfirmPay")); // NOI18N
+        setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(450, 485));
         setModalExclusionType(null);
         setType(java.awt.Window.Type.POPUP);
 
-        kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setkFillBackground(false);
+        panelForm.setBackground(new java.awt.Color(255, 255, 255));
+        panelForm.setkEndColor(new java.awt.Color(153, 255, 153));
+        panelForm.setkStartColor(new java.awt.Color(102, 153, 255));
+        panelForm.setMinimumSize(new java.awt.Dimension(611, 485));
+        panelForm.setLayout(new javax.swing.BoxLayout(panelForm, javax.swing.BoxLayout.Y_AXIS));
 
-        kGradientPanel2.setkBorderRadius(70);
-        kGradientPanel2.setkFillBackground(false);
-        kGradientPanel2.setName(""); // NOI18N
+        panelHeader.setBackground(new java.awt.Color(255, 255, 255));
+        panelHeader.setMinimumSize(new java.awt.Dimension(300, 55));
+        panelHeader.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 30, 5));
+
+        panelTitle.setBackground(new java.awt.Color(255, 255, 255));
+        panelTitle.setkBorderRadius(70);
+        panelTitle.setkFillBackground(false);
+        panelTitle.setName(""); // NOI18N
+        panelTitle.setLayout(new java.awt.BorderLayout());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 102, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         jLabel1.setText(bundle.getString("titlePayForm")); // NOI18N
+        jLabel1.setMaximumSize(new java.awt.Dimension(250, 40));
+        jLabel1.setMinimumSize(new java.awt.Dimension(250, 45));
+        jLabel1.setPreferredSize(new java.awt.Dimension(250, 45));
+        panelTitle.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
-        kGradientPanel2.setLayout(kGradientPanel2Layout);
-        kGradientPanel2Layout.setHorizontalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        kGradientPanel2Layout.setVerticalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        panelHeader.add(panelTitle);
+        panelTitle.getAccessibleContext().setAccessibleName("");
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("titleBorderChoosePayment"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelForm.add(panelHeader);
+
+        panelBody.setBackground(new java.awt.Color(255, 255, 255));
+        panelBody.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("titleChoosePayment"))); // NOI18N
+        panelBody.setkBorderRadius(30);
+        panelBody.setkEndColor(new java.awt.Color(255, 255, 255));
+        panelBody.setkGradientFocus(900);
+        panelBody.setkStartColor(new java.awt.Color(255, 255, 255));
+        panelBody.setMinimumSize(new java.awt.Dimension(166, 231));
+        panelBody.setOpaque(false);
+        panelBody.setPreferredSize(new java.awt.Dimension(166, 231));
+        panelBody.setLayout(new java.awt.GridLayout(4, 1, 30, 40));
 
         btnGroupPay.add(btnRadioPayCash);
         btnRadioPayCash.setText(bundle.getString("btnRadioPayCash")); // NOI18N
         btnRadioPayCash.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRadioPayCash.setIconTextGap(10);
+        btnRadioPayCash.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/cash.png"))); // NOI18N
+        btnRadioPayCash.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/cash.png"))); // NOI18N
         btnRadioPayCash.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRadioPayCashActionPerformed(evt);
             }
         });
+        panelBody.add(btnRadioPayCash);
 
         btnGroupPay.add(btnRadioPayBank);
         btnRadioPayBank.setText(bundle.getString("btnRadioPayBank")); // NOI18N
         btnRadioPayBank.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRadioPayBank.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/mobile-banking.png"))); // NOI18N
+        btnRadioPayBank.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/mobile-banking.png"))); // NOI18N
+        btnRadioPayBank.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRadioPayBankActionPerformed(evt);
+            }
+        });
+        panelBody.add(btnRadioPayBank);
 
         btnGroupPay.add(btnRadioZaloPay);
         btnRadioZaloPay.setText(bundle.getString("btnRadioZaloPay")); // NOI18N
         btnRadioZaloPay.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRadioZaloPay.setRolloverSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/zalopay.png"))); // NOI18N
+        btnRadioZaloPay.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/zalopay.png"))); // NOI18N
+        btnRadioZaloPay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRadioZaloPayActionPerformed(evt);
+            }
+        });
+        panelBody.add(btnRadioZaloPay);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnRadioPayCash, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRadioPayBank, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRadioZaloPay, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(btnRadioPayCash, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(btnRadioPayBank, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(btnRadioZaloPay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(39, Short.MAX_VALUE))
-        );
+        panelForm.add(panelBody);
+
+        panelFooter.setBackground(new java.awt.Color(255, 255, 255));
+        panelFooter.setPreferredSize(new java.awt.Dimension(367, 100));
+        panelFooter.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 5));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText(bundle.getString("lbTotalAmount")); // NOI18N
+        panelFooter.add(jLabel2);
 
         txtTotalAmount.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         txtTotalAmount.setForeground(new java.awt.Color(0, 204, 51));
         txtTotalAmount.setText("0 đ");
+        panelFooter.add(txtTotalAmount);
 
-        btnPay.setText(bundle.getString("btnPay")); // NOI18N
+        btnPay.setText(bundle.getString("btnPayConfirm")); // NOI18N
         btnPay.setToolTipText("");
         btnPay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPay.setIconTextGap(3);
@@ -173,6 +177,13 @@ public class PayForm extends javax.swing.JDialog {
         btnPay.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnPay.setkHoverStartColor(new java.awt.Color(0, 153, 153));
         btnPay.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnPay.setPreferredSize(new java.awt.Dimension(100, 45));
+        btnPay.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnPayMouseClicked(evt);
+            }
+        });
+        panelFooter.add(btnPay);
 
         btnCancel.setText(bundle.getString("btnCancle")); // NOI18N
         btnCancel.setToolTipText("");
@@ -183,108 +194,117 @@ public class PayForm extends javax.swing.JDialog {
         btnCancel.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnCancel.setkHoverStartColor(new java.awt.Color(0, 153, 153));
         btnCancel.setkStartColor(new java.awt.Color(255, 51, 51));
+        btnCancel.setMinimumSize(new java.awt.Dimension(65, 27));
+        btnCancel.setPreferredSize(new java.awt.Dimension(65, 45));
         btnCancel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnCancelMouseClicked(evt);
             }
         });
+        panelFooter.add(btnCancel);
 
-        javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
-        kGradientPanel1.setLayout(kGradientPanel1Layout);
-        kGradientPanel1Layout.setHorizontalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(kGradientPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTotalAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnPay, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(65, Short.MAX_VALUE))
-        );
-        kGradientPanel1Layout.setVerticalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(kGradientPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotalAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPay, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(85, Short.MAX_VALUE))
-        );
+        panelForm.add(panelFooter);
 
-        kGradientPanel2.getAccessibleContext().setAccessibleName("");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(kGradientPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        getContentPane().add(panelForm, java.awt.BorderLayout.CENTER);
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCancelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelMouseClicked
-        this.setVisible(false);
+        this.dispose();
+        paymentSuccessful = false;
     }//GEN-LAST:event_btnCancelMouseClicked
 
     private void btnRadioPayCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioPayCashActionPerformed
-        // TODO add your handling code here:
+        selectedPaymentMethod = PaymentMethodEnum.CASH;
     }//GEN-LAST:event_btnRadioPayCashActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PayForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PayForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PayForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PayForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void btnRadioPayBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioPayBankActionPerformed
+        selectedPaymentMethod = PaymentMethodEnum.BANK_TRANSFER;
+    }//GEN-LAST:event_btnRadioPayBankActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PayForm().setVisible(true);
+    private void btnRadioZaloPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioZaloPayActionPerformed
+        selectedPaymentMethod = PaymentMethodEnum.ZALOPAY;
+    }//GEN-LAST:event_btnRadioZaloPayActionPerformed
+
+    private void btnPayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
+        if (!btnRadioPayCash.isSelected() && !btnRadioPayBank.isSelected() && !btnRadioZaloPay.isSelected()) {
+            btnRadioPayCash.setSelected(true);
+            selectedPaymentMethod = PaymentMethodEnum.CASH;
+        }
+        
+        // Hiển thị thông báo xác nhận dựa trên phương thức thanh toán
+        String message = "Xác nhận thanh toán bằng ";
+        
+        switch (selectedPaymentMethod) {
+            case CASH:
+                message += "Tiền mặt?";
+                break;
+            case BANK_TRANSFER:
+                message += "Chuyển khoản ngân hàng?";
+                break;
+            case ZALOPAY:
+                message += "Ví điện tử ZaloPay?";
+                break;
+            default:
+                message += "Tiền mặt?";
+                selectedPaymentMethod = PaymentMethodEnum.CASH;
+        }
+        
+        int option = JOptionPane.showConfirmDialog(
+            this,
+            message,
+            "Xác nhận thanh toán",
+            JOptionPane.YES_NO_OPTION
+        );
+        
+        if (option == JOptionPane.YES_OPTION) {
+            checkSelectedPaymentMethod = true;
+            //Thông báo Xác nhận đã thanh toán hay chưa?
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Xác nhận đã thanh toán thành công?",
+                "Xác nhận thanh toán",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Xử lý thanh toán thành công
+                paymentSuccessful = true;
+                this.dispose();
+            } else {
+                paymentSuccessful = false;
             }
-        });
+        }else{
+            checkSelectedPaymentMethod = false;
+        }
+    }//GEN-LAST:event_btnPayMouseClicked
+    
+    public Invoice getCurrentInvoice() {
+        return currentInvoice;
+    }
+
+    public void setCurrentInvoice(Invoice currentInvoice) {
+        this.currentInvoice = currentInvoice;
+
+        NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+
+        this.txtTotalAmount.setText(formatter.format(currentInvoice.getTotalAmount()) + " đ");
+    }
+
+    public boolean isPaymentSuccessful() {
+        return paymentSuccessful;
+    }
+    
+    public PaymentMethodEnum getSelectedPaymentMethod() {
+        return selectedPaymentMethod;
+    }
+
+    public boolean isCheckSelectedPaymentMethod() {
+        return checkSelectedPaymentMethod;
+    }
+    public void setCheckSelectedPaymentMethod(boolean checkSelectedPaymentMethod) {
+        this.checkSelectedPaymentMethod = checkSelectedPaymentMethod;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -296,13 +316,11 @@ public class PayForm extends javax.swing.JDialog {
     private javax.swing.JRadioButton btnRadioZaloPay;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private com.k33ptoo.components.KButton kButton1;
-    private com.k33ptoo.components.KButton kButton2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
+    private com.k33ptoo.components.KGradientPanel panelBody;
+    private javax.swing.JPanel panelFooter;
+    private com.k33ptoo.components.KGradientPanel panelForm;
+    private javax.swing.JPanel panelHeader;
+    private com.k33ptoo.components.KGradientPanel panelTitle;
     private javax.swing.JLabel txtTotalAmount;
     // End of variables declaration//GEN-END:variables
 }

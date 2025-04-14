@@ -150,7 +150,7 @@ INSERT INTO Warranties (WarrantyID, InvoiceDetailID, StartDate, EndDate) VALUES
 ('BH008', 9, '2023-03-15', '2025-03-15');
 
 -- Thêm dữ liệu cho bảng RepairServices
-INSERT INTO RepairServices (CustomerID, EmployeeID, DeviceDescription, Problem, DiagnosisResult, RepairCost, ReceiveDate, EstimatedCompletionDate, ActualCompletionDate, Status) VALUES
+INSERT INTO RepairServices (CustomerID, EmployeeID, DeviceName, Problem, DiagnosisResult, RepairCost, ReceiveDate, EstimatedCompletionDate, ActualCompletionDate, Status) VALUES
 ('KH01', 'NV03', N'Laptop Dell XPS bị hỏng màn hình', N'Màn hình không hiển thị', N'Cần thay màn hình mới', 3500000, '2023-02-01', '2023-02-05', '2023-02-04', 'Completed'),
 ('KH03', 'NV03', N'PC không khởi động được', N'Máy không lên nguồn', N'Hỏng nguồn, cần thay PSU', 1200000, '2023-02-10', '2023-02-15', NULL, 'Repairing'),
 ('KH02', NULL, N'Màn hình Dell 27 inch flicker', N'Màn hình chớp liên tục', NULL, NULL, '2023-02-20', '2023-02-25', NULL, 'Received'),

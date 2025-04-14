@@ -1,17 +1,22 @@
 package com.pcstore.service;
 
-import com.pcstore.model.Employee;
-import com.pcstore.repository.impl.EmployeeRepository;
-
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.pcstore.model.Employee;
+import com.pcstore.repository.impl.EmployeeRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến nhân viên
  */
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final Connection connection;
     
     /**
      * Khởi tạo service với csdl
@@ -19,6 +24,7 @@ public class EmployeeService {
      */
     public EmployeeService(Connection connection) {
         this.employeeRepository = new EmployeeRepository(connection);
+        this.connection = connection;
     }
 
     /**
@@ -27,6 +33,7 @@ public class EmployeeService {
      */
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
+        this.connection = null;
     }
     
     /**
@@ -144,5 +151,41 @@ public class EmployeeService {
                 throw new IllegalArgumentException("Số điện thoại đã được sử dụng bởi nhân viên khác");
             }
         }
+    }
+
+    /**
+     * Lấy danh sách tất cả nhân viên
+     * 
+     * @return Danh sách tất cả nhân viên
+     * @throws Exception Nếu có lỗi xảy ra
+     */
+    public List<Employee> getAllEmployees() throws Exception {
+        List<Employee> employees = new ArrayList<>();
+        
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT * FROM Employees WHERE Position IN ('Manager', 'Sales', 'Stock Keeper')")) {
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Employee employee = new Employee();
+                    employee.setEmployeeId(rs.getString("EmployeeID"));
+                    employee.setFullName(rs.getString("FullName"));
+                    employee.setEmail(rs.getString("Email"));
+                    // employee.setPhone(rs.getString("PhoneNumber"));
+                    // employee.setRole(rs.getString("Position"));
+                    
+                    // Các trường khác nếu cần
+                    // employee.setAddress(rs.getString("Address"));
+                    // employee.setSalary(rs.getBigDecimal("Salary"));
+                    // employee.setHireDate(rs.getDate("HireDate") != null ? rs.getDate("HireDate").toLocalDate() : null);
+                    
+                    employees.add(employee);
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Lỗi khi lấy danh sách nhân viên: " + e.getMessage(), e);
+        }
+        
+        return employees;
     }
 }

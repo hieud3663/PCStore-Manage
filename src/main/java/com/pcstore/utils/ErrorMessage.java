@@ -24,6 +24,7 @@ public class ErrorMessage {
     //customer messages
     public static final String CUSTOMER_NAME_TOO_SHORT = "Tên khách hàng phải có ít nhất 2 ký tự";
     public static final String CUSTOMER_ID_FORMAT = "Mã khách hàng phải có định dạng KHxx";
+    
 
     // Category error messages
     public static final String CATEGORY_NAME_EMPTY = "Tên danh mục không được để trống";

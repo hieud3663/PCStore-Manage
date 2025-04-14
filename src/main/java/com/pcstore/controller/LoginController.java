@@ -4,6 +4,7 @@ import com.pcstore.model.User;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.UserService;
 import com.pcstore.utils.SessionManager;
+import com.pcstore.view.DashboardForm;
 import com.pcstore.view.LoginForm;
 
 import java.sql.SQLException;
@@ -14,8 +15,18 @@ import javax.swing.JOptionPane;
  * Controller xử lý logic đăng nhập hệ thống
  */
 public class LoginController {
+
+    // private static LoginController instance;
+
     private UserService userService;
     private LoginForm loginView;
+
+    private boolean loginSuccess = false;
+    private User authenticatedUser = null;
+
+
+    
+
     /**
      * Khởi tạo controller và các service cần thiết
      */
@@ -34,9 +45,16 @@ public class LoginController {
      * @throws SQLException 
      */
 
-     public LoginController(LoginForm loginView) throws SQLException {
-        this.userService = ServiceFactory.getUserService();
-        this.loginView = loginView; 
+
+
+    public LoginController(LoginForm loginView) throws SQLException {
+        try {
+            this.userService = ServiceFactory.getUserService();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi kết nối đến cơ sở dữ liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }finally {
+            this.loginView = loginView;
+        }
     }
     
     /**
@@ -52,11 +70,19 @@ public class LoginController {
             if (user != null) {
                 // Lưu thông tin người dùng hiện tại vào SessionManager
                 SessionManager.getInstance().setCurrentUser(user);
+                loginSuccess = true;
+                authenticatedUser = user;  
+                // Mở DashboardForm sau khi đăng nhập thành công
+                DashboardForm dashboardForm = DashboardForm.getInstance();
+                dashboardForm.setVisible(true);
+                // loginView.dispose(); // Đóng form đăng nhập
+                
             }
             
             return user;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi xác thực người dùng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
             return null;
         }
     }
@@ -91,4 +117,5 @@ public class LoginController {
         
         return true;
     }
+
 }

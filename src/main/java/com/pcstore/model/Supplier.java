@@ -15,11 +15,19 @@ public class Supplier extends BaseTimeEntity {
     private String email;
     private String address;
     
-    // Danh sách sản phẩm từ nhà cung cấp - Sử dụng List vì có thể có nhiều sản phẩm
-    private List<Product> products = new ArrayList<>();
+
+
     
-    // Danh sách đơn nhập hàng - Sử dụng List vì có thể có nhiều đơn nhập hàng
-    private List<PurchaseOrder> purchaseOrders = new ArrayList<>();
+    public Supplier(String supplierId, String name, String phoneNumber, String email, String address) {
+        this.supplierId = supplierId;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.address = address;
+    }
+
+    public Supplier() {
+    }
 
     @Override
     public Object getId() {
@@ -81,53 +89,6 @@ public class Supplier extends BaseTimeEntity {
         this.address = address;
     }
 
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
-    
-    public void addProduct(Product product) {
-        if (product == null) {
-            throw new IllegalArgumentException("Sản phẩm không được để trống");
-        }
-        if (!products.contains(product)) {
-            products.add(product);
-            product.setSupplier(this);
-        }
-    }
-    
-    public void removeProduct(Product product) {
-        if (products.remove(product)) {
-            product.setSupplier(null);
-        }
-    }
-    
-    public List<PurchaseOrder> getPurchaseOrders() {
-        return purchaseOrders;
-    }
-    
-    public void setPurchaseOrders(List<PurchaseOrder> purchaseOrders) {
-        this.purchaseOrders = purchaseOrders;
-    }
-    
-    public void addPurchaseOrder(PurchaseOrder purchaseOrder) {
-        if (purchaseOrder == null) {
-            throw new IllegalArgumentException("Đơn nhập hàng không được để trống");
-        }
-        if (!purchaseOrders.contains(purchaseOrder)) {
-            purchaseOrders.add(purchaseOrder);
-            purchaseOrder.setSupplier(this);
-        }
-    }
-    
-    public void removePurchaseOrder(PurchaseOrder purchaseOrder) {
-        if (purchaseOrders.remove(purchaseOrder)) {
-            purchaseOrder.setSupplier(null);
-        }
-    }
 
     // Phương thức kiểm tra số điện thoại hợp lệ
     private boolean isValidPhoneNumber(String phoneNumber) {
@@ -141,26 +102,4 @@ public class Supplier extends BaseTimeEntity {
         return pattern.matcher(email).matches();
     }
 
-    // Phương thức kiểm tra xem nhà cung cấp có thể xóa không
-    public boolean canDelete() {
-        // Kiểm tra xem có đơn nhập hàng nào đang trong trạng thái xử lý không
-        for (PurchaseOrder order : purchaseOrders) {
-            if ("Processing".equals(order.getStatus())) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Factory method để tạo nhà cung cấp mới
-    public static Supplier createNew(String supplierId, String name, 
-                                   String phoneNumber, String email, String address) {
-        Supplier supplier = new Supplier();
-        supplier.setSupplierId(supplierId);
-        supplier.setName(name);
-        supplier.setPhoneNumber(phoneNumber);
-        supplier.setEmail(email);
-        supplier.setAddress(address);
-        return supplier;
-    }
 }

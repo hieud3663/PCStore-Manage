@@ -7,6 +7,9 @@ package com.pcstore.view;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
+import javax.swing.JDialog;
+import com.pcstore.view.AddReapairProductForm;
+import java.util.List;
 
 /**
  *
@@ -14,15 +17,88 @@ import javax.swing.SwingUtilities;
  */
 public class RepairServiceForm extends javax.swing.JPanel {
 
-   
+    private com.pcstore.controller.RepairController repairController;
 
     /**
      * Creates new form RepairService
      */
     public RepairServiceForm() {
         initComponents();
+        try {
+            // Tạm thời comment đoạn này để tránh lỗi khi khởi tạo form
+            // Bạn sẽ cần kết nối với controller sau khi đã sửa lỗi trong repository
+            // loadRepairServices();
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Lỗi khi khởi tạo form: " + e.getMessage(), 
+                "Lỗi", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
+    /**
+     * Tải danh sách dịch vụ sửa chữa
+     */
+    public void loadRepairServices() {
+        try {
+            System.out.println("Đang tải danh sách dịch vụ sửa chữa...");
+            
+            // Xóa dữ liệu hiện tại trong bảng
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0);
+            
+            if (repairController == null) {
+                System.out.println("Cảnh báo: RepairController chưa được thiết lập");
+                return;
+            }
+            
+            // Lấy danh sách dịch vụ từ controller - đảm bảo lấy dữ liệu mới nhất
+            List<com.pcstore.model.Repair> repairs = repairController.getAllRepairServices();
+            System.out.println("Đã tìm thấy " + repairs.size() + " dịch vụ sửa chữa");
+            
+            // Thêm dữ liệu vào bảng
+            if (repairs.isEmpty()) {
+                model.addRow(new Object[]{"", "Không có dữ liệu", "", "", "", "", ""});
+                return;
+            }
+            
+            for (com.pcstore.model.Repair repair : repairs) {
+                String customerName = repair.getCustomer() != null ? repair.getCustomer().getFullName() : "N/A";
+                String deviceName = repair.getDeviceName() != null ? repair.getDeviceName() : "N/A";
+                String problem = repair.getProblem() != null ? repair.getProblem() : "N/A";
+                String fee = repair.getServiceFee() != null ? repair.getServiceFee().toString() : "0";
+                String status = repair.getStatus() != null ? repair.getStatus().getStatus() : "N/A";
+                String notes = repair.getNotes() != null ? repair.getNotes() : "";
+                
+                model.addRow(new Object[]{
+                    repair.getRepairServiceId(),
+                    customerName,
+                    deviceName,
+                    problem,
+                    fee,
+                    status,
+                    notes
+                });
+            }
+            
+            // Tùy chọn: hiển thị thông báo cập nhật thành công trong console
+            System.out.println("Cập nhật bảng dịch vụ sửa chữa thành công!");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Lỗi khi tải danh sách dịch vụ sửa chữa: " + e.getMessage());
+            // Hiển thị thông báo lỗi cho người dùng nếu cần
+        }
+    }
 
+    /**
+     * Thiết lập controller
+     */
+    public void setRepairController(com.pcstore.controller.RepairController controller) {
+        this.repairController = controller;
+        // Tải dữ liệu khi controller được thiết lập
+        loadRepairServices();
     }
 
     /**
@@ -36,9 +112,13 @@ public class RepairServiceForm extends javax.swing.JPanel {
 
         kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
         kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
+        jPanel1 = new javax.swing.JPanel();
         btnAddRepair = new com.k33ptoo.components.KButton();
+        btnDetail = new com.k33ptoo.components.KButton();
+        btnRemoveRepair = new com.k33ptoo.components.KButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jPanel2 = new javax.swing.JPanel();
         btnDetailCard = new com.k33ptoo.components.KButton();
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
@@ -52,18 +132,25 @@ public class RepairServiceForm extends javax.swing.JPanel {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        kGradientPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dịch Vụ Sửa Chữa", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
-        kGradientPanel2.setkFillBackground(false);
-
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("RepairService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        setPreferredSize(new java.awt.Dimension(1153, 713));
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        kGradientPanel2.setkFillBackground(false);
+        kGradientPanel2.setPreferredSize(new java.awt.Dimension(1120, 713));
+        kGradientPanel2.setLayout(new javax.swing.BoxLayout(kGradientPanel2, javax.swing.BoxLayout.Y_AXIS));
+
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 15));
+
         btnAddRepair.setText(bundle.getString("btnAddRepair")); // NOI18N
         btnAddRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnAddRepair.setkBorderRadius(30);
-        btnAddRepair.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair.setkEndColor(new java.awt.Color(0, 255, 51));
         btnAddRepair.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnAddRepair.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnAddRepair.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnAddRepair.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair.setkStartColor(new java.awt.Color(0, 204, 255));
         btnAddRepair.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnAddRepairMouseClicked(evt);
@@ -74,6 +161,49 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 btnAddRepairActionPerformed(evt);
             }
         });
+        jPanel1.add(btnAddRepair);
+
+        btnDetail.setText(bundle.getString("btnDetail")); // NOI18N
+        btnDetail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnDetail.setkBorderRadius(30);
+        btnDetail.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnDetail.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnDetail.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnDetail.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnDetail.setkStartColor(new java.awt.Color(51, 204, 255));
+        btnDetail.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDetailMouseClicked(evt);
+            }
+        });
+        btnDetail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnDetail);
+
+        btnRemoveRepair.setText(bundle.getString("btnRemoveRepair")); // NOI18N
+        btnRemoveRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnRemoveRepair.setkBorderRadius(30);
+        btnRemoveRepair.setkEndColor(new java.awt.Color(255, 102, 51));
+        btnRemoveRepair.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnRemoveRepair.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnRemoveRepair.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnRemoveRepair.setkStartColor(new java.awt.Color(255, 0, 51));
+        btnRemoveRepair.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRemoveRepairMouseClicked(evt);
+            }
+        });
+        btnRemoveRepair.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveRepairActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnRemoveRepair);
+
+        kGradientPanel2.add(jPanel1);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -121,6 +251,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        kGradientPanel2.add(jScrollPane1);
+
         btnDetailCard.setText(bundle.getString("btnDetailCard")); // NOI18N
         btnDetailCard.setkBorderRadius(30);
         btnDetailCard.setkEndColor(new java.awt.Color(102, 153, 255));
@@ -134,84 +266,258 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
-        kGradientPanel2.setLayout(kGradientPanel2Layout);
-        kGradientPanel2Layout.setHorizontalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 982, Short.MAX_VALUE)
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(973, Short.MAX_VALUE)
+                .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
-        kGradientPanel2Layout.setVerticalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
-                .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        kGradientPanel2.add(jPanel2);
+
+        add(kGradientPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 28, 1110, 570));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddRepairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddRepairMouseClicked
-        // TODO add your handling code here:
-        System.exit(0);
+        // Call the action performed method to avoid duplicate code
+        btnAddRepairActionPerformed(null);
     }//GEN-LAST:event_btnAddRepairMouseClicked
+
+    private void btnAddRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRepairActionPerformed
+        try {
+            // Tạo và hiển thị dialog AddReapairProductForm
+            AddReapairProductForm addDialog = new AddReapairProductForm();
+            addDialog.setTitle("Thêm sản phẩm sửa chữa");
+            addDialog.setSize(850, 700);
+            addDialog.setLocationRelativeTo(this);
+            addDialog.setModal(true); // Làm dialog modal để chặn tương tác với form cha
+            addDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            // Truyền controller vào dialog
+            if (repairController != null) {
+                addDialog.setRepairController(repairController);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Cảnh báo: Controller chưa được thiết lập. Thao tác thêm mới có thể không hoạt động.",
+                    "Cảnh báo",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+
+            // Hiển thị dialog
+            addDialog.setVisible(true);
+
+            // Kiểm tra xem đã thêm mới thành công hay không
+            if (addDialog.isRepairAdded()) {
+                // Cập nhật bảng với dữ liệu mới
+                loadRepairServices();
+
+                // Có thể thêm thông báo sau khi đã cập nhật bảng thành công
+                System.out.println("Đã cập nhật bảng sau khi thêm mới dịch vụ sửa chữa");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Lỗi khi mở form thêm mới: " + e.getMessage(),
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnAddRepairActionPerformed
+
+    private void btnDetailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetailMouseClicked
+        // Gọi phương thức xử lý sự kiện action để tránh lặp code
+        btnDetailActionPerformed(null);
+    }//GEN-LAST:event_btnDetailMouseClicked
+
+    private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
+        try {
+            // Kiểm tra xem có hàng nào được chọn không
+            int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow == -1) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dịch vụ sửa chữa để xem chi tiết.",
+                    "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // Lấy ID của dịch vụ sửa chữa được chọn
+            Object repairIdObj = jTable1.getValueAt(selectedRow, 0);
+            if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Dịch vụ sửa chữa không có ID hợp lệ.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Integer repairId = null;
+            try {
+                repairId = Integer.parseInt(repairIdObj.toString());
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Kiểm tra controller
+            if (repairController == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Controller chưa được khởi tạo.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Lấy thông tin chi tiết dịch vụ sửa chữa
+            java.util.Optional<com.pcstore.model.Repair> repairOpt = repairController.getRepairServiceById(repairId);
+            if (!repairOpt.isPresent()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Không tìm thấy thông tin dịch vụ sửa chữa với ID: " + repairId,
+                    "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // Hiển thị dialog chi tiết
+            javax.swing.JDialog detailDialog = new javax.swing.JDialog();
+            detailDialog.setTitle("Chi tiết dịch vụ sửa chữa");
+            detailDialog.setSize(900,800 );
+            detailDialog.setLocationRelativeTo(this);
+            detailDialog.setModal(true);
+
+            // Tạo form chi tiết
+            RepairDetailsForm detailsForm = new RepairDetailsForm();
+            detailsForm.setRepairDetails(repairOpt.get());
+
+            // Thêm form vào dialog
+            detailDialog.getContentPane().add(detailsForm, java.awt.BorderLayout.CENTER);
+            detailsForm.addCloseButton(detailDialog); // Thêm nút đóng
+
+            detailDialog.pack();
+            detailDialog.setVisible(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Lỗi khi hiển thị chi tiết: " + e.getMessage(),
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnDetailActionPerformed
+
+    private void btnRemoveRepairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRemoveRepairMouseClicked
+        // Gọi phương thức xử lý sự kiện action để tránh lặp code
+        btnRemoveRepairActionPerformed(null);
+    }//GEN-LAST:event_btnRemoveRepairMouseClicked
+
+    private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveRepairActionPerformed
+        try {
+            // Kiểm tra xem có hàng nào được chọn không
+            int selectedRow = jTable1.getSelectedRow();
+            if (selectedRow == -1) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn một dịch vụ sửa chữa để xóa.",
+                    "Thông báo",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // Lấy ID của dịch vụ sửa chữa được chọn
+            Object repairIdObj = jTable1.getValueAt(selectedRow, 0);
+            if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Dịch vụ sửa chữa không có ID hợp lệ.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Integer repairId = null;
+            try {
+                repairId = Integer.parseInt(repairIdObj.toString());
+            } catch (NumberFormatException e) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Kiểm tra controller
+            if (repairController == null) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Controller chưa được khởi tạo.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Xác nhận trước khi xóa
+            int choice = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc chắn muốn xóa dịch vụ sửa chữa này không?",
+                "Xác nhận xóa",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+
+            if (choice != javax.swing.JOptionPane.YES_OPTION) {
+                return; // Người dùng đã hủy việc xóa
+            }
+
+            // Tiến hành xóa dịch vụ
+            boolean success = repairController.deleteRepair(repairId);
+
+            if (success) {
+                // Hiển thị thông báo thành công
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Đã xóa dịch vụ sửa chữa thành công!",
+                    "Thành công",
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                // Cập nhật lại bảng
+                loadRepairServices();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Không thể xóa dịch vụ sửa chữa. Vui lòng thử lại sau.",
+                    "Lỗi",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Lỗi khi xóa dịch vụ sửa chữa: " + e.getMessage(),
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnRemoveRepairActionPerformed
 
     private void btnDetailCardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetailCardMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDetailCardMouseClicked
 
-    private void btnAddRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRepairActionPerformed
-        // Open a dialog to collect input for a new repair service entry
-        String repairId = javax.swing.JOptionPane.showInputDialog(this, "Enter Repair ID:");
-        String customerName = javax.swing.JOptionPane.showInputDialog(this, "Enter Customer Name:");
-        String deviceName = javax.swing.JOptionPane.showInputDialog(this, "Enter Device Name:");
-        String issue = javax.swing.JOptionPane.showInputDialog(this, "Enter Repair Issue:");
-        String costStr = javax.swing.JOptionPane.showInputDialog(this, "Enter Cost:");
-        String statusStr = javax.swing.JOptionPane.showInputDialog(this, "Is Repair Completed? (true/false):");
-        String notes = javax.swing.JOptionPane.showInputDialog(this, "Enter Notes:");
+    /**
+     * Open the Add Repair form in a dialog
+     */
     
-        try {
-            int cost = Integer.parseInt(costStr);
-            boolean status = Boolean.parseBoolean(statusStr);
-    
-            // Add the new row to the table
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-            model.addRow(new Object[]{repairId, customerName, deviceName, issue, cost, status, notes});
-        } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Invalid input for cost or status. Please try again.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_btnAddRepairActionPerformed
-            
-
-    
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAddRepair;
+    private com.k33ptoo.components.KButton btnDetail;
     private com.k33ptoo.components.KButton btnDetailCard;
+    private com.k33ptoo.components.KButton btnRemoveRepair;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;

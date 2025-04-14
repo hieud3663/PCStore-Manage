@@ -22,10 +22,26 @@ public class CustomerRepository implements Repository<Customer, String> {
         this.connection = connection;
     }
     
+
+    public Customer save(Customer customer) {
+
+        // Kiểm tra xem customer có tồn tại chưa đã
+        Customer existingCustomer = findById(customer.getCustomerId()).orElse(null);
+        if (existingCustomer != null) {
+            return update(customer);
+        } else {
+            return add(customer);
+        }
+
+    }
+
+
     @Override
     public Customer add(Customer customer) {
-        String sql = "INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, CreatedAt) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+        
+
+        String sql = "INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, Point, CreatedAt, UpdatedAt) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                     
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, customer.getCustomerId());
@@ -33,16 +49,23 @@ public class CustomerRepository implements Repository<Customer, String> {
             statement.setString(3, customer.getPhoneNumber());
             statement.setString(4, customer.getEmail());
             statement.setString(5, customer.getAddress());
+            statement.setInt(6, customer.getPoints());
             
             LocalDateTime now = LocalDateTime.now();
             customer.setCreatedAt(now);
             customer.setUpdatedAt(now);
             
-            statement.setObject(6, customer.getCreatedAt());
-            
+            statement.setObject(7, customer.getCreatedAt());
+            statement.setObject(8, customer.getUpdatedAt());
+
+            customer.setCustomerId(generateCustomerId());
+
             statement.executeUpdate();
+            
+             // Tạo mã khách hàng tự động
             return customer;
         } catch (SQLException e) {
+            customer.setCustomerId(null); // Đặt lại mã khách hàng nếu có lỗi
             throw new RuntimeException("Error adding customer", e);
         }
     }
@@ -50,18 +73,22 @@ public class CustomerRepository implements Repository<Customer, String> {
     @Override
     public Customer update(Customer customer) {
         String sql = "UPDATE Customers SET FullName = ?, PhoneNumber = ?, Email = ?, " +
-                    "Address = ? WHERE CustomerID = ?";
+                    "Address = ?, Point = ?, UpdatedAt = ? WHERE CustomerID = ?";
                     
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, customer.getFullName());
             statement.setString(2, customer.getPhoneNumber());
             statement.setString(3, customer.getEmail());
             statement.setString(4, customer.getAddress());
-            statement.setString(5, customer.getCustomerId());
+            statement.setInt(5, customer.getPoints());
             
-            statement.executeUpdate();
             
             customer.setUpdatedAt(LocalDateTime.now());
+            statement.setObject(6, customer.getUpdatedAt());
+
+            statement.setString(7, customer.getCustomerId());
+
+            statement.executeUpdate();
             return customer;
         } catch (SQLException e) {
             throw new RuntimeException("Error updating customer", e);
@@ -209,6 +236,7 @@ public class CustomerRepository implements Repository<Customer, String> {
         customer.setFullName(resultSet.getString("FullName"));
         customer.setPhoneNumber(resultSet.getString("PhoneNumber"));
         customer.setEmail(resultSet.getString("Email"));
+        customer.setPoints(resultSet.getInt("Point"));
         customer.setAddress(resultSet.getString("Address"));
         customer.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
         

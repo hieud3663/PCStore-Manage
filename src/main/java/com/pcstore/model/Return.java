@@ -1,7 +1,8 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
 import java.time.LocalDateTime;
+
+import com.pcstore.model.base.BaseTimeEntity;
 
 /**
  * Class biểu diễn đơn trả hàng
@@ -14,6 +15,10 @@ public class Return extends BaseTimeEntity {
     private String reason;
     private String status; // Pending, Approved, Rejected, Completed
     private String notes;
+    private java.math.BigDecimal returnAmount;
+    private Employee processedBy;
+    private boolean isExchange;
+    private Product newProduct;
 
     @Override
     public Object getId() {
@@ -58,9 +63,8 @@ public class Return extends BaseTimeEntity {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Số lượng trả phải lớn hơn 0");
         }
-        if (invoiceDetail != null && !invoiceDetail.canReturn(quantity)) {
-            throw new IllegalArgumentException("Số lượng trả vượt quá số lượng có thể trả");
-        }
+        
+        // Bỏ kiểm tra invoiceDetail.canReturn() vì đã được kiểm tra ở controller
         this.quantity = quantity;
     }
 
@@ -163,16 +167,12 @@ public class Return extends BaseTimeEntity {
     }
 
     // Factory method để tạo đơn trả hàng mới
-    public static Return createNew(InvoiceDetail invoiceDetail, int quantity, 
-                                 String reason) {
+    public static Return createNew(InvoiceDetail invoiceDetail, int quantity, String reason) {
         if (invoiceDetail == null) {
             throw new IllegalArgumentException("Chi tiết hóa đơn không được để trống");
         }
         if (quantity <= 0) {
             throw new IllegalArgumentException("Số lượng trả phải lớn hơn 0");
-        }
-        if (!invoiceDetail.canReturn(quantity)) {
-            throw new IllegalArgumentException("Số lượng trả vượt quá số lượng có thể trả");
         }
         if (reason == null || reason.trim().isEmpty()) {
             throw new IllegalArgumentException("Lý do trả hàng không được để trống");
@@ -180,7 +180,7 @@ public class Return extends BaseTimeEntity {
 
         Return returnItem = new Return();
         returnItem.setInvoiceDetail(invoiceDetail);
-        returnItem.setQuantity(quantity);
+        returnItem.setQuantity(quantity); // Kiểm tra số lượng đã được thực hiện ở controller
         returnItem.setReason(reason);
         returnItem.setReturnDate(LocalDateTime.now());
         returnItem.setStatus("Pending");
@@ -203,5 +203,41 @@ public class Return extends BaseTimeEntity {
             default:
                 throw new IllegalStateException("Trạng thái không hợp lệ: " + status);
         }
+    }
+
+    /**
+     * Thiết lập số tiền hoàn trả
+     * 
+     * @param returnAmount Số tiền hoàn trả
+     */
+    public void setReturnAmount(java.math.BigDecimal returnAmount) {
+        this.returnAmount = returnAmount;
+    }
+
+    /**
+     * Thiết lập nhân viên xử lý đơn trả hàng
+     * 
+     * @param processedBy Nhân viên xử lý
+     */
+    public void setProcessedBy(Employee processedBy) {
+        this.processedBy = processedBy;
+    }
+
+    /**
+     * Thiết lập trạng thái đổi hàng
+     * 
+     * @param isExchange true nếu là đổi hàng, false nếu là trả hàng
+     */
+    public void setExchange(boolean isExchange) {
+        this.isExchange = isExchange;
+    }
+
+    /**
+     * Thiết lập sản phẩm mới (trong trường hợp đổi hàng)
+     * 
+     * @param newProduct Sản phẩm mới
+     */
+    public void setNewProduct(Product newProduct) {
+        this.newProduct = newProduct;
     }
 }

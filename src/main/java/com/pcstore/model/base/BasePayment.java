@@ -5,6 +5,7 @@ import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 
+import java.awt.Component;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -15,16 +16,16 @@ import java.util.UUID;
  */
 public abstract class BasePayment {
     
-    private String paymentId;
-    private Invoice invoice;
-    private BigDecimal amount;
-    private PaymentMethodEnum paymentMethod;
-    private InvoiceStatusEnum status;
-    private LocalDateTime paymentDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private String transactionReference;
-    private String description;
+    protected String paymentId;
+    protected Invoice invoice;
+    protected BigDecimal amount;
+    protected PaymentMethodEnum paymentMethod;
+    protected InvoiceStatusEnum status;
+    protected LocalDateTime paymentDate;
+    protected LocalDateTime createdAt;
+    protected LocalDateTime updatedAt;
+    protected String transactionReference;
+    protected String description;
     
     /**
      * Constructor mặc định
@@ -48,11 +49,32 @@ public abstract class BasePayment {
     }
     
     /**
+     * Constructor với invoice
+     * @param invoice Hóa đơn cần thanh toán
+     */
+    public BasePayment(Invoice invoice) {
+        this.invoice = invoice;
+        this.paymentId = UUID.randomUUID().toString();
+        this.status = InvoiceStatusEnum.PENDING;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        this.amount = invoice.getTotalAmount(); // Số tiền thanh toán mặc định là tổng hóa đơn
+    }
+
+    /**
      * Xử lý thanh toán - hàm trừu tượng bắt buộc các lớp con phải triển khai
      * @return true nếu thanh toán thành công, false nếu thất bại
      */
     public abstract boolean processPayment();
+
+    /**
+     * Xử lý thanh toán - hàm trừu tượng bắt buộc các lớp con phải triển khai
+     * @return true nếu thanh toán thành công, false nếu thất bại
+     */
+    public abstract boolean processPayment(Component parent);
     
+    
+
     /**
      * Kiểm tra trạng thái thanh toán
      * @return true nếu đã thanh toán thành công, false nếu chưa

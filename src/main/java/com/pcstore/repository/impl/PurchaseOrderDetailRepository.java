@@ -52,7 +52,7 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
             detail.setUpdatedAt(now);
             
             // Cập nhật tổng tiền đơn nhập hàng
-            RepositoryFactory.getPurchaseOrderRepository().updateTotalAmount(detail.getPurchaseOrder().getPurchaseOrderId());
+            // RepositoryFactory.getPurchaseOrderRepository().updateTotalAmount(detail.getPurchaseOrder().getPurchaseOrderId());
             
             // Nếu đơn nhập hàng đã hoàn thành, cập nhật số lượng tồn kho
             PurchaseOrder order = detail.getPurchaseOrder();

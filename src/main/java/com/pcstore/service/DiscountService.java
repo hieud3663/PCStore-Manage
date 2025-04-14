@@ -4,6 +4,7 @@ import com.pcstore.model.Discount;
 import com.pcstore.repository.impl.DiscountRepository;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +22,14 @@ public class DiscountService {
      */
     public DiscountService(DiscountRepository discountRepository) {
         this.discountRepository = discountRepository;
+    }
+    
+    /**
+     * Khởi tạo service với repository
+     * @param connection Kết nối đến cơ sở dữ liệu
+     */
+    public DiscountService(Connection connection) {
+        this.discountRepository = new DiscountRepository(connection);
     }
     
     /**

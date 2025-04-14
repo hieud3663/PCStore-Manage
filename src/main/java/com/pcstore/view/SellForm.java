@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
+import com.pcstore.controller.PaymentController;
 import com.pcstore.controller.SellController;
 import com.pcstore.model.Customer;
 import com.pcstore.model.Employee;
@@ -59,7 +60,7 @@ public class SellForm extends JPanel {
         try {
             // Lấy kết nối cơ sở dữ liệu
             connection = DatabaseConnection.getInstance().getConnection();
-            repositoryFactory = new RepositoryFactory(connection);
+            repositoryFactory = RepositoryFactory.getInstance(connection);
             sellController = new SellController(connection, repositoryFactory);
             
             // Khởi tạo một giao dịch mới với ID nhân viên hiện tại
@@ -383,6 +384,11 @@ public class SellForm extends JPanel {
         btnApplyVoucher.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnApplyVoucher.setkHoverStartColor(new java.awt.Color(0, 153, 153));
         btnApplyVoucher.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnApplyVoucher.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnApplyVoucherMouseClicked(evt);
+            }
+        });
         panelCustomerInfo.add(btnApplyVoucher);
 
         panelCustomerPoint.setOpaque(false);
@@ -486,9 +492,9 @@ public class SellForm extends JPanel {
 
 
 
-    private void btnPayMouseClicked(MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked    
+    private void btnPayMouseClicked(MouseEvent evt) {                                        
         saveInvoiceToPay();
-    }//GEN-LAST:event_btnPayMouseClicked
+    }                                   
 
     private void tableListProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListProductMouseClicked
         if (evt.getClickCount() == 2) {
@@ -583,7 +589,52 @@ public class SellForm extends JPanel {
 
     }//GEN-LAST:event_btnResetMouseClicked
 
+    private void btnApplyVoucherMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnApplyVoucherMouseClicked
+        Customer customer = sellController.getCurrentInvoice().getCustomer();
+    
+        if (customer == null || "Khách vãng lai".equalsIgnoreCase(customer.getFullName())) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng chọn khách hàng trước khi áp dụng ưu đãi điểm.", 
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        int points = customer.getPoints();
+        if (points < 10000) {
+            JOptionPane.showMessageDialog(this, 
+                "Khách hàng chưa đủ điểm để áp dụng ưu đãi. Cần ít nhất 10,000 điểm.", 
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Khách hàng có " + points + " điểm tích lũy.\nBạn có muốn sử dụng điểm để giảm giá không?", 
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            BigDecimal discountAmount = sellController.applyPointsDiscount(true);
+            
+            if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
+                updateDiscountAmount(discountAmount);
+            }
+        }else{
+            BigDecimal discountAmount = sellController.applyPointsDiscount(false);
+            updateDiscountAmount(discountAmount);
 
+        }
+    }//GEN-LAST:event_btnApplyVoucherMouseClicked
+
+    //Cập nhật lại ô giảm giá
+    private void updateDiscountAmount(BigDecimal discountAmount) {
+        // Cập nhật hiển thị
+        NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+        txtDiscountAmount.setText(formatter.format(discountAmount));
+        // Cập nhật tổng tiền
+        BigDecimal totalAfterDiscount = sellController.calculateTotalAfterDiscount();
+        txtTotalAmount.setText(formatter.format(totalAfterDiscount) + " đ");
+        
+        txtDiscountAmount.setText("-" + formatter.format(discountAmount) + " đ");
+    }
 
     // Trong phương thức initComponents() hoặc constructor của form bán hàng
     private void loadAllProducts() {
@@ -693,8 +744,90 @@ public class SellForm extends JPanel {
         return customer;
     }
 
-    private void saveInvoiceToPay(){
-        // Kiểm tra nếu giỏ hàng trống
+    // private void saveInvoiceToPay(){
+    //     // Kiểm tra nếu giỏ hàng trống
+    //     if (sellController.getCartItems().isEmpty()) {
+    //         JOptionPane.showMessageDialog(this, 
+    //             "Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.", 
+    //             "Thông báo", JOptionPane.WARNING_MESSAGE);
+    //         return;
+    //     }
+        
+    //     try {
+
+    //         boolean checkUpdateInvoive = sellController.updateCurrentInvoice();
+    //         if (!checkUpdateInvoive) {
+    //             JOptionPane.showMessageDialog(this, 
+    //                 "Lỗi cập nhật hóa đơn. Vui lòng thử lại.", 
+    //                 "Lỗi", JOptionPane.ERROR_MESSAGE);
+    //             return;
+    //         }
+
+    //         //===================Lưu thông tin khách hàng=========================
+    //         String FullNameCustomer = txtNameKH.getText().trim();
+    //         String PhoneNumberCustomer = txtPhoneNumberKH.getText().trim();
+
+    //         if(!PhoneNumberCustomer.isEmpty()) {
+    //             Customer customer = insertCustomer(FullNameCustomer, PhoneNumberCustomer);
+    //             if (customer == null) {
+    //                 return; // Nếu không thể tạo khách hàng, thoát khỏi phương thức
+    //             }
+    //             sellController.addCustomerToSale(customer);
+    //         }
+    //         //====================================================================
+
+    //         DashboardForm dashboard = DashboardForm.getInstance();
+    //         PayForm payForm = new PayForm(dashboard, true);
+    //         Invoice invoice = sellController.getCurrentInvoice();
+    //         payForm.setCurrentInvoice(invoice);
+
+    //         PaymentMethodEnum paymentMethod = payForm.getSelectedPaymentMethod();      
+            
+    //     /////////////Xác nhận lưu hóa đơn====================================
+    //         int confirm = JOptionPane.showConfirmDialog(this, 
+    //             "Bạn có chắc chắn muốn thanh toán hóa đơn không?", 
+    //             "Xác nhận", JOptionPane.YES_NO_OPTION);
+    //         if (confirm != JOptionPane.YES_OPTION) {
+    //             return; // Nếu không xác nhận, thoát khỏi phương thức
+    //         }
+
+    //         Invoice saveInvoice = sellController.saveInvoice(paymentMethod);
+    //         if (saveInvoice != null) {
+    //             JOptionPane.showMessageDialog(this, 
+    //                 "Lưu hóa đơn thành công! ID: " + saveInvoice.getInvoiceId(), 
+    //                 "Thành công", JOptionPane.INFORMATION_MESSAGE);
+    //         } else {
+    //             JOptionPane.showMessageDialog(this, 
+    //                 "Lỗi khi lưu hóa đơn. Vui lòng thử lại.", 
+    //                 "Lỗi", JOptionPane.ERROR_MESSAGE);
+    //         }
+    //     //-================================================================
+    //         payForm.setVisible(true);
+            
+    //         // Sau khi dialog đóng, kiểm tra kết quả
+    //         if (payForm.isPaymentSuccessful()) {
+
+    //             sellController.completeSale(saveInvoice);
+
+    //             sellController.exportInvoiceToPDF(payForm.getCurrentPayment());
+
+    //             JOptionPane.showMessageDialog(this, 
+    //                 "Thanh toán thành công!", 
+    //                 "Thành công", JOptionPane.INFORMATION_MESSAGE);
+    //             resetSaleForm();
+    //         } else {
+    //             JOptionPane.showMessageDialog(this, 
+    //                 "Thanh toán không thành công!", 
+    //                 "Thất bại", JOptionPane.ERROR_MESSAGE);
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         JOptionPane.showMessageDialog(this,
+    //             "Lỗi khi xử lý thanh toán: " + e.getMessage(),
+    //             "Lỗi", JOptionPane.ERROR_MESSAGE);
+    //     }
+    // }
+    private void saveInvoiceToPay() {
         if (sellController.getCartItems().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
                 "Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.", 
@@ -703,7 +836,6 @@ public class SellForm extends JPanel {
         }
         
         try {
-
             boolean checkUpdateInvoive = sellController.updateCurrentInvoice();
             if (!checkUpdateInvoive) {
                 JOptionPane.showMessageDialog(this, 
@@ -711,61 +843,59 @@ public class SellForm extends JPanel {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
+    
             //===================Lưu thông tin khách hàng=========================
             String FullNameCustomer = txtNameKH.getText().trim();
             String PhoneNumberCustomer = txtPhoneNumberKH.getText().trim();
-
+    
             if(!PhoneNumberCustomer.isEmpty()) {
                 Customer customer = insertCustomer(FullNameCustomer, PhoneNumberCustomer);
                 if (customer == null) {
-                    return; // Nếu không thể tạo khách hàng, thoát khỏi phương thức
+                    return; 
                 }
                 sellController.addCustomerToSale(customer);
             }
             //====================================================================
-
-            DashboardForm dashboard = DashboardForm.getInstance();
-            PayForm payForm = new PayForm(dashboard, true);
-            Invoice invoice = sellController.getCurrentInvoice();
-            payForm.setCurrentInvoice(invoice);
-
-            PaymentMethodEnum paymentMethod = payForm.getSelectedPaymentMethod();      
-            
-        /////////////Xác nhận lưu hóa đơn====================================
+    
+            // Xác nhận lưu hóa đơn
             int confirm = JOptionPane.showConfirmDialog(this, 
                 "Bạn có chắc chắn muốn thanh toán hóa đơn không?", 
                 "Xác nhận", JOptionPane.YES_NO_OPTION);
             if (confirm != JOptionPane.YES_OPTION) {
-                return; // Nếu không xác nhận, thoát khỏi phương thức
+                return; 
             }
-
-            Invoice saveInvoice = sellController.saveInvoice(paymentMethod);
-            if (saveInvoice != null) {
-                JOptionPane.showMessageDialog(this, 
-                    "Lưu hóa đơn thành công! ID: " + saveInvoice.getInvoiceId(), 
-                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            } else {
+    
+            // Lưu hóa đơn trước khi thanh toán 
+            Invoice saveInvoice = sellController.saveInvoice(PaymentMethodEnum.CASH); //Mặc định là tiền mặt
+            if (saveInvoice == null) {
                 JOptionPane.showMessageDialog(this, 
                     "Lỗi khi lưu hóa đơn. Vui lòng thử lại.", 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-        //-================================================================
-            payForm.setVisible(true);
-            // Lấy phương thức thanh toán được chọn
-            if(payForm.isCheckSelectedPaymentMethod()) {
-                Invoice invoice2 = sellController.saveInvoice(payForm.getSelectedPaymentMethod());
-            }
-
-
-            // Sau khi dialog đóng, kiểm tra kết quả
-            if (payForm.isPaymentSuccessful()) {
-
+            
+            JOptionPane.showMessageDialog(this, 
+                "Lưu hóa đơn thành công! ID: " + saveInvoice.getInvoiceId(), 
+                "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            
+            DashboardForm dashboard = DashboardForm.getInstance();
+            PayForm payForm = new PayForm(dashboard, true);
+            
+            PaymentController paymentController = new PaymentController(payForm, saveInvoice);
+            paymentController.showPaymentForm();
+            
+            if (paymentController.isPaymentSuccessful()) {
+                
+                saveInvoice.setPaymentMethod(paymentController.getCurrentPayment().getPaymentMethod());
                 sellController.completeSale(saveInvoice);
                 
+                sellController.exportInvoiceToPDF(paymentController.getCurrentPayment());
+    
                 JOptionPane.showMessageDialog(this, 
                     "Thanh toán thành công!", 
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    
+                // Reset form bán hàng
                 resetSaleForm();
             } else {
                 JOptionPane.showMessageDialog(this, 
@@ -779,7 +909,6 @@ public class SellForm extends JPanel {
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     public void resetSaleForm() {
 
         boolean check = sellController.initializeSale(employee);

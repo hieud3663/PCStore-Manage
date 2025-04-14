@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.pcstore.model.Invoice;
+import com.pcstore.model.InvoiceDetail;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.InvoiceRepository;
 import com.pcstore.repository.impl.ProductRepository;
@@ -17,15 +18,17 @@ import com.pcstore.repository.impl.ProductRepository;
 public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ProductRepository productRepository;
-    
+    private  InvoiceDetailService invoiceDetailService;
     /**
      * Repository cho hóa đơn
      * @param connection Kết nối đến cơ sở dữ liệu
      * @param invoiceRepository Repository hóa đơn
      */
-    public InvoiceService(Connection connection, RepositoryFactory repositoryFactory) {
-        this.invoiceRepository = new InvoiceRepository(connection, repositoryFactory);
-        this.productRepository = new ProductRepository(connection); 
+    public InvoiceService(Connection connection) {
+
+        this.invoiceRepository = RepositoryFactory.getInstance(connection).getInvoiceRepository();
+        this.productRepository = RepositoryFactory.getInstance(connection).getProductRepository(); 
+        this.invoiceDetailService = new InvoiceDetailService(connection);
     }
 
     /**
@@ -61,18 +64,14 @@ public class InvoiceService {
     public Invoice updateInvoice(Invoice invoice) {
         // Đây là một hành động phức tạp, cần xử lý cẩn thận về tồn kho
         // Nên lấy hóa đơn cũ để so sánh thay đổi và điều chỉnh tồn kho phù hợp
-        Optional<Invoice> oldInvoiceOpt = invoiceRepository.findById(invoice.getInvoiceId());
+        Optional<Invoice> oldInvoiceOpt = this.findInvoiceById(invoice.getInvoiceId());
         if (oldInvoiceOpt.isPresent()) {
             Invoice oldInvoice = oldInvoiceOpt.get();
             
-            // Hoàn trả số lượng sản phẩm của hóa đơn cũ vào kho
-            oldInvoice.getInvoiceDetails().forEach(detail -> {
-                productRepository.updateStockQuantity(detail.getProduct().getProductId(), detail.getQuantity());
-            });
-            
-            // Trừ số lượng sản phẩm của hóa đơn mới từ kho
-            invoice.getInvoiceDetails().forEach(detail -> {
-                productRepository.updateStockQuantity(detail.getProduct().getProductId(), -detail.getQuantity());
+            //Lấy thông tin chi tiết hóa đơn cũ
+            List<InvoiceDetail> oldDetails = oldInvoice.getInvoiceDetails();
+            oldDetails.forEach(detail -> {
+                invoiceDetailService.updateInvoiceDetail(detail);
             });
         }
         
@@ -108,9 +107,19 @@ public class InvoiceService {
      * @return Optional chứa hóa đơn nếu tìm thấy
      */
     public Optional<Invoice> findInvoiceById(Integer invoiceId) {
-        return invoiceRepository.findById(invoiceId);
+        Optional<Invoice> invoiceOpt =  invoiceRepository.findById(invoiceId);
+
+        if (invoiceOpt.isPresent()) {
+            Invoice invoice = invoiceOpt.get();
+            // Cập nhật thông tin chi tiết hóa đơn
+            invoice.setInvoiceDetails(invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId));
+            return Optional.of(invoice);
+        }
+        
+        return invoiceOpt;
     }
-    
+      
+
     
     /**
      * Lấy danh sách tất cả hóa đơn

@@ -198,8 +198,8 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             if (resultSet.next()) {
                 Invoice invoice = mapResultSetToInvoice(resultSet);
                 
-                // Load các chi tiết hóa đơn
-                invoice.setInvoiceDetails(RepositoryFactory.getInvoiceDetailRepository().findByInvoiceId(id));
+                // // Load các chi tiết hóa đơn
+                // invoice.setInvoiceDetails(RepositoryFactory.getInvoiceDetailRepository().findByInvoiceId(id));
                 
                 return Optional.of(invoice);
             }
@@ -400,14 +400,17 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         invoice.setInvoiceId(resultSet.getInt("InvoiceID"));
         invoice.setTotalAmount(resultSet.getBigDecimal("TotalAmount"));
         invoice.setInvoiceDate(resultSet.getObject("InvoiceDate", LocalDateTime.class));
+        invoice.setDiscountAmount(resultSet.getBigDecimal("DiscountAmount"));
+        invoice.setCreatedAt(resultSet.getObject("InvoiceDate", LocalDateTime.class));
         
         // Map status from ID to enum
         int statusId = resultSet.getInt("StatusID");
         switch (statusId) {
-            case 1: invoice.setStatus(InvoiceStatusEnum.PENDING); break;
-            case 2: invoice.setStatus(InvoiceStatusEnum.PAID); break;
-            case 3: invoice.setStatus(InvoiceStatusEnum.CANCELLED); break;
-            case 4: invoice.setStatus(InvoiceStatusEnum.DELIVERED); break;
+            case 0: invoice.setStatus(InvoiceStatusEnum.PENDING); break;
+            case 1: invoice.setStatus(InvoiceStatusEnum.CONFIRMED); break;
+            case 2: invoice.setStatus(InvoiceStatusEnum.DELIVERED); break;
+            case 3: invoice.setStatus(InvoiceStatusEnum.COMPLETED); break;
+            case 4: invoice.setStatus(InvoiceStatusEnum.CANCELLED); break;
             case 5: invoice.setStatus(InvoiceStatusEnum.PROCESSING); break;
             default: invoice.setStatus(InvoiceStatusEnum.PENDING);
         }
@@ -416,9 +419,10 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         int paymentMethodId = resultSet.getInt("PaymentMethodID");
         switch (paymentMethodId) {
             case 1: invoice.setPaymentMethod(PaymentMethodEnum.CASH); break;
-            case 2: invoice.setPaymentMethod(PaymentMethodEnum.CREDIT_CARD); break;
-            case 3: invoice.setPaymentMethod(PaymentMethodEnum.BANK_TRANSFER); break;
-            case 4: invoice.setPaymentMethod(PaymentMethodEnum.E_WALLET); break;
+            case 2: invoice.setPaymentMethod(PaymentMethodEnum.MOMO); break;
+            case 3: invoice.setPaymentMethod(PaymentMethodEnum.ZALOPAY); break;
+            case 4: invoice.setPaymentMethod(PaymentMethodEnum.BANK_TRANSFER); break;
+            case 5: invoice.setPaymentMethod(PaymentMethodEnum.CREDIT_CARD); break;
             default: invoice.setPaymentMethod(PaymentMethodEnum.CASH);
         }
         

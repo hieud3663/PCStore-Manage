@@ -9,7 +9,9 @@ public enum InvoiceStatusEnum {
     COMPLETED("Hoàn thành"),
     RETURNED("Đã trả hàng"),
     REFUNDED("Đã hoàn tiền"),
-    FAILED("Thất bại");
+    FAILED("Thất bại"),
+    CONFIRMED("Đã xác nhận");
+
     private final String displayName;
     
     InvoiceStatusEnum(String displayName) {

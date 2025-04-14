@@ -120,6 +120,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnDetailCard = new com.k33ptoo.components.KButton();
+        btnAddRepair1 = new com.k33ptoo.components.KButton();
+        btnAddRepair2 = new com.k33ptoo.components.KButton();
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
         kGradientPanel1.setLayout(kGradientPanel1Layout);
@@ -263,6 +265,44 @@ public class RepairServiceForm extends javax.swing.JPanel {
         btnDetailCard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnDetailCardMouseClicked(evt);
+            }
+        });
+
+        btnAddRepair1.setText(bundle.getString("btnAddRepair")); // NOI18N
+        btnAddRepair1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAddRepair1.setkBorderRadius(30);
+        btnAddRepair1.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAddRepair1.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnAddRepair1.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAddRepair1MouseClicked(evt);
+            }
+        });
+        btnAddRepair1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddRepair1ActionPerformed(evt);
+            }
+        });
+
+        btnAddRepair2.setText(bundle.getString("btnAddRepair")); // NOI18N
+        btnAddRepair2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAddRepair2.setkBorderRadius(30);
+        btnAddRepair2.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair2.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAddRepair2.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnAddRepair2.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAddRepair2MouseClicked(evt);
+            }
+        });
+        btnAddRepair2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddRepair2ActionPerformed(evt);
             }
         });
 

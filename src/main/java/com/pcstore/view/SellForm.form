@@ -515,6 +515,9 @@
                           <Color blue="ff" green="99" red="66" type="rgb"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnApplyVoucherMouseClicked"/>
+                      </Events>
                     </Component>
                     <Container class="javax.swing.JPanel" name="panelCustomerPoint">
                       <Properties>

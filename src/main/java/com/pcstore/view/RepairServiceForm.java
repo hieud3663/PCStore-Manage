@@ -40,6 +40,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         btnDetailCard = new com.k33ptoo.components.KButton();
+        btnAddRepair1 = new com.k33ptoo.components.KButton();
+        btnAddRepair2 = new com.k33ptoo.components.KButton();
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
         kGradientPanel1.setLayout(kGradientPanel1Layout);
@@ -134,6 +136,44 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
         });
 
+        btnAddRepair1.setText(bundle.getString("btnAddRepair")); // NOI18N
+        btnAddRepair1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAddRepair1.setkBorderRadius(30);
+        btnAddRepair1.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAddRepair1.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnAddRepair1.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAddRepair1MouseClicked(evt);
+            }
+        });
+        btnAddRepair1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddRepair1ActionPerformed(evt);
+            }
+        });
+
+        btnAddRepair2.setText(bundle.getString("btnAddRepair")); // NOI18N
+        btnAddRepair2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnAddRepair2.setkBorderRadius(30);
+        btnAddRepair2.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair2.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAddRepair2.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnAddRepair2.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnAddRepair2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAddRepair2MouseClicked(evt);
+            }
+        });
+        btnAddRepair2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddRepair2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
         kGradientPanel2.setLayout(kGradientPanel2Layout);
         kGradientPanel2Layout.setHorizontalGroup(
@@ -141,23 +181,32 @@ public class RepairServiceForm extends javax.swing.JPanel {
             .addGroup(kGradientPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 982, Short.MAX_VALUE)
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
                     .addGroup(kGradientPanel2Layout.createSequentialGroup()
                         .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAddRepair1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(btnAddRepair2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
+                        .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(kGradientPanel2Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         kGradientPanel2Layout.setVerticalGroup(
             kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
-                .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addGap(31, 31, 31)
+                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddRepair1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAddRepair2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
                 .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
         );
@@ -204,6 +253,22 @@ public class RepairServiceForm extends javax.swing.JPanel {
             javax.swing.JOptionPane.showMessageDialog(this, "Invalid input for cost or status. Please try again.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAddRepairActionPerformed
+
+    private void btnAddRepair1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddRepair1MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddRepair1MouseClicked
+
+    private void btnAddRepair1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRepair1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddRepair1ActionPerformed
+
+    private void btnAddRepair2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddRepair2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddRepair2MouseClicked
+
+    private void btnAddRepair2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRepair2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddRepair2ActionPerformed
             
 
     
@@ -211,6 +276,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAddRepair;
+    private com.k33ptoo.components.KButton btnAddRepair1;
+    private com.k33ptoo.components.KButton btnAddRepair2;
     private com.k33ptoo.components.KButton btnDetailCard;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

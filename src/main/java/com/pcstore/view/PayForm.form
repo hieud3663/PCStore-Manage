@@ -295,9 +295,6 @@
                   <Dimension value="[100, 45]"/>
                 </Property>
               </Properties>
-              <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnPayMouseClicked"/>
-              </Events>
             </Component>
             <Component class="com.k33ptoo.components.KButton" name="btnCancel">
               <Properties>

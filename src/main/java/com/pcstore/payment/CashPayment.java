@@ -1,12 +1,16 @@
 package com.pcstore.payment;
 
+import java.awt.Component;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import javax.swing.JOptionPane;
+
 import com.pcstore.model.Invoice;
 import com.pcstore.model.base.BasePayment;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import com.pcstore.utils.JDialogInputUtils;
 
 /**
  * Thanh toán bằng tiền mặt
@@ -22,6 +26,15 @@ public class CashPayment extends BasePayment {
      */
     public CashPayment() {
         super();
+        this.setPaymentMethod(PaymentMethodEnum.CASH);
+    }
+
+    /**
+     * Constructor với hóa đơn
+     * @param invoice Hóa đơn cần thanh toán
+     */
+    public CashPayment(Invoice invoice) {
+        super(invoice);
         this.setPaymentMethod(PaymentMethodEnum.CASH);
     }
     
@@ -56,7 +69,34 @@ public class CashPayment extends BasePayment {
      * @return true nếu thanh toán thành công, false nếu thất bại
      */
     @Override
-    public boolean processPayment() {
+    public boolean processPayment(Component parent) {
+
+        BigDecimal amountReceived = JDialogInputUtils.showInputDialogBigDecimal(parent, 
+                "Nhập số tiền khách đưa:", 
+                "Thanh toán bằng tiền mặt");
+        
+        // Nếu người dùng hủy việc nhập tiền
+        if (amountReceived == null) {
+            return false;
+        }
+        
+        try {
+            // Kiểm tra số tiền khách đưa có đủ không
+            if (amountReceived.compareTo(invoice.getTotalAmount()) < 0) {
+                JOptionPane.showMessageDialog(parent, 
+                    "Số tiền khách đưa không đủ!", 
+                    "Lỗi", 
+                    JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+            setAmountReceived(amountReceived);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(parent, 
+                "Số tiền không hợp lệ!", 
+                "Lỗi", 
+                JOptionPane.ERROR_MESSAGE);
+        }
         // Kiểm tra số tiền khách đưa phải >= số tiền cần thanh toán
         if (amountReceived == null || amountReceived.compareTo(getAmount()) < 0) {
             setDescription("Số tiền khách đưa không đủ");
@@ -68,7 +108,7 @@ public class CashPayment extends BasePayment {
             change = amountReceived.subtract(getAmount());
             
             // Cập nhật trạng thái
-            setStatus(InvoiceStatusEnum.COMPLETED);
+            setStatus(InvoiceStatusEnum.PAID);
             setPaymentDate(LocalDateTime.now());
             setTransactionReference("CASH_" + getPaymentId());
             setDescription("Thanh toán tiền mặt thành công. Tiền thừa: " + change);
@@ -134,5 +174,11 @@ public class CashPayment extends BasePayment {
                 ", status=" + getStatus() +
                 ", paymentDate=" + getPaymentDate() +
                 '}';
+    }
+
+    @Override
+    public boolean processPayment() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'processPayment'");
     }
 }

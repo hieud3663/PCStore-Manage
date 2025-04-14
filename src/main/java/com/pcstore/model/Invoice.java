@@ -1,13 +1,14 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
-import com.pcstore.model.enums.InvoiceStatusEnum;
-import com.pcstore.model.enums.PaymentMethodEnum;
-import com.pcstore.utils.ErrorMessage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.pcstore.model.base.BaseTimeEntity;
+import com.pcstore.model.enums.InvoiceStatusEnum;
+import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Class biểu diễn hóa đơn
@@ -20,9 +21,39 @@ public class Invoice extends BaseTimeEntity {
     private LocalDateTime invoiceDate;
     private InvoiceStatusEnum status;
     private PaymentMethodEnum paymentMethod;
+    private BigDecimal discountAmount;
     private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
+    private boolean pointUsed = false; // Điểm đã sử dụng hay chưa
 
 
+    public Invoice() {
+    }
+
+    public Invoice(Customer customer, Employee employee, BigDecimal totalAmount, LocalDateTime invoiceDate,
+            InvoiceStatusEnum status, PaymentMethodEnum paymentMethod, BigDecimal discountAmount,
+            List<InvoiceDetail> invoiceDetails) {
+        this.customer = customer;
+        this.employee = employee;
+        this.totalAmount = totalAmount;
+        this.invoiceDate = invoiceDate;
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+        this.discountAmount = discountAmount;
+        this.invoiceDetails = invoiceDetails;
+    }
+
+    
+
+    public Invoice(Customer customer, Employee employee, BigDecimal totalAmount, PaymentMethodEnum paymentMethod,
+            List<InvoiceDetail> invoiceDetails) {
+        this.customer = customer;
+        this.employee = employee;
+        this.totalAmount = totalAmount;
+        this.paymentMethod = paymentMethod;
+        this.invoiceDetails = invoiceDetails;
+        this.invoiceDate = LocalDateTime.now();
+        this.status = InvoiceStatusEnum.PENDING;
+    }
 
     @Override
     public Object getId() {
@@ -63,6 +94,7 @@ public class Invoice extends BaseTimeEntity {
         return totalAmount;
     }
 
+ 
     public void setTotalAmount(BigDecimal totalAmount) {
         if (totalAmount == null) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Tổng tiền"));
@@ -155,6 +187,16 @@ public class Invoice extends BaseTimeEntity {
         setTotalAmount(calculateTotal());
     }
 
+
+    //set point
+//    public void setPoinUsed(int pointUsed) {
+//        if (pointUsed < 0) {
+//            throw new IllegalArgumentException("Điểm sử dụng không hợp lệ");
+//        }
+//        this.customer.setPointUsed(pointUsed);
+//    }
+
+    //
     // Kiểm tra chi tiết hóa đơn hợp lệ
     private boolean isValidDetail(InvoiceDetail detail) {
         if (detail.getProduct() == null) {
@@ -237,6 +279,14 @@ public class Invoice extends BaseTimeEntity {
         setStatus(InvoiceStatusEnum.CANCELLED);
     }
 
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+    
     // Factory method để tạo hóa đơn mới
     public static Invoice createNew(Customer customer, Employee employee) {
         if (customer == null) {
@@ -252,6 +302,17 @@ public class Invoice extends BaseTimeEntity {
         invoice.setInvoiceDate(LocalDateTime.now());
         invoice.setStatus(InvoiceStatusEnum.PENDING);
         invoice.setTotalAmount(BigDecimal.ZERO);
+        invoice.setDiscountAmount(BigDecimal.ZERO);
         return invoice;
     }
+
+    public boolean isPointUsed() {
+        return pointUsed;
+    }
+
+    public void setPointUsed(boolean pointUsed) {
+        this.pointUsed = pointUsed;
+    }
+
+    
 }

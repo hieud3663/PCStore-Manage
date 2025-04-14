@@ -6,14 +6,21 @@ package com.pcstore.view;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.Year;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
+import com.k33ptoo.components.KButton;
+import com.pcstore.controller.PaymentController;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.base.BasePayment;
+import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
-import com.pcstore.payment.Payment;
+import com.pcstore.payment.CashPayment;
+import com.pcstore.payment.ZalopayPayment;
+//import com.pcstore.payment.ZalopayPayment;
 import com.pcstore.utils.LocaleManager;
 
 /**
@@ -25,9 +32,11 @@ public class PayForm extends javax.swing.JDialog {
     private Invoice currentInvoice;
     private boolean paymentSuccessful = false;
     private PaymentMethodEnum selectedPaymentMethod = PaymentMethodEnum.CASH;
+    private PaymentController paymentController;
     private boolean  checkSelectedPaymentMethod = false;
 
-    private Payment currentPayment;
+
+    private BasePayment currentPayment;
     /**
      * Creates new form PayForm
      */     
@@ -178,11 +187,6 @@ public class PayForm extends javax.swing.JDialog {
         btnPay.setkHoverStartColor(new java.awt.Color(0, 153, 153));
         btnPay.setkStartColor(new java.awt.Color(102, 153, 255));
         btnPay.setPreferredSize(new java.awt.Dimension(100, 45));
-        btnPay.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnPayMouseClicked(evt);
-            }
-        });
         panelFooter.add(btnPay);
 
         btnCancel.setText(bundle.getString("btnCancle")); // NOI18N
@@ -217,87 +221,47 @@ public class PayForm extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelMouseClicked
 
     private void btnRadioPayCashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioPayCashActionPerformed
+        checkSelectedPaymentMethod = true;
         selectedPaymentMethod = PaymentMethodEnum.CASH;
     }//GEN-LAST:event_btnRadioPayCashActionPerformed
 
     private void btnRadioPayBankActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioPayBankActionPerformed
+        checkSelectedPaymentMethod = true;
         selectedPaymentMethod = PaymentMethodEnum.BANK_TRANSFER;
     }//GEN-LAST:event_btnRadioPayBankActionPerformed
 
     private void btnRadioZaloPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRadioZaloPayActionPerformed
+        checkSelectedPaymentMethod = true;
         selectedPaymentMethod = PaymentMethodEnum.ZALOPAY;
     }//GEN-LAST:event_btnRadioZaloPayActionPerformed
 
-    private void btnPayMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
-        if (!btnRadioPayCash.isSelected() && !btnRadioPayBank.isSelected() && !btnRadioZaloPay.isSelected()) {
-            btnRadioPayCash.setSelected(true);
-            selectedPaymentMethod = PaymentMethodEnum.CASH;
-        }
-        
-        // Hiển thị thông báo xác nhận dựa trên phương thức thanh toán
-        String message = "Xác nhận thanh toán bằng ";
-        
-        switch (selectedPaymentMethod) {
-            case CASH:
-                message += "Tiền mặt?";
-                break;
-            case BANK_TRANSFER:
-                message += "Chuyển khoản ngân hàng?";
-                break;
-            case ZALOPAY:
-                message += "Ví điện tử ZaloPay?";
-                break;
-            default:
-                message += "Tiền mặt?";
-                selectedPaymentMethod = PaymentMethodEnum.CASH;
-        }
-        
-        int option = JOptionPane.showConfirmDialog(
-            this,
-            message,
-            "Xác nhận thanh toán",
-            JOptionPane.YES_NO_OPTION
-        );
-        
-        if (option == JOptionPane.YES_OPTION) {
-            checkSelectedPaymentMethod = true;
-            //Thông báo Xác nhận đã thanh toán hay chưa?
-            int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Xác nhận đã thanh toán thành công?",
-                "Xác nhận thanh toán",
-                JOptionPane.YES_NO_OPTION
-            );
-            if (confirm == JOptionPane.YES_OPTION) {
-                // Xử lý thanh toán thành công
-                paymentSuccessful = true;
-                this.dispose();
-            } else {
-                paymentSuccessful = false;
-            }
-        }else{
-            checkSelectedPaymentMethod = false;
-        }
-    }//GEN-LAST:event_btnPayMouseClicked
     
+    
+    public KButton getBtnPay() {
+        return btnPay;
+    }
+
     public Invoice getCurrentInvoice() {
         return currentInvoice;
     }
 
     public void setCurrentInvoice(Invoice currentInvoice) {
         this.currentInvoice = currentInvoice;
-
+        
         NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
-
         this.txtTotalAmount.setText(formatter.format(currentInvoice.getTotalAmount()) + " đ");
     }
 
     public boolean isPaymentSuccessful() {
-        return paymentSuccessful;
+        return paymentController != null && paymentController.isPaymentSuccessful();
     }
     
     public PaymentMethodEnum getSelectedPaymentMethod() {
         return selectedPaymentMethod;
+    }
+
+    public void setSelectedPaymentMethod(PaymentMethodEnum selectedPaymentMethod) {
+        this.selectedPaymentMethod = selectedPaymentMethod;
     }
 
     public boolean isCheckSelectedPaymentMethod() {
@@ -306,6 +270,20 @@ public class PayForm extends javax.swing.JDialog {
     public void setCheckSelectedPaymentMethod(boolean checkSelectedPaymentMethod) {
         this.checkSelectedPaymentMethod = checkSelectedPaymentMethod;
     }
+    
+
+    public BasePayment getCurrentPayment() {
+        return paymentController != null ? paymentController.getCurrentPayment() : null;
+    }
+
+    public void setPaymentController(PaymentController paymentController) {
+        this.paymentController = paymentController;
+    }
+
+    public void setCurrentPayment(BasePayment currentPayment) {
+        this.currentPayment = currentPayment;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnCancel;

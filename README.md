@@ -1,5 +1,8 @@
 # MÔ HÌNH CHỨC NĂNG HỆ THỐNG QUẢN LÝ CỬA HÀNG MÁY TÍNH & LINH KIỆN
 
+## 0. GIỚI THIỆU
+   Hệ thống quản lý cửa hàng máy tính và linh kiện giúp quản lý toàn bộ quy trình từ nhập hàng, bán hàng, dịch vụ sau bán hàng đến báo cáo thống kê. Hệ thống này bao gồm các chức năng chính như quản lý sản phẩm, quản lý bán hàng, quản lý dịch vụ sau bán hàng, quản lý nhân viên và phân quyền, thống kê và báo cáo.
+
 ## 1. QUẢN LÝ SẢN PHẨM VÀ KHO HÀNG (Lộc)
    ### 1.1. Quản lý danh mục sản phẩm
       - Thêm mới danh mục sản phẩm

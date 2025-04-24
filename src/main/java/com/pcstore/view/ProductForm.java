@@ -4,17 +4,169 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.controller.ProductController;
+import com.pcstore.model.Category;
+import com.pcstore.model.Supplier;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author nloc2
  */
 public class ProductForm extends javax.swing.JPanel {
 
+    private ProductController controller;
+    private JComboBox<Category> categoryComboBox;
+    private JComboBox<Supplier> supplierComboBox;
+
     /**
      * Creates new form Product
      */
     public ProductForm() {
         initComponents();
+        
+        // Vô hiệu hóa trường ProductID
+        jTextField2.setEditable(false);
+        jTextField2.setBackground(new Color(240, 240, 240));
+        
+        // Thiết lập renderer cho combobox danh mục
+        categoryComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Category) {
+                    setText(((Category) value).getCategoryName());
+                }
+                return this;
+            }
+        });
+        
+        // Thiết lập renderer cho combobox nhà cung cấp
+        supplierComboBox.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Supplier) {
+                    setText(((Supplier) value).getName());
+                }
+                return this;
+            }
+        });
+        
+        // Thêm ràng buộc nhập liệu cho trường số lượng (chỉ cho nhập số)
+        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                    evt.consume();
+                }
+            }
+        });
+        
+        // Thêm ràng buộc nhập liệu cho trường giá (số và dấu chấm)
+        jTextField6.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c) && c != '.' && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                    evt.consume();
+                }
+            }
+        });
+        
+        // Thêm sự kiện khi thay đổi danh mục để cập nhật ID tạm thời
+        categoryComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                categoryComboBoxActionPerformed(evt);
+            }
+        });
+        
+        // Thêm sự kiện cho các nút
+        btnAdd3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdd3ActionPerformed(evt);
+            }
+        });
+        
+        kButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kButton1ActionPerformed(evt);
+            }
+        });
+        
+        kButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kButton2ActionPerformed(evt);
+            }
+        });
+        
+        kButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                kButton3ActionPerformed(evt);
+            }
+        });
+        
+        // Thêm sự kiện cho tìm kiếm
+        try {
+            textFieldSearch1.getBtnSearch().addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    textFieldSearch1ActionPerformed(evt);
+                }
+            });
+        } catch (Exception e) {
+            // Fallback nếu không có phương thức getBtnSearch()
+            textFieldSearch1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+                @Override
+                public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                    textFieldSearch1ActionPerformed(null);
+                }
+
+                @Override
+                public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                    textFieldSearch1ActionPerformed(null);
+                }
+
+                @Override
+                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                    textFieldSearch1ActionPerformed(null);
+                }
+            });
+            System.err.println("Warning: Không thể truy cập getBtnSearch(). Sử dụng phương án dự phòng: " + e.getMessage());
+        }
+        
+        // Thêm sự kiện click vào bảng để hiển thị chi tiết sản phẩm
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
+        
+        // Khởi tạo controller
+        controller = new ProductController(this);
+        
+        // Load dữ liệu ban đầu
+        controller.loadProducts();
+
+        btnConfirmAddProduct = new com.k33ptoo.components.KButton();
+        btnConfirmAddProduct.setText("Xác nhận thêm");
+        btnConfirmAddProduct.setkBorderRadius(30);
+        btnConfirmAddProduct.setkEndColor(new java.awt.Color(0, 204, 102)); // Màu xanh lá
+        btnConfirmAddProduct.setkHoverEndColor(new java.awt.Color(0, 153, 76));
+        btnConfirmAddProduct.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnConfirmAddProduct.setkHoverStartColor(new java.awt.Color(0, 204, 102));
+        btnConfirmAddProduct.setkStartColor(new java.awt.Color(153, 255, 153));
+        btnConfirmAddProduct.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnConfirmAddProductActionPerformed(evt);
+    }
+});
+jPanel1.add(btnConfirmAddProduct);
     }
 
     /**
@@ -27,8 +179,8 @@ public class ProductForm extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel2 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
-        kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
+        panelHeader = new javax.swing.JPanel();
+        kPanelSearch = new com.k33ptoo.components.KGradientPanel();
         textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
         kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
         jPanel5 = new javax.swing.JPanel();
@@ -50,22 +202,22 @@ public class ProductForm extends javax.swing.JPanel {
         jTextField1 = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        categoryComboBox = new JComboBox<>();
         jPanel8 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        supplierComboBox = new JComboBox<>();
         jPanel9 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jTextField5 = new javax.swing.JTextField();
         jPanel10 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jTextField6 = new javax.swing.JTextField();
-        jPanel11 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jPanel12 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
+        panelDetail2 = new javax.swing.JPanel();
+        jLabel14 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextArea3 = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextArea2 = new javax.swing.JTextArea();
         panelDetail = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -91,23 +243,22 @@ public class ProductForm extends javax.swing.JPanel {
         jLabel2.setPreferredSize(new java.awt.Dimension(900, 30));
         add(jLabel2);
 
-        jPanel4.setBackground(new java.awt.Color(153, 255, 0));
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Panel Cái này để tìm kiếm"));
-        jPanel4.setMaximumSize(new java.awt.Dimension(328791, 1000));
-        jPanel4.setMinimumSize(new java.awt.Dimension(771, 50));
-        jPanel4.setOpaque(false);
-        jPanel4.setPreferredSize(new java.awt.Dimension(771, 80));
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.LINE_AXIS));
+        panelHeader.setBackground(new java.awt.Color(153, 255, 0));
+        panelHeader.setMaximumSize(new java.awt.Dimension(328791, 1000));
+        panelHeader.setMinimumSize(new java.awt.Dimension(771, 50));
+        panelHeader.setOpaque(false);
+        panelHeader.setPreferredSize(new java.awt.Dimension(771, 80));
+        panelHeader.setLayout(new javax.swing.BoxLayout(panelHeader, javax.swing.BoxLayout.LINE_AXIS));
 
-        kGradientPanel3.setkFillBackground(false);
-        kGradientPanel3.setMaximumSize(new java.awt.Dimension(100, 200));
-        kGradientPanel3.setMinimumSize(new java.awt.Dimension(100, 41));
-        kGradientPanel3.setOpaque(false);
+        kPanelSearch.setkFillBackground(false);
+        kPanelSearch.setMaximumSize(new java.awt.Dimension(100, 200));
+        kPanelSearch.setMinimumSize(new java.awt.Dimension(100, 41));
+        kPanelSearch.setOpaque(false);
 
         textFieldSearch1.setPreferredSize(new java.awt.Dimension(650, 31));
-        kGradientPanel3.add(textFieldSearch1);
+        kPanelSearch.add(textFieldSearch1);
 
-        jPanel4.add(kGradientPanel3);
+        panelHeader.add(kPanelSearch);
 
         kGradientPanel2.setkFillBackground(false);
         kGradientPanel2.setLayout(new java.awt.BorderLayout());
@@ -119,7 +270,7 @@ public class ProductForm extends javax.swing.JPanel {
         jLabel12.setText(bundle.getString("lbSort")); // NOI18N
         jPanel5.add(jLabel12);
 
-        cbbSortCustomer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<Không>", "Tên khách hàng", "Điểm" }));
+        cbbSortCustomer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<Không>", "Giá Bán", "Phân Loại" }));
         cbbSortCustomer.setPreferredSize(new java.awt.Dimension(150, 30));
         jPanel5.add(cbbSortCustomer);
 
@@ -138,9 +289,9 @@ public class ProductForm extends javax.swing.JPanel {
 
         kGradientPanel2.add(jPanel5, java.awt.BorderLayout.PAGE_START);
 
-        jPanel4.add(kGradientPanel2);
+        panelHeader.add(kGradientPanel2);
 
-        add(jPanel4);
+        add(panelHeader);
 
         panelBody.setBackground(new java.awt.Color(255, 255, 255));
         panelBody.setBorder(javax.swing.BorderFactory.createEmptyBorder(21, 10, 21, 10));
@@ -196,7 +347,7 @@ public class ProductForm extends javax.swing.JPanel {
         panelBody.add(kGradientPanel1);
 
         panelDetails.setBackground(new java.awt.Color(255, 255, 255));
-        panelDetails.setBorder(javax.swing.BorderFactory.createTitledBorder("Cái này để hiển thị thông tin chi tiết"));
+        panelDetails.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("titleDetailInformation"))); // NOI18N
         panelDetails.setPreferredSize(new java.awt.Dimension(450, 470));
         panelDetails.setLayout(new java.awt.BorderLayout());
 
@@ -211,9 +362,12 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel3.setBackground(new java.awt.Color(255, 255, 255));
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel3.setText(bundle.getString("lbProductID")); // NOI18N
         jLabel3.setOpaque(true);
         jPanel6.add(jLabel3);
+
+        jTextField2.setEditable(false);
+        jTextField2.setBackground(new Color(240, 240, 240)); // Màu nền xám nhạt để biểu thị không thể edit
         jPanel6.add(jTextField2);
 
         jPanel2.add(jPanel6);
@@ -235,10 +389,12 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel5.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel5.setText(bundle.getString("lbClassfication")); // NOI18N
         jLabel5.setOpaque(true);
         jPanel7.add(jLabel5);
-        jPanel7.add(jTextField3);
+
+        categoryComboBox.setPreferredSize(new Dimension(200, 30));
+        jPanel7.add(categoryComboBox);
 
         jPanel2.add(jPanel7);
 
@@ -247,10 +403,12 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel6.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel6.setText(bundle.getString("lbSupplier")); // NOI18N
         jLabel6.setOpaque(true);
         jPanel8.add(jLabel6);
-        jPanel8.add(jTextField4);
+
+        supplierComboBox.setPreferredSize(new Dimension(200, 30));
+        jPanel8.add(supplierComboBox);
 
         jPanel2.add(jPanel8);
 
@@ -259,7 +417,7 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel7.setBackground(new java.awt.Color(255, 255, 255));
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel7.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel7.setText(bundle.getString("lbQuantity")); // NOI18N
         jLabel7.setOpaque(true);
         jPanel9.add(jLabel7);
         jPanel9.add(jTextField5);
@@ -271,38 +429,42 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel8.setBackground(new java.awt.Color(255, 255, 255));
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel8.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel8.setText(bundle.getString("lbPrice")); // NOI18N
         jLabel8.setOpaque(true);
         jPanel10.add(jLabel8);
         jPanel10.add(jTextField6);
 
         jPanel2.add(jPanel10);
 
-        jPanel11.setPreferredSize(new java.awt.Dimension(250, 50));
-        jPanel11.setLayout(new java.awt.GridLayout(2, 0));
+        panelDetail2.setAlignmentY(30.0F);
+        panelDetail2.setMinimumSize(new java.awt.Dimension(200, 80));
+        panelDetail2.setName(""); // NOI18N
+        panelDetail2.setPreferredSize(new java.awt.Dimension(300, 100));
+        panelDetail2.setLayout(new javax.swing.BoxLayout(panelDetail2, javax.swing.BoxLayout.Y_AXIS));
 
-        jLabel9.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel9.setText(bundle.getString("lbProductName")); // NOI18N
-        jLabel9.setOpaque(true);
-        jPanel11.add(jLabel9);
-        jPanel11.add(jTextField7);
+        jLabel14.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel14.setText(bundle.getString("lbSpecfication")); // NOI18N
+        jLabel14.setOpaque(true);
+        panelDetail2.add(jLabel14);
 
-        jPanel2.add(jPanel11);
+        jScrollPane4.setMinimumSize(new java.awt.Dimension(16, 50));
 
-        jPanel12.setPreferredSize(new java.awt.Dimension(250, 50));
-        jPanel12.setLayout(new java.awt.GridLayout(2, 0));
+        jTextArea3.setColumns(20);
+        jTextArea3.setRows(5);
+        jTextArea3.setAutoscrolls(false);
+        jScrollPane4.setViewportView(jTextArea3);
 
-        jLabel10.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel10.setText(bundle.getString("lbProductName")); // NOI18N
-        jLabel10.setOpaque(true);
-        jPanel12.add(jLabel10);
-        jPanel12.add(jTextField8);
+        panelDetail2.add(jScrollPane4);
 
-        jPanel2.add(jPanel12);
+        jTextArea2.setColumns(20);
+        jTextArea2.setRows(5);
+        jScrollPane3.setViewportView(jTextArea2);
 
-        panelDetails.add(jPanel2, java.awt.BorderLayout.CENTER);
+        panelDetail2.add(jScrollPane3);
+
+        jPanel2.add(panelDetail2);
+        panelDetail2.getAccessibleContext().setAccessibleDescription("");
 
         panelDetail.setMinimumSize(new java.awt.Dimension(200, 80));
         panelDetail.setPreferredSize(new java.awt.Dimension(300, 100));
@@ -310,7 +472,7 @@ public class ProductForm extends javax.swing.JPanel {
 
         jLabel11.setBackground(new java.awt.Color(255, 255, 255));
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel11.setText(bundle.getString("lbProductName")); // NOI18N
+        jLabel11.setText(bundle.getString("lbDetail")); // NOI18N
         jLabel11.setOpaque(true);
         panelDetail.add(jLabel11);
 
@@ -322,7 +484,9 @@ public class ProductForm extends javax.swing.JPanel {
 
         panelDetail.add(jScrollPane2);
 
-        panelDetails.add(panelDetail, java.awt.BorderLayout.PAGE_END);
+        jPanel2.add(panelDetail);
+
+        panelDetails.add(jPanel2, java.awt.BorderLayout.CENTER);
 
         panelBody.add(panelDetails);
 
@@ -331,6 +495,12 @@ public class ProductForm extends javax.swing.JPanel {
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         kButton3.setText("Xuất Excel");
+        kButton3.setkBorderRadius(30);
+        kButton3.setkEndColor(new java.awt.Color(0, 153, 153));
+        kButton3.setkHoverEndColor(new java.awt.Color(0, 204, 204));
+        kButton3.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        kButton3.setkHoverStartColor(new java.awt.Color(0, 204, 204));
+        kButton3.setkStartColor(new java.awt.Color(102, 255, 0));
         kButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 kButton3ActionPerformed(evt);
@@ -338,13 +508,26 @@ public class ProductForm extends javax.swing.JPanel {
         });
         jPanel1.add(kButton3);
 
+        kButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
         kButton2.setText("Xóa");
+        kButton2.setkBorderRadius(30);
+        kButton2.setkEndColor(new java.awt.Color(255, 51, 51));
+        kButton2.setkHoverEndColor(new java.awt.Color(255, 204, 204));
+        kButton2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        kButton2.setkHoverStartColor(new java.awt.Color(255, 51, 51));
+        kButton2.setkStartColor(new java.awt.Color(255, 204, 204));
         jPanel1.add(kButton2);
 
+        kButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
         kButton1.setText("Cập nhật");
+        kButton1.setkBorderRadius(30);
+        kButton1.setkEndColor(new java.awt.Color(102, 153, 255));
+        kButton1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        kButton1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        kButton1.setkHoverStartColor(new java.awt.Color(153, 255, 154));
         jPanel1.add(kButton1);
 
-        btnAdd3.setText(bundle.getString("btnAddProduct")); // NOI18N
+        btnAdd3.setText("Thêm mới");// NOI18N
         btnAdd3.setkBorderRadius(30);
         btnAdd3.setkEndColor(new java.awt.Color(102, 153, 255));
         btnAdd3.setkHoverEndColor(new java.awt.Color(102, 153, 255));
@@ -368,27 +551,191 @@ public class ProductForm extends javax.swing.JPanel {
         // Thêm logic xử lý khác nếu cần
     }
 
-    private void btnAdd3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAdd3ActionPerformed
+    private void btnAdd3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // Khi nhấn nút "Thêm sản phẩm", luôn thực hiện reset form để chuẩn bị thêm mới
+        controller.handleAddButtonClick();
+    }
 
-    private void kButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_kButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_kButton3ActionPerformed
+    private void kButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        controller.exportToExcel();
+    }
+    
+    private void kButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+        controller.updateProduct();
+    }
 
-    private void btnResetSortMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetSortMouseClicked
+    private void kButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        controller.deleteProduct();
+    }
+
+    private void btnResetSortMouseClicked(java.awt.event.MouseEvent evt) {
         cbbSortCustomer.setSelectedIndex(0);
         cbbSort.setSelectedIndex(0);
-    }//GEN-LAST:event_btnResetSortMouseClicked
+        controller.loadProducts(); // Tải lại danh sách không sắp xếp
+    }
+
+    /**
+     * Cập nhật ID tạm thời khi thay đổi danh mục
+     */
+    private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        Category selectedCategory = (Category) categoryComboBox.getSelectedItem();
+        if (selectedCategory != null) {
+            jTextField2.setText(selectedCategory.getCategoryId() + "xxx"); // Hiển thị ID mẫu
+        } else {
+            jTextField2.setText("xxxxx"); // Mẫu mặc định
+        }
+    }
+
+    private void textFieldSearch1ActionPerformed(java.awt.event.ActionEvent evt) {
+        controller.searchProducts(textFieldSearch1.getText());
+    }
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {
+        controller.displaySelectedProduct();
+    }
+    
+    /**
+     * Sắp xếp sản phẩm theo tiêu chí được chọn
+     */
+    private void sortProducts() {
+        String sortField = cbbSortCustomer.getSelectedItem().toString();
+        String sortOrder = cbbSort.getSelectedItem().toString();
+        
+        if (!"<Không>".equals(sortField) && !"<Không>".equals(sortOrder)) {
+            controller.sortProducts(sortField, sortOrder);
+        }
+    }
+
+    private void btnConfirmAddProductActionPerformed(java.awt.event.ActionEvent evt) {
+        // Chỉ thực hiện thêm sản phẩm khi form đang ở trạng thái thêm mới (ID kết thúc bằng xxx)
+        String currentId = jTextField2.getText().trim();
+        if (currentId.endsWith("xxx")) {
+            controller.addProduct();
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                    "Vui lòng nhấn nút 'Thêm sản phẩm' trước khi xác nhận thêm mới.", 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    // Thêm các getter cho các thành phần giao diện
+    public javax.swing.JTable getTable() {
+        return jTable1;
+    }
+
+    public javax.swing.JTextField getIdField() {
+        return jTextField2;  // ID
+    }
+
+    public javax.swing.JTextField getNameField() {
+        return jTextField1;  // Name
+    }
+
+    public JComboBox<Category> getCategoryComboBox() {
+        return categoryComboBox;  // Category
+    }
+
+    public JComboBox<Supplier> getSupplierComboBox() {
+        return supplierComboBox;  // Supplier
+    }
+
+    public javax.swing.JTextField getQuantityField() {
+        return jTextField5;  // Quantity
+    }
+
+    public javax.swing.JTextField getPriceField() {
+        return jTextField6;  // Price
+    }
+
+    public javax.swing.JTextArea getSpecificationsArea() {
+        return jTextArea3;  // Specifications
+    }
+
+    public javax.swing.JTextArea getDescriptionArea() {
+        return jTextArea1;  // Description
+    }
+
+    public com.pcstore.utils.TextFieldSearch getTextFieldSearch() {
+        return textFieldSearch1;
+    }
+
+    public com.k33ptoo.components.KButton getBtnAdd() {
+        return btnAdd3;
+    }
+
+    public com.k33ptoo.components.KButton getBtnUpdate() {
+        return kButton1;
+    }
+
+    public com.k33ptoo.components.KButton getBtnDelete() {
+        return kButton2;
+    }
+
+    public javax.swing.JComboBox<String> getCbbSortCustomer() {
+        return cbbSortCustomer;
+    }
+
+    public javax.swing.JComboBox<String> getCbbSort() {
+        return cbbSort;
+    }
+
+    public javax.swing.JButton getBtnResetSort() {
+        return btnResetSort;
+    }
+
+    public javax.swing.JPanel getDetailsPanel() {
+        return panelDetails;
+    }
+    public com.k33ptoo.components.KButton getBtnConfirmAddProduct() {
+        return btnConfirmAddProduct;
+    }
+
+    /**
+     * Cập nhật dữ liệu cho bảng sản phẩm
+     * @param data Dữ liệu hiển thị
+     * @param columns Tên các cột
+     */
+    public void updateTable(Object[][] data, String[] columns) {
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            data, columns) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép sửa trực tiếp trên bảng
+            }
+            
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 4 || columnIndex == 5) {
+                    return Integer.class;
+                }
+                return String.class;
+            }
+        });
+    }
+
+    /**
+     * Reset form nhập liệu
+     */
+    public void resetForm() {
+        jTextField1.setText(""); // Tên sản phẩm
+        jTextField5.setText("0"); // Số lượng
+        jTextField6.setText("0"); // Giá
+        jTextArea3.setText(""); // Thông số kỹ thuật
+        jTextArea1.setText(""); // Mô tả
+        
+        // Cập nhật ID tạm thời
+        categoryComboBoxActionPerformed(null);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAdd3;
+    private com.k33ptoo.components.KButton btnConfirmAddProduct;
     private javax.swing.JButton btnResetSort;
     private javax.swing.JComboBox<String> cbbSort;
     private javax.swing.JComboBox<String> cbbSortCustomer;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -396,14 +743,10 @@ public class ProductForm extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
@@ -411,25 +754,27 @@ public class ProductForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea jTextArea2;
+    private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     private com.k33ptoo.components.KButton kButton1;
     private com.k33ptoo.components.KButton kButton2;
     private com.k33ptoo.components.KButton kButton3;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
+    private com.k33ptoo.components.KGradientPanel kPanelSearch;
     private javax.swing.JPanel panelBody;
     private javax.swing.JPanel panelDetail;
+    private javax.swing.JPanel panelDetail2;
     private javax.swing.JPanel panelDetails;
+    private javax.swing.JPanel panelHeader;
     private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     // End of variables declaration//GEN-END:variables
 }

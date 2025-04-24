@@ -19,17 +19,24 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import com.pcstore.controller.WareHouseController;
+
 /**
  *
  * @author nloc2
  */
 public class WareHouseForm extends javax.swing.JPanel {
 
+    private WareHouseController controller;
+
     /**
      * Creates new form PurchaseOder
      */
     public WareHouseForm() {
         initComponents();
+        
+        // Khởi tạo controller
+        controller = new WareHouseController(this);
     }
 
     /**
@@ -217,23 +224,51 @@ public class WareHouseForm extends javax.swing.JPanel {
         historyStockInForm.setLocationRelativeTo(historyStockInForm);
         historyStockInForm.setVisible(true);
     }//GEN-LAST:event_btnHistoryStockInMouseClicked
+
+    private void initTable() {
+        // Tạo mô hình bảng cho phép kiểm soát tính chỉnh sửa
+        String[] columns = {"Chức Năng ", "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"};
+        EditableTableModel model = new EditableTableModel(new Object[0][0], columns);
+        jTable1.setModel(model);
+        
+        // Thiết lập renderer và editor cho cột chứa các nút
+        jTable1.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer());
+        jTable1.getColumnModel().getColumn(0).setCellEditor(new ButtonEditor(jTable1));
+        
+        // Lưu controller vào thuộc tính của bảng để sử dụng trong ButtonEditor
+        jTable1.putClientProperty("controller", controller);
+        
+        // Thiết lập độ rộng cho các cột
+        jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
+        jTable1.getColumnModel().getColumn(1).setPreferredWidth(50);
+        jTable1.getColumnModel().getColumn(2).setPreferredWidth(150);
+        jTable1.getColumnModel().getColumn(3).setPreferredWidth(300);
+        jTable1.getColumnModel().getColumn(4).setPreferredWidth(200);
+        jTable1.getColumnModel().getColumn(5).setPreferredWidth(100);
+        
+        // Thiết lập độ cao cho hàng
+        jTable1.setRowHeight(32);
+    }
    
     
     public class ButtonRenderer extends JPanel implements TableCellRenderer {
-
         private final JButton btnEdit = new JButton();
         private final JButton btnDelete = new JButton();
+        
+        // Icon cho các trạng thái của nút sửa
+        private final ImageIcon editIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"));
+        private final ImageIcon confirmIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/check.png"));
     
         public ButtonRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
     
-            // Thêm icon cho nút "Sửa"
-            btnEdit.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"))); // Đường dẫn đến icon "Sửa"
-            btnEdit.setToolTipText("Sửa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Sửa"
+            btnEdit.setIcon(editIcon);
+            btnEdit.setToolTipText("Sửa");
     
-            // Thêm icon cho nút "Xóa"
-            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png"))); // Đường dẫn đến icon "Xóa"
-            btnDelete.setToolTipText("Xóa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Xóa"
+            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png")));
+            btnDelete.setToolTipText("Xóa");
     
             add(btnEdit);
             add(btnDelete);
@@ -241,51 +276,121 @@ public class WareHouseForm extends javax.swing.JPanel {
     
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            // Kiểm tra xem hàng này có đang được chỉnh sửa không
+            boolean isEditing = false;
+            if (table.getModel() instanceof EditableTableModel) {
+                isEditing = ((EditableTableModel) table.getModel()).isRowEditable(row);
+            }
+            
+            // Thay đổi icon của nút sửa tùy thuộc vào trạng thái
+            btnEdit.setIcon(isEditing ? confirmIcon : editIcon);
+            btnEdit.setToolTipText(isEditing ? "Hoàn tất" : "Sửa");
+            
             return this;
+        }
+    }
+    public class EditableTableModel extends DefaultTableModel {
+        private int editableRow = -1; // -1 nghĩa là không có hàng nào được mở khóa để sửa
+        
+        public EditableTableModel(Object[][] data, Object[] columnNames) {
+            super(data, columnNames);
+        }
+        
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // Cột 0 (chứa các nút) luôn có thể chỉnh sửa để các nút hoạt động
+            if (column == 0) return true;
+            
+            // Các cột khác chỉ có thể chỉnh sửa nếu hàng đó được mở khóa
+            return row == editableRow;
+        }
+        
+        /**
+         * Đặt hàng có thể chỉnh sửa
+         * @param row Chỉ số hàng, hoặc -1 để khóa tất cả
+         */
+        public void setEditableRow(int row) {
+            int oldEditableRow = editableRow;
+            editableRow = row;
+            
+            // Thông báo về sự thay đổi cho các cột bị ảnh hưởng
+            if (oldEditableRow != -1) {
+                fireTableRowsUpdated(oldEditableRow, oldEditableRow);
+            }
+            if (editableRow != -1) {
+                fireTableRowsUpdated(editableRow, editableRow);
+            }
+        }
+        
+        /**
+         * Kiểm tra xem hàng có được mở khóa để sửa hay không
+         */
+        public boolean isRowEditable(int row) {
+            return row == editableRow;
+        }
+        
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            if (columnIndex == 1 || columnIndex == 5) {
+                return Integer.class;
+            }
+            return String.class;
         }
     }
 
     // Lớp ButtonEditor để xử lý sự kiện khi bấm các nút
     // Lớp ButtonEditor để xử lý sự kiện khi bấm các nút
     public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
-
         private final JPanel panel = new JPanel();
         private final JButton btnEdit = new JButton();
         private final JButton btnDelete = new JButton();
-        private final JTable table; // Tham chiếu đến bảng để thao tác
+        private final JTable table;
+        
+        // Icon cho các trạng thái của nút sửa
+        private final ImageIcon editIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"));
+        private final ImageIcon confirmIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/check.png"));
     
         public ButtonEditor(JTable table) {
-            this.table = table; // Lưu tham chiếu đến bảng
+            this.table = table;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
     
-            // Thêm icon cho nút "Sửa"
-            btnEdit.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"))); // Đường dẫn đến icon "Sửa"
-            btnEdit.setToolTipText("Sửa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Sửa"
+            btnEdit.setIcon(editIcon);
+            btnEdit.setToolTipText("Sửa");
     
-            // Thêm icon cho nút "Xóa"
-            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png"))); // Đường dẫn đến icon "Xóa"
-            btnDelete.setToolTipText("Xóa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Xóa"
+            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png")));
+            btnDelete.setToolTipText("Xóa");
     
-            // Thêm các nút vào panel
             panel.add(btnEdit);
             panel.add(btnDelete);
     
-            // Xử lý sự kiện cho nút "Sửa"
+            // Xử lý sự kiện cho nút "Sửa/Hoàn tất"
             btnEdit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
-                        // Hiển thị form EditQuantityForm
-                        javax.swing.JFrame frame = new javax.swing.JFrame("Edit Quantity");
-                        frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-                        frame.setContentPane(new EditQuantityForm());
-                        frame.pack();
-                        frame.setLocationRelativeTo(null);
-                        frame.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(table, "Không có dòng nào được chọn để sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        // Lấy model tùy chỉnh
+                        EditableTableModel model = (EditableTableModel) table.getModel();
+                        
+                        // Kiểm tra trạng thái hiện tại của hàng
+                        boolean isCurrentlyEditing = model.isRowEditable(selectedRow);
+                        
+                        if (isCurrentlyEditing) {
+                            // Đang chỉnh sửa -> hoàn tất và lưu thay đổi
+                            saveChanges(selectedRow);
+                            model.setEditableRow(-1); // Khóa tất cả các hàng
+                        } else {
+                            // Chưa chỉnh sửa -> chuyển sang chế độ chỉnh sửa
+                            model.setEditableRow(selectedRow);
+                        }
+                        
+                        // Cập nhật giao diện
+                        table.repaint();
                     }
+                    // Báo cho AbstractCellEditor biết rằng chỉnh sửa đã kết thúc
+                    stopCellEditing();
                 }
             });
     
@@ -295,18 +400,84 @@ public class WareHouseForm extends javax.swing.JPanel {
                 public void actionPerformed(ActionEvent e) {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
-                        // Xóa dòng được chọn
-                        ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
-                        JOptionPane.showMessageDialog(table, "Đã xóa sản phẩm tại dòng: " + selectedRow);
-                    } else {
-                        JOptionPane.showMessageDialog(table, "Không có dòng nào được chọn để xóa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        // Xác nhận trước khi xóa
+                        int confirm = JOptionPane.showConfirmDialog(table,
+                                "Bạn có chắc chắn muốn xóa sản phẩm này?",
+                                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                        
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            // Lấy id sản phẩm để xóa
+                            String productId = table.getValueAt(selectedRow, 2).toString();
+                            
+                            // Xử lý xóa sản phẩm thông qua controller
+                            try {
+                                // Gọi phương thức xóa từ controller (thêm vào WareHouseController)
+                                WareHouseController controller = (WareHouseController) table.getClientProperty("controller");
+                                if (controller != null) {
+                                    controller.deleteProduct(productId);
+                                }
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(table, 
+                                    "Lỗi khi xóa sản phẩm: " + ex.getMessage(),
+                                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
+                    stopCellEditing();
                 }
             });
         }
     
+        /**
+         * Lưu các thay đổi từ dòng đang chỉnh sửa
+         */
+        private void saveChanges(int row) {
+            try {
+                // Lấy thông tin sản phẩm từ bảng
+                String productId = table.getValueAt(row, 2).toString();
+                String productName = table.getValueAt(row, 3).toString();
+                String supplier = table.getValueAt(row, 4).toString();
+                int quantity = (int) table.getValueAt(row, 5);
+                
+                // Kiểm tra dữ liệu đầu vào
+                if (productName.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(table, "Tên sản phẩm không được để trống!", 
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if (quantity < 0) {
+                    JOptionPane.showMessageDialog(table, "Số lượng không được âm!", 
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                // Gọi phương thức cập nhật từ controller (thêm vào WareHouseController)
+                WareHouseController controller = (WareHouseController) table.getClientProperty("controller");
+                if (controller != null) {
+                    controller.updateProductQuantity(productId, quantity);
+                    JOptionPane.showMessageDialog(table, "Đã cập nhật thông tin sản phẩm thành công!", 
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(table, "Lỗi khi cập nhật sản phẩm: " + e.getMessage(), 
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+    
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            // Kiểm tra xem hàng này có đang được chỉnh sửa không
+            boolean isEditing = false;
+            if (table.getModel() instanceof EditableTableModel) {
+                isEditing = ((EditableTableModel) table.getModel()).isRowEditable(row);
+            }
+            
+            // Thay đổi icon của nút sửa tùy thuộc vào trạng thái
+            btnEdit.setIcon(isEditing ? confirmIcon : editIcon);
+            btnEdit.setToolTipText(isEditing ? "Hoàn tất" : "Sửa");
+            
             return panel;
         }
     
@@ -315,6 +486,36 @@ public class WareHouseForm extends javax.swing.JPanel {
             return null;
         }
     }
+
+    /**
+     * Getter cho bảng sản phẩm
+     */
+    public JTable getTable() {
+        return jTable1;
+    }
+
+    /**
+     * Getter cho nút tạo đơn đặt hàng
+     */
+    public JButton getBtnCreatePurchaseOrder() {
+        return btnCreatePurchaseOrder;
+    }
+
+    /**
+     * Getter cho nút xem lịch sử nhập kho
+     */
+    public JButton getBtnHistoryStockIn() {
+        return btnHistoryStockIn;
+    }
+
+    /**
+     * Getter cho ô tìm kiếm (cần thêm ô tìm kiếm vào form)
+     */
+    public javax.swing.JTextField getTextFieldSearch() {
+        // Nếu chưa có ô tìm kiếm, hãy thêm vào form và thay đổi tên phù hợp
+        return null; // Tạm thời trả về null
+    }
+   
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public com.k33ptoo.components.KButton btnCreatePurchaseOrder;

@@ -4,16 +4,11 @@
 
 package com.pcstore;
 
-import java.sql.SQLException;
-
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.apache.commons.logging.Log;
-
 import com.formdev.flatlaf.FlatLightLaf;
-import com.pcstore.controller.LoginController;
 import com.pcstore.view.LoginForm;
 
 /**

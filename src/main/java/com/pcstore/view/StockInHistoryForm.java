@@ -3,12 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package com.pcstore.view;
-import javax.swing.border.*;
-import javax.swing.table.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import com.k33ptoo.components.*;
+import java.awt.event.MouseEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.LayoutStyle;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import com.k33ptoo.components.KButton;
+import com.k33ptoo.components.KGradientPanel;
 /**
  *
  * @author nloc2
@@ -37,8 +45,10 @@ public class StockInHistoryForm extends JDialog {
 
         kGradientPanel1 = new KGradientPanel();
         jScrollPane1 = new JScrollPane();
-        jTable1 = new JTable();
+        tablePurchaseOrders = new JTable();
         btnClose = new KButton();
+        JScrollPane jScrollPane2 = new JScrollPane();
+        tablePurchaseOrderDetails = new JTable();
 
         setMinimumSize(new java.awt.Dimension(946, 600));
         setResizable(false);
@@ -46,25 +56,25 @@ public class StockInHistoryForm extends JDialog {
         kGradientPanel1.setBorder(BorderFactory.createTitledBorder(null, "Lịch Sử Nhập Hàng", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel1.setkFillBackground(false);
 
-        jTable1.setModel(new DefaultTableModel(
+        tablePurchaseOrders.setModel(new DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Ngày Nhập", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Nhà Cung Cấp", "Giá Mỗi Sản Phẩm", "Thành Tiền"
+                "STT", "Mã Đơn", "Ngày Tạo", "Nhân Viên", "Nhà Cung Cấp", "Trạng Thái", "Tổng Tiền"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
-            };
+        ));
+        jScrollPane1.setViewportView(tablePurchaseOrders);
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+        tablePurchaseOrderDetails.setModel(new DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "STT", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền"
             }
-        });
-        jTable1.setRowHeight(25);
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
+        ));
+        jScrollPane2.setViewportView(tablePurchaseOrderDetails);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnClose.setText(bundle.getString("btnClose")); // NOI18N
@@ -87,14 +97,17 @@ public class StockInHistoryForm extends JDialog {
                 .addContainerGap()
                 .addGroup(kGradientPanel1Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                     .addComponent(btnClose, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 915, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 915, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 915, GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         kGradientPanel1Layout.setVerticalGroup(
             kGradientPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel1Layout.createSequentialGroup()
                 .addGap(29, 29, 29)
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 410, GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 200, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClose, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(12, Short.MAX_VALUE))
@@ -116,10 +129,27 @@ public class StockInHistoryForm extends JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCloseMouseClicked
 
+    /**
+     * Getter cho bảng hiển thị danh sách đơn nhập hàng
+     * @return Bảng hiển thị danh sách đơn nhập hàng
+     */
+    public JTable getTablePurchaseOrders() {
+        return tablePurchaseOrders;
+    }
+
+    /**
+     * Getter cho bảng hiển thị chi tiết đơn nhập hàng
+     * @return Bảng hiển thị chi tiết đơn nhập hàng
+     */
+    public JTable getTablePurchaseOrderDetails() {
+        return tablePurchaseOrderDetails;
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JTable tablePurchaseOrders;
+    private JTable tablePurchaseOrderDetails;
     private KButton btnClose;
     private JScrollPane jScrollPane1;
-    private JTable jTable1;
     private KGradientPanel kGradientPanel1;
     // End of variables declaration//GEN-END:variables
 }

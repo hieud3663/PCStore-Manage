@@ -57,9 +57,6 @@ public class Customer extends BasePerson {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     @Override
     public void setFullName(String fullName) {
@@ -70,6 +67,17 @@ public class Customer extends BasePerson {
             throw new IllegalArgumentException(ErrorMessage.CUSTOMER_NAME_TOO_SHORT);
         }
         this.fullName = fullName;
+    }
+
+
+    @Override
+    public void setEmail(String emailString){
+        if(isValidEmail(emailString) || emailString.isEmpty()) {
+            this.email = emailString;
+        } else {
+            throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL);
+        }
+
     }
 
     @Override

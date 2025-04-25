@@ -34,28 +34,11 @@ public class RepairServiceForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
         kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
         btnAddRepair = new com.k33ptoo.components.KButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         btnDetailCard = new com.k33ptoo.components.KButton();
-        btnAddRepair1 = new com.k33ptoo.components.KButton();
-        btnAddRepair2 = new com.k33ptoo.components.KButton();
-
-        javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
-        kGradientPanel1.setLayout(kGradientPanel1Layout);
-        kGradientPanel1Layout.setHorizontalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        kGradientPanel1Layout.setVerticalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-
-        kGradientPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Dịch Vụ Sửa Chữa", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
-        kGradientPanel2.setkFillBackground(false);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnAddRepair.setText(bundle.getString("btnAddRepair")); // NOI18N
@@ -136,77 +119,19 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
         });
 
-        btnAddRepair1.setText(bundle.getString("btnAddRepair")); // NOI18N
-        btnAddRepair1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnAddRepair1.setkBorderRadius(30);
-        btnAddRepair1.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnAddRepair1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnAddRepair1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAddRepair1.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnAddRepair1.setkStartColor(new java.awt.Color(102, 153, 255));
-        btnAddRepair1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnAddRepair1MouseClicked(evt);
-            }
-        });
-        btnAddRepair1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddRepair1ActionPerformed(evt);
-            }
-        });
-
-        btnAddRepair2.setText(bundle.getString("btnAddRepair")); // NOI18N
-        btnAddRepair2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnAddRepair2.setkBorderRadius(30);
-        btnAddRepair2.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnAddRepair2.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnAddRepair2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAddRepair2.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnAddRepair2.setkStartColor(new java.awt.Color(102, 153, 255));
-        btnAddRepair2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnAddRepair2MouseClicked(evt);
-            }
-        });
-        btnAddRepair2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddRepair2ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout kGradientPanel2Layout = new javax.swing.GroupLayout(kGradientPanel2);
-        kGradientPanel2.setLayout(kGradientPanel2Layout);
-        kGradientPanel2Layout.setHorizontalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnAddRepair1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
-                        .addComponent(btnAddRepair2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                        .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(kGradientPanel2Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE))
-                        .addContainerGap())))
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(973, Short.MAX_VALUE)
+                .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
-        kGradientPanel2Layout.setVerticalGroup(
-            kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel2Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addGroup(kGradientPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddRepair, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddRepair1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAddRepair2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
                 .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
         );
@@ -281,7 +206,6 @@ public class RepairServiceForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnDetailCard;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel2;
     // End of variables declaration//GEN-END:variables
 }

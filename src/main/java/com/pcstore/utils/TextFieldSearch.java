@@ -85,7 +85,8 @@ public class TextFieldSearch extends javax.swing.JPanel {
         btnSearch.setText(bundle.getString("btnSearch")); // NOI18N
         btnSearch.setToolTipText("");
         btnSearch.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        btnSearch.setIconTextGap(3);
+        btnSearch.setIconTextGap(15);
+        btnSearch.setkBorderRadius(30);
         btnSearch.setkEndColor(new java.awt.Color(153, 255, 153));
         btnSearch.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnSearch.setkHoverStartColor(new java.awt.Color(0, 153, 153));
@@ -104,8 +105,7 @@ public class TextFieldSearch extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(kPanelFieldSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(btnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

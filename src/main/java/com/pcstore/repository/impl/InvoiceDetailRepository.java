@@ -260,6 +260,51 @@ public class InvoiceDetailRepository implements Repository<InvoiceDetail, Intege
         }
     }
     
+    /**
+     * Tìm chi tiết hóa đơn theo danh sách ID hóa đơn
+     * 
+     * @param invoiceIds Danh sách ID hóa đơn
+     * @return Danh sách chi tiết hóa đơn
+     */
+    public List<InvoiceDetail> findByInvoiceIds(List<Integer> invoiceIds) {
+        if (invoiceIds == null || invoiceIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        List<InvoiceDetail> result = new ArrayList<>();
+        
+        // Tạo chuỗi dấu ? tương ứng với số lượng ID
+        StringBuilder placeholders = new StringBuilder();
+        for (int i = 0; i < invoiceIds.size(); i++) {
+            if (i > 0) {
+                placeholders.append(",");
+            }
+            placeholders.append("?");
+        }
+        
+        String sql = "SELECT * FROM invoice_detail WHERE invoice_id IN (" + placeholders.toString() + ")";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Set giá trị cho các tham số
+            for (int i = 0; i < invoiceIds.size(); i++) {
+                statement.setInt(i + 1, invoiceIds.get(i));
+            }
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    InvoiceDetail detail = mapResultSetToInvoiceDetail(rs);
+                    result.add(detail);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return result;
+    }
+
+
+    
     // Cập nhật tổng tiền hóa đơn
     private void updateInvoiceTotal(int invoiceId) {
         String sql = "UPDATE Invoices SET TotalAmount = (" +

@@ -15,6 +15,7 @@ import javax.swing.table.TableRowSorter;
 import com.pcstore.controller.InvoiceController;
 import com.pcstore.utils.IActionButtonTableListener;
 import com.pcstore.utils.TableActionCellComponent;
+import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.utils.TextFieldSearch;
 import com.k33ptoo.components.*;
 /**
@@ -37,7 +38,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
     public InvoiceForm() {
         initComponents();
       
-        setupSortableTables();
+        // setupSortableTables();
         initComponentsV2();
 
         initController();
@@ -255,14 +256,16 @@ public class InvoiceForm extends javax.swing.JPanel  {
 
     private void initComponentsV2(){
 
-        setupCusmizeTable();
+        // setupCusmizeTable();
 
         panelBody.removeAll();
         
         jScrollPaneInvoice.setPreferredSize(null);
         tableInvoice.setPreferredSize(null);
-        
-      
+
+        setupCusmizeTable();
+
+        // tách pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setTopComponent(panelInvoice);
         splitPane.setBottomComponent(panelInovoiceDetail);
@@ -285,88 +288,24 @@ public class InvoiceForm extends javax.swing.JPanel  {
         panelBody.revalidate();
         panelBody.repaint();
 
-        setupCusmizeHeaderTable();
+        // setupCusmizeHeaderTable();
     }
 
-    private void setupCusmizeHeaderTable() {
-        DefaultTableCellRenderer headerRenderer = createHeaderRenderer();
+    private void setupCusmizeTable(){
+        // Áp dụng kiểu dáng bảng từ TableStyleUtil
+        invoiceTableSorter = TableStyleUtil.applyDefaultStyle(tableInvoice);
+        invoiceDetailTableSorter = TableStyleUtil.applyDefaultStyle(tableInvoiceDetail);
         
-        tableInvoice.getTableHeader().setDefaultRenderer(headerRenderer);
-        tableInvoiceDetail.getTableHeader().setDefaultRenderer(headerRenderer);
-    
-        tableInvoice.getTableHeader().setReorderingAllowed(false);
-        tableInvoiceDetail.getTableHeader().setReorderingAllowed(false);
-    }
-    
-    /**
-     * Render lại cái Header nha mom
-     */
-    private DefaultTableCellRenderer createHeaderRenderer() {
-        return new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value,
-                        isSelected, hasFocus, row, column);
-                
-                label.setHorizontalAlignment(JLabel.CENTER);
-                label.setBackground(new Color(51, 153, 255));
-                label.setForeground(Color.WHITE);
-                label.setFont(new Font("Segoe UI", Font.BOLD, 13));
-                label.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-                
-           
-                RowSorter<?> sorter = table.getRowSorter();
-                if (sorter != null && sorter.getSortKeys().size() > 0) {
-                    RowSorter.SortKey sortKey = sorter.getSortKeys().get(0);
-                    if (sortKey.getColumn() == table.convertColumnIndexToModel(column)) {
-                        String text = value.toString();
-                        if (sortKey.getSortOrder() == SortOrder.ASCENDING) {
-                            text += " ▲"; 
-                        } else if (sortKey.getSortOrder() == SortOrder.DESCENDING) {
-                            text += " ▼"; 
-                        }
-                        label.setText(text);
-                    }
-                }
-                
-                return label;
-            }
-        };
-    }
-
-    private void setupCusmizeTable() {
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-
-        for (int i = 1; i < tableInvoice.getColumnCount(); i++) {
-            tableInvoice.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        for (int i = 0; i < tableInvoiceDetail.getColumnCount(); i++) {
-            tableInvoiceDetail.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        TableStyleUtil.setBooleanColumns(tableInvoice, 0); // Cột checkbox
+        TableStyleUtil.disableSortingForColumns(invoiceTableSorter, 0);
+        
+        // Thiết lập kích thước cột
+        if (tableInvoice.getColumnModel().getColumnCount() > 0) {
+            TableStyleUtil.setupColumnWidths(tableInvoice, 20, 60, 80);
         }
     }
 
-
-    //Setup cho cái bảng sắp xếp nha bé iu
-    private void setupSortableTables() {
-        invoiceTableSorter = new TableRowSorter<>(tableInvoice.getModel());
-        tableInvoice.setRowSorter(invoiceTableSorter);
-
-        invoiceTableSorter.setSortable(0, false);
-        
-        invoiceDetailTableSorter = new TableRowSorter<>(tableInvoiceDetail.getModel());
-        tableInvoiceDetail.setRowSorter(invoiceDetailTableSorter);
-    }
-
-    public void updateTableSorters() {
-        invoiceTableSorter.setModel(tableInvoice.getModel());
-        invoiceTableSorter.setSortable(0, false); 
-        invoiceDetailTableSorter.setModel(tableInvoiceDetail.getModel());
-    }
-
+   
     private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportExcelActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnExportExcelActionPerformed
@@ -442,6 +381,15 @@ public class InvoiceForm extends javax.swing.JPanel  {
 
     public KButton getBtnPaymentInvoice() {
         return btnPaymentInvoice;
+    }
+
+    public TableRowSorter<TableModel> getInvoiceTableSorter() {
+        return invoiceTableSorter;
+    }
+
+
+    public TableRowSorter<TableModel> getInvoiceDetailTableSorter() {
+        return invoiceDetailTableSorter;
     }
 
 

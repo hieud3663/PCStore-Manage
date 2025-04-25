@@ -23,6 +23,7 @@ public class ReturnRepository implements Repository<Return, Integer> {
     
     public ReturnRepository(Connection connection) {
         this.connection = connection;
+        this.repositoryFactory = RepositoryFactory.getInstance(connection);
     }
     
     @Override

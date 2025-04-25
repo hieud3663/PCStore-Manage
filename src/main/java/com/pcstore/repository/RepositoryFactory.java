@@ -21,10 +21,12 @@ public class RepositoryFactory {
     private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     private PurchaseOrderRepository purchaseOrderRepository;
     private RepairRepository repairRepository;
+    private WarrantyRepository warrantyRepository;
     // Singleton pattern implementation
     private static RepositoryFactory instance;
     private static Connection currentConnection;
     
+
     private RepositoryFactory(Connection connection) {
         this.connection = connection;
     }
@@ -100,12 +102,13 @@ public class RepositoryFactory {
         return purchaseOrderRepository;
     }
 
-    // public RepairRepository getRepairRepository() {
-    //     if (repairRepository == null) {
-    //         repairRepository = new RepairRepository(connection, this);
-    //     }
-    //     return repairRepository;
-    // }
+
+    public WarrantyRepository getWarrantyRepository() {
+        if (warrantyRepository == null) {
+            warrantyRepository = new WarrantyRepository(connection);
+        }
+        return warrantyRepository;
+    }
 
     
     public Connection getConnection() {

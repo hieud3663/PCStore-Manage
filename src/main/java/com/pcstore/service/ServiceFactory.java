@@ -90,6 +90,22 @@ public class ServiceFactory {
     }
     
     /**
+     * Lấy InvoiceDetailService
+     * @return InvoiceDetailService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
+        if (invoiceDetailService == null) {
+            RepositoryFactory repoFactory = RepositoryFactory.getInstance(getInstance().getConnection());
+            invoiceDetailService = new InvoiceDetailService(
+                    repoFactory.getInvoiceDetailRepository(), 
+                    repoFactory.getProductRepository()
+            );
+        }
+        return invoiceDetailService;
+    }
+    
+    /**
      * Lấy ProductService
      * @return ProductService instance
      * @throws SQLException Nếu có lỗi với kết nối database
@@ -126,17 +142,6 @@ public class ServiceFactory {
     }
     
 
-    /**
-     * Lấy InvoiceDetailService
-     * @return InvoiceDetailService instance
-     * @throws SQLException Nếu có lỗi với kết nối database
-     */
-    public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
-        if (invoiceDetailService == null) {
-            invoiceDetailService = new InvoiceDetailService(repositoryFactory.getInvoiceDetailRepository(), repositoryFactory.getProductRepository());
-        }
-        return invoiceDetailService;
-    }
     /**
      * Lấy PurchaseOrderService
      * @return PurchaseOrderService instance

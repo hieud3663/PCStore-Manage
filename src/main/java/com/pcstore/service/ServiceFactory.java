@@ -20,11 +20,11 @@ public class ServiceFactory {
     private static ProductService productService;
     private static SupplierService supplierService;
     private static InvoiceService invoiceService; 
+    private static InvoiceDetailService invoiceDetailService;
     private static PurchaseOrderService purchaseOrderService;
     private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
-    private static InvoiceDetailService invoiceDetailService;  // Thay vì InvoiceDetail
     // private static UserService userService;
     
     /**
@@ -33,7 +33,7 @@ public class ServiceFactory {
      */
     private ServiceFactory() throws SQLException {
         connection = DatabaseConnection.getInstance().getConnection();
-        repositoryFactory = new RepositoryFactory(connection);
+        repositoryFactory = RepositoryFactory.getInstance(connection);
     }
     
     /**
@@ -91,11 +91,10 @@ public class ServiceFactory {
      */
     public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
         if (invoiceDetailService == null) {
-            RepositoryFactory repoFactory = new RepositoryFactory(getInstance().getConnection());
+            RepositoryFactory repoFactory = RepositoryFactory.getInstance(getInstance().getConnection());
             invoiceDetailService = new InvoiceDetailService(
-                repoFactory.getInvoiceDetailRepository(),
-                repoFactory.getProductRepository(),
-                repoFactory.getInvoiceRepository() // Thêm InvoiceRepository
+                    repoFactory.getInvoiceDetailRepository(), 
+                    repoFactory.getProductRepository()
             );
         }
         return invoiceDetailService;
@@ -132,11 +131,12 @@ public class ServiceFactory {
      */
     public static InvoiceService getInvoiceService() throws SQLException {
         if (invoiceService == null) {
-            invoiceService = new InvoiceService(getInstance().getConnection(), repositoryFactory);
+            invoiceService = new InvoiceService(getInstance().getConnection());
         }
         return invoiceService;
     }
     
+
     /**
      * Lấy PurchaseOrderService
      * @return PurchaseOrderService instance

@@ -122,6 +122,10 @@ CREATE TABLE Employees (
     Email NVARCHAR(255) UNIQUE NOT NULL, -- Email
     Position NVARCHAR(50) CHECK (Position IN ('Manager', 'Sales', 'Stock Keeper')) NOT NULL -- Chức vụ
 );
+ALTER TABLE Employees
+ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo nhân viên
+    UpdatedAt DATETIME DEFAULT GETDATE();
+
 
 -- Bảng phương thức thanh toán
 CREATE TABLE PaymentMethods (
@@ -341,3 +345,6 @@ UPDATE Products
 SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
 WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
 
+
+
+SELECT * FROM Products

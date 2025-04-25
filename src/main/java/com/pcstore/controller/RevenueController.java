@@ -75,7 +75,7 @@ public class RevenueController {
         
         try {
             // Khởi tạo RepositoryFactory
-            RepositoryFactory repositoryFactory = new RepositoryFactory(connection);
+            RepositoryFactory repositoryFactory = RepositoryFactory.getInstance(connection);
             
             // Khởi tạo các repositories
             InvoiceRepository invoiceRepository = repositoryFactory.getInvoiceRepository();
@@ -84,11 +84,7 @@ public class RevenueController {
             
             // Khởi tạo các services
             this.invoiceService = new InvoiceService(invoiceRepository, productRepository);
-            this.invoiceDetailService = new InvoiceDetailService(
-                invoiceDetailRepository,
-                productRepository,
-                invoiceRepository
-            );
+            this.invoiceDetailService = new InvoiceDetailService(invoiceDetailRepository, productRepository);
             this.productService = new ProductService(productRepository);
             
             // Mặc định là ngày hiện tại
@@ -258,7 +254,8 @@ public class RevenueController {
             LocalDateTime endOfDay = date.plusDays(1).atStartOfDay().minusNanos(1);
             
             // Gọi service để lấy dữ liệu
-            List<InvoiceDetail> details = invoiceDetailService.findByDateRange(startOfDay, endOfDay);
+            
+            List<InvoiceDetail> details =  invoiceDetailService.findByDateRange(startOfDay, endOfDay);
             
             // Tính tổng doanh thu
             BigDecimal totalRevenue = calculateTotalRevenue(details);

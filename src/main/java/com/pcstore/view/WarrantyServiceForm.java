@@ -61,6 +61,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             // Khởi tạo controller với các service cần thiết
             controller = new WarrantyController(
                 ServiceFactory.getWarrantyService(),
+                ServiceFactory.getInvoiceService(),
                 ServiceFactory.getInvoiceDetailService(),
                 ServiceFactory.getProductService(),
                 ServiceFactory.getCustomerService()
@@ -116,6 +117,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 10));
 
         btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
+        btnWarrantyRegistration.setkBorderRadius(40);
         btnWarrantyRegistration.setkEndColor(new java.awt.Color(0, 255, 51));
         btnWarrantyRegistration.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(255, 255, 255));
@@ -130,7 +132,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
 
         btnRemoveRepair.setText(bundle.getString("btnRemoveRepair")); // NOI18N
         btnRemoveRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnRemoveRepair.setkBorderRadius(30);
+        btnRemoveRepair.setkBorderRadius(40);
         btnRemoveRepair.setkEndColor(new java.awt.Color(255, 102, 51));
         btnRemoveRepair.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnRemoveRepair.setkHoverForeGround(new java.awt.Color(255, 255, 255));
@@ -149,11 +151,17 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel2.add(btnRemoveRepair);
 
         btnDetailWarrantyCard.setText(bundle.getString("btnDetailWarrantyCard")); // NOI18N
+        btnDetailWarrantyCard.setkBorderRadius(40);
         btnDetailWarrantyCard.setkEndColor(new java.awt.Color(102, 153, 255));
         btnDetailWarrantyCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnDetailWarrantyCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnDetailWarrantyCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnDetailWarrantyCard.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnDetailWarrantyCard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDetailWarrantyCardActionPerformed(evt);
+            }
+        });
         jPanel2.add(btnDetailWarrantyCard);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
@@ -166,12 +174,18 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         btnWarrantyInformationLookup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnWarrantyInformationLookup.setIconTextGap(25);
         btnWarrantyInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyInformationLookup.setkBorderRadius(30);
         btnWarrantyInformationLookup.setkEndColor(new java.awt.Color(153, 153, 153));
         btnWarrantyInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarrantyInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnWarrantyInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnWarrantyInformationLookup.setkStartColor(new java.awt.Color(204, 204, 204));
         btnWarrantyInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        btnWarrantyInformationLookup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnWarrantyInformationLookupActionPerformed(evt);
+            }
+        });
         jPanel3.add(btnWarrantyInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, 70, 32));
 
         jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
@@ -327,14 +341,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnRemoveRepairActionPerformed
 
-    private void btnWarrantyInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {
-        if (controller != null) {
-            String keyword = jTextField1.getText().trim();
-            controller.searchWarranties(keyword);
-        }
-    }
-    
-    private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailWarrantyCardActionPerformed
         if (controller != null) {
             int selectedRow = jTable1.getSelectedRow();
             if (selectedRow == -1) {
@@ -351,7 +358,16 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             String warrantyId = jTable1.getValueAt(selectedRow, 0).toString();
             controller.viewWarrantyDetail(warrantyId);
         }
-    }
+    }//GEN-LAST:event_btnDetailWarrantyCardActionPerformed
+
+    private void btnWarrantyInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyInformationLookupActionPerformed
+        if (controller != null) {
+            String keyword = jTextField1.getText().trim();
+            controller.searchWarranties(keyword);
+        }
+    }//GEN-LAST:event_btnWarrantyInformationLookupActionPerformed
+   
+    
 
     /**
      * Cập nhật dữ liệu bảng bảo hành từ danh sách

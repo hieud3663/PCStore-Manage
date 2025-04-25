@@ -1,35 +1,40 @@
 package com.pcstore.controller;
 
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
 import com.pcstore.model.Customer;
+import com.pcstore.model.Discount;
 import com.pcstore.model.Employee;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Product;
-import com.pcstore.model.Discount;
+import com.pcstore.model.base.BasePayment;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.CustomerRepository;
+import com.pcstore.repository.impl.DiscountRepository;
 import com.pcstore.repository.impl.EmployeeRepository;
 import com.pcstore.repository.impl.InvoiceDetailRepository;
 import com.pcstore.repository.impl.InvoiceRepository;
 import com.pcstore.repository.impl.ProductRepository;
-import com.pcstore.repository.impl.DiscountRepository;
 import com.pcstore.service.InvoiceService;
+import com.pcstore.utils.ExportInvoice;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.SessionManager;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import java.sql.Connection;
-import java.text.NumberFormat;
+import com.pcstore.view.SellForm;
 
 /**
  * Controller xử lý các hoạt động bán hàng
@@ -52,15 +57,19 @@ public class SellController {
     private final DiscountRepository discountRepository;
     private final InvoiceService invoiceService;
     
+    private SellForm sellForm;
+    
     private Invoice currentInvoice;
     private List<InvoiceDetail> cartItems;
-    
+    private TableRowSorter<TableModel> tabelListProductSorter;
+
     /**
      * Constructor khởi tạo các repositories và services
      * @param connection Kết nối cơ sở dữ liệu
      * @param repositoryFactory Factory để tạo repositories
      */
-    public SellController(Connection connection, RepositoryFactory repositoryFactory) {
+    public SellController(SellForm sellForm, Connection connection, RepositoryFactory repositoryFactory) {
+        this.sellForm = sellForm;
         this.invoiceRepository = new InvoiceRepository(connection, repositoryFactory);
         this.invoiceDetailRepository = new InvoiceDetailRepository(connection, repositoryFactory);
         this.customerRepository = new CustomerRepository(connection);
@@ -70,7 +79,8 @@ public class SellController {
         this.invoiceService = new InvoiceService(invoiceRepository, productRepository);
         
         this.cartItems = new ArrayList<>();
-        
+
+        setuptabelListProductSorter();
     }
     
     /**
@@ -99,6 +109,36 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    
+
+    private void setuptabelListProductSorter(){
+        if (sellForm == null) return;
+
+        tabelListProductSorter = sellForm.getTableListProductSorter();
+        
+        // comparator (cột 5 - Giá bán)
+        tabelListProductSorter.setComparator(5, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return compareAmount(s1, s2);
+            }
+        });
+      
+    }
+
+    private int compareAmount(String s1, String s2) {
+        try {
+            String v1 = s1.replaceAll("\\.", "");
+            String v2 = s2.replaceAll("\\.", "");
+            
+            double d1 = Double.parseDouble(v1);
+            double d2 = Double.parseDouble(v2);
+            
+            return Double.compare(d1, d2);
+        } catch (Exception e) {
+            return s1.compareTo(s2);
         }
     }
     
@@ -405,7 +445,7 @@ public class SellController {
             currentInvoice.setInvoiceDate(LocalDateTime.now());
             // currentInvoice.setStatus(InvoiceStatusEnum.PROCESSING); // Trạng thái chờ xác nhận
             currentInvoice.setPaymentMethod(paymentMethod);
-            currentInvoice.setTotalAmount(calculateTotal());
+            currentInvoice.setTotalAmount(calculateTotalAfterDiscount());
             
             // Lưu hóa đơn vào CSDL
             Invoice savedInvoice = invoiceRepository.save(currentInvoice);
@@ -430,9 +470,7 @@ public class SellController {
                     detailsSaved = false;
                     break;
                 }    
-
                 detail.setInvoiceDetailId(invoiceDetail.getInvoiceDetailId());
-
             }
             
             if (!detailsSaved) {
@@ -441,9 +479,12 @@ public class SellController {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
+
             
             // Đặt lại trạng thái hiện tại
             this.currentInvoice = savedInvoice;
+            this.currentInvoice.setInvoiceDetails(cartItems);
+            
             return savedInvoice;
         } catch (Exception e) {
             e.printStackTrace();
@@ -469,7 +510,7 @@ public class SellController {
         try {
             // Cập nhật trạng thái hóa đơn
             invoice.setStatus(InvoiceStatusEnum.COMPLETED);
-            invoice.setTotalAmount(calculateTotal());
+            invoice.setTotalAmount(calculateTotalAfterDiscount());
             
             // Lưu hóa đơn vào CSDL
             Invoice savedInvoice = invoiceRepository.save(invoice);
@@ -480,9 +521,13 @@ public class SellController {
                 return null;
             }
             
+            // Cập nhật điểm thưởng cho khách hàng
+            updateCustomerPoints(savedInvoice);
+
             // Đặt lại trạng thái hiện tại
             this.currentInvoice = savedInvoice;
-            this.cartItems.clear();
+            this.currentInvoice.setInvoiceDetails(cartItems);
+            
             return savedInvoice;
         } catch (Exception e) {
             e.printStackTrace();
@@ -564,6 +609,108 @@ public class SellController {
     }
 
 
+        /**
+     * Áp dụng giảm giá dựa trên điểm thưởng của khách hàng
+     * @param usePoints Có sử dụng điểm thưởng để giảm giá hay không
+     * @return BigDecimal Số tiền được giảm
+     */
+    public BigDecimal applyPointsDiscount(boolean usePoints) {
+        
+        //nếu usepoints = false thif resset laij dungf giarm gias trong hoas down hieenj taij
+        if (!usePoints) {
+            currentInvoice.setDiscountAmount(BigDecimal.ZERO);
+            currentInvoice.setPointUsed(false);
+            return BigDecimal.ZERO;
+        }
+
+        if (currentInvoice == null || !usePoints) {
+            return BigDecimal.ZERO;
+        }
+
+        if(currentInvoice.isPointUsed()){
+            JOptionPane.showMessageDialog(null, 
+                "Hóa đơn đã sử dụng điểm.",
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return BigDecimal.ZERO;
+        }
+        
+        //Trên 10k điểm mới được giảm giá
+        Customer customer = currentInvoice.getCustomer();
+        if (customer == null || customer.getPoints() < 10000) {
+            return BigDecimal.ZERO;
+        }
+        
+        try {
+            // Tính toán số tiền giảm dựa trên điểm thưởng
+            // Giả sử: 10,000 điểm = 100,000 VND giảm giá (10 điểm = 10VND)
+            BigDecimal discountAmount = new BigDecimal(customer.getPoints()); // 1 VND cho mỗi điểm
+            
+            // Giới hạn số tiền giảm không vượt quá 50% tổng giá trị hóa đơn
+            BigDecimal maxDiscount = calculateTotal().multiply(new BigDecimal("0.5"));
+            if (discountAmount.compareTo(maxDiscount) > 0) {
+                discountAmount = maxDiscount;
+            }
+            
+            // Thiết lập giảm giá cho hóa đơn
+            currentInvoice.setDiscountAmount(discountAmount);
+            currentInvoice.setPointUsed(true);
+            
+            return discountAmount;
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                "Lỗi khi áp dụng giảm giá từ điểm thưởng: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return BigDecimal.ZERO;
+        }
+    }
+
+    /**
+     * Tính tổng tiền sau khi áp dụng giảm giá
+     * @return Tổng tiền sau khi giảm giá
+     */
+    public BigDecimal calculateTotalAfterDiscount() {
+        BigDecimal total = calculateTotal();
+        BigDecimal discountAmount = currentInvoice.getDiscountAmount() != null ? 
+                                currentInvoice.getDiscountAmount() : BigDecimal.ZERO;
+        
+        return total.subtract(discountAmount);
+    }
+
+    /**
+     * Cập nhật điểm thưởng của khách hàng sau khi thanh toán
+     * @param invoice Hóa đơn đã thanh toán
+     * @return true nếu cập nhật thành công, false nếu thất bại
+     */
+    private boolean updateCustomerPoints(Invoice invoice) {
+        if (invoice == null || invoice.getCustomer() == null) {
+            return false;
+        }
+        
+        try {
+            Customer customer = invoice.getCustomer();
+            int currentPoints = customer.getPoints();
+            
+            // Trừ điểm đã sử dụng
+            int pointsUsed = invoice.getDiscountAmount() != null ? invoice.getDiscountAmount().intValue() : 0;
+            
+            // Cộng điểm mới (1% giá trị hóa đơn)
+            BigDecimal totalAmount = invoice.getTotalAmount();
+            int newPoints = (int)(totalAmount.intValue() * LocaleManager.getPointRate());
+
+            // Cập nhật tổng điểm
+            customer.setPoints(currentPoints - pointsUsed + newPoints);
+            
+            // Lưu vào database
+            customerRepository.save(customer);
+            
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean updateCurrentInvoice() {
         if (currentInvoice == null) {
             return false;
@@ -572,7 +719,7 @@ public class SellController {
         try {
             currentInvoice.setCreatedAt(LocalDateTime.now());
             currentInvoice.setUpdatedAt(LocalDateTime.now());
-            currentInvoice.setTotalAmount(calculateTotal());
+            currentInvoice.setTotalAmount(calculateTotalAfterDiscount());
             currentInvoice.setInvoiceDetails(cartItems);
             return true;
         } catch (Exception e) {
@@ -581,6 +728,8 @@ public class SellController {
         }
     }
 
+
+
     public boolean setCurrentInvoice(Invoice invoice) {
         if (invoice == null) {
             return false;
@@ -588,6 +737,15 @@ public class SellController {
         
         try {
             currentInvoice = invoice;
+            
+            // Đảm bảo invoice có danh sách InvoiceDetails
+            if (currentInvoice.getInvoiceDetails() == null) {
+                currentInvoice.setInvoiceDetails(new ArrayList<>());
+            }
+            
+            // Gán cartItems tham chiếu đến danh sách trong invoice
+            this.cartItems = currentInvoice.getInvoiceDetails();
+            
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -602,13 +760,45 @@ public class SellController {
         currentInvoice.setInvoiceDate(LocalDateTime.now());
         currentInvoice.setStatus(InvoiceStatusEnum.PENDING);
         currentInvoice.setPaymentMethod(PaymentMethodEnum.CASH); // Mặc định là tiền mặt
-        currentInvoice.setInvoiceDetails(cartItems);
-        currentInvoice.setTotalAmount(calculateTotal());
+        currentInvoice.setTotalAmount(calculateTotalAfterDiscount());
+
+        // Thay đổi ở đây: thiết lập một danh sách mới trong Invoice
+        if (currentInvoice.getInvoiceDetails() == null) {
+            currentInvoice.setInvoiceDetails(new ArrayList<>());
+        }
+        
+        // Gán địa chỉ của danh sách trong Invoice cho cartItems
+        this.cartItems = currentInvoice.getInvoiceDetails();
+        
 
         //Lấy id hóa đơn mới
         int invoiceId = invoiceRepository.generateInvoiceId();
         currentInvoice.setInvoiceId(invoiceId);
-
+        this.cartItems.clear();
         return currentInvoice;
+    }
+
+
+    public void exportInvoiceToPDF(BasePayment payment) {
+        if (currentInvoice == null) {
+            JOptionPane.showMessageDialog(null, 
+                "Không thể xuất hóa đơn. Hóa đơn không hợp lệ.",
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        try {
+            boolean success = ExportInvoice.exportPDF(currentInvoice, payment);
+            if (!success) {
+                JOptionPane.showMessageDialog(null, 
+                    "Xuất hóa đơn thất bại. Vui lòng thử lại.",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                "Lỗi khi xuất hóa đơn: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

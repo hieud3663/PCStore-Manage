@@ -1,7 +1,9 @@
 package com.pcstore.utils;
 
 import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Properties;
 
 /**
  * Lớp quản lý thiết lập Locale toàn cục trong ứng dụng
@@ -9,6 +11,9 @@ import java.util.Locale;
 public class LocaleManager {
     
     private static final double pointRate = 0.1; // Tỷ lệ điểm quy đổi
+
+    private final String fileNameVI = "/com/pcstore/resources/vi_VN.properties";
+    private final String  fileNameEN = "/com/pcstore/resources/en_US.properties";
 
     // Singleton instance
     private static LocaleManager instance;
@@ -48,6 +53,29 @@ public class LocaleManager {
         return instance;
     }
     
+
+    //Lấy ngôn ngữ hiện tại
+    public String getCurrentLanguage() {
+        return currentLocale.getLanguage();
+    }
+
+    //Trả về bundle properties tương ứng với ngôn ngữ hiện tại
+    //Trả về file properties dạng bundle tương ứng với ngôn ngữ hiện tại
+    public Properties getProperties(){
+        Properties properties = new Properties();
+        try {
+            if (currentLocale.getLanguage().equals("vi")) {
+                properties.load(getClass().getResourceAsStream(fileNameVI));
+            } else {
+                properties.load(getClass().getResourceAsStream(fileNameEN));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return properties;
+    }
+    
+
     /**
      * Cập nhật các định dạng dựa trên Locale hiện tại
      */
@@ -117,5 +145,24 @@ public class LocaleManager {
      */
     public String formatCurrency(Number amount, String currencySymbol) {
         return numberFormatter.format(amount) + " " + currencySymbol;
+    }
+
+    //ĐỊnh dạng thời gian
+    public String formatDate(java.util.Date date) {
+        java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy", currentLocale);
+        return dateFormat.format(date);
+    }
+    
+    public String formatDateTime(java.util.Date date) {
+        java.text.SimpleDateFormat dateTimeFormat = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss", currentLocale);
+        return dateTimeFormat.format(date);
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss", currentLocale);
+    }
+
+    public DateTimeFormatter getDateFormatter() {
+        return DateTimeFormatter.ofPattern("dd/MM/yyyy", currentLocale);
     }
 }

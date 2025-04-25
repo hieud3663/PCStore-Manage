@@ -35,6 +35,7 @@ BEGIN
            ISNULL(CreatedAt, GETDATE())
     FROM @InsertedUsers;
 END;
+GO
 
 --Trigger cập nhật tồn kho sau khi bán hàng
 CREATE TRIGGER trg_UpdateWareHouseAfterSale
@@ -58,6 +59,7 @@ BEGIN
         RETURN;
     END;
 END;
+GO
 
 
 --Trigger cập nhật tồn kho sau khi nhập hàng
@@ -74,6 +76,7 @@ BEGIN
     FROM Products p
     INNER JOIN inserted i ON p.ProductID = i.ProductID;
 END;
+GO
 
 --Trigger tự động tính tổng tiền hóa đơn
 CREATE TRIGGER trg_CalculateInvoiceTotal
@@ -101,6 +104,7 @@ BEGIN
     FROM Invoices inv
     INNER JOIN @AffectedInvoiceIDs a ON inv.InvoiceID = a.InvoiceID;
 END;
+GO
 
 --Trigger tự động tạo mã khách hàng (KH01, KH02...)
 CREATE TRIGGER trg_GenerateCustomerID
@@ -137,6 +141,7 @@ BEGIN
            ISNULL(CreatedAt, GETDATE())
     FROM @InsertedCustomers;
 END;
+GO
 
 --Trigger tự động tạo mã nhân viên (NV01, NV02...)
 CREATE TRIGGER trg_GenerateEmployeeID
@@ -171,6 +176,7 @@ BEGIN
            FullName, PhoneNumber, Email, Position
     FROM @InsertedEmployees;
 END;
+GO
 
 USE [ComputerStoreManagement]
 GO
@@ -251,6 +257,7 @@ BEGIN
         SET @CurrentRow = @CurrentRow + 1
     END
 END;
+GO
 
 --Trigger xử lý đổi/trả hàng
 CREATE TRIGGER trg_HandleProductReturn
@@ -286,7 +293,7 @@ BEGIN
         WHERE r.Status = 'Completed' AND r.IsExchange = 1;
     END;
 END;
-
+GO
 --Trigger tự động tính ngày hết hạn bảo hành
 CREATE TRIGGER trg_SetWarrantyDates
 ON Warranties
@@ -322,5 +329,210 @@ BEGIN
         END
     FROM ProductCategories pc;
 END;
+GO
 
 --
+
+
+---------------
+-- SỬA TRIGGER
+----------
+-- Cập nhật trigger tự động tạo mã khách hàng và thiết lập UpdatedAt = CreatedAt
+ALTER TRIGGER trg_GenerateCustomerID
+ON Customers
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Tạo bảng tạm
+    DECLARE @InsertedCustomers TABLE (
+        RowNum INT IDENTITY(1,1),
+        FullName NVARCHAR(255),
+        PhoneNumber NVARCHAR(15),
+        Email NVARCHAR(255),
+        Address NVARCHAR(MAX),
+        Point INT,
+        CreatedAt DATETIME
+    );
+    
+    -- Đưa dữ liệu vào bảng tạm
+    INSERT INTO @InsertedCustomers (FullName, PhoneNumber, Email, Address, Point, CreatedAt)
+    SELECT FullName, PhoneNumber, Email, Address, Point, ISNULL(CreatedAt, GETDATE())
+    FROM inserted;
+    
+    -- Lấy mã tiếp theo
+    DECLARE @NextCustomerID INT;
+    SELECT @NextCustomerID = ISNULL(MAX(CAST(SUBSTRING(CustomerID, 3, LEN(CustomerID)-2) AS INT)), 0) + 1
+    FROM Customers;
+    
+    -- Thêm dữ liệu với mã đã tạo và UpdatedAt = CreatedAt
+    INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, Point, CreatedAt, UpdatedAt)
+    SELECT 
+        'KH' + RIGHT('0' + CAST((@NextCustomerID + RowNum - 1) AS VARCHAR(2)), 2),
+        FullName, 
+        PhoneNumber, 
+        Email, 
+        Address, 
+        ISNULL(Point, 0), 
+        CreatedAt,
+        CreatedAt  -- Đặt UpdatedAt = CreatedAt khi thêm mới
+    FROM @InsertedCustomers;
+END;
+GO
+
+-- Tạo trigger để cập nhật UpdatedAt khi cập nhật thông tin khách hàng
+CREATE TRIGGER trg_UpdateCustomerTimestamp
+ON Customers
+AFTER UPDATE
+AS
+BEGIN
+    -- Chỉ cập nhật UpdatedAt nếu có trường nào đó thay đổi (trừ UpdatedAt)
+    IF UPDATE(FullName) OR UPDATE(PhoneNumber) OR UPDATE(Email) 
+       OR UPDATE(Address) OR UPDATE(Point)
+    BEGIN
+        UPDATE Customers
+        SET UpdatedAt = GETDATE()
+        FROM Customers c
+        INNER JOIN inserted i ON c.CustomerID = i.CustomerID;
+    END
+END;
+GO
+
+-- Tương tự cho các bảng liên quan
+-- Cập nhật trigger tự động tạo mã nhân viên và thiết lập UpdatedAt = CreatedAt
+ALTER TRIGGER trg_GenerateEmployeeID
+ON Employees
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Tạo bảng tạm
+    DECLARE @InsertedEmployees TABLE (
+        RowNum INT IDENTITY(1,1),
+        FullName NVARCHAR(255),
+        PhoneNumber NVARCHAR(15),
+        Email NVARCHAR(255),
+        Position NVARCHAR(50),
+        CreatedAt DATETIME
+    );
+    
+    -- Đưa dữ liệu vào bảng tạm
+    INSERT INTO @InsertedEmployees (FullName, PhoneNumber, Email, Position, CreatedAt)
+    SELECT FullName, PhoneNumber, Email, Position, ISNULL(CreatedAt, GETDATE())
+    FROM inserted;
+    
+    -- Lấy mã tiếp theo
+    DECLARE @NextEmployeeID INT;
+    SELECT @NextEmployeeID = ISNULL(MAX(CAST(SUBSTRING(EmployeeID, 3, LEN(EmployeeID)-2) AS INT)), 0) + 1
+    FROM Employees;
+    
+    -- Thêm dữ liệu với mã đã tạo và UpdatedAt = CreatedAt
+    INSERT INTO Employees (EmployeeID, FullName, PhoneNumber, Email, Position, CreatedAt, UpdatedAt)
+    SELECT 
+        'NV' + RIGHT('0' + CAST((@NextEmployeeID + RowNum - 1) AS VARCHAR(2)), 2),
+        FullName, 
+        PhoneNumber, 
+        Email, 
+        Position,
+        CreatedAt,
+        CreatedAt  -- Đặt UpdatedAt = CreatedAt khi thêm mới
+    FROM @InsertedEmployees;
+END;
+GO
+
+-- Tạo trigger để cập nhật UpdatedAt khi cập nhật thông tin nhân viên
+CREATE OR ALTER TRIGGER trg_UpdateEmployeeTimestamp
+ON Employees
+AFTER UPDATE
+AS
+BEGIN
+    -- Chỉ cập nhật UpdatedAt nếu có trường nào đó thay đổi (trừ UpdatedAt)
+    IF UPDATE(FullName) OR UPDATE(PhoneNumber) OR UPDATE(Email) 
+       OR UPDATE(Position)
+    BEGIN
+        UPDATE Employees
+        SET UpdatedAt = GETDATE()
+        FROM Employees e
+        INNER JOIN inserted i ON e.EmployeeID = i.EmployeeID;
+    END
+END;
+GO
+
+-- Cập nhật lại dữ liệu hiện có để UpdatedAt = CreatedAt nếu chưa có giá trị
+UPDATE Customers
+SET UpdatedAt = CreatedAt
+WHERE UpdatedAt IS NULL OR UpdatedAt <> CreatedAt;
+GO
+
+UPDATE Employees
+SET UpdatedAt = CreatedAt
+WHERE UpdatedAt IS NULL OR UpdatedAt <> CreatedAt;
+GO
+-- Tương tự cho bảng Users
+ALTER TRIGGER trg_GenerateUserID
+ON Users
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Tạo bảng tạm để lưu dữ liệu
+    DECLARE @InsertedUsers TABLE (
+        RowNum INT IDENTITY(1,1),
+        Username NVARCHAR(50),
+        PasswordHash NVARCHAR(255),
+        EmployeeID VARCHAR(10),
+        IsActive BIT,
+        LastLogin DATETIME,
+        CreatedAt DATETIME
+    );
+    
+    -- Đưa dữ liệu vào bảng tạm
+    INSERT INTO @InsertedUsers (Username, PasswordHash, EmployeeID, IsActive, LastLogin, CreatedAt)
+    SELECT Username, PasswordHash, EmployeeID, IsActive, LastLogin, ISNULL(CreatedAt, GETDATE())
+    FROM inserted;
+    
+    -- Lấy ID tiếp theo
+    DECLARE @NextUserID INT;
+    SELECT @NextUserID = ISNULL(MAX(CAST(SUBSTRING(UserID, 2, LEN(UserID)-1) AS INT)), 0) + 1
+    FROM Users;
+    
+    -- Thêm dữ liệu với ID đã tạo và UpdatedAt = CreatedAt
+    INSERT INTO Users (UserID, Username, PasswordHash, EmployeeID, IsActive, LastLogin, CreatedAt, UpdatedAt)
+    SELECT 
+        'U' + RIGHT('000' + CAST((@NextUserID + RowNum - 1) AS VARCHAR(3)), 3),
+        Username, 
+        PasswordHash, 
+        EmployeeID, 
+        ISNULL(IsActive, 1), 
+        LastLogin, 
+        CreatedAt,
+        CreatedAt  -- Đặt UpdatedAt = CreatedAt khi thêm mới
+    FROM @InsertedUsers;
+END;
+GO
+
+-- Tạo trigger để cập nhật UpdatedAt khi cập nhật thông tin người dùng
+CREATE OR ALTER TRIGGER trg_UpdateUserTimestamp
+ON Users
+AFTER UPDATE
+AS
+BEGIN
+    -- Chỉ cập nhật UpdatedAt nếu có trường nào đó thay đổi (trừ UpdatedAt)
+    IF UPDATE(Username) OR UPDATE(PasswordHash) OR UPDATE(EmployeeID) 
+       OR UPDATE(IsActive) OR UPDATE(LastLogin)
+    BEGIN
+        UPDATE Users
+        SET UpdatedAt = GETDATE()
+        FROM Users u
+        INNER JOIN inserted i ON u.UserID = i.UserID;
+    END
+END;
+GO
+
+-- Cập nhật lại dữ liệu hiện có
+UPDATE Users
+SET UpdatedAt = CreatedAt
+WHERE UpdatedAt IS NULL OR UpdatedAt <> CreatedAt;

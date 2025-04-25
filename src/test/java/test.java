@@ -1,9 +1,10 @@
-import com.pcstore.model.enums.RepairEnum;
+import java.util.Properties;
+import com.pcstore.utils.LocaleManager;
 
 public class test {
 
     public static void main(String[] args) {
-        String status = RepairEnum.CANCELLED.getStatus();
-        System.out.println(status); // Output: CANCELLED
+        Properties prop = LocaleManager.getInstance().getProperties();
+        System.out.println(prop.getProperty("titleLogo"));
     }
 }

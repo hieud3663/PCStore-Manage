@@ -5,12 +5,20 @@
 package com.pcstore.view;
 
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.*;
-import com.k33ptoo.components.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import com.k33ptoo.components.KButton;
+import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.controller.DashboardController;
 import com.pcstore.utils.DatabaseConnection;
 
@@ -74,6 +82,18 @@ public class DashboardForm extends JFrame {
                 DatabaseConnection.getInstance().closeConnection();
             }
         });
+
+        // Khởi tạo các controllers cho dịch vụ
+        // Giả sử bạn đã có sẵn các services từ trước
+        com.pcstore.controller.RepairController repairController = new com.pcstore.controller.RepairController(
+            com.pcstore.utils.DatabaseConnection.getInstance().getConnection(),
+            new com.pcstore.service.CustomerService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection()),
+            new com.pcstore.service.EmployeeService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection()),
+            new com.pcstore.service.WarrantyService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection())
+        );
+
+        // Thiết lập controller cho form dịch vụ
+        serviceForm.setRepairController(repairController);
     }
 
     /**

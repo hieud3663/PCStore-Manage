@@ -205,18 +205,16 @@ public class Repair extends BaseTimeEntity {
         return serviceFee;
     }
 
+    /**
+     * Đặt phí dịch vụ sửa chữa
+     * 
+     * @param serviceFee Phí dịch vụ
+     */
     public void setServiceFee(BigDecimal serviceFee) {
-        if (serviceFee == null) {
-            throw new IllegalArgumentException("Phí dịch vụ không được để trống");
-        }
-        if (serviceFee.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Phí dịch vụ không được âm");
-        }
-        // Nếu còn bảo hành, không tính phí
-        if (warranty != null && warranty.isValid() && 
-            serviceFee.compareTo(BigDecimal.ZERO) > 0) {
-            throw new IllegalArgumentException("Không tính phí cho sửa chữa trong bảo hành");
-        }
+        // Cho phép phí dịch vụ là null (trường hợp chưa xác định)
+        // if (serviceFee == null) {
+        //    throw new IllegalArgumentException("Phí dịch vụ không được để trống");
+        // }
         this.serviceFee = serviceFee;
     }
 
@@ -228,7 +226,9 @@ public class Repair extends BaseTimeEntity {
         if (status == null) {
             throw new IllegalArgumentException("Trạng thái không được để trống");
         }
-        if (!canChangeStatus(status)) {
+        
+        // Bỏ qua kiểm tra trạng thái khi đang khởi tạo đối tượng mới
+        if (this.status != null && !canChangeStatus(status)) {
             throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
         }
         

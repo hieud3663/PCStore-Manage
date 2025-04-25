@@ -1,9 +1,5 @@
 package com.pcstore.repository.impl;
 
-import com.pcstore.repository.Repository;
-import com.pcstore.model.Return;
-import com.pcstore.model.InvoiceDetail;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,11 +11,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pcstore.model.Employee;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Product;
+import com.pcstore.model.Return;
+import com.pcstore.repository.Repository;
+import com.pcstore.repository.RepositoryFactory;
+
 /**
  * Repository implementation for Return entity
  */
 public class ReturnRepository implements Repository<Return, Integer> {
     private Connection connection;
+    private RepositoryFactory repositoryFactory;
     
     public ReturnRepository(Connection connection) {
         this.connection = connection;
@@ -389,48 +393,112 @@ public class ReturnRepository implements Repository<Return, Integer> {
         }
     }
     
-    private Return mapResultSetToReturn(ResultSet resultSet) throws SQLException {
-        Return returnObj = new Return();
-        returnObj.setReturnId(resultSet.getInt("ReturnID"));
+    /**
+     * Tìm các đơn trả hàng theo mã chi tiết hóa đơn
+     * 
+     * @param invoiceDetailId Mã chi tiết hóa đơn
+     * @return Danh sách các đơn trả hàng của chi tiết hóa đơn đó
+     * @throws SQLException Nếu có lỗi truy cập CSDL
+     */
+    public List<Return> findByInvoiceDetail(Integer invoiceDetailId) throws SQLException {
+        List<Return> returns = new ArrayList<>();
         
-        // Chỉ lấy ID của chi tiết hóa đơn, sản phẩm và khách hàng
-        // Các đối tượng đầy đủ sẽ được thiết lập trong service layer
-        int invoiceDetailId = resultSet.getInt("InvoiceDetailID");
+        String sql = "SELECT r.ReturnID, r.InvoiceDetailID, r.ReturnDate, r.ReturnReason, " +
+                     "r.Quantity, r.ReturnAmount, r.ProcessedBy, r.Status, r.IsExchange, r.NewProductID, r.Notes, " +
+                     "i.InvoiceID, p.ProductID, p.ProductName, i.UnitPrice, " +
+                     "e.FullName as ProcessorName " +
+                     "FROM Returns r " +
+                     "JOIN InvoiceDetails i ON r.InvoiceDetailID = i.InvoiceDetailID " +
+                     "JOIN Products p ON i.ProductID = p.ProductID " +
+                     "LEFT JOIN Employees e ON r.ProcessedBy = e.EmployeeID " +
+                     "WHERE r.InvoiceDetailID = ?";
         
-        // Dữ liệu cơ bản của đơn trả hàng
-        Timestamp returnDate = resultSet.getTimestamp("ReturnDate");
-        if (returnDate != null) {
-            returnObj.setReturnDate(returnDate.toLocalDateTime());
-        }
-        
-        returnObj.setQuantity(resultSet.getInt("Quantity"));
-        returnObj.setReason(resultSet.getString("ReturnReason"));
-        returnObj.setStatus(resultSet.getString("Status"));
-        returnObj.setNotes(resultSet.getString("Notes"));
-        
-        // Dữ liệu mở rộng để hiển thị UI
-        // try {
-        //     // Lưu thông tin bổ sung cho tầng service/UI nếu cần
-        //     returnObj.setCustomerName(resultSet.getString("CustomerName"));
-        //     returnObj.setProductName(resultSet.getString("ProductName"));
-        //     returnObj.setProcessorName(resultSet.getString("ProcessorName"));
-        // } catch (SQLException e) {
-        //     // Bỏ qua nếu không có cột này
-        // }
-        
-        // Lấy thời gian tạo và cập nhật nếu có
-        try {
-            Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
-            if (createdAt != null) {
-                returnObj.setCreatedAt(createdAt.toLocalDateTime());
-            }
-            
-            Timestamp updatedAt = resultSet.getTimestamp("UpdatedAt");
-            if (updatedAt != null) {
-                returnObj.setUpdatedAt(updatedAt.toLocalDateTime());
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, invoiceDetailId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    returns.add(mapResultSetToReturn(rs));
+                }
             }
         } catch (SQLException e) {
-            // Bỏ qua nếu không có các cột này
+            throw new SQLException("Lỗi khi tìm đơn trả hàng theo chi tiết hóa đơn: " + e.getMessage(), e);
+        }
+        
+        return returns;
+    }
+    
+    /**
+     * Chuyển đổi ResultSet thành đối tượng Return
+     * 
+     * @param rs ResultSet chứa dữ liệu đơn trả hàng
+     * @return Đối tượng Return được tạo từ ResultSet
+     */
+    private Return mapResultSetToReturn(ResultSet rs) throws SQLException {
+        Return returnObj = new Return();
+        
+        returnObj.setReturnId(rs.getInt("ReturnID"));
+        
+        // Lấy chi tiết hóa đơn - tạo trực tiếp từ kết quả truy vấn
+        InvoiceDetail invoiceDetail = new InvoiceDetail();
+        invoiceDetail.setInvoiceDetailId(rs.getInt("InvoiceDetailID"));
+        
+        // Tạo sản phẩm cho chi tiết hóa đơn
+        Product product = new Product();
+        product.setProductId(rs.getString("ProductID"));
+        product.setProductName(rs.getString("ProductName"));
+        invoiceDetail.setProduct(product);
+        
+        // Thiết lập giá cho chi tiết hóa đơn
+        invoiceDetail.setUnitPrice(rs.getBigDecimal("UnitPrice"));
+        
+        returnObj.setInvoiceDetail(invoiceDetail);
+        
+        // Thiết lập các thuộc tính khác
+        returnObj.setReturnDate(rs.getTimestamp("ReturnDate").toLocalDateTime());
+        returnObj.setReason(rs.getString("ReturnReason"));
+        returnObj.setQuantity(rs.getInt("Quantity"));
+        returnObj.setReturnAmount(rs.getBigDecimal("ReturnAmount"));
+        
+        // Xử lý ProcessedBy (có thể null)
+        String processedBy = rs.getString("ProcessedBy");
+        if (processedBy != null && !rs.wasNull()) {
+            // Tạo đối tượng Employee đơn giản với id và name
+            Employee processor = new Employee();
+            processor.setEmployeeId(processedBy);
+            processor.setFullName(rs.getString("ProcessorName"));
+            returnObj.setProcessedBy(processor);
+        }
+        
+        returnObj.setStatus(rs.getString("Status"));
+        returnObj.setExchange(rs.getBoolean("IsExchange"));
+        
+        // Xử lý NewProductID (có thể null)
+        String newProductId = rs.getString("NewProductID");
+        if (newProductId != null && !rs.wasNull()) {
+            // Tạo đối tượng Product mới nếu có
+            Product newProduct = new Product();
+            newProduct.setProductId(newProductId);
+            // Cố gắng lấy tên sản phẩm nếu có trong kết quả truy vấn
+            try {
+                String newProductName = rs.getString("NewProductName");
+                if (newProductName != null && !rs.wasNull()) {
+                    newProduct.setProductName(newProductName);
+                }
+            } catch (SQLException ex) {
+                // Có thể không có cột NewProductName trong kết quả
+                newProduct.setProductName("Sản phẩm thay thế");
+            }
+            returnObj.setNewProduct(newProduct);
+        }
+        
+        // Thêm ghi chú nếu có
+        try {
+            String notes = rs.getString("Notes");
+            if (notes != null && !rs.wasNull()) {
+                returnObj.setNotes(notes);
+            }
+        } catch (SQLException ex) {
+            // Có thể không có cột Notes trong kết quả
         }
         
         return returnObj;

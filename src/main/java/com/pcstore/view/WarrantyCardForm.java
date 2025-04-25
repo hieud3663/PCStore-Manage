@@ -5,7 +5,11 @@
 package com.pcstore.view;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+
+import com.pcstore.controller.WarrantyController;
 
 /**
  *
@@ -13,11 +17,22 @@ import javax.swing.SwingUtilities;
  */
 public class WarrantyCardForm extends javax.swing.JPanel {
 
+    private WarrantyController controller;
+
     /**
      * Creates new form WarrantyCard
      */
     public WarrantyCardForm() {
         initComponents();
+    }
+
+    /**
+     * Thiết lập controller cho form
+     * @param controller Controller bảo hành
+     */
+    public void setController(WarrantyController controller) {
+        this.controller = controller;
+        controller.setCardForm(this);
     }
 
     /**
@@ -223,9 +238,52 @@ public class WarrantyCardForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPrintCardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrintCardMouseClicked
-        // TODO add your handling code here:
+        if (controller != null) {
+            controller.printWarrantyCard();
+        }
     }//GEN-LAST:event_btnPrintCardMouseClicked
-public static void main(String[] args) {
+
+    /**
+     * Trả về nhãn tên khách hàng
+     * @return Nhãn tên khách hàng
+     */
+    public JLabel getNameCustomerLabel() {
+        return NameCustomer;
+    }
+    
+    /**
+     * Trả về nhãn địa chỉ khách hàng
+     * @return Nhãn địa chỉ khách hàng
+     */
+    public JLabel getAdressCustomerLabel() {
+        return AdressCustomer;
+    }
+    
+    /**
+     * Trả về nhãn số điện thoại
+     * @return Nhãn số điện thoại
+     */
+    public JLabel getSdtLabel() {
+        return SDT;
+    }
+    
+    /**
+     * Trả về nhãn ngày mua
+     * @return Nhãn ngày mua
+     */
+    public JLabel getDateOfPurchaseLabel() {
+        return DateOfPurchase;
+    }
+    
+    /**
+     * Trả về bảng hiển thị sản phẩm
+     * @return Bảng sản phẩm
+     */
+    public JTable getProductTable() {
+        return jTable1;
+    }
+
+    public static void main(String[] args) {
         // Set Look and Feel
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {

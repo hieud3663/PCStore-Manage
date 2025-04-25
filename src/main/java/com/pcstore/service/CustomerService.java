@@ -1,12 +1,11 @@
 package com.pcstore.service;
 
-import com.pcstore.model.Customer;
-import com.pcstore.repository.iCustomerRepository;
-import com.pcstore.repository.impl.CustomerRepository;
-
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+
+import com.pcstore.model.Customer;
+import com.pcstore.repository.impl.CustomerRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến khách hàng

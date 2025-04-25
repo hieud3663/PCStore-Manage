@@ -4,7 +4,27 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.controller.WarrantyController;
+import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.repository.*;
+import com.pcstore.service.*;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
+
+import com.pcstore.model.Warranty;
+import com.pcstore.repository.impl.CustomerRepository;
+import com.pcstore.repository.impl.InvoiceDetailRepository;
+import com.pcstore.repository.impl.ProductRepository;
+import com.pcstore.repository.impl.WarrantyRepository;
 
 /**
  *
@@ -12,6 +32,8 @@ import javax.swing.UIManager;
  */
 public class WarrantyServiceForm extends javax.swing.JPanel {
 
+    private WarrantyController controller;
+    
     /**
      * Creates new form Service
      */
@@ -70,21 +92,26 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
 
         jPanel5 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        btnWarrantyRegistration = new com.k33ptoo.components.KButton();
+        btnRemoveRepair = new com.k33ptoo.components.KButton();
+        btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
         jPanel3 = new javax.swing.JPanel();
         btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
         jTextField1 = new javax.swing.JTextField();
-        btnWarrantyRegistration = new com.k33ptoo.components.KButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
-        btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
 
-        setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("WarrantyService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         setMaximumSize(new java.awt.Dimension(1153, 713));
         setMinimumSize(new java.awt.Dimension(1153, 713));
         setPreferredSize(new java.awt.Dimension(1153, 713));
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jPanel5.setMaximumSize(new java.awt.Dimension(1360, 600));
+        jPanel5.setMinimumSize(new java.awt.Dimension(1360, 600));
+        jPanel5.setPreferredSize(new java.awt.Dimension(1360, 600));
         jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 10));
@@ -141,15 +168,18 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel3.setPreferredSize(new java.awt.Dimension(425, 65));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        btnWarrantyInformationLookup.setText(bundle.getString("btnWarrantyInformationLookup")); // NOI18N
+        btnWarrantyInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
+        btnWarrantyInformationLookup.setDisabledSelectedIcon(null);
+        btnWarrantyInformationLookup.setEnabled(false);
+        btnWarrantyInformationLookup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnWarrantyInformationLookup.setIconTextGap(25);
         btnWarrantyInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
         btnWarrantyInformationLookup.setkBorderRadius(30);
         btnWarrantyInformationLookup.setkEndColor(new java.awt.Color(153, 153, 153));
         btnWarrantyInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarrantyInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnWarrantyInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarrantyInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnWarrantyInformationLookup.setkStartColor(new java.awt.Color(204, 204, 204));
         btnWarrantyInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
         btnWarrantyInformationLookup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,24 +189,13 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel3.add(btnWarrantyInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, 70, 32));
 
         jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
-        jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 292, 30));
+        jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 310, 30));
 
         jPanel2.add(jPanel3);
 
-        btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
-        btnWarrantyRegistration.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyRegistration.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarrantyRegistration.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarrantyRegistration.setkStartColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyRegistration.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnWarrantyRegistrationMouseClicked(evt);
-            }
-        });
-        jPanel2.add(btnWarrantyRegistration);
-
         jPanel5.add(jPanel2);
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(452, 500));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -194,18 +213,9 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel5.add(jScrollPane1);
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 20));
-
-        btnDetailWarrantyCard.setText(bundle.getString("btnDetailWarrantyCard")); // NOI18N
-        btnDetailWarrantyCard.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnDetailWarrantyCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnDetailWarrantyCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDetailWarrantyCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnDetailWarrantyCard.setkStartColor(new java.awt.Color(102, 153, 255));
-        jPanel4.add(btnDetailWarrantyCard);
-
         jPanel5.add(jPanel4);
 
-        add(jPanel5, java.awt.BorderLayout.CENTER);
+        add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 35, 1080, 530));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyRegistrationActionPerformed
@@ -445,6 +455,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnDetailWarrantyCard;
+    private com.k33ptoo.components.KButton btnRemoveRepair;
     private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
     private com.k33ptoo.components.KButton btnWarrantyRegistration;
     private javax.swing.JPanel jPanel2;

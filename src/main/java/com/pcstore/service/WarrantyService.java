@@ -1,18 +1,21 @@
 package com.pcstore.service;
 
-import com.pcstore.repository.impl.WarrantyRepository;
-import com.pcstore.model.InvoiceDetail;
-import com.pcstore.model.Warranty;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
+
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Warranty;
+import com.pcstore.repository.impl.WarrantyRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến bảo hành
  */
 public class WarrantyService {
     private final WarrantyRepository warrantyRepository;
+    private static final Logger logger = Logger.getLogger(WarrantyService.class.getName());
     
     /**
      * Khởi tạo service với repository
@@ -112,8 +115,13 @@ public class WarrantyService {
      * @param warrantyId Mã bảo hành
      * @return Bảo hành nếu tìm thấy
      */
-    public Optional<Warranty> findWarrantyById(Integer warrantyId) {
-        return warrantyRepository.findById(warrantyId);
+    public Optional<Warranty> findWarrantyById(String warrantyId) {
+        try {
+            return warrantyRepository.findById(warrantyId);
+        } catch (Exception e) {
+            logger.warning("Error finding warranty by ID: " + e.getMessage());
+            return Optional.empty();
+        }
     }
     
     /**
@@ -149,6 +157,15 @@ public class WarrantyService {
      */
     public List<Warranty> getAllWarranties() {
         return warrantyRepository.findAll();
+    }
+    
+    /**
+     * Tìm kiếm bảo hành theo từ khóa
+     * @param keyword Từ khóa tìm kiếm
+     * @return Danh sách bảo hành phù hợp với từ khóa
+     */
+    public List<Warranty> searchWarranties(String keyword) {
+        return warrantyRepository.search(keyword);
     }
     
     /**

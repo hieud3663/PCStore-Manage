@@ -1,13 +1,8 @@
 package com.pcstore.service;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.xml.crypto.Data;
-
-import com.pcstore.model.Invoice;
-import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.utils.DatabaseConnection;
 

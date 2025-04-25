@@ -1,8 +1,9 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
+import com.pcstore.model.base.BaseTimeEntity;
 
 /**
  * Class biểu diễn thông tin bảo hành
@@ -21,6 +22,19 @@ public class Warranty extends BaseTimeEntity {
     private transient String productName;
     private transient Integer repairServiceId;
     private transient String repairStatus;
+    private transient String customerPhone;
+
+    /**
+     * Lấy mã khách hàng
+     * @return Mã khách hàng
+     */
+    private String customerId;
+
+    /**
+     * Lấy mã sản phẩm
+     * @return Mã sản phẩm
+     */
+    private String productId;
 
     @Override
     public Object getId() {
@@ -31,6 +45,7 @@ public class Warranty extends BaseTimeEntity {
         return warrantyId;
     }
 
+    // Phương thức setter mới
     public void setWarrantyId(String warrantyId) {
         this.warrantyId = warrantyId;
     }
@@ -137,6 +152,46 @@ public class Warranty extends BaseTimeEntity {
         this.productName = productName;
     }
 
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    /**
+     * Lấy mã khách hàng
+     * @return Mã khách hàng
+     */
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    /**
+     * Đặt mã khách hàng
+     * @param customerId Mã khách hàng
+     */
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
+    /**
+     * Lấy mã sản phẩm
+     * @return Mã sản phẩm
+     */
+    public String getProductId() {
+        return productId;
+    }
+
+    /**
+     * Đặt mã sản phẩm
+     * @param productId Mã sản phẩm
+     */
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
     // Phương thức kiểm tra bảo hành còn hiệu lực không
     public boolean isValid() {
         if (isUsed) {
@@ -204,5 +259,15 @@ public class Warranty extends BaseTimeEntity {
         this.setStartDate(startDate);
         this.setEndDate(startDate.plusMonths(warrantyMonths));
         this.setWarrantyTerms("Điều khoản bảo hành tiêu chuẩn");
+    }
+
+    // Phương thức helper để chuyển đổi giữa String và Integer ID nếu cần
+    public Integer getWarrantyIdAsInteger() {
+        try {
+            return Integer.parseInt(warrantyId);
+        } catch (NumberFormatException e) {
+            // Nếu không phải số nguyên hợp lệ
+            return null;
+        }
     }
 }

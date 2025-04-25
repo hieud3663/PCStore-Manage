@@ -56,6 +56,7 @@ public class Invoice extends BaseTimeEntity {
     }
 
     @Override
+    
     public Object getId() {
         return invoiceId;
     }
@@ -77,6 +78,10 @@ public class Invoice extends BaseTimeEntity {
             throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
         }
         this.customer = customer;
+    }
+
+    public String getCustomerId() {
+        return customer.getCustomerId() != null ? customer.getCustomerId() : "";
     }
 
     public Employee getEmployee() {

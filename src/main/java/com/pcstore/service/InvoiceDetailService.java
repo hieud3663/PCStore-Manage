@@ -1,26 +1,25 @@
 package com.pcstore.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Product;
 import com.pcstore.repository.impl.InvoiceDetailRepository;
 import com.pcstore.repository.impl.InvoiceRepository;
-import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Product;
 import com.pcstore.repository.iInvoiceDetailRepository;
 import com.pcstore.repository.impl.InvoiceDetailRepository;
 import com.pcstore.repository.Repository;
 import com.pcstore.repository.RepositoryFactory;
+import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.ErrorMessage;
 
 import java.sql.Connection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,10 +28,11 @@ import java.util.Optional;
  */
 public class InvoiceDetailService {
     
+    Connection connection;
   
     private final Repository<InvoiceDetail, Integer> invoiceDetailRepository;
     private final Repository<Product, String> productRepository;
-    
+  
     /**
      * Khởi tạo service với repository
      * @param invoiceDetailRepository Repository chi tiết hóa đơn
@@ -42,13 +42,17 @@ public class InvoiceDetailService {
                               Repository<Product, String> productRepository) {
         this.invoiceDetailRepository = invoiceDetailRepository;
         this.productRepository = productRepository;
+        this.connection = DatabaseConnection.getInstance().getConnection();
+
     }
 
 
     //Khởi tạo với connection
     public InvoiceDetailService(Connection connection){
+        this.connection = connection;
         this.invoiceDetailRepository = RepositoryFactory.getInstance(connection).getInvoiceDetailRepository();
         this.productRepository = RepositoryFactory.getInstance(connection).getProductRepository();
+       
     }
     
     /**
@@ -134,7 +138,8 @@ public class InvoiceDetailService {
         }
         throw new UnsupportedOperationException("Repository không hỗ trợ phương thức findByProductId");
     }
-    
+
+  
     /**
      * Xóa tất cả chi tiết hóa đơn theo mã hóa đơn
      * @param invoiceId Mã hóa đơn
@@ -168,5 +173,29 @@ public class InvoiceDetailService {
         } else {
             return updateInvoiceDetail(invoiceDetail);
         }
+    }
+
+        /**
+     * Tìm chi tiết hóa đơn trong khoảng thời gian
+     * @param startDate Thời gian bắt đầu
+     * @param endDate Thời gian kết thúc
+     * @return Danh sách chi tiết hóa đơn trong khoảng thời gian
+     */
+    public List<InvoiceDetail> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        List<InvoiceDetail> result = new ArrayList<>();
+        
+        InvoiceRepository invoiceRepository = RepositoryFactory.getInstance(connection).getInvoiceRepository();
+        // Lấy danh sách hóa đơn trong khoảng thời gian
+        List<Invoice> invoices = invoiceRepository.findByDateRange(startDate, endDate);
+        
+        // Với mỗi hóa đơn, lấy chi tiết hóa đơn và thêm vào kết quả
+        for (Invoice invoice : invoices) {
+            List<InvoiceDetail> details = findInvoiceDetailsByInvoiceId(invoice.getInvoiceId());
+            if (details != null) {
+                result.addAll(details);
+            }
+        }
+        
+        return result;
     }
 }

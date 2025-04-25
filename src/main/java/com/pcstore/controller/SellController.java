@@ -5,12 +5,15 @@ import java.sql.Connection;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import com.pcstore.model.Customer;
 import com.pcstore.model.Discount;
@@ -31,6 +34,7 @@ import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.service.InvoiceService;
 import com.pcstore.utils.ExportInvoice;
 import com.pcstore.utils.LocaleManager;
+import com.pcstore.view.SellForm;
 
 /**
  * Controller xử lý các hoạt động bán hàng
@@ -53,15 +57,19 @@ public class SellController {
     private final DiscountRepository discountRepository;
     private final InvoiceService invoiceService;
     
+    private SellForm sellForm;
+    
     private Invoice currentInvoice;
     private List<InvoiceDetail> cartItems;
-    
+    private TableRowSorter<TableModel> tabelListProductSorter;
+
     /**
      * Constructor khởi tạo các repositories và services
      * @param connection Kết nối cơ sở dữ liệu
      * @param repositoryFactory Factory để tạo repositories
      */
-    public SellController(Connection connection, RepositoryFactory repositoryFactory) {
+    public SellController(SellForm sellForm, Connection connection, RepositoryFactory repositoryFactory) {
+        this.sellForm = sellForm;
         this.invoiceRepository = new InvoiceRepository(connection, repositoryFactory);
         this.invoiceDetailRepository = new InvoiceDetailRepository(connection, repositoryFactory);
         this.customerRepository = new CustomerRepository(connection);
@@ -71,7 +79,8 @@ public class SellController {
         this.invoiceService = new InvoiceService(invoiceRepository, productRepository);
         
         this.cartItems = new ArrayList<>();
-        
+
+        setuptabelListProductSorter();
     }
     
     /**
@@ -100,6 +109,36 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    
+
+    private void setuptabelListProductSorter(){
+        if (sellForm == null) return;
+
+        tabelListProductSorter = sellForm.getTableListProductSorter();
+        
+        // comparator (cột 5 - Giá bán)
+        tabelListProductSorter.setComparator(5, new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return compareAmount(s1, s2);
+            }
+        });
+      
+    }
+
+    private int compareAmount(String s1, String s2) {
+        try {
+            String v1 = s1.replaceAll("\\.", "");
+            String v2 = s2.replaceAll("\\.", "");
+            
+            double d1 = Double.parseDouble(v1);
+            double d2 = Double.parseDouble(v2);
+            
+            return Double.compare(d1, d2);
+        } catch (Exception e) {
+            return s1.compareTo(s2);
         }
     }
     

@@ -25,7 +25,6 @@ public class ServiceFactory {
     private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
-    private static InvoiceDetailService invoiceDetailService;  // Thay vì InvoiceDetail
     // private static UserService userService;
     
     /**
@@ -92,11 +91,10 @@ public class ServiceFactory {
      */
     public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
         if (invoiceDetailService == null) {
-            RepositoryFactory repoFactory = new RepositoryFactory(getInstance().getConnection());
+            RepositoryFactory repoFactory = RepositoryFactory.getInstance(getInstance().getConnection());
             invoiceDetailService = new InvoiceDetailService(
-                repoFactory.getInvoiceDetailRepository(),
-                repoFactory.getProductRepository(),
-                repoFactory.getInvoiceRepository() // Thêm InvoiceRepository
+                    repoFactory.getInvoiceDetailRepository(), 
+                    repoFactory.getProductRepository()
             );
         }
         return invoiceDetailService;
@@ -139,17 +137,6 @@ public class ServiceFactory {
     }
     
 
-    /**
-     * Lấy InvoiceDetailService
-     * @return InvoiceDetailService instance
-     * @throws SQLException Nếu có lỗi với kết nối database
-     */
-    public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
-        if (invoiceDetailService == null) {
-            invoiceDetailService = new InvoiceDetailService(repositoryFactory.getInvoiceDetailRepository(), repositoryFactory.getProductRepository());
-        }
-        return invoiceDetailService;
-    }
     /**
      * Lấy PurchaseOrderService
      * @return PurchaseOrderService instance

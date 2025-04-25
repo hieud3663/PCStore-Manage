@@ -36,18 +36,17 @@ public class ReturnController {
                             InvoiceService invoiceService,
                             ProductService productService) {
         // Khởi tạo RepositoryFactory
-        RepositoryFactory repositoryFactory = new RepositoryFactory(connection);
+        RepositoryFactory repositoryFactory = RepositoryFactory.getInstance(connection);
         
         // Khởi tạo các repositories với connection và repositoryFactory
-        ProductRepository productRepository = new ProductRepository(connection);
-        InvoiceDetailRepository invoiceDetailRepository = new InvoiceDetailRepository(connection, repositoryFactory);
+        ProductRepository productRepository = repositoryFactory.getProductRepository();
+        InvoiceDetailRepository invoiceDetailRepository = repositoryFactory.getInvoiceDetailRepository();
         
         // Khởi tạo các services
         this.returnService = new ReturnService(new ReturnRepository(connection), productRepository);
         this.invoiceService = invoiceService;
         this.productService = productService;
-        this.invoiceDetailService = new InvoiceDetailService(invoiceDetailRepository, productRepository, 
-        repositoryFactory.getInvoiceRepository());
+        this.invoiceDetailService = new InvoiceDetailService(invoiceDetailRepository, productRepository);
     }
 
     /**

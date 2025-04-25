@@ -3,6 +3,7 @@ package com.pcstore.service;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import com.pcstore.model.InvoiceDetail;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.InvoiceRepository;
 import com.pcstore.repository.impl.ProductRepository;
+import com.pcstore.utils.DatabaseConnection;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến hóa đơn
@@ -19,6 +21,14 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ProductRepository productRepository;
     private  InvoiceDetailService invoiceDetailService;
+
+
+    public InvoiceService() {
+        Connection connection = DatabaseConnection.getInstance().getConnection();
+        this.invoiceRepository = RepositoryFactory.getInstance(connection).getInvoiceRepository();
+        this.productRepository = RepositoryFactory.getInstance(connection).getProductRepository();
+    }
+
     /**
      * Repository cho hóa đơn
      * @param connection Kết nối đến cơ sở dữ liệu
@@ -111,7 +121,6 @@ public class InvoiceService {
 
         if (invoiceOpt.isPresent()) {
             Invoice invoice = invoiceOpt.get();
-            // Cập nhật thông tin chi tiết hóa đơn
             invoice.setInvoiceDetails(invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId));
             return Optional.of(invoice);
         }
@@ -135,8 +144,18 @@ public class InvoiceService {
      * @return Danh sách hóa đơn của khách hàng
      */
     public List<Invoice> findInvoicesByCustomer(String customerId) {
-        return invoiceRepository.findByCustomerId(customerId);
+        List<Invoice> invoices = invoiceRepository.findByCustomerId(customerId);
+        if (invoices != null) {
+            for (Invoice invoice : invoices) {
+                invoice.setInvoiceDetails(invoiceDetailService.findInvoiceDetailsByInvoiceId(invoice.getInvoiceId()));
+            }
+            return invoices;
+        }
+
+        return new ArrayList<>();
     }
+
+    
     
     /**
      * Tìm hóa đơn theo nhân viên

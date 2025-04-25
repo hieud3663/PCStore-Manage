@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import com.pcstore.model.Customer;
+import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Product;
 import com.pcstore.model.Warranty;
@@ -22,6 +23,7 @@ import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.repository.impl.WarrantyRepository;
 import com.pcstore.service.CustomerService;
 import com.pcstore.service.InvoiceDetailService;
+import com.pcstore.service.InvoiceService;
 import com.pcstore.service.ProductService;
 import com.pcstore.service.WarrantyService;
 import com.pcstore.view.AddWarrantyForm;
@@ -36,7 +38,7 @@ public class WarrantyController {
     private final InvoiceDetailService invoiceDetailService;
     private final ProductService productService;
     private final CustomerService customerService;
-    
+    private final InvoiceService invoiceService;
     private WarrantyServiceForm serviceForm;
     private WarrantyCardForm cardForm;
     
@@ -44,27 +46,21 @@ public class WarrantyController {
      * Khởi tạo controller với kết nối CSDL được cung cấp
      * @param connection Kết nối CSDL
      */
-    public WarrantyController(Connection connection, WarrantyService warrantyService1, InvoiceDetailService invoiceDetailService1, ProductService productService1, CustomerService customerService1) {
-        // Khởi tạo RepositoryFactory
-        RepositoryFactory repositoryFactory = new RepositoryFactory(connection);
+    public WarrantyController(Connection connection) {
+
+        RepositoryFactory repositoryFactory = RepositoryFactory.getInstance(connection);
         
-        // Lấy các repository từ factory
         WarrantyRepository warrantyRepository = repositoryFactory.getWarrantyRepository();
         InvoiceDetailRepository invoiceDetailRepository = repositoryFactory.getInvoiceDetailRepository();
         ProductRepository productRepository = repositoryFactory.getProductRepository();
         
-        // Khởi tạo các services
+       
         this.warrantyService = new WarrantyService(warrantyRepository);
-        
-        // Sửa dòng này để truyền thêm tham số thứ 3 là invoiceRepository
-        this.invoiceDetailService = new InvoiceDetailService(
-            invoiceDetailRepository, 
-            productRepository,
-            repositoryFactory.getInvoiceRepository()  // Thêm tham số này
-        );
-        
+        this.invoiceService = new InvoiceService(repositoryFactory.getInvoiceRepository(), productRepository);
+        this.invoiceDetailService = new InvoiceDetailService(invoiceDetailRepository, productRepository);
         this.productService = new ProductService(productRepository);
         this.customerService = new CustomerService(repositoryFactory.getCustomerRepository());
+
     }
     
     /**
@@ -75,7 +71,7 @@ public class WarrantyController {
      * @param productService Service xử lý sản phẩm
      * @param customerService Service xử lý khách hàng
      */
-    public WarrantyController(WarrantyService warrantyService,
+    public WarrantyController(WarrantyService warrantyService, InvoiceService invoiceService,
                          InvoiceDetailService invoiceDetailService,
                          ProductService productService,
                          CustomerService customerService) {
@@ -83,6 +79,7 @@ public class WarrantyController {
         this.invoiceDetailService = invoiceDetailService;
         this.productService = productService;
         this.customerService = customerService;
+        this.invoiceService = invoiceService;
     }
     
     /**
@@ -94,6 +91,7 @@ public class WarrantyController {
         this.invoiceDetailService = null;
         this.productService = null;
         this.customerService = null;
+        this.invoiceService = null;
     }
     
     /**
@@ -331,13 +329,27 @@ public class WarrantyController {
             Optional<Customer> customerOpt = customerService.findCustomerByPhone(phoneNumber);
             
             if (!customerOpt.isPresent()) {
-                return new ArrayList<>(); // Trả về danh sách rỗng nếu không tìm thấy khách hàng
+                return new ArrayList<>(); 
             }
             
             Customer customer = customerOpt.get();
             
+            //Lấy hóa đơn của khách hàng
+            List<Invoice> listInvoices = invoiceService.findInvoicesByCustomer(customer.getCustomerId());
+            
+            if (listInvoices.isEmpty()) {
+                return new ArrayList<>(); // Không có hóa đơn nào
+            }
+
             // Tìm các chi tiết hóa đơn của khách hàng
-            return invoiceDetailService.findByCustomerId(customer.getCustomerId());
+            List<InvoiceDetail> allInvoiceDetails = new ArrayList<>();
+            for (Invoice invoice : listInvoices) {
+                if (invoice.getInvoiceDetails() != null) {
+                    allInvoiceDetails.addAll(invoice.getInvoiceDetails());
+                }
+            }
+            
+            return allInvoiceDetails;
         } catch (Exception e) {
             showError("Lỗi khi tìm kiếm sản phẩm đã mua", e.getMessage());
             return new ArrayList<>();

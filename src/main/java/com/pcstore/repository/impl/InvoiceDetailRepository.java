@@ -318,6 +318,8 @@ public class InvoiceDetailRepository implements Repository<InvoiceDetail, Intege
         
         return result;
     }
+
+
     
     // Cập nhật tổng tiền hóa đơn
     private void updateInvoiceTotal(int invoiceId) {

@@ -1,36 +1,52 @@
 package com.pcstore.service;
 
-import com.pcstore.repository.impl.RepairServiceRepository;
-import com.pcstore.model.Customer;
-import com.pcstore.model.Employee;
-import com.pcstore.model.RepairService;
-import com.pcstore.model.Warranty;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.pcstore.model.Customer;
+import com.pcstore.model.Employee;
+import com.pcstore.model.Repair;
+import com.pcstore.model.Warranty;
+import com.pcstore.model.enums.RepairEnum;
+import com.pcstore.repository.impl.RepairRepository;
+
 /**
  * Service xử lý logic nghiệp vụ liên quan đến dịch vụ sửa chữa
  */
-public class RepairServiceService {
-    private final RepairServiceRepository repairServiceRepository;
+public class RepairService {
+    private final RepairRepository repairServiceRepository;
+    private final CustomerService customerService;
+    private final EmployeeService employeeService;
     
     /**
-     * Khởi tạo service với repository
+     * Khởi tạo service với repository và các service khác
      * @param connection Kết nối đến database
+     * @param customerService Service khách hàng
+     * @param employeeService Service nhân viên
      */
-    public RepairServiceService(Connection connection) {
-        this.repairServiceRepository = new RepairServiceRepository(connection);
+    public RepairService(Connection connection, 
+                               CustomerService customerService,
+                               EmployeeService employeeService) {
+        this.repairServiceRepository = new RepairRepository(connection);
+        this.customerService = customerService;
+        this.employeeService = employeeService;
     }
     
-    /**
-     * Khởi tạo service với repository đã có
-     * @param repairServiceRepository Repository dịch vụ sửa chữa
-     */
-    public RepairServiceService(RepairServiceRepository repairServiceRepository) {
+    // Giữ nguyên constructor hiện tại để tránh ảnh hưởng code đang dùng
+    public RepairService(Connection connection) {
+        this.repairServiceRepository = new RepairRepository(connection);
+        this.customerService = null;
+        this.employeeService = null;
+    }
+    
+    // Giữ nguyên constructor hiện tại để tránh ảnh hưởng code đang dùng
+    public RepairService(RepairRepository repairServiceRepository) {
         this.repairServiceRepository = repairServiceRepository;
+        this.customerService = null;
+        this.employeeService = null;
     }
     
     /**
@@ -38,9 +54,9 @@ public class RepairServiceService {
      * @param repairService Thông tin dịch vụ sửa chữa
      * @return Dịch vụ sửa chữa đã được thêm
      */
-    public RepairService addRepairService(RepairService repairService) {
+    public Repair addRepairService(Repair repairService) {
         // Kiểm tra thông tin bắt buộc
-        validateRequiredFields(repairService);
+        // validateRequiredFields(repairService);
         
         // Thiết lập ngày nhận nếu chưa có
         if (repairService.getReceiveDate() == null) {
@@ -48,8 +64,8 @@ public class RepairServiceService {
         }
         
         // Thiết lập trạng thái mặc định nếu chưa có
-        if (repairService.getStatus() == null || repairService.getStatus().trim().isEmpty()) {
-            repairService.setStatus("Pending");
+        if (repairService.getStatus() == null) {
+            repairService.setStatus(RepairEnum.RECEIVED);
         }
         
         // Kiểm tra liên kết bảo hành nếu có
@@ -67,7 +83,7 @@ public class RepairServiceService {
      * @param repairService Thông tin dịch vụ sửa chữa mới
      * @return Dịch vụ sửa chữa đã được cập nhật
      */
-    public RepairService updateRepairService(RepairService repairService) {
+    public Repair updateRepairService(Repair repairService) {
         // Kiểm tra tồn tại
         if (!repairServiceRepository.exists(repairService.getRepairServiceId())) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairService.getRepairServiceId() + " không tồn tại");
@@ -77,7 +93,7 @@ public class RepairServiceService {
         validateRequiredFields(repairService);
         
         // Kiểm tra trạng thái có thể cập nhật không
-        Optional<RepairService> existingService = repairServiceRepository.findById(repairService.getRepairServiceId());
+        Optional<Repair> existingService = repairServiceRepository.findById(repairService.getRepairServiceId());
         if (existingService.isPresent() && !existingService.get().canUpdate()) {
             throw new IllegalStateException("Không thể cập nhật dịch vụ sửa chữa trong trạng thái " + existingService.get().getStatus());
         }
@@ -92,13 +108,13 @@ public class RepairServiceService {
      */
     public boolean deleteRepairService(Integer repairServiceId) {
         // Kiểm tra tồn tại
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
         // Chỉ có thể xóa dịch vụ ở trạng thái Pending hoặc Cancelled
-        if (!"Pending".equals(service.get().getStatus()) && !"Cancelled".equals(service.get().getStatus())) {
+        if (service.get().getStatus() != RepairEnum.RECEIVED && service.get().getStatus() != RepairEnum.CANCELLED) {
             throw new IllegalStateException("Không thể xóa dịch vụ sửa chữa trong trạng thái " + service.get().getStatus());
         }
         
@@ -110,16 +126,83 @@ public class RepairServiceService {
      * @param repairServiceId Mã dịch vụ sửa chữa
      * @return Dịch vụ sửa chữa nếu tìm thấy
      */
-    public Optional<RepairService> findRepairServiceById(Integer repairServiceId) {
-        return repairServiceRepository.findById(repairServiceId);
-    }
-    
     /**
-     * Lấy danh sách tất cả dịch vụ sửa chữa
-     * @return Danh sách dịch vụ sửa chữa
+     * Tìm dịch vụ sửa chữa theo mã và lấy thông tin đầy đủ của Customer và Employee
+     * @param repairServiceId Mã dịch vụ sửa chữa
+     * @return Dịch vụ sửa chữa với thông tin đầy đủ nếu tìm thấy
      */
-    public List<RepairService> getAllRepairServices() {
-        return repairServiceRepository.findAll();
+    public Optional<Repair> findRepairServiceWithFullInfo(Integer repairServiceId) {
+        Optional<Repair> repairServiceOpt = repairServiceRepository.findById(repairServiceId);
+        
+        if (!repairServiceOpt.isPresent()) {
+            return Optional.empty();
+        }
+        
+        Repair repairService = repairServiceOpt.get();
+        
+        // Kiểm tra trường hợp customerService và employeeService chưa được thiết lập
+        if (customerService == null || employeeService == null) {
+            throw new IllegalStateException("CustomerService và EmployeeService phải được khởi tạo để lấy thông tin đầy đủ");
+        }
+        
+        // Lấy thông tin đầy đủ của Customer
+        if (repairService.getCustomer() != null) {
+            String customerId = repairService.getCustomer().getCustomerId();
+            customerService.findCustomerById(customerId).ifPresent(customer -> {
+                repairService.setCustomer(customer);
+            });
+        }
+        
+        // Lấy thông tin đầy đủ của Employee
+        if (repairService.getEmployee() != null) {
+            String employeeId = repairService.getEmployee().getEmployeeId();
+            employeeService.findEmployeeById(employeeId).ifPresent(employee -> {
+                repairService.setEmployee(employee);
+            });
+        }
+        
+        return Optional.of(repairService);
+    }
+
+    /**
+     * Lấy danh sách tất cả dịch vụ sửa chữa với thông tin đầy đủ
+     * @return Danh sách dịch vụ sửa chữa với thông tin đầy đủ
+     */
+    public List<Repair> getAllRepairServicesWithFullInfo() {
+        try {
+            System.out.println("RepairService: Đang tải danh sách dịch vụ sửa chữa...");
+            List<Repair> repairs = repairServiceRepository.findAll();
+            System.out.println("RepairService: Đã tìm thấy " + repairs.size() + " dịch vụ");
+            
+            // Load thông tin đầy đủ cho mỗi dịch vụ
+            for (Repair repair : repairs) {
+                try {
+                    // Tải thông tin khách hàng
+                    if (repair.getCustomer() != null) {
+                        String customerId = repair.getCustomer().getCustomerId();
+                        customerService.findCustomerById(customerId).ifPresent(customer -> {
+                            repair.setCustomer(customer);
+                        });
+                    }
+                    
+                    // Tải thông tin nhân viên
+                    if (repair.getEmployee() != null) {
+                        String employeeId = repair.getEmployee().getEmployeeId();
+                        employeeService.findEmployeeById(employeeId).ifPresent(employee -> {
+                            repair.setEmployee(employee);
+                        });
+                    }
+                } catch (Exception e) {
+                    System.err.println("RepairService: Lỗi khi tải thông tin chi tiết: " + e.getMessage());
+                }
+            }
+            
+            return repairs;
+        } catch (Exception e) {
+            System.err.println("RepairService: Lỗi khi tải danh sách dịch vụ: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error getting all repair services with full info", e);
+        }
     }
     
     /**
@@ -127,7 +210,7 @@ public class RepairServiceService {
      * @param customerId Mã khách hàng
      * @return Danh sách dịch vụ sửa chữa
      */
-    public List<RepairService> findRepairServicesByCustomer(String customerId) {
+    public List<Repair> findRepairServicesByCustomer(String customerId) {
         return repairServiceRepository.findByCustomerId(customerId);
     }
     
@@ -136,7 +219,7 @@ public class RepairServiceService {
      * @param employeeId Mã nhân viên
      * @return Danh sách dịch vụ sửa chữa
      */
-    public List<RepairService> findRepairServicesByEmployee(String employeeId) {
+    public List<Repair> findRepairServicesByEmployee(String employeeId) {
         return repairServiceRepository.findByEmployeeId(employeeId);
     }
     
@@ -145,15 +228,29 @@ public class RepairServiceService {
      * @param status Trạng thái dịch vụ
      * @return Danh sách dịch vụ sửa chữa
      */
-    public List<RepairService> findRepairServicesByStatus(String status) {
-        return repairServiceRepository.findByStatus(status);
+    public List<Repair> findRepairServicesByStatus(RepairEnum status) {
+        return repairServiceRepository.findByStatus(status.getStatus());
+    }
+    
+    /**
+     * Tìm dịch vụ sửa chữa theo trạng thái (phương thức tương thích ngược)
+     * @param statusString Chuỗi trạng thái dịch vụ
+     * @return Danh sách dịch vụ sửa chữa
+     */
+    public List<Repair> findRepairServicesByStatus(String statusString) {
+        for (RepairEnum status : RepairEnum.values()) {
+            if (status.getStatus().equals(statusString)) {
+                return repairServiceRepository.findByStatus(statusString);
+            }
+        }
+        throw new IllegalArgumentException("Trạng thái không hợp lệ: " + statusString);
     }
     
     /**
      * Tìm dịch vụ sửa chữa đến hạn hôm nay
      * @return Danh sách dịch vụ sửa chữa
      */
-    public List<RepairService> findDueRepairServices() {
+    public List<Repair> findDueRepairServices() {
         return repairServiceRepository.findDueToday();
     }
     
@@ -163,19 +260,19 @@ public class RepairServiceService {
      * @return true nếu cập nhật thành công
      */
     public boolean startRepairService(Integer repairServiceId) {
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
         // Kiểm tra trạng thái
-        RepairService repairService = service.get();
-        if (!"Pending".equals(repairService.getStatus())) {
+        Repair repairService = service.get();
+        if (repairService.getStatus() != RepairEnum.RECEIVED) {
             throw new IllegalStateException("Chỉ có thể bắt đầu dịch vụ sửa chữa đang ở trạng thái chờ xử lý");
         }
         
         // Cập nhật trạng thái
-        return repairServiceRepository.updateStatus(repairServiceId, "In Progress");
+        return repairServiceRepository.updateStatus(repairServiceId, RepairEnum.DIAGNOSING.getStatus());
     }
     
     /**
@@ -188,14 +285,15 @@ public class RepairServiceService {
      */
     public boolean completeRepairService(Integer repairServiceId, LocalDateTime completionDate, 
             String notes, double finalCost) {
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
         // Kiểm tra trạng thái
-        RepairService repairService = service.get();
-        if (!"In Progress".equals(repairService.getStatus())) {
+        Repair repairService = service.get();
+        RepairEnum currentStatus = repairService.getStatus();
+        if (currentStatus != RepairEnum.REPAIRING && currentStatus != RepairEnum.WAITING_FOR_PARTS) {
             throw new IllegalStateException("Chỉ có thể hoàn thành dịch vụ sửa chữa đang trong tiến trình");
         }
         
@@ -219,31 +317,35 @@ public class RepairServiceService {
      * @return true nếu cập nhật thành công
      */
     public boolean cancelRepairService(Integer repairServiceId) {
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
         // Kiểm tra trạng thái
-        RepairService repairService = service.get();
+        Repair repairService = service.get();
         if (!repairService.canUpdate()) {
             throw new IllegalStateException("Không thể hủy dịch vụ sửa chữa trong trạng thái hiện tại");
         }
         
         // Cập nhật trạng thái
-        return repairServiceRepository.updateStatus(repairServiceId, "Cancelled");
+        return repairServiceRepository.updateStatus(repairServiceId, RepairEnum.CANCELLED.getStatus());
     }
     
     /**
      * Kiểm tra các trường bắt buộc
      * @param repairService Dịch vụ sửa chữa cần kiểm tra
      */
-    private void validateRequiredFields(RepairService repairService) {
+    private void validateRequiredFields(Repair repairService) {
         if (repairService.getCustomer() == null) {
             throw new IllegalArgumentException("Khách hàng không được để trống");
         }
         
-        if (repairService.getDescription() == null || repairService.getDescription().trim().isEmpty()) {
+        if (repairService.getDeviceName() == null || repairService.getDeviceName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên thiết bị không được để trống");
+        }
+        
+        if (repairService.getProblem() == null || repairService.getProblem().trim().isEmpty()) {
             throw new IllegalArgumentException("Mô tả vấn đề không được để trống");
         }
         
@@ -256,15 +358,11 @@ public class RepairServiceService {
     /**
      * Tạo mới dịch vụ sửa chữa
      * @param customer Khách hàng
-     * @param employee Nhân viên kỹ thuật
-     * @param description Mô tả vấn đề
-     * @param warranty Bảo hành (nếu có)
-     * @return Dịch vụ sửa chữa mới
      */
-    public RepairService createNewRepairService(Customer customer, Employee employee, 
+    public Repair createNewRepairService(Customer customer, Employee employee, 
             String description, Warranty warranty) {
         // Sử dụng factory method từ model
-        return RepairService.createNew(customer, employee, description, warranty);
+        return new Repair(customer, employee, description, warranty);
     }
     
     /**
@@ -274,12 +372,12 @@ public class RepairServiceService {
      * @return true nếu phân công thành công
      */
     public boolean assignEmployee(Integer repairServiceId, Employee employee) {
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
-        RepairService repairService = service.get();
+        Repair repairService = service.get();
         if (!repairService.canUpdate()) {
             throw new IllegalStateException("Không thể phân công nhân viên trong trạng thái hiện tại");
         }
@@ -296,12 +394,12 @@ public class RepairServiceService {
      * @return true nếu cập nhật thành công
      */
     public boolean updateDiagnosis(Integer repairServiceId, String diagnosis) {
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
-        RepairService repairService = service.get();
+        Repair repairService = service.get();
         if (!repairService.canUpdate()) {
             throw new IllegalStateException("Không thể cập nhật chẩn đoán trong trạng thái hiện tại");
         }
@@ -318,12 +416,12 @@ public class RepairServiceService {
      * @return true nếu cập nhật thành công
      */
     public boolean updateServiceFee(Integer repairServiceId, BigDecimal serviceFee) {
-        Optional<RepairService> service = repairServiceRepository.findById(repairServiceId);
+        Optional<Repair> service = repairServiceRepository.findById(repairServiceId);
         if (!service.isPresent()) {
             throw new IllegalArgumentException("Dịch vụ sửa chữa với mã " + repairServiceId + " không tồn tại");
         }
         
-        RepairService repairService = service.get();
+        Repair repairService = service.get();
         if (!repairService.canUpdate()) {
             throw new IllegalStateException("Không thể cập nhật phí dịch vụ trong trạng thái hiện tại");
         }

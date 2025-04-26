@@ -5,12 +5,20 @@
 package com.pcstore.view;
 
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import javax.swing.*;
-import com.k33ptoo.components.*;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import com.k33ptoo.components.KButton;
+import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.controller.DashboardController;
 import com.pcstore.utils.DatabaseConnection;
 
@@ -74,6 +82,18 @@ public class DashboardForm extends JFrame {
                 DatabaseConnection.getInstance().closeConnection();
             }
         });
+
+        // Khởi tạo các controllers cho dịch vụ
+        // Giả sử bạn đã có sẵn các services từ trước
+        com.pcstore.controller.RepairController repairController = new com.pcstore.controller.RepairController(
+            com.pcstore.utils.DatabaseConnection.getInstance().getConnection(),
+            new com.pcstore.service.CustomerService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection()),
+            new com.pcstore.service.EmployeeService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection()),
+            new com.pcstore.service.WarrantyService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection())
+        );
+
+        // Thiết lập controller cho form dịch vụ
+        serviceForm.setRepairController(repairController);
     }
 
     /**
@@ -329,8 +349,8 @@ public class DashboardForm extends JFrame {
         cbLanguage.setBackground(new java.awt.Color(102, 153, 255));
         cbLanguage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cbLanguage.setForeground(new java.awt.Color(255, 255, 255));
-        cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cbLanguage.setOpaque(true);
+        cbLanguage.setMaximumRowCount(10);
+        cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Việt Nam", "English" }));
         panelLanguage.add(cbLanguage);
 
         PanelNavigation.add(panelLanguage);
@@ -564,29 +584,29 @@ public class DashboardForm extends JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try{
-            UIManager.setLookAndFeel(new FlatLightLaf());
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-        //</editor-fold>
-        //</editor-fold>
+    // public static void main(String args[]) {
+    //     /* Set the Nimbus look and feel */
+    //     //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+    //     /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+    //      * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+    //      */
+    //     try{
+    //         UIManager.setLookAndFeel(new FlatLightLaf());
+    //     }catch(Exception e){
+    //         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    //     }
+    //     //</editor-fold>
+    //     //</editor-fold>
 
-        /* Create and display the form */
-        /* Create and display the form */
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                DashboardForm dashBoard = DashboardForm.getInstance();
-                dashBoard.setVisible(true);
-            }
-        });
-    }
+    //     /* Create and display the form */
+    //     /* Create and display the form */
+    //     SwingUtilities.invokeLater(new Runnable() {
+    //         public void run() {
+    //             DashboardForm dashBoard = DashboardForm.getInstance();
+    //             dashBoard.setVisible(true);
+    //         }
+    //     });
+    // }
 
     // Thêm biến để theo dõi panel đang được chọn
     private KGradientPanel activePanel = null;

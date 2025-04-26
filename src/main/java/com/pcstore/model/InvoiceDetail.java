@@ -1,13 +1,12 @@
 package com.pcstore.model;
 
-import com.pcstore.model.base.BaseTimeEntity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-/**
- * Class biểu diễn chi tiết hóa đơn
- */
+import com.pcstore.model.base.BaseTimeEntity;
+
+
 public class InvoiceDetail extends BaseTimeEntity {
     private Integer invoiceDetailId;
     private Invoice invoice;
@@ -17,6 +16,7 @@ public class InvoiceDetail extends BaseTimeEntity {
     private BigDecimal unitPrice;
     private BigDecimal discountAmount;
     private String notes;
+
 
     public InvoiceDetail(Integer invoiceDetailId, Invoice invoice, Product product, Warranty warranty, int quantity,
             BigDecimal unitPrice, BigDecimal discountAmount, String notes) {
@@ -128,6 +128,7 @@ public class InvoiceDetail extends BaseTimeEntity {
         this.notes = notes;
     }
 
+
     // Tính tổng tiền trước giảm giá
     public BigDecimal getSubtotal() {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
@@ -191,27 +192,23 @@ public class InvoiceDetail extends BaseTimeEntity {
         }
     }
 
-    // Kiểm tra xem có thể trả lại một số lượng sản phẩm không
-    public boolean canReturn(int returnQuantity) {
-        if (returnQuantity <= 0) {
-            return false;
-        }
+    /**
+     * Kiểm tra liệu chi tiết hóa đơn có thể trả lại với số lượng cho trước không
+     * @param quantityToReturn Số lượng muốn trả lại
+     * @return true nếu có thể trả với số lượng đó
+     */
+    public boolean canReturn(int quantityToReturn) {
+        // Nếu số lượng trả <= 0, không hợp lệ
+        if (quantityToReturn <= 0) return false;
         
-        // Kiểm tra xem số lượng trả có vượt quá số lượng đã mua không
-        if (returnQuantity > this.quantity) {
-            return false;
-        }
-        
-        // TODO: Kiểm tra các điều kiện khác nếu cần
-        // Ví dụ: thời gian trả hàng, tình trạng sản phẩm, chính sách của cửa hàng...
-        
-        return true;
+        // Mặc định, mọi chi tiết đều có thể trả lại
+        return quantityToReturn <= quantity;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != getClass()) return false;
         InvoiceDetail that = (InvoiceDetail) o;
         return Objects.equals(invoiceDetailId, that.invoiceDetailId);
     }

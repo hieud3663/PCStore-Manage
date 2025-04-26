@@ -5,10 +5,21 @@
 package com.pcstore.view;
 
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import com.k33ptoo.components.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.GroupLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import com.k33ptoo.components.KGradientPanel;
 
 /**
  *
@@ -37,6 +48,7 @@ public class ServiceForm extends JPanel {
         initializeHoverEffects();
 
         selectMenu(panelWarranty, lbWarranty, warrantyServiceForm);
+     
     }
 
     /**
@@ -246,6 +258,27 @@ public class ServiceForm extends JPanel {
         selectMenu(panelRepair, lbRepair, repairServiceForm);
     }
 
+    /**
+     * Thiết lập controller cho RepairServiceForm
+     */
+    public void setRepairController(com.pcstore.controller.RepairController controller) {
+        if (repairServiceForm != null) {
+            repairServiceForm.setRepairController(controller);
+            // Đảm bảo form sửa chữa được hiển thị sau khi thiết lập controller
+            if (activePanel == panelRepair) {
+                loadRepairServiceForm();
+            }
+        }
+    }
+
+    /**
+     * Tải lại form dịch vụ sửa chữa
+     */
+    private void loadRepairServiceForm() {
+        if (repairServiceForm != null) {
+            repairServiceForm.loadRepairServices();
+        }
+    }
 
     // End Hover=====================================================
 

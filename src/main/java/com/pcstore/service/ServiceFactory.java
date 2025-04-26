@@ -1,13 +1,8 @@
 package com.pcstore.service;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import javax.xml.crypto.Data;
-
-import com.pcstore.model.Invoice;
-import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.utils.DatabaseConnection;
 
@@ -25,8 +20,9 @@ public class ServiceFactory {
     private static ProductService productService;
     private static SupplierService supplierService;
     private static InvoiceService invoiceService; 
+    private static InvoiceDetailService invoiceDetailService;
     private static PurchaseOrderService purchaseOrderService;
-    private static RepairServiceService repairServiceService;
+    private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
     // private static UserService userService;
@@ -37,7 +33,7 @@ public class ServiceFactory {
      */
     private ServiceFactory() throws SQLException {
         connection = DatabaseConnection.getInstance().getConnection();
-        repositoryFactory = new RepositoryFactory(connection);
+        repositoryFactory = RepositoryFactory.getInstance(connection);
     }
     
     /**
@@ -89,6 +85,22 @@ public class ServiceFactory {
     }
     
     /**
+     * Lấy InvoiceDetailService
+     * @return InvoiceDetailService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static InvoiceDetailService getInvoiceDetailService() throws SQLException {
+        if (invoiceDetailService == null) {
+            RepositoryFactory repoFactory = RepositoryFactory.getInstance(getInstance().getConnection());
+            invoiceDetailService = new InvoiceDetailService(
+                    repoFactory.getInvoiceDetailRepository(), 
+                    repoFactory.getProductRepository()
+            );
+        }
+        return invoiceDetailService;
+    }
+    
+    /**
      * Lấy ProductService
      * @return ProductService instance
      * @throws SQLException Nếu có lỗi với kết nối database
@@ -119,11 +131,12 @@ public class ServiceFactory {
      */
     public static InvoiceService getInvoiceService() throws SQLException {
         if (invoiceService == null) {
-            invoiceService = new InvoiceService(getInstance().getConnection(), repositoryFactory);
+            invoiceService = new InvoiceService(getInstance().getConnection());
         }
         return invoiceService;
     }
     
+
     /**
      * Lấy PurchaseOrderService
      * @return PurchaseOrderService instance
@@ -141,9 +154,9 @@ public class ServiceFactory {
      * @return RepairServiceService instance
      * @throws SQLException Nếu có lỗi với kết nối database
      */
-    public static RepairServiceService getRepairServiceService() throws SQLException {
+    public static RepairService getRepairServiceService() throws SQLException {
         if (repairServiceService == null) {
-            repairServiceService = new RepairServiceService(getInstance().getConnection());
+            repairServiceService = new RepairService(getInstance().getConnection());
         }
         return repairServiceService;
     }

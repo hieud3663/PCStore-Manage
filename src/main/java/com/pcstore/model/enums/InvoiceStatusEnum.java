@@ -6,8 +6,12 @@ public enum InvoiceStatusEnum {
     CANCELLED("Đã hủy"),
     DELIVERED("Đã giao hàng"),
     PROCESSING("Đang xử lý"),
-    COMPLETED("Hoàn thành");
-    
+    COMPLETED("Hoàn thành"),
+    RETURNED("Đã trả hàng"),
+    REFUNDED("Đã hoàn tiền"),
+    FAILED("Thất bại"),
+    CONFIRMED("Đã xác nhận");
+
     private final String displayName;
     
     InvoiceStatusEnum(String displayName) {

@@ -1,12 +1,11 @@
 package com.pcstore.service;
 
-import com.pcstore.model.Customer;
-import com.pcstore.repository.iCustomerRepository;
-import com.pcstore.repository.impl.CustomerRepository;
-
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+
+import com.pcstore.model.Customer;
+import com.pcstore.repository.impl.CustomerRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến khách hàng
@@ -31,8 +30,25 @@ public class CustomerService {
      */
     public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
+    }   
+
+    public String generateCustomerId() {
+        return customerRepository.generateCustomerId();
     }
     
+
+    //Lưu 
+    public Customer saveCustomer(Customer customer) {
+        // Kiểm tra xem customer có tồn tại chưa đã
+        Customer existingCustomer = findCustomerById(customer.getCustomerId()).orElse(null);
+        if (existingCustomer != null) {
+            return updateCustomer(customer);
+        } else {
+            return addCustomer(customer);
+        }
+    }
+
+
     /**
      * Thêm khách hàng mới
      * @param customer Thông tin khách hàng
@@ -147,4 +163,6 @@ public class CustomerService {
     public boolean customerExists(String customerId) {
         return customerRepository.exists(customerId);
     }
+
+    
 }

@@ -47,9 +47,9 @@ public class DatabaseConnection {
         return instance;
     }
     
-    public static RepositoryFactory getRepositoryFactory() {
-        return new RepositoryFactory(getInstance().getConnection());
-    }
+    // public static RepositoryFactory getRepositoryFactory() {
+    //     return new RepositoryFactory(getInstance().getConnection());
+    // }
     
     public void closeConnection() {
         if (connection != null) {

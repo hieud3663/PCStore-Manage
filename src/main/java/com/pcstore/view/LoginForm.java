@@ -44,6 +44,8 @@ public class LoginForm extends JFrame {
      * Creates new form testLogin
      */
     public LoginForm() {
+
+
         initComponents();
        
         loginController = new LoginController();
@@ -56,6 +58,9 @@ public class LoginForm extends JFrame {
                 DatabaseConnection.getInstance().closeConnection();
             }
         });
+
+        checkLogin(); //test login
+
     }
 
     /**
@@ -285,8 +290,11 @@ public class LoginForm extends JFrame {
 
 
     public void checkLogin(){
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
+        // String username = txtUsername.getText();
+        // String password = txtPassword.getText();
+
+        String username = "admin";
+        String password = "admin";
 
         if(username.isEmpty() && password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);

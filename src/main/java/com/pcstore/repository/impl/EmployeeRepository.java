@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 /**
  * Repository implementation cho Employee entity
@@ -262,11 +263,13 @@ public class EmployeeRepository implements Repository<Employee, String> {
     
     private Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
+
         employee.setEmployeeId(resultSet.getString("EmployeeID"));
         employee.setFullName(resultSet.getString("FullName"));
         employee.setPhoneNumber(resultSet.getString("PhoneNumber"));
         employee.setEmail(resultSet.getString("Email"));
-        
+
+       
         // Chuyển đổi string position thành enum
         String positionStr = resultSet.getString("Position");
         for (EmployeePositionEnum position : EmployeePositionEnum.values()) {

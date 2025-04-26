@@ -4,12 +4,21 @@
  */
 package com.pcstore.view;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+
+import com.k33ptoo.components.KButton;
+import com.pcstore.controller.RevenueController;
+
 /**
  *
  * @author DUC ANH
  */
 public class RevenueMonthlyForm extends javax.swing.JPanel {
 
+    private RevenueController controller;
+    
     /**
      * Creates new form RevenueDaily
      */
@@ -37,6 +46,7 @@ public class RevenueMonthlyForm extends javax.swing.JPanel {
         jLabel4 = new javax.swing.JLabel();
         TotalProfit = new javax.swing.JLabel();
 
+        setPreferredSize(new java.awt.Dimension(1153, 610));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
@@ -114,35 +124,95 @@ public class RevenueMonthlyForm extends javax.swing.JPanel {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(TotalProfit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
-                .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
+                .addContainerGap(445, Short.MAX_VALUE))
             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addGap(34, 34, 34)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(TotalRevenue)
-                    .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(TotalProfit))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnExportReport, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 990, 610));
+        add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1153, 610));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnExportReportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportReportMouseClicked
-        // TODO add your handling code here:
+        // Việc xử lý đã được chuyển sang controller
     }//GEN-LAST:event_btnExportReportMouseClicked
 
+    /**
+     * Thiết lập controller cho form
+     * @param controller Controller doanh thu
+     */
+    public void setController(RevenueController controller) {
+        this.controller = controller;
+        if (controller != null) {
+            controller.setRevenueMonthlyForm(this);
+        }
+    }
+    
+    /**
+     * Lấy label hiển thị tháng
+     * @return Label tháng
+     */
+    public JLabel getMonthLabel() {
+        return jLabel1;
+    }
+    
+    /**
+     * Lấy nút chọn tháng
+     * @return Nút tháng
+     */
+    public JButton getMonthButton() {
+        return jButton1;
+    }
+    
+    /**
+     * Lấy label hiển thị tổng doanh thu
+     * @return Label doanh thu
+     */
+    public JLabel getTotalRevenueLabel() {
+        return TotalRevenue;
+    }
+    
+    /**
+     * Lấy label hiển thị tổng lợi nhuận
+     * @return Label lợi nhuận
+     */
+    public JLabel getTotalProfitLabel() {
+        return TotalProfit;
+    }
+    
+    /**
+     * Lấy nút xuất báo cáo
+     * @return Nút xuất báo cáo
+     */
+    public KButton getExportButton() {
+        return btnExportReport;
+    }
+    
+    /**
+     * Lấy bảng thống kê doanh thu
+     * @return Bảng thống kê
+     */
+    public JTable getRevenueTable() {
+        return jTable1;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TotalProfit;

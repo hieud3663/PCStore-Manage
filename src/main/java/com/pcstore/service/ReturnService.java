@@ -1,13 +1,16 @@
 package com.pcstore.service;
 
-import com.pcstore.model.Return;
-import com.pcstore.repository.impl.ReturnRepository;
-import com.pcstore.repository.impl.ProductRepository;
-
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.pcstore.model.Product;
+import com.pcstore.model.Return;
+import com.pcstore.repository.impl.ProductRepository;
+import com.pcstore.repository.impl.ReturnRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến đơn trả hàng
@@ -257,5 +260,84 @@ public class ReturnService {
      */
     public boolean returnExists(Integer returnId) {
         return returnRepository.exists(returnId);
+    }
+    
+    /**
+     * Tìm kiếm đơn trả hàng theo từ khóa
+     * @param keyword Từ khóa tìm kiếm
+     * @return Danh sách đơn trả hàng phù hợp
+     */
+    public List<Return> searchReturns(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return findAllReturns();
+        }
+        
+        keyword = keyword.trim().toLowerCase();
+        List<Return> results = new ArrayList<>();
+        List<Return> allReturns = findAllReturns();
+        
+        for (Return returnObj : allReturns) {
+            // Tìm theo ID
+            if (returnObj.getReturnId().toString().contains(keyword)) {
+                results.add(returnObj);
+                continue;
+            }
+            
+            // Tìm theo lý do
+            if (returnObj.getReason() != null && 
+                returnObj.getReason().toLowerCase().contains(keyword)) {
+                results.add(returnObj);
+                continue;
+            }
+            
+            // Tìm theo ghi chú
+            if (returnObj.getNotes() != null && 
+                returnObj.getNotes().toLowerCase().contains(keyword)) {
+                results.add(returnObj);
+                continue;
+            }
+            
+            // Tìm theo trạng thái
+            if (returnObj.getStatus() != null && 
+                returnObj.getStatus().toLowerCase().contains(keyword)) {
+                results.add(returnObj);
+                continue;
+            }
+            
+            // Tìm theo thông tin sản phẩm
+            if (returnObj.getInvoiceDetail() != null && 
+                returnObj.getInvoiceDetail().getProduct() != null) {
+                
+                Product product = returnObj.getInvoiceDetail().getProduct();
+                
+                if (product.getProductId() != null && 
+                    product.getProductId().toLowerCase().contains(keyword)) {
+                    results.add(returnObj);
+                    continue;
+                }
+                
+                if (product.getProductName() != null && 
+                    product.getProductName().toLowerCase().contains(keyword)) {
+                    results.add(returnObj);
+                }
+            }
+        }
+        
+        return results;
+    }
+    
+    /**
+     * Tìm các đơn trả hàng theo mã chi tiết hóa đơn
+     * 
+     * @param invoiceDetailId Mã chi tiết hóa đơn
+     * @return Danh sách các đơn trả hàng của chi tiết hóa đơn đó
+     * @throws SQLException Nếu có lỗi truy cập CSDL
+     */
+    public List<Return> findReturnsByInvoiceDetail(Integer invoiceDetailId) throws SQLException {
+        if (invoiceDetailId == null) {
+            throw new IllegalArgumentException("ID chi tiết hóa đơn không được null");
+        }
+        
+        return returnRepository.findByInvoiceDetail(invoiceDetailId);
     }
 }

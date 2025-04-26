@@ -7,4 +7,6 @@ public interface iInvoiceDetailRepository extends iRepository<InvoiceDetail, Lon
     List<InvoiceDetail> findByInvoiceId(String invoiceId);
     List<InvoiceDetail> findByProductId(String productId);
     void deleteByInvoiceId(String invoiceId);
+   
+
 }

@@ -4,31 +4,33 @@
  */
 package com.pcstore.view;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import com.k33ptoo.components.*;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.StyledEditorKit.BoldAction;
 
+import com.pcstore.controller.PaymentController;
 import com.pcstore.controller.SellController;
 import com.pcstore.model.Customer;
+import com.pcstore.model.Employee;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.Product;
 import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.JDialogInputUtils;
+import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.SessionManager;
+import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.utils.TextFieldSearch;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -42,7 +44,13 @@ public class SellForm extends JPanel {
     private Connection connection;
     private RepositoryFactory repositoryFactory;
 
+    private Employee employee;
+
     private List<String> listSelectProductIDs; // Danh sách tất cả sản phẩm
+
+    private TableRowSorter<TableModel> tableListProductSorter;
+
+    // private TextFieldSearch textFieldSearch = new TextFieldSearch();
     
     /**
      * Creates new form Sell
@@ -53,18 +61,18 @@ public class SellForm extends JPanel {
 
         initComponents();
 
+        setupCusmizeTable();
 
         try {
-            // Lấy kết nối cơ sở dữ liệu
             connection = DatabaseConnection.getInstance().getConnection();
-            repositoryFactory = new RepositoryFactory(connection);
-            sellController = new SellController(connection, repositoryFactory);
+            repositoryFactory = RepositoryFactory.getInstance(connection);
+            sellController = new SellController(this, connection, repositoryFactory);
             
             // Khởi tạo một giao dịch mới với ID nhân viên hiện tại
-            String employeeId = SessionManager.getInstance().getCurrentUser().getEmployeeId();
+            Employee employee = SessionManager.getInstance().getCurrentUser().getEmployee();
             // String employeeId = "NV001";
 
-            sellController.initializeSale(employeeId);
+            sellController.initializeSale(employee);
             
             updateCartDisplay();
             
@@ -88,7 +96,9 @@ public class SellForm extends JPanel {
                 searchProducts();
             }
         });
-   
+        
+        employee = SessionManager.getInstance().getCurrentUser().getEmployee();
+        resetSaleForm();
     }
 
     /**
@@ -102,7 +112,7 @@ public class SellForm extends JPanel {
 
         kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
         panelTitle = new com.k33ptoo.components.KGradientPanel();
-        jLabel3 = new javax.swing.JLabel();
+        labelTitle = new javax.swing.JLabel();
         panelNav = new javax.swing.JPanel();
         textFieldSearch = new com.pcstore.utils.TextFieldSearch();
         paneBody = new javax.swing.JPanel();
@@ -113,28 +123,30 @@ public class SellForm extends JPanel {
         panelCart = new com.k33ptoo.components.KGradientPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tableCart = new javax.swing.JTable();
+        panelDelete = new javax.swing.JPanel();
+        btnDeleteItemCart = new javax.swing.JButton();
         panelCustomerInfo = new com.k33ptoo.components.KGradientPanel();
         panelCustomerName = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        labelCustomerName = new javax.swing.JLabel();
         txtNameKH = new javax.swing.JTextField();
         panelCustomerPromotion = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        labelVoucher = new javax.swing.JLabel();
+        cbbVoucher = new javax.swing.JComboBox<>();
         panelCustomerPhone = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
+        labelCustomerPhone = new javax.swing.JLabel();
         txtPhoneNumberKH = new javax.swing.JTextField();
         btnApplyVoucher = new com.k33ptoo.components.KButton();
         panelCustomerPoint = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        labelCustomerPoint = new javax.swing.JLabel();
         txtPointKH = new javax.swing.JTextField();
         panelCustomerDiscount = new javax.swing.JPanel();
-        jLabel8 = new javax.swing.JLabel();
+        labelDiscount = new javax.swing.JLabel();
         txtDiscountAmount = new javax.swing.JTextField();
         panelCustomerTotalAmount = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
+        labelCustomerTotalAmonut = new javax.swing.JLabel();
         txtTotalAmount = new javax.swing.JTextField();
         panelButtonAction = new javax.swing.JPanel();
-        btnCancle = new com.k33ptoo.components.KButton();
+        btnReset = new com.k33ptoo.components.KButton();
         btnPay = new com.k33ptoo.components.KButton();
 
         setLayout(new java.awt.BorderLayout());
@@ -154,13 +166,13 @@ public class SellForm extends JPanel {
         panelTitle.setOpaque(false);
         panelTitle.setPreferredSize(new java.awt.Dimension(1153, 50));
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(102, 0, 204));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        labelTitle.setForeground(new java.awt.Color(102, 0, 204));
+        labelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel3.setText(bundle.getString("txtMenuSell")); // NOI18N
-        jLabel3.setToolTipText(bundle.getString("txtMenuSell")); // NOI18N
-        panelTitle.add(jLabel3);
+        labelTitle.setText(bundle.getString("txtMenuSell")); // NOI18N
+        labelTitle.setToolTipText(bundle.getString("txtMenuSell")); // NOI18N
+        panelTitle.add(labelTitle);
 
         kGradientPanel1.add(panelTitle);
 
@@ -180,6 +192,8 @@ public class SellForm extends JPanel {
         panelListProduct.setMinimumSize(new java.awt.Dimension(500, 39));
         panelListProduct.setPreferredSize(new java.awt.Dimension(800, 425));
         panelListProduct.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setPreferredSize(null);
 
         tableListProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -204,6 +218,7 @@ public class SellForm extends JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tableListProduct.setPreferredSize(null);
         tableListProduct.getTableHeader().setReorderingAllowed(false);
         tableListProduct.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -232,6 +247,7 @@ public class SellForm extends JPanel {
 
         panelRight.setLayout(new javax.swing.BoxLayout(panelRight, javax.swing.BoxLayout.Y_AXIS));
 
+        panelCart.setBackground(new java.awt.Color(255, 255, 255));
         panelCart.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("lbCart"))); // NOI18N
         panelCart.setkFillBackground(false);
         panelCart.setOpaque(false);
@@ -293,6 +309,21 @@ public class SellForm extends JPanel {
 
         panelCart.add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
+        panelDelete.setBackground(new java.awt.Color(255, 255, 255));
+        panelDelete.setMinimumSize(new java.awt.Dimension(10, 20));
+        panelDelete.setPreferredSize(new java.awt.Dimension(100, 25));
+        panelDelete.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 5, 0));
+
+        btnDeleteItemCart.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png"))); // NOI18N
+        btnDeleteItemCart.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDeleteItemCartMouseClicked(evt);
+            }
+        });
+        panelDelete.add(btnDeleteItemCart);
+
+        panelCart.add(panelDelete, java.awt.BorderLayout.PAGE_START);
+
         panelRight.add(panelCart);
 
         panelCustomerInfo.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("lbInfoInvoice"))); // NOI18N
@@ -306,15 +337,20 @@ public class SellForm extends JPanel {
         panelCustomerName.setOpaque(false);
         panelCustomerName.setLayout(new javax.swing.BoxLayout(panelCustomerName, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText(bundle.getString("lbName")); // NOI18N
-        jLabel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 5));
-        panelCustomerName.add(jLabel1);
+        labelCustomerName.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelCustomerName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        labelCustomerName.setText(bundle.getString("lbName")); // NOI18N
+        labelCustomerName.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 5));
+        panelCustomerName.add(labelCustomerName);
 
         txtNameKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtNameKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtNameKH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
+        txtNameKH.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtNameKHFocusGained(evt);
+            }
+        });
         panelCustomerName.add(txtNameKH);
 
         panelCustomerInfo.add(panelCustomerName);
@@ -322,23 +358,23 @@ public class SellForm extends JPanel {
         panelCustomerPromotion.setOpaque(false);
         panelCustomerPromotion.setLayout(new javax.swing.BoxLayout(panelCustomerPromotion, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jLabel7.setText(bundle.getString("lbDiscount")); // NOI18N
-        panelCustomerPromotion.add(jLabel7);
+        labelVoucher.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelVoucher.setText(bundle.getString("lbDiscount")); // NOI18N
+        panelCustomerPromotion.add(labelVoucher);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(51, 51, 51)));
-        panelCustomerPromotion.add(jComboBox1);
+        cbbVoucher.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbbVoucher.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(51, 51, 51)));
+        panelCustomerPromotion.add(cbbVoucher);
 
         panelCustomerInfo.add(panelCustomerPromotion);
 
         panelCustomerPhone.setOpaque(false);
         panelCustomerPhone.setLayout(new javax.swing.BoxLayout(panelCustomerPhone, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jLabel4.setText(bundle.getString("lbPhoneNumber")); // NOI18N
-        jLabel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 20));
-        panelCustomerPhone.add(jLabel4);
+        labelCustomerPhone.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelCustomerPhone.setText(bundle.getString("lbPhoneNumber")); // NOI18N
+        labelCustomerPhone.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 20));
+        panelCustomerPhone.add(labelCustomerPhone);
 
         txtPhoneNumberKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtPhoneNumberKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
@@ -351,23 +387,30 @@ public class SellForm extends JPanel {
         btnApplyVoucher.setToolTipText("");
         btnApplyVoucher.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         btnApplyVoucher.setIconTextGap(3);
+        btnApplyVoucher.setkBorderRadius(45);
         btnApplyVoucher.setkEndColor(new java.awt.Color(153, 255, 153));
         btnApplyVoucher.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnApplyVoucher.setkHoverStartColor(new java.awt.Color(0, 153, 153));
         btnApplyVoucher.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnApplyVoucher.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnApplyVoucherMouseClicked(evt);
+            }
+        });
         panelCustomerInfo.add(btnApplyVoucher);
 
         panelCustomerPoint.setOpaque(false);
         panelCustomerPoint.setLayout(new javax.swing.BoxLayout(panelCustomerPoint, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jLabel5.setText(bundle.getString("lbPointKH")); // NOI18N
-        jLabel5.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 10));
-        panelCustomerPoint.add(jLabel5);
+        labelCustomerPoint.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelCustomerPoint.setText(bundle.getString("lbPointKH")); // NOI18N
+        labelCustomerPoint.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 10));
+        panelCustomerPoint.add(labelCustomerPoint);
 
         txtPointKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtPointKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtPointKH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
+        txtPointKH.setEnabled(false);
         panelCustomerPoint.add(txtPointKH);
 
         panelCustomerInfo.add(panelCustomerPoint);
@@ -375,10 +418,10 @@ public class SellForm extends JPanel {
         panelCustomerDiscount.setOpaque(false);
         panelCustomerDiscount.setLayout(new javax.swing.BoxLayout(panelCustomerDiscount, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jLabel8.setText(bundle.getString("lbDiscountAmount")); // NOI18N
-        jLabel8.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 10));
-        panelCustomerDiscount.add(jLabel8);
+        labelDiscount.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelDiscount.setText(bundle.getString("lbDiscountAmount")); // NOI18N
+        labelDiscount.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 10));
+        panelCustomerDiscount.add(labelDiscount);
 
         txtDiscountAmount.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtDiscountAmount.setHorizontalAlignment(javax.swing.JTextField.LEFT);
@@ -392,9 +435,9 @@ public class SellForm extends JPanel {
         panelCustomerTotalAmount.setOpaque(false);
         panelCustomerTotalAmount.setLayout(new javax.swing.BoxLayout(panelCustomerTotalAmount, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        jLabel6.setText(bundle.getString("lbTotalAmount")); // NOI18N
-        panelCustomerTotalAmount.add(jLabel6);
+        labelCustomerTotalAmonut.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelCustomerTotalAmonut.setText(bundle.getString("lbTotalAmount")); // NOI18N
+        panelCustomerTotalAmount.add(labelCustomerTotalAmonut);
 
         txtTotalAmount.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtTotalAmount.setForeground(new java.awt.Color(0, 255, 51));
@@ -412,22 +455,29 @@ public class SellForm extends JPanel {
         panelButtonAction.setOpaque(false);
         panelButtonAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 5));
 
-        btnCancle.setText(bundle.getString("btnCancle")); // NOI18N
-        btnCancle.setToolTipText("");
-        btnCancle.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnCancle.setIconTextGap(3);
-        btnCancle.setkBorderRadius(20);
-        btnCancle.setkEndColor(new java.awt.Color(255, 153, 0));
-        btnCancle.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnCancle.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnCancle.setkStartColor(new java.awt.Color(255, 51, 51));
-        panelButtonAction.add(btnCancle);
+        btnReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        btnReset.setText(bundle.getString("btnReset")); // NOI18N
+        btnReset.setToolTipText("");
+        btnReset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnReset.setIconTextGap(45);
+        btnReset.setInheritsPopupMenu(true);
+        btnReset.setkBorderRadius(40);
+        btnReset.setkEndColor(new java.awt.Color(0, 204, 0));
+        btnReset.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnReset.setkHoverStartColor(new java.awt.Color(0, 153, 153));
+        btnReset.setkStartColor(new java.awt.Color(102, 255, 0));
+        btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnResetMouseClicked(evt);
+            }
+        });
+        panelButtonAction.add(btnReset);
 
-        btnPay.setText(bundle.getString("btnConfirm")); // NOI18N
+        btnPay.setText(bundle.getString("btnPay")); // NOI18N
         btnPay.setToolTipText("");
         btnPay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnPay.setIconTextGap(3);
-        btnPay.setkBorderRadius(20);
+        btnPay.setkBorderRadius(45);
         btnPay.setkEndColor(new java.awt.Color(153, 255, 153));
         btnPay.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnPay.setkHoverStartColor(new java.awt.Color(0, 153, 153));
@@ -448,75 +498,27 @@ public class SellForm extends JPanel {
         add(kGradientPanel1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnPayMouseClicked(MouseEvent evt) {//GEN-FIRST:event_btnPayMouseClicked
-            // Kiểm tra nếu giỏ hàng trống
-        if (sellController.getCartItems().isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.", 
-                "Thông báo", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+
+    private void setupCusmizeTable(){
         
-        try {
-            // Lấy frame cha là DashboardForm
-            DashboardForm dashboard = DashboardForm.getInstance();
-            
-            // Tạo dialog thanh toán
-            PayForm payForm = new PayForm(dashboard, true);
-            
-            // // Thiết lập thông tin hóa đơn cho form thanh toán
-            // payForm.setInvoiceDetails(
-            //     sellController.getCurrentInvoice(), 
-            //     sellController.getCartItems(),
-            //     sellController.calculateTotal()
-            // );
-            
-            // // Hiển thị dialog và chờ kết quả
-            // payForm.setVisible(true);
-            
-            // // Sau khi dialog đóng, kiểm tra kết quả
-            // if (payForm.isPaymentSuccessful()) {
-            //     // Lấy phương thức thanh toán được chọn
-            //     PaymentMethodEnum paymentMethod = payForm.getSelectedPaymentMethod();
-                
-            //     // Hoàn thành giao dịch với phương thức thanh toán đã chọn
-            //     Invoice completedInvoice = sellController.completeSale(paymentMethod);
-                
-            //     if (completedInvoice != null) {
-            //         // Thông báo thành công
-            //         JOptionPane.showMessageDialog(this,
-            //             "Thanh toán thành công! Mã hóa đơn: " + completedInvoice.getInvoiceId(),
-            //             "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
-            //         // Hỏi người dùng có muốn in hóa đơn không
-            //         int option = JOptionPane.showConfirmDialog(this,
-            //             "Bạn có muốn in hóa đơn không?",
-            //             "In hóa đơn", JOptionPane.YES_NO_OPTION);
-                    
-            //         if (option == JOptionPane.YES_OPTION) {
-            //             // Triển khai chức năng in hóa đơn (nếu cần)
-            //             printReceipt(completedInvoice);
-            //         }
-                    
-            //         // Khởi tạo giao dịch mới
-            //         resetSaleForm();
-            //     } else {
-            //         JOptionPane.showMessageDialog(this,
-            //             "Lỗi khi hoàn thành giao dịch. Vui lòng thử lại.",
-            //             "Lỗi", JOptionPane.ERROR_MESSAGE);
-            //     }
-            //}
-            // Nếu người dùng hủy, không làm gì cả
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                "Lỗi khi xử lý thanh toán: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        tableListProductSorter = TableStyleUtil.applyDefaultStyle(tableListProduct);
+        
+        //kích thước cột cho bảng sản phẩm
+        if (tableListProduct.getColumnModel().getColumnCount() > 0) {
+            TableStyleUtil.setupColumnWidths(tableListProduct, 
+                    120, // Mã sản phẩm
+                    250, // Tên sản phẩm
+                    150, // Phân loại
+                    150, // Hãng sản xuất
+                    100, // Số lượng tồn kho
+                    125  // Giá bán
+            );
         }
-    
-        // Nếu cần lấy kết quả sau khi dialog đóng, đặt code ở đây
-        // Ví dụ: if (payForm.isPaymentSuccessful()) { ... }
-    }//GEN-LAST:event_btnPayMouseClicked
+    }
+
+    private void btnPayMouseClicked(MouseEvent evt) {                                        
+        saveInvoiceToPay();
+    }                                   
 
     private void tableListProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableListProductMouseClicked
         if (evt.getClickCount() == 2) {
@@ -537,9 +539,126 @@ public class SellForm extends JPanel {
                 listSelectProductIDs.add(productId);
             }
         }
+
+        //Nếu click duoble thì sửa số lượng sản phẩm
+        if (evt.getClickCount() == 2) {
+            int selectedRow = tableCart.getSelectedRow();
+            if (selectedRow >= 0) {
+                String productId = tableCart.getValueAt(selectedRow, 2).toString();
+                Integer quantity = JDialogInputUtils.showInputDialogInt(this, 
+                    "Nhập số lượng sản phẩm:", 
+                    String.valueOf(tableCart.getValueAt(selectedRow, 4)));
+                sellController.updateProductQuantityInCart(productId, quantity);
+                
+
+                // Cập nhật số lượng trong controller
+                boolean updated = sellController.updateProductQuantityInCart(productId, quantity);
+                        
+                if (updated) {
+                    updateCartDisplay();
+                } else {
+                    JOptionPane.showMessageDialog(SellForm.this,
+                        "Không thể cập nhật số lượng. Số lượng vượt quá tồn kho hoặc có lỗi khác.",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    
+                    updateCartDisplay();
+                }
+            }
+        }
     }//GEN-LAST:event_tableCartMouseClicked
 
+    private void btnDeleteItemCartMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeleteItemCartMouseClicked
+        // Xóa sản phẩm đã chọn trong giỏ hàng
+        if (listSelectProductIDs.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng chọn sản phẩm để xóa khỏi giỏ hàng.", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Bạn có chắc chắn muốn xóa sản phẩm đã chọn khỏi giỏ hàng không?", 
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            for (String productId : listSelectProductIDs) {
+                
+                sellController.removeProductFromCart(productId);
 
+                // listSelectProductIDs.remove(productId);
+            }
+            listSelectProductIDs.clear();
+        }
+
+        updateCartDisplay();
+    }//GEN-LAST:event_btnDeleteItemCartMouseClicked
+
+    private void txtNameKHFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNameKHFocusGained
+        Customer customer = sellController.searchCustomerByPhone(txtPhoneNumberKH.getText().trim());
+        if (customer != null) {
+            txtNameKH.setText(customer.getFullName());
+            txtPointKH.setText(String.valueOf(customer.getPoints()));
+            sellController.addCustomerToSale(customer); // Lưu khách hàng hiện tại vào controller
+        } else {
+            txtNameKH.setText("Khách vãng lai");
+            txtPointKH.setText("0");
+        }
+    }//GEN-LAST:event_txtNameKHFocusGained
+
+    private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
+        int confirm = JOptionPane.showConfirmDialog(this,"Bạn có chắc chắn muốn làm mới giỏ hàng không?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) 
+            resetSaleForm();
+
+    }//GEN-LAST:event_btnResetMouseClicked
+
+    private void btnApplyVoucherMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnApplyVoucherMouseClicked
+        Customer customer = sellController.getCurrentInvoice().getCustomer();
+    
+        if (customer == null || "Khách vãng lai".equalsIgnoreCase(customer.getFullName())) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng chọn khách hàng trước khi áp dụng ưu đãi điểm.", 
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        int points = customer.getPoints();
+        if (points < 10000) {
+            JOptionPane.showMessageDialog(this, 
+                "Khách hàng chưa đủ điểm để áp dụng ưu đãi. Cần ít nhất 10,000 điểm.", 
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Khách hàng có " + points + " điểm tích lũy.\nBạn có muốn sử dụng điểm để giảm giá không?", 
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            BigDecimal discountAmount = sellController.applyPointsDiscount(true);
+            
+            if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
+                updateDiscountAmount(discountAmount);
+            }
+        }else{
+            BigDecimal discountAmount = sellController.applyPointsDiscount(false);
+            updateDiscountAmount(discountAmount);
+
+        }
+    }//GEN-LAST:event_btnApplyVoucherMouseClicked
+
+    //Cập nhật lại ô giảm giá
+    private void updateDiscountAmount(BigDecimal discountAmount) {
+        // Cập nhật hiển thị
+        NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+        txtDiscountAmount.setText(formatter.format(discountAmount));
+        // Cập nhật tổng tiền
+        BigDecimal totalAfterDiscount = sellController.calculateTotalAfterDiscount();
+        txtTotalAmount.setText(formatter.format(totalAfterDiscount) + " đ");
+        
+        txtDiscountAmount.setText("-" + formatter.format(discountAmount) + " đ");
+    }
 
     // Trong phương thức initComponents() hoặc constructor của form bán hàng
     private void loadAllProducts() {
@@ -558,38 +677,16 @@ public class SellForm extends JPanel {
             e.printStackTrace();
         }
         
-        // Cập nhật tổng số tiền
-        txtTotalAmount.setText(sellController.calculateTotal().toString() + " đ");
-        
-        // Cập nhật thông tin khách hàng nếu có
-        Invoice currentInvoice = sellController.getCurrentInvoice();
-        if (currentInvoice != null) {
-            Customer customer = currentInvoice.getCustomer();
-            if (customer != null && !customer.getCustomerId().equals("GUEST")) {
-                txtNameKH.setText(customer.getFullName());
-                txtPhoneNumberKH.setText(customer.getPhoneNumber());
-                txtPointKH.setText(String.valueOf(customer.getPoints()));
-            } else {
-                // Nếu là khách vãng lai
-                txtNameKH.setText("Khách vãng lai");
-                txtPhoneNumberKH.setText("");
-                txtPointKH.setText("0");
-            }
-        } else {
-            // Nếu chưa có hóa đơn
-            txtNameKH.setText("");
-            txtPhoneNumberKH.setText("");
-            txtPointKH.setText("");
-        }
+        // Sử dụng LocaleManager
+        NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+        BigDecimal total = sellController.calculateTotal();
+        txtTotalAmount.setText(formatter.format(total) + " đ");
     }
 
-
-    // Thêm vào lớp SellForm
     private void searchProducts() {
         String query = textFieldSearch.getTxtSearchField().getText().trim();
         List<Product> products = sellController.searchProducts(query);
         
-        // Hiển thị sản phẩm trong bảng sản phẩm (tableListProduct)
         updateProductTable(products);
     }
 
@@ -648,48 +745,162 @@ public class SellForm extends JPanel {
     }
 
 
-    // private void btnApplyVoucherActionPerformed(java.awt.event.ActionEvent evt) {
-    //     String discountCode = JOptionPane.showInputDialog(this, 
-    //         "Nhập mã giảm giá:",
-    //         "");
+
+    private Customer insertCustomer(String FullNameCustomer, String PhoneNumberCustomer) {
+        // Kiểm tra xem khách hàng đã tồn tại trong cơ sở dữ liệu chưa
+        Customer existingCustomer = sellController.searchCustomerByPhone(PhoneNumberCustomer);
+        if (existingCustomer != null) {
+            return existingCustomer;
+        }
+
+        // Nếu chưa có khách hàng, thì tạo khách hàng mới nhé
+        Customer customer = new Customer();
+        if (FullNameCustomer.isEmpty() || FullNameCustomer.equalsIgnoreCase("Khách vãng lai")) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng nhập tên khách hàng", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+        
+        customer.setFullName(FullNameCustomer);
+        customer.setPhoneNumber(PhoneNumberCustomer);
+        customer.setPoints(0); // Hoặc lấy từ cơ sở dữ liệu nếu cần
+        return customer;
+    }
+
+    
+    private void saveInvoiceToPay() {
+        if (sellController.getCartItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.", 
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try {
+            boolean checkUpdateInvoive = sellController.updateCurrentInvoice();
+            if (!checkUpdateInvoive) {
+                JOptionPane.showMessageDialog(this, 
+                    "Lỗi cập nhật hóa đơn. Vui lòng thử lại.", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            //===================Lưu thông tin khách hàng=========================
+            String FullNameCustomer = txtNameKH.getText().trim();
+            String PhoneNumberCustomer = txtPhoneNumberKH.getText().trim();
+    
+            if(!PhoneNumberCustomer.isEmpty()) {
+                Customer customer = insertCustomer(FullNameCustomer, PhoneNumberCustomer);
+                if (customer == null) {
+                    return; 
+                }
+                sellController.addCustomerToSale(customer);
+            }
+            //====================================================================
+    
+            // Xác nhận lưu hóa đơn
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Bạn có chắc chắn muốn thanh toán hóa đơn không?", 
+                "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) {
+                return; 
+            }
+    
+            // Lưu hóa đơn trước khi thanh toán 
+            Invoice saveInvoice = sellController.saveInvoice(PaymentMethodEnum.CASH); //Mặc định là tiền mặt
+            if (saveInvoice == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Lỗi khi lưu hóa đơn. Vui lòng thử lại.", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
-    //     if (discountCode != null && !discountCode.trim().isEmpty()) {
-    //         boolean applied = sellController.applyDiscount(discountCode);
-    //         if (applied) {
-    //             JOptionPane.showMessageDialog(this,
-    //                 "Áp dụng mã giảm giá thành công!",
-    //                 "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
-    //             // Cập nhật hiển thị giỏ hàng
-    //             updateCartDisplay();
+            JOptionPane.showMessageDialog(this, 
+                "Lưu hóa đơn thành công! ID: " + saveInvoice.getInvoiceId(), 
+                "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            
+            DashboardForm dashboard = DashboardForm.getInstance();
+            PayForm payForm = new PayForm(dashboard, true);
+            
+            PaymentController paymentController = new PaymentController(payForm, saveInvoice);
+            paymentController.showPaymentForm();
+            
+            if (paymentController.isPaymentSuccessful()) {
                 
-    //             // Cập nhật số tiền giảm giá
-    //             BigDecimal originalTotal = sellController.calculateTotal();
-    //             // Bạn cần logic để tính toán số tiền giảm giá
-    //             // Đây chỉ là một placeholder
-    //             txtDiscountAmount.setText("Đã áp dụng");
-    //         } else {
-    //             JOptionPane.showMessageDialog(this,
-    //                 "Mã giảm giá không hợp lệ hoặc đã hết hạn.",
-    //                 "Lỗi", JOptionPane.ERROR_MESSAGE);
-    //         }
-    //     }
-    // }
+                saveInvoice.setPaymentMethod(paymentController.getCurrentPayment().getPaymentMethod());
+                sellController.completeSale(saveInvoice);
+                
+                sellController.exportInvoiceToPDF(paymentController.getCurrentPayment());
+    
+                JOptionPane.showMessageDialog(this, 
+                    "Thanh toán thành công!", 
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    
+                // Reset form bán hàng
+                resetSaleForm();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Thanh toán không thành công!", 
+                    "Thất bại", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                "Lỗi khi xử lý thanh toán: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public void resetSaleForm() {
+
+        boolean check = sellController.initializeSale(employee);
+        if (!check) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khởi tạo hóa đơn mới. Vui lòng thử lại.", 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // Xóa giỏ hàng
+        sellController.clearCart();
+        
+        loadAllProducts();
+
+        // Cập nhật hiển thị giỏ hàng
+        updateCartDisplay();
+        
+        // Xóa thông tin khách hàng
+        txtNameKH.setText("Khách vãng lai");
+        txtPhoneNumberKH.setText("");
+        txtPointKH.setText("0");
+        txtDiscountAmount.setText("0 đ");
+    }
+
+
+        
+    public TableRowSorter<TableModel> getTableListProductSorter() {
+        return tableListProductSorter;
+    }
+
+
+
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnApplyVoucher;
-    private com.k33ptoo.components.KButton btnCancle;
+    private javax.swing.JButton btnDeleteItemCart;
     private com.k33ptoo.components.KButton btnPay;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
+    private com.k33ptoo.components.KButton btnReset;
+    private javax.swing.JComboBox<String> cbbVoucher;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
+    private javax.swing.JLabel labelCustomerName;
+    private javax.swing.JLabel labelCustomerPhone;
+    private javax.swing.JLabel labelCustomerPoint;
+    private javax.swing.JLabel labelCustomerTotalAmonut;
+    private javax.swing.JLabel labelDiscount;
+    private javax.swing.JLabel labelTitle;
+    private javax.swing.JLabel labelVoucher;
     private javax.swing.JPanel paneBody;
     private javax.swing.JPanel panelButtonAction;
     private com.k33ptoo.components.KGradientPanel panelCart;
@@ -700,6 +911,7 @@ public class SellForm extends JPanel {
     private javax.swing.JPanel panelCustomerPoint;
     private javax.swing.JPanel panelCustomerPromotion;
     private javax.swing.JPanel panelCustomerTotalAmount;
+    private javax.swing.JPanel panelDelete;
     private javax.swing.JPanel panelListProduct;
     private javax.swing.JPanel panelNav;
     private javax.swing.JPanel panelRight;

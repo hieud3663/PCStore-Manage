@@ -76,7 +76,7 @@ CREATE TABLE Customers (
     CustomerID VARCHAR(10) PRIMARY KEY, -- Mã KH01, KH02...
     FullName NVARCHAR(255) NOT NULL, -- Họ và tên
     PhoneNumber NVARCHAR(15) UNIQUE NOT NULL, -- Số điện thoại
-    Email NVARCHAR(255) UNIQUE NOT NULL, -- Email
+    Email NVARCHAR(255) NULL, -- Email
     Address NVARCHAR(MAX), -- Địa chỉ
     CreatedAt DATETIME DEFAULT GETDATE() -- Ngày đăng ký tài khoản
 );
@@ -122,6 +122,10 @@ CREATE TABLE Employees (
     Email NVARCHAR(255) UNIQUE NOT NULL, -- Email
     Position NVARCHAR(50) CHECK (Position IN ('Manager', 'Sales', 'Stock Keeper')) NOT NULL -- Chức vụ
 );
+ALTER TABLE Employees
+ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo nhân viên
+    UpdatedAt DATETIME DEFAULT GETDATE();
+
 
 -- Bảng phương thức thanh toán
 CREATE TABLE PaymentMethods (
@@ -255,7 +259,7 @@ CREATE TABLE RepairServices (
     RepairID INT IDENTITY(1,1) PRIMARY KEY,
     CustomerID VARCHAR(10) NOT NULL,
     EmployeeID VARCHAR(10) NULL, -- Nhân viên phụ trách
-    DeviceDescription NVARCHAR(255) NOT NULL, -- Mô tả thiết bị cần sửa
+    DeviceName NVARCHAR(255) NOT NULL, -- Mô tả thiết bị cần sửa
     Problem NVARCHAR(MAX) NOT NULL, -- Mô tả vấn đề
     DiagnosisResult NVARCHAR(MAX), -- Kết quả chẩn đoán
     RepairCost DECIMAL(10,2), -- Chi phí sửa chữa
@@ -340,3 +344,7 @@ ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo sản phẩm
 UPDATE Products
 SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
 WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
+
+
+
+SELECT * FROM Products

@@ -1,8 +1,6 @@
 package com.pcstore.repository.impl;
 
-import com.pcstore.repository.Repository;
-import com.pcstore.repository.RepositoryFactory;
-import com.pcstore.model.RepairService;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,13 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.pcstore.model.Customer;
+import com.pcstore.model.Employee;
+import com.pcstore.model.Repair;
+import com.pcstore.model.enums.RepairEnum;
+import com.pcstore.repository.Repository;
+
 /**
  * Repository implementation cho RepairService entity
  */
-public class RepairServiceRepository implements Repository<RepairService, Integer> {
+public class RepairRepository implements Repository<Repair, Integer> {
     private Connection connection;
     
-    public RepairServiceRepository(Connection connection) {
+    public RepairRepository(Connection connection) {
         this.connection = connection;
     }
     
@@ -29,8 +33,8 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     // }
 
     @Override
-    public RepairService add(RepairService repairService) {
-        String sql = "INSERT INTO RepairServices (CustomerID, EmployeeID, DeviceDescription, " +
+    public Repair add(Repair repairService) {
+        String sql = "INSERT INTO RepairServices (CustomerID, EmployeeID, DeviceName, " +
                      "Problem, DiagnosisResult, RepairCost, ReceiveDate, EstimatedCompletionDate, " +
                      "ActualCompletionDate, Status, Notes) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -43,16 +47,17 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
             statement.setString(1, repairService.getCustomer().getCustomerId());
             statement.setString(2, repairService.getEmployee() != null ? 
                     repairService.getEmployee().getEmployeeId() : null);
-            statement.setString(3, repairService.getDescription());
-            statement.setString(4, repairService.getDescription()); // Problem matches description
+            statement.setString(3, repairService.getDeviceName());
+            statement.setString(4, repairService.getProblem());
             statement.setString(5, repairService.getDiagnosis());
-            statement.setBigDecimal(6, repairService.getServiceFee());
+            statement.setBigDecimal(6, repairService.getServiceFee() != null ? 
+                    repairService.getServiceFee() : BigDecimal.ZERO);
             statement.setTimestamp(7, repairService.getReceiveDate() != null ? 
-                    Timestamp.valueOf(repairService.getReceiveDate()) : null);
-            statement.setTimestamp(8, null); // EstimatedCompletionDate not in model
+                    Timestamp.valueOf(repairService.getReceiveDate()) : Timestamp.valueOf(now));
+            statement.setTimestamp(8, null); // EstimatedCompletionDate
             statement.setTimestamp(9, repairService.getCompletionDate() != null ? 
                     Timestamp.valueOf(repairService.getCompletionDate()) : null);
-            statement.setString(10, repairService.getStatus());
+            statement.setString(10, repairService.getStatus().getStatus()); // Chuyển từ Enum sang String
             statement.setString(11, repairService.getNotes());
             
             statement.executeUpdate();
@@ -65,14 +70,15 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
             
             return repairService;
         } catch (SQLException e) {
-            throw new RuntimeException("Error adding repair service", e);
+            System.err.println("Lỗi SQL khi thêm dịch vụ sửa chữa: " + e.getMessage());
+            throw new RuntimeException("Lỗi khi thêm dịch vụ sửa chữa: " + e.getMessage(), e);
         }
     }
     
     @Override
-    public RepairService update(RepairService repairService) {
+    public Repair update(Repair repairService) {
         String sql = "UPDATE RepairServices SET CustomerID = ?, EmployeeID = ?, " +
-                     "DeviceDescription = ?, Problem = ?, DiagnosisResult = ?, " +
+                     "DeviceName = ?, Problem = ?, DiagnosisResult = ?, " +
                      "RepairCost = ?, ReceiveDate = ?, EstimatedCompletionDate = ?, " +
                      "ActualCompletionDate = ?, Status = ?, Notes = ? " +
                      "WHERE RepairID = ?";
@@ -84,23 +90,23 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
             statement.setString(1, repairService.getCustomer().getCustomerId());
             statement.setString(2, repairService.getEmployee() != null ? 
                     repairService.getEmployee().getEmployeeId() : null);
-            statement.setString(3, repairService.getDescription());
-            statement.setString(4, repairService.getDescription()); // Problem matches description
+            statement.setString(3, repairService.getDeviceName());
+            statement.setString(4, repairService.getProblem());
             statement.setString(5, repairService.getDiagnosis());
             statement.setBigDecimal(6, repairService.getServiceFee());
             statement.setTimestamp(7, repairService.getReceiveDate() != null ? 
                     Timestamp.valueOf(repairService.getReceiveDate()) : null);
-            statement.setTimestamp(8, null); // EstimatedCompletionDate not in model
+            statement.setTimestamp(8, null); // EstimatedCompletionDate không có trong model
             statement.setTimestamp(9, repairService.getCompletionDate() != null ? 
                     Timestamp.valueOf(repairService.getCompletionDate()) : null);
-            statement.setString(10, repairService.getStatus());
+            statement.setString(10, repairService.getStatus().toString());
             statement.setString(11, repairService.getNotes());
             statement.setInt(12, repairService.getRepairServiceId());
             
             statement.executeUpdate();
             return repairService;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating repair service", e);
+            throw new RuntimeException("Lỗi khi cập nhật dịch vụ sửa chữa", e);
         }
     }
     
@@ -118,7 +124,7 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     }
     
     @Override
-    public Optional<RepairService> findById(Integer repairServiceId) {
+    public Optional<Repair> findById(Integer repairServiceId) {
         String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
@@ -139,13 +145,17 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     }
     
     @Override
-    public List<RepairService> findAll() {
-        String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
+    public List<Repair> findAll() {
+        // Liệt kê chính xác các cột cần lấy từ database
+        String sql = "SELECT rs.RepairID, rs.CustomerID, rs.EmployeeID, rs.DeviceName, " +
+                     "rs.Problem, rs.DiagnosisResult, rs.RepairCost, rs.ReceiveDate, " +
+                     "rs.EstimatedCompletionDate, rs.ActualCompletionDate, rs.Status, rs.Notes, " +
+                     "c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID";
                      
-        List<RepairService> services = new ArrayList<>();
+        List<Repair> services = new ArrayList<>();
         
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -155,6 +165,9 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
             }
             return services;
         } catch (SQLException e) {
+            // Log chi tiết lỗi để dễ debug
+            e.printStackTrace();
+            System.err.println("Error in findAll: " + e.getMessage());
             throw new RuntimeException("Error finding all repair services", e);
         }
     }
@@ -177,14 +190,14 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     }
     
     // Tìm kiếm dịch vụ sửa chữa theo khách hàng
-    public List<RepairService> findByCustomerId(String customerId) {
+    public List<Repair> findByCustomerId(String customerId) {
         String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
                      "WHERE rs.CustomerID = ?";
                      
-        List<RepairService> services = new ArrayList<>();
+        List<Repair> services = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, customerId);
@@ -200,14 +213,14 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     }
     
     // Tìm kiếm dịch vụ sửa chữa theo trạng thái
-    public List<RepairService> findByStatus(String status) {
+    public List<Repair> findByStatus(String status) {
         String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
                      "WHERE rs.Status = ?";
                      
-        List<RepairService> services = new ArrayList<>();
+        List<Repair> services = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, status);
@@ -223,14 +236,14 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     }
     
     // Tìm kiếm dịch vụ sửa chữa theo nhân viên kỹ thuật
-    public List<RepairService> findByEmployeeId(String employeeId) {
+    public List<Repair> findByEmployeeId(String employeeId) {
         String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
                      "WHERE rs.EmployeeID = ?";
                      
-        List<RepairService> services = new ArrayList<>();
+        List<Repair> services = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, employeeId);
@@ -246,14 +259,14 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
     }
     
     // Tìm kiếm dịch vụ đến hạn hoàn thành trong ngày
-    public List<RepairService> findDueToday() {
+    public List<Repair> findDueToday() {
         String sql = "SELECT rs.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
                      "FROM RepairServices rs " +
                      "LEFT JOIN Customers c ON rs.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON rs.EmployeeID = e.EmployeeID " +
                      "WHERE DATE(rs.EstimatedCompletionDate) = CURRENT_DATE AND rs.Status != 'Completed' AND rs.Status != 'Cancelled'";
                      
-        List<RepairService> services = new ArrayList<>();
+        List<Repair> services = new ArrayList<>();
         
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -300,56 +313,62 @@ public class RepairServiceRepository implements Repository<RepairService, Intege
         }
     }
     
-    private RepairService mapResultSetToRepairService(ResultSet resultSet) throws SQLException {
-        RepairService service = new RepairService();
-        service.setRepairServiceId(resultSet.getInt("RepairID"));
-        
-        // Dữ liệu khách hàng và nhân viên sẽ được lấy từ service layer
-        // Ở đây chỉ lấy ID để tham chiếu
-        
-        service.setDescription(resultSet.getString("DeviceDescription") + "\n" + 
-                              resultSet.getString("Problem"));
-        service.setDiagnosis(resultSet.getString("DiagnosisResult"));
-        service.setServiceFee(resultSet.getBigDecimal("RepairCost"));
-        service.setStatus(resultSet.getString("Status"));
-        service.setNotes(resultSet.getString("Notes"));
-        
-        Timestamp receiveDate = resultSet.getTimestamp("ReceiveDate");
-        if (receiveDate != null) {
-            service.setReceiveDate(receiveDate.toLocalDateTime());
-        }
-        
-        Timestamp completionDate = resultSet.getTimestamp("ActualCompletionDate");
-        if (completionDate != null) {
-            service.setCompletionDate(completionDate.toLocalDateTime());
-        }
-        
-        // Lấy thông tin bổ sung nếu có join
+    private Repair mapResultSetToRepairService(ResultSet resultSet) throws SQLException {
         try {
-            String customerName = resultSet.getString("CustomerName");
-            String employeeName = resultSet.getString("EmployeeName");
+            Repair repairService = new Repair();
+            repairService.setRepairServiceId(resultSet.getInt("RepairID"));
             
-            // Có thể lưu trữ tạm thời để hiển thị UI
-            // Đối tượng đầy đủ sẽ được thiết lập trong service layer
-        } catch (SQLException e) {
-            // Bỏ qua nếu không có cột này
-        }
-        
-        // Lấy thời gian tạo và cập nhật nếu có
-        try {
-            Timestamp createdAt = resultSet.getTimestamp("CreatedAt");
-            if (createdAt != null) {
-                service.setCreatedAt(createdAt.toLocalDateTime());
+            // Dữ liệu khách hàng và nhân viên
+            String customerId = resultSet.getString("CustomerID");
+            String employeeId = resultSet.getString("EmployeeID");
+            
+            if (customerId != null) {
+                Customer customer = new Customer();
+                customer.setCustomerId(customerId);
+                repairService.setCustomer(customer);
             }
             
-            Timestamp updatedAt = resultSet.getTimestamp("UpdatedAt");
-            if (updatedAt != null) {
-                service.setUpdatedAt(updatedAt.toLocalDateTime());
+            if (employeeId != null) {
+                Employee employee = new Employee();
+                employee.setEmployeeId(employeeId);
+                repairService.setEmployee(employee);
             }
+            
+            // Các thông tin cơ bản của RepairService
+            repairService.setDeviceName(resultSet.getString("DeviceName"));
+            repairService.setProblem(resultSet.getString("Problem"));
+            repairService.setDiagnosis(resultSet.getString("DiagnosisResult"));
+            
+            // Xử lý phí dịch vụ có thể null
+            java.math.BigDecimal fee = resultSet.getBigDecimal("RepairCost");
+            repairService.setServiceFee(fee != null ? fee : BigDecimal.ZERO);
+            
+            // Chuyển đổi String status sang RepairEnum
+            String statusStr = resultSet.getString("Status");
+            try {
+                repairService.setStatus(RepairEnum.fromString(statusStr));
+            } catch (IllegalArgumentException e) {
+                // Fallback cho trường hợp giá trị không hợp lệ trong database
+                System.err.println("Cảnh báo: Trạng thái không hợp lệ trong DB: " + statusStr);
+                repairService.setStatus(RepairEnum.RECEIVED); // Giá trị mặc định
+            }
+            
+            repairService.setNotes(resultSet.getString("Notes"));
+            
+            Timestamp receiveDate = resultSet.getTimestamp("ReceiveDate");
+            if (receiveDate != null) {
+                repairService.setReceiveDate(receiveDate.toLocalDateTime());
+            }
+            
+            Timestamp completionDate = resultSet.getTimestamp("ActualCompletionDate");
+            if (completionDate != null) {
+                repairService.setCompletionDate(completionDate.toLocalDateTime());
+            }
+            
+            return repairService;
         } catch (SQLException e) {
-            // Bỏ qua nếu không có các cột này
+            System.err.println("Lỗi khi đọc dữ liệu từ ResultSet: " + e.getMessage());
+            throw e;
         }
-        
-        return service;
     }
 }

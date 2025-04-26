@@ -1,7 +1,6 @@
 package com.pcstore.repository;
 
 import com.pcstore.repository.impl.*;
-import com.pcstore.repository.impl.UserRepository;
 import java.sql.Connection;
 
 /**
@@ -10,7 +9,7 @@ import java.sql.Connection;
 public class RepositoryFactory {
     private Connection connection;
     
-    // Các Repository instance
+    // Individual repository instances
     private CustomerRepository customerRepository;
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
@@ -18,19 +17,27 @@ public class RepositoryFactory {
     private EmployeeRepository employeeRepository;
     private InvoiceRepository invoiceRepository;
     private InvoiceDetailRepository invoiceDetailRepository;
-    private PurchaseOrderRepository purchaseOrderRepository;
+
     private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
-    private UserRepository userRepository;
+    private PurchaseOrderRepository purchaseOrderRepository;
+    private RepairRepository repairRepository;
     private WarrantyRepository warrantyRepository;
-    private RepairServiceRepository repairServiceRepository;
-    private ReturnRepository returnRepository;
-    private DiscountRepository discountRepository;
+    // Singleton pattern implementation
+    private static RepositoryFactory instance;
+    private static Connection currentConnection;
     
-    public RepositoryFactory(Connection connection) {
+
+    private RepositoryFactory(Connection connection) {
         this.connection = connection;
     }
     
-    // Lazy initialization pattern cho các Repository
+    public static synchronized RepositoryFactory getInstance(Connection connection) {
+        if (instance == null || currentConnection != connection) {
+            instance = new RepositoryFactory(connection);
+            currentConnection = connection;
+        }
+        return instance;
+    }
     
     public CustomerRepository getCustomerRepository() {
         if (customerRepository == null) {
@@ -73,68 +80,37 @@ public class RepositoryFactory {
         }
         return invoiceRepository;
     }
-    
+
     public InvoiceDetailRepository getInvoiceDetailRepository() {
         if (invoiceDetailRepository == null) {
             invoiceDetailRepository = new InvoiceDetailRepository(connection, this);
         }
         return invoiceDetailRepository;
     }
-    
-    public PurchaseOrderRepository getPurchaseOrderRepository() {
-        if (purchaseOrderRepository == null) {
-            purchaseOrderRepository = new PurchaseOrderRepository(connection, this);
-        }
-        return purchaseOrderRepository;
-    }
-    
+
     public PurchaseOrderDetailRepository getPurchaseOrderDetailRepository() {
         if (purchaseOrderDetailRepository == null) {
             purchaseOrderDetailRepository = new PurchaseOrderDetailRepository(connection, this);
         }
         return purchaseOrderDetailRepository;
     }
-    
-    public UserRepository getUserRepository() {
-        if (userRepository == null) {
-            // userRepository = new UserRepository(connection, this);
-            userRepository = new UserRepository(connection);
+
+    public PurchaseOrderRepository getPurchaseOrderRepository() {
+        if (purchaseOrderRepository == null) {
+            purchaseOrderRepository = new PurchaseOrderRepository(connection, this);
         }
-        return userRepository;
+        return purchaseOrderRepository;
     }
-    
-   public WarrantyRepository getWarrantyRepository() {
-       if (warrantyRepository == null) {
-           // warrantyRepository = new WarrantyRepository(connection, this);
-           warrantyRepository = new WarrantyRepository(connection);
-       }
-       return warrantyRepository;
-   }
-    
-    public RepairServiceRepository getRepairServiceRepository() {
-        if (repairServiceRepository == null) {
-            // repairServiceRepository = new RepairServiceRepository(connection, this);
-            repairServiceRepository = new RepairServiceRepository(connection);
+
+
+    public WarrantyRepository getWarrantyRepository() {
+        if (warrantyRepository == null) {
+            warrantyRepository = new WarrantyRepository(connection);
         }
-        return repairServiceRepository;
+        return warrantyRepository;
     }
+
     
-    public ReturnRepository getReturnRepository() {
-        if (returnRepository == null) {
-            // returnRepository = new ReturnRepository(connection, this);
-            returnRepository = new ReturnRepository(connection);
-        }
-        return returnRepository;
-    }
-    
-    public DiscountRepository getDiscountRepository() {
-        if (discountRepository == null) {
-            discountRepository = new DiscountRepository(connection);
-        }
-        return discountRepository;
-    }
-    
-    // Phương thức để lấy connection
     public Connection getConnection() {
         return connection;
     }

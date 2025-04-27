@@ -30,6 +30,7 @@ public class ProductController {
     private CategoryRepository categoryRepository;
     private SupplierRepository supplierRepository;
     private Connection connection;
+    private boolean addingProduct = false;
 
     /**
      * Khởi tạo controller với form sản phẩm
@@ -104,13 +105,6 @@ public class ProductController {
         // Đăng ký sự kiện cho nút reset sort
         productForm.getBtnResetSort().addActionListener(e -> resetSort());
 
-        try {
-            if (productForm.getBtnConfirmAddProduct() != null) {
-                productForm.getBtnConfirmAddProduct().addActionListener(e -> addProduct());
-            }
-        } catch (Exception e) {
-            System.err.println("Không thể đăng ký sự kiện cho nút Xác nhận thêm: " + e.getMessage());
-        }
     }
     
     /**
@@ -175,6 +169,147 @@ public class ProductController {
         }
         
         searchProducts(keyword);
+    }
+
+    /**
+     * Thêm sản phẩm mới vào cơ sở dữ liệu
+     */
+    /**
+/**
+ * Thêm sản phẩm mới vào cơ sở dữ liệu
+ */
+public void addProduct() {
+    try {
+        // Kiểm tra xem có đang ở chế độ thêm không
+        if (!addingProduct) {
+            handleAddButtonClick();
+            return; // Điểm quan trọng: đảm bảo dừng thực thi ở đây khi mới chuyển qua chế độ thêm
+        }
+        
+        // Chỉ thực hiện phần code dưới đây khi đang ở chế độ thêm và người dùng nhấn "Xác nhận thêm"
+        
+        // Lấy thông tin từ form
+        String productName = productForm.getNameField().getText().trim();
+        Category category = (Category) productForm.getCategoryComboBox().getSelectedItem();
+        Supplier supplier = (Supplier) productForm.getSupplierComboBox().getSelectedItem();
+        
+        // Kiểm tra dữ liệu - chỉ hiện thông báo khi người dùng đã nhập thông tin và nhấn Xác nhận thêm
+        if (productName.isEmpty()) {
+            JOptionPane.showMessageDialog(productForm, 
+                    "Vui lòng nhập tên sản phẩm",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (category == null) {
+            JOptionPane.showMessageDialog(productForm, 
+                    "Vui lòng chọn danh mục",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (supplier == null) {
+            JOptionPane.showMessageDialog(productForm, 
+                    "Vui lòng chọn nhà cung cấp",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Tiếp tục xử lý các thông tin khác...
+        int stockQuantity = 0;
+        BigDecimal price = BigDecimal.ZERO;
+        
+        try {
+            String quantityStr = productForm.getQuantityField().getText().trim();
+            String priceStr = productForm.getPriceField().getText().trim();
+            
+            if (!quantityStr.isEmpty()) {
+                stockQuantity = Integer.parseInt(quantityStr);
+            }
+            
+            if (!priceStr.isEmpty()) {
+                price = new BigDecimal(priceStr);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(productForm, 
+                    "Số lượng và giá phải là số hợp lệ",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Tạo mã sản phẩm mới dựa trên danh mục
+        String productId = generateProductId(category);
+        
+        // Tạo đối tượng sản phẩm mới
+        Product product = new Product();
+        product.setProductId(productId);
+        product.setProductName(productName);
+        product.setCategory(category);
+        product.setSupplier(supplier);
+        product.setStockQuantity(stockQuantity);
+        product.setPrice(price);
+        product.setSpecifications(productForm.getSpecificationsArea().getText());
+        product.setDescription(productForm.getDescriptionArea().getText());
+        
+        // Lưu vào cơ sở dữ liệu
+        Product savedProduct = productRepository.add(product);
+        
+        if (savedProduct != null) {
+            JOptionPane.showMessageDialog(productForm, 
+                    "Thêm sản phẩm thành công!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Sau khi thêm thành công, thoát khỏi chế độ thêm
+            addingProduct = false;
+            updateUIForAddMode(false);
+            
+            // Tải lại dữ liệu
+            loadProducts();
+        } else {
+            JOptionPane.showMessageDialog(productForm, 
+                    "Không thể thêm sản phẩm. Vui lòng thử lại!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(productForm, 
+                "Lỗi: " + e.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
+    /**
+     * Tạo mã sản phẩm mới dựa trên danh mục
+     */
+    private String generateProductId(Category category) {
+        // Format mã sản phẩm: [CategoryID]_[RandomNumber]
+        String categoryId = category.getCategoryId();
+        int randomNum = (int) (Math.random() * 10000);
+        return categoryId + "_" + String.format("%04d", randomNum);
+    }
+
+    /**
+ * Hủy chế độ thêm sản phẩm
+ */
+public void cancelAddProduct() {
+    try {
+        if (addingProduct) {
+            addingProduct = false;
+            resetForm();
+            updateUIForAddMode(false);
+            // Đã loại bỏ thông báo không cần thiết
+        }
+    } catch (Exception e) {
+        System.err.println("Lỗi khi hủy chế độ thêm: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
+    /**
+     * Kiểm tra xem đang ở chế độ thêm hay không
+     * @return true nếu đang ở chế độ thêm, ngược lại false
+     */
+    public boolean isAddingProduct() {
+        return addingProduct;
     }
     
     /**
@@ -247,148 +382,92 @@ public class ProductController {
     }
     
     /**
-     * Xử lý khi người dùng nhấn nút Thêm để bắt đầu nhập thông tin mới
-     */
-    /**
  * Xử lý khi người dùng nhấn nút Thêm để bắt đầu nhập thông tin mới
  */
 public void handleAddButtonClick() {
-    // Xóa lựa chọn hiện tại trong bảng
-    productForm.getTable().clearSelection();
-    
-    // Reset form trước khi thêm mới để tránh sử dụng dữ liệu của sản phẩm đang chọn
-    resetForm();
-    
-    // Đặt focus vào trường tên sản phẩm
-    productForm.getNameField().requestFocus();
-    
+    try {
+        // Chuyển sang chế độ thêm mới
+        addingProduct = true;
+        
+        // Xóa lựa chọn hiện tại trong bảng
+        if (productForm.getTable() != null) {
+            productForm.getTable().clearSelection();
+        }
+        
+        // Reset form trước khi thêm mới
+        resetForm();
+
+        // Cập nhật giao diện cho chế độ thêm mới
+        updateUIForAddMode(true);
+        
+        // Đặt focus vào trường tên sản phẩm
+        if (productForm.getNameField() != null) {
+            productForm.getNameField().requestFocus();
+        }
+        
+        // Xóa thông báo debug không cần thiết
+    } catch (Exception e) {
+        System.err.println("Lỗi khi chuyển sang chế độ thêm: " + e.getMessage());
+        e.printStackTrace();
+    }
 }
 
     /**
-     * Thêm sản phẩm mới
+     * Cập nhật các thành phần giao diện dựa trên chế độ thêm mới
+     * @param isAddMode true nếu đang ở chế độ thêm mới, ngược lại false
      */
-    public void addProduct() {
+    private void updateUIForAddMode(boolean isAddMode) {
         try {
-            // Lấy thông tin từ form
-            String productName = productForm.getNameField().getText().trim();
-            Category category = (Category) productForm.getCategoryComboBox().getSelectedItem();
-            Supplier supplier = (Supplier) productForm.getSupplierComboBox().getSelectedItem();
-            
-            // Kiểm tra thông tin bắt buộc
-            if (productName.isEmpty() || category == null || supplier == null) {
-                JOptionPane.showMessageDialog(productForm,
-                        "Vui lòng nhập đầy đủ thông tin sản phẩm!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // Các thông tin khác
-            String quantityStr = productForm.getQuantityField().getText().trim();
-            String priceStr = productForm.getPriceField().getText().trim();
-            String specifications = productForm.getSpecificationsArea().getText().trim();
-            String description = productForm.getDescriptionArea().getText().trim();
-            
-            // Kiểm tra và chuyển đổi kiểu dữ liệu
-            int stockQuantity = 0;
-            BigDecimal price = BigDecimal.ZERO;
-            
-            try {
-                if (!quantityStr.isEmpty()) {
-                    stockQuantity = Integer.parseInt(quantityStr);
-                    if (stockQuantity < 0) throw new NumberFormatException("Số lượng không được âm");
-                }
-                
-                if (!priceStr.isEmpty()) {
-                    price = new BigDecimal(priceStr);
-                    if (price.compareTo(BigDecimal.ZERO) <= 0) throw new NumberFormatException("Giá phải lớn hơn 0");
+            // Thay đổi text của nút Add (không ẩn hiện nút)
+            if (productForm.getBtnAdd() != null) {
+                if (isAddMode) {
+                    // Đổi text của nút thêm thành "Xác nhận thêm" khi ở chế độ thêm
+                    productForm.getBtnAdd().setText("Xác nhận thêm");
+                    productForm.getBtnAdd().setkBackGroundColor(new java.awt.Color(0, 204, 102));
+                    productForm.getBtnAdd().repaint();
                 } else {
-                    throw new NumberFormatException("Giá không được để trống");
+                    // Khôi phục text của nút thêm về "Thêm sản phẩm" khi ở chế độ bình thường
+                    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+                    productForm.getBtnAdd().setText(bundle.getString("btnAddProduct"));
+                    productForm.getBtnAdd().setkBackGroundColor(new java.awt.Color(0, 102, 255));
+                    productForm.getBtnAdd().repaint();
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(productForm,
-                        "Lỗi định dạng số: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
             }
             
-            // Tạo đối tượng sản phẩm mới
-            Product product = new Product();
-            
-            // Tạo mã sản phẩm mẫu cho repository
-            String tempProductId = category.getCategoryId() + "TMP"; // ID tạm thời
-            product.setProductId(tempProductId);
-            
-            product.setProductName(productName);
-            product.setCategory(category);
-            product.setSupplier(supplier);
-            product.setPrice(price);
-            product.setStockQuantity(stockQuantity);
-            product.setSpecifications(specifications);
-            product.setDescription(description);
-            
-            // Thực hiện thêm sản phẩm
-            Product savedProduct = null;
-            try {
-                savedProduct = productRepository.add(product);
-                
-                // Lấy sản phẩm vừa thêm dựa trên các thông tin
-                String findSql = "SELECT TOP 1 * FROM Products WHERE ProductName = ? AND CategoryID = ? AND SupplierID = ? ORDER BY CreatedAt DESC";
-                try (PreparedStatement stmt = connection.prepareStatement(findSql)) {
-                    stmt.setString(1, productName);
-                    stmt.setString(2, category.getCategoryId());
-                    stmt.setString(3, supplier.getSupplierId());
-                    
-                    ResultSet rs = stmt.executeQuery();
-                    if (rs.next()) {
-                        product.setProductId(rs.getString("ProductID"));
-                        savedProduct = product;
-                    }
-                }
-                
-                // Nếu vẫn không tìm thấy sản phẩm, thử tìm sản phẩm mới nhất theo danh mục
-                if (savedProduct == null || savedProduct.getProductId() == null || savedProduct.getProductId().equals(tempProductId)) {
-                    String altFindSql = "SELECT TOP 1 * FROM Products WHERE CategoryID = ? ORDER BY CreatedAt DESC";
-                    try (PreparedStatement stmt = connection.prepareStatement(altFindSql)) {
-                        stmt.setString(1, category.getCategoryId());
-                        
-                        ResultSet rs = stmt.executeQuery();
-                        if (rs.next()) {
-                            product.setProductId(rs.getString("ProductID"));
-                            savedProduct = product;
-                        }
-                    }
-                }
-                
-                // Kiểm tra kết quả
-                if (savedProduct == null || savedProduct.getProductId() == null || savedProduct.getProductId().equals(tempProductId)) {
-                    throw new SQLException("Không thể lấy ID sản phẩm sau khi thêm");
-                }
-                
-                // Hiển thị thông báo thành công
-                JOptionPane.showMessageDialog(productForm,
-                        "Thêm sản phẩm thành công! Mã sản phẩm: " + savedProduct.getProductId(),
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                
-                // Reset form
-                resetForm();
-                
-                // Cập nhật lại bảng sản phẩm
-                loadProducts();
-                
-            } catch (SQLException e) {
-                System.err.println("Lỗi SQL: " + e.getMessage());
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(productForm,
-                        "Lỗi khi thêm sản phẩm: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            // Vô hiệu hóa/kích hoạt các nút khác
+            if (productForm.getBtnUpdate() != null) {
+                com.pcstore.utils.ButtonUtils.setKButtonEnabled(productForm.getBtnUpdate(), !isAddMode);
             }
             
+            if (productForm.getBtnDelete() != null) {
+                com.pcstore.utils.ButtonUtils.setKButtonEnabled(productForm.getBtnDelete(), !isAddMode);
+            }
+         
+            // Vô hiệu hóa các thành phần UI khác khi ở chế độ thêm
+            if (productForm.getTable() != null) {
+                productForm.getTable().setEnabled(!isAddMode);
+            }
+            
+            if (productForm.getTextFieldSearch() != null) {
+                productForm.getTextFieldSearch().setEnabled(!isAddMode);
+            }
+            
+            // Thêm vô hiệu hóa cho combobox sắp xếp
+            if (productForm.getCbbSort() != null) {
+                productForm.getCbbSort().setEnabled(!isAddMode);
+            }
+            
+            if (productForm.getCbbSortCustomer() != null) {
+                productForm.getCbbSortCustomer().setEnabled(!isAddMode);
+            }
+            
+            // Thêm vô hiệu hóa cho nút reset sort
+            if (productForm.getBtnResetSort() != null) {
+                productForm.getBtnResetSort().setEnabled(!isAddMode);
+            }
         } catch (Exception e) {
-            System.err.println("Lỗi: " + e.getMessage());
+            System.err.println("Lỗi khi cập nhật giao diện: " + e.getMessage());
             e.printStackTrace();
-            JOptionPane.showMessageDialog(productForm,
-                    "Lỗi khi thêm sản phẩm: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -410,13 +489,7 @@ public void handleAddButtonClick() {
             Category category = (Category) productForm.getCategoryComboBox().getSelectedItem();
             Supplier supplier = (Supplier) productForm.getSupplierComboBox().getSelectedItem();
             
-            // Kiểm tra thông tin bắt buộc
-            if (productName.isEmpty() || category == null || supplier == null) {
-                JOptionPane.showMessageDialog(productForm,
-                        "Vui lòng nhập đầy đủ thông tin sản phẩm!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+           
             
             // Các thông tin khác
             String quantityStr = productForm.getQuantityField().getText().trim();

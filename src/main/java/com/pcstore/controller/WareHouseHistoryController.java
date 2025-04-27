@@ -16,6 +16,7 @@ import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.view.StockInHistoryForm;
+import com.pcstore.repository.Repository;
 import com.pcstore.repository.RepositoryFactory;
 
 /**

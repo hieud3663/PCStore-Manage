@@ -75,57 +75,63 @@ public class ButtonUtils {
      * @param button KButton cần thiết lập
      * @param enabled trạng thái enable/disable
      */
-    public static void setKButtonEnabled(KButton button, boolean enabled) {
-        // Lưu trạng thái màu sắc khi lần đầu disable
-        if (button.getClientProperty("original_colors") == null) {
-            // Lưu toàn bộ màu sắc hiện tại vào một mảng
-            Color[] colors = new Color[] {
-                button.kBackGroundColor,
-                button.kForeGround,
-                button.kStartColor,
-                button.kEndColor,
-                button.kHoverStartColor,
-                button.kHoverEndColor
-            };
-            button.putClientProperty("original_colors", colors);
-        }
+    // Trong file ButtonUtils.java
+public static void setKButtonEnabled(KButton button, boolean enabled) {
+    if (button == null) return;
+    
+    // Lưu trạng thái màu sắc khi lần đầu disable
+    if (button.getClientProperty("original_colors") == null) {
+        // Lưu toàn bộ màu sắc hiện tại vào một mảng
+        Color[] colors = new Color[] {
+            button.getkBackGroundColor(),    // Background
+            button.getkForeGround(),         // Foreground
+            button.getkStartColor(),         // Start 
+            button.getkEndColor(),           // End
+            button.getkHoverStartColor(),    // HoverStart
+            button.getkHoverEndColor(),      // HoverEnd
+            button.getkHoverForeGround()     // HoverForeground
+        };
+        button.putClientProperty("original_colors", colors);
         
-        // Thiết lập trạng thái enabled/disabled
-        button.setEnabled(enabled);
-        
-        if (enabled) {
-            Color[] colors = (Color[]) button.getClientProperty("original_colors");
-            if (colors != null) {
-                button.setkBackGroundColor(colors[0]);
-                button.setkForeGround(colors[1]);
-                button.setkStartColor(colors[2]);
-                button.setkEndColor(colors[3]);
-                button.setkHoverStartColor(colors[4]);
-                button.setkHoverEndColor(colors[5]);
-            }
-            
-            SwingUtilities.invokeLater(() -> {
-                button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            });
-
-            button.setkAllowGradient(true);
-        } else {
-            // Khi disable, sử dụng màu xám
-            Color disabledBg = new Color(220, 220, 220); // Xám nhạt
-            Color disabledFg = new Color(120, 120, 120); // Xám đậm
-            
-            button.setkBackGroundColor(disabledBg);
-            button.setkForeGround(disabledFg);
-            button.setkStartColor(disabledBg);
-            button.setkEndColor(disabledBg);
-            
-            // Tắt hiệu ứng gradient khi disabled
-            button.setkAllowGradient(false);
-        }
-        
-        // Cập nhật giao diện
-        button.repaint();
+        // Lưu trạng thái gradient
+        button.putClientProperty("original_gradient", button.iskAllowGradient());
     }
+    
+    // Thiết lập trạng thái enabled/disabled
+    button.setEnabled(enabled);
+    
+    if (enabled) {
+        // Khôi phục lại các màu ban đầu
+        Color[] colors = (Color[]) button.getClientProperty("original_colors");
+        if (colors != null) {
+            button.setkBackGroundColor(colors[0]);
+            button.setkForeGround(colors[1]);
+            button.setkStartColor(colors[2]);
+            button.setkEndColor(colors[3]);
+            button.setkHoverStartColor(colors[4]);
+            button.setkHoverEndColor(colors[5]);
+            button.setkHoverForeGround(colors[6]);
+            
+            // Khôi phục gradient
+            Boolean allowGradient = (Boolean) button.getClientProperty("original_gradient");
+            if (allowGradient != null) {
+                button.setkAllowGradient(allowGradient);
+            }
+        }
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    } else {
+        // Khi disable, sử dụng màu xám
+        button.setkBackGroundColor(new Color(200, 200, 200));
+        button.setkForeGround(new Color(120, 120, 120));
+        button.setkStartColor(new Color(200, 200, 200));
+        button.setkEndColor(new Color(200, 200, 200));
+        button.setkAllowGradient(false);
+        button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
+    
+    // Cập nhật giao diện
+    button.repaint();
+}
     
     /**
      * Thiết lập style cho button với màu tuỳ chỉnh

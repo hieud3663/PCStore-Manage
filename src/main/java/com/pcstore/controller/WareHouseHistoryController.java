@@ -36,7 +36,7 @@ public class WareHouseHistoryController {
         this.connection = DatabaseConnection.getInstance().getConnection();
 
         // Lấy repository từ factory
-        RepositoryFactory repositoryFactory = new RepositoryFactory(connection);
+        RepositoryFactory repositoryFactory = RepositoryFactory.getInstance(connection);
         this.purchaseOrderRepository = repositoryFactory.getPurchaseOrderRepository();
         this.purchaseOrderDetailRepository = repositoryFactory.getPurchaseOrderDetailRepository();
 

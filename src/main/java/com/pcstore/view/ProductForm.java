@@ -10,6 +10,8 @@ import com.pcstore.model.Supplier;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -23,6 +25,7 @@ import javax.swing.JOptionPane;
 public class ProductForm extends javax.swing.JPanel {
 
     private ProductController controller;
+
     private JComboBox<Category> categoryComboBox;
     private JComboBox<Supplier> supplierComboBox;
 
@@ -32,6 +35,14 @@ public class ProductForm extends javax.swing.JPanel {
     public ProductForm() {
         initComponents();
         
+        // 1. Khởi tạo combobox và các thành phần UI cơ bản
+        categoryComboBox = (JComboBox<Category>) jComboBox1;
+        supplierComboBox = (JComboBox<Supplier>) jComboBox2;
+        
+        // 2. Khởi tạo controller TRƯỚC khi sử dụng trong các sự kiện
+        controller = new ProductController(this);
+        
+        // 3. Thiết lập các thuộc tính và listeners cho UI
         // Vô hiệu hóa trường ProductID
         jTextField2.setEditable(false);
         jTextField2.setBackground(new Color(240, 240, 240));
@@ -86,11 +97,20 @@ public class ProductForm extends javax.swing.JPanel {
                 categoryComboBoxActionPerformed(evt);
             }
         });
+        for (ActionListener al : btnAdd4.getActionListeners()) {
+            btnAdd4.removeActionListener(al);
+        }
         
         // Thêm sự kiện cho các nút
-        btnAdd3.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdd3ActionPerformed(evt);
+                if (controller.isAddingProduct()) {
+                    // Nếu đang ở chế độ thêm, thực hiện thêm sản phẩm
+                    controller.addProduct();
+                } else {
+                    // Nếu đang ở chế độ bình thường, chuyển sang chế độ thêm
+                    controller.handleAddButtonClick();
+                }
             }
         });
         
@@ -147,26 +167,54 @@ public class ProductForm extends javax.swing.JPanel {
             }
         });
         
-        // Khởi tạo controller
-        controller = new ProductController(this);
-        
-        // Load dữ liệu ban đầu
-        controller.loadProducts();
+        // 4. Mọi listener sử dụng controller phải được đặt sau khi controller đã khởi tạo
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (controller != null && controller.isAddingProduct()) {
+                    // Kiểm tra xem click có phải trên nút thêm không
+                    java.awt.Point p = evt.getPoint();
+                    if (btnAdd4 != null && !btnAdd4.getBounds().contains(p)) {
+                        controller.cancelAddProduct();
+                    }
+                }
+            }
+        });
+        java.awt.event.KeyAdapter escKeyListener = new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    if (controller != null && controller.isAddingProduct()) {
+                        controller.cancelAddProduct();
+                    }
+                }
+            }
+        };
 
-        btnConfirmAddProduct = new com.k33ptoo.components.KButton();
-        btnConfirmAddProduct.setText("Xác nhận thêm");
-        btnConfirmAddProduct.setkBorderRadius(30);
-        btnConfirmAddProduct.setkEndColor(new java.awt.Color(0, 204, 102)); // Màu xanh lá
-        btnConfirmAddProduct.setkHoverEndColor(new java.awt.Color(0, 153, 76));
-        btnConfirmAddProduct.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnConfirmAddProduct.setkHoverStartColor(new java.awt.Color(0, 204, 102));
-        btnConfirmAddProduct.setkStartColor(new java.awt.Color(153, 255, 153));
-        btnConfirmAddProduct.addActionListener(new java.awt.event.ActionListener() {
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            btnConfirmAddProductActionPerformed(evt);
+// Thêm KeyListener để bắt phím ESC để hủy thêm sản phẩm
+    // Thay thế đoạn code hiện tại trong ProductForm.java từ dòng 174-193 với đoạn sau:
+// Thêm KeyListener để bắt phím ESC để hủy thêm sản phẩm
+KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
+    new java.awt.KeyEventDispatcher() {
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            // Chỉ xử lý khi phím được nhấn xuống (KEY_PRESSED)
+            if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                // Nếu đang ở chế độ thêm sản phẩm, hủy thêm
+                if (controller != null && controller.isAddingProduct()) {
+                    controller.cancelAddProduct();
+                    return true; // Đã xử lý sự kiện
+                }
+            }
+            return false; // Không xử lý sự kiện
+        }
     }
-});
-jPanel1.add(btnConfirmAddProduct);
+);
+    // Đảm bảo form có thể nhận được sự kiện từ bàn phím
+    setFocusable(true);
+        
+        // 5. Load dữ liệu ban đầu
+        controller.loadProducts();
     }
 
     /**
@@ -202,10 +250,10 @@ jPanel1.add(btnConfirmAddProduct);
         jTextField1 = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        categoryComboBox = new JComboBox<>();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jPanel8 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        supplierComboBox = new JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
         jPanel9 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jTextField5 = new javax.swing.JTextField();
@@ -226,7 +274,7 @@ jPanel1.add(btnConfirmAddProduct);
         kButton3 = new com.k33ptoo.components.KButton();
         kButton2 = new com.k33ptoo.components.KButton();
         kButton1 = new com.k33ptoo.components.KButton();
-        btnAdd3 = new com.k33ptoo.components.KButton();
+        btnAdd4 = new com.k33ptoo.components.KButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1153, 713));
@@ -365,9 +413,6 @@ jPanel1.add(btnConfirmAddProduct);
         jLabel3.setText(bundle.getString("lbProductID")); // NOI18N
         jLabel3.setOpaque(true);
         jPanel6.add(jLabel3);
-
-        jTextField2.setEditable(false);
-        jTextField2.setBackground(new Color(240, 240, 240)); // Màu nền xám nhạt để biểu thị không thể edit
         jPanel6.add(jTextField2);
 
         jPanel2.add(jPanel6);
@@ -393,8 +438,8 @@ jPanel1.add(btnConfirmAddProduct);
         jLabel5.setOpaque(true);
         jPanel7.add(jLabel5);
 
-        categoryComboBox.setPreferredSize(new Dimension(200, 30));
-        jPanel7.add(categoryComboBox);
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel7.add(jComboBox1);
 
         jPanel2.add(jPanel7);
 
@@ -407,8 +452,8 @@ jPanel1.add(btnConfirmAddProduct);
         jLabel6.setOpaque(true);
         jPanel8.add(jLabel6);
 
-        supplierComboBox.setPreferredSize(new Dimension(200, 30));
-        jPanel8.add(supplierComboBox);
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel8.add(jComboBox2);
 
         jPanel2.add(jPanel8);
 
@@ -494,7 +539,9 @@ jPanel1.add(btnConfirmAddProduct);
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        kButton3.setText("Xuất Excel");
+        kButton3.setText(bundle.getString("btnExport")); // NOI18N
+        kButton3.setkAllowGradient(false);
+        kButton3.setkBackGroundColor(new java.awt.Color(0, 204, 102));
         kButton3.setkBorderRadius(30);
         kButton3.setkEndColor(new java.awt.Color(0, 153, 153));
         kButton3.setkHoverEndColor(new java.awt.Color(0, 204, 204));
@@ -510,6 +557,8 @@ jPanel1.add(btnConfirmAddProduct);
 
         kButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
         kButton2.setText("Xóa");
+        kButton2.setkAllowGradient(false);
+        kButton2.setkBackGroundColor(new java.awt.Color(255, 51, 51));
         kButton2.setkBorderRadius(30);
         kButton2.setkEndColor(new java.awt.Color(255, 51, 51));
         kButton2.setkHoverEndColor(new java.awt.Color(255, 204, 204));
@@ -527,18 +576,19 @@ jPanel1.add(btnConfirmAddProduct);
         kButton1.setkHoverStartColor(new java.awt.Color(153, 255, 154));
         jPanel1.add(kButton1);
 
-        btnAdd3.setText("Thêm mới");// NOI18N
-        btnAdd3.setkBorderRadius(30);
-        btnAdd3.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnAdd3.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnAdd3.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAdd3.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnAdd3.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd4.setText(bundle.getString("btnAddProduct")); // NOI18N
+        btnAdd4.setkAllowGradient(false);
+        btnAdd4.setkBackGroundColor(new java.awt.Color(0, 102, 255));
+        btnAdd4.setkBorderRadius(30);
+        btnAdd4.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAdd4.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnAdd4.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAdd4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdd3ActionPerformed(evt);
+                btnAdd4ActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAdd3);
+        jPanel1.add(btnAdd4);
 
         add(jPanel1);
     }// </editor-fold>//GEN-END:initComponents
@@ -551,10 +601,6 @@ jPanel1.add(btnConfirmAddProduct);
         // Thêm logic xử lý khác nếu cần
     }
 
-    private void btnAdd3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Khi nhấn nút "Thêm sản phẩm", luôn thực hiện reset form để chuẩn bị thêm mới
-        controller.handleAddButtonClick();
-    }
 
     private void kButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         controller.exportToExcel();
@@ -606,15 +652,13 @@ jPanel1.add(btnConfirmAddProduct);
         }
     }
 
-    private void btnConfirmAddProductActionPerformed(java.awt.event.ActionEvent evt) {
-        // Chỉ thực hiện thêm sản phẩm khi form đang ở trạng thái thêm mới (ID kết thúc bằng xxx)
-        String currentId = jTextField2.getText().trim();
-        if (currentId.endsWith("xxx")) {
+    private void btnAdd4ActionPerformed(java.awt.event.ActionEvent evt) {
+        if (controller.isAddingProduct()) {
+            // Nếu đang ở chế độ thêm, thực hiện thêm sản phẩm
             controller.addProduct();
         } else {
-            JOptionPane.showMessageDialog(this, 
-                    "Vui lòng nhấn nút 'Thêm sản phẩm' trước khi xác nhận thêm mới.", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            // Nếu đang ở chế độ bình thường, chuyển sang chế độ thêm
+            controller.handleAddButtonClick();
         }
     }
 
@@ -660,7 +704,7 @@ jPanel1.add(btnConfirmAddProduct);
     }
 
     public com.k33ptoo.components.KButton getBtnAdd() {
-        return btnAdd3;
+        return btnAdd4;
     }
 
     public com.k33ptoo.components.KButton getBtnUpdate() {
@@ -669,6 +713,9 @@ jPanel1.add(btnConfirmAddProduct);
 
     public com.k33ptoo.components.KButton getBtnDelete() {
         return kButton2;
+    }
+    public com.k33ptoo.components.KButton getBtnExport() {
+        return kButton3;
     }
 
     public javax.swing.JComboBox<String> getCbbSortCustomer() {
@@ -685,9 +732,6 @@ jPanel1.add(btnConfirmAddProduct);
 
     public javax.swing.JPanel getDetailsPanel() {
         return panelDetails;
-    }
-    public com.k33ptoo.components.KButton getBtnConfirmAddProduct() {
-        return btnConfirmAddProduct;
     }
 
     /**
@@ -728,11 +772,12 @@ jPanel1.add(btnConfirmAddProduct);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAdd3;
-    private com.k33ptoo.components.KButton btnConfirmAddProduct;
+    private com.k33ptoo.components.KButton btnAdd4;
     private javax.swing.JButton btnResetSort;
     private javax.swing.JComboBox<String> cbbSort;
     private javax.swing.JComboBox<String> cbbSortCustomer;
+    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;

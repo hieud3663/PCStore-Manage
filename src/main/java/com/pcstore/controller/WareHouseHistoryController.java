@@ -16,6 +16,7 @@ import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.view.StockInHistoryForm;
+import com.pcstore.repository.Repository;
 import com.pcstore.repository.RepositoryFactory;
 
 /**
@@ -36,7 +37,7 @@ public class WareHouseHistoryController {
         this.connection = DatabaseConnection.getInstance().getConnection();
 
         // Lấy repository từ factory
-        RepositoryFactory repositoryFactory = new RepositoryFactory(connection);
+        RepositoryFactory repositoryFactory = RepositoryFactory.getInstance(connection);
         this.purchaseOrderRepository = repositoryFactory.getPurchaseOrderRepository();
         this.purchaseOrderDetailRepository = repositoryFactory.getPurchaseOrderDetailRepository();
 

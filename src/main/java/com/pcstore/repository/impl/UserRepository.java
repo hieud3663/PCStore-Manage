@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
 
 /**
  * Repository implementation cho User entity
@@ -28,21 +27,27 @@ public class UserRepository implements Repository<User, String> {
         this.connection = connection;
     }
     
-    // public UserRepository(Connection connection2, RepositoryFactory RepositoryFactory) {
-    //     //TODO Auto-generated constructor stub
-    // }
+
+
+    public User save(User user){
+        if (exists(user.getUsername())) {
+            return update(user);
+        } else {
+            return add(user);
+        }
+    }
 
     @Override
     public User add(User user) {
-        String sql = "INSERT INTO Users (Username, PasswordHash, EmployeeID, isActive) " +
-                     "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (Username, PasswordHash, EmployeeID, RoleID, isActive) " +
+                     "VALUES (?, ?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, user.getUsername());
             statement.setString(2, PCrypt.hashPassword(user.getPassword()));
-            // statement.setInt(3, user.getRoleID());
             statement.setString(3, user.getEmployeeId());
-            statement.setBoolean(4, user.getIsActive());
+            statement.setInt(4, user.getRoleID());
+            statement.setBoolean(5, user.getIsActive());
             
             statement.executeUpdate();
             
@@ -50,20 +55,9 @@ public class UserRepository implements Repository<User, String> {
             user.setCreatedAt(now);
             user.setUpdatedAt(now);
             
-
-            String sql2 = "INSERT INTO UserRoles (UserID, RoleID) " +
-                     "VALUES (?, ?)";
-
-            try (PreparedStatement statement2 = connection.prepareStatement(sql2)) {
-                statement2.setString(1, user.getUserId());
-                statement2.setInt(2, user.getRoleID());
-                statement2.executeUpdate();
-            } catch (SQLException e) {
-                throw new RuntimeException("Error adding user role", e);
-            }
             return user;
         } catch (SQLException e) {
-            throw new RuntimeException("Error adding user", e);
+            throw new RuntimeException("Error adding user: " + e.getMessage());
         }
 
         
@@ -78,19 +72,12 @@ public class UserRepository implements Repository<User, String> {
             statement.setString(1, user.getPassword());
             // statement.setString(2, user.getRoleName());
             statement.setBoolean(2, user.getIsActive());
-            // statement.setDate(4, user.getLastLogin());
-
-
-             // Xử lý LocalDateTime - chuyển đổi thành Timestamp
             LocalDateTime lastLogin = user.getLastLogin();
             if (lastLogin != null) {
                 statement.setTimestamp(3, Timestamp.valueOf(lastLogin));
             } else {
                 statement.setNull(3, Types.TIMESTAMP);
             }
-
-            // System.out.println("Thời gian đăng nhập cuối: " + user.getLastLogin());
-            // System.out.println("Thời gian đăng nhập cuối: " + Timestamp.valueOf(lastLogin));
 
             statement.setString(4, user.getUsername());
 
@@ -99,7 +86,7 @@ public class UserRepository implements Repository<User, String> {
             user.setUpdatedAt(LocalDateTime.now());
             return user;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating user" + e.getMessage());
+            throw new RuntimeException("Error updating user: " + e.getMessage());
         }
     }
     
@@ -112,20 +99,20 @@ public class UserRepository implements Repository<User, String> {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting user", e);
+            throw new RuntimeException("Error deleting user: " + e.getMessage());
         }
     }
     
     @Override
-    public Optional<User> findById(String username) {
+    public Optional<User> findById(String userID) {
         String sql = "SELECT u.*, r.RoleName, e.FullName as EmployeeName " +
                      "FROM Users u " +
                      "LEFT JOIN Roles r ON u.RoleID = r.RoleID " +
                      "LEFT JOIN Employees e ON u.EmployeeID = e.EmployeeID " +
-                     "WHERE u.Username = ?";
+                     "WHERE u.UserID= ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, username);
+            statement.setString(1, userID);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
@@ -133,7 +120,7 @@ public class UserRepository implements Repository<User, String> {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding user by username", e);
+            throw new RuntimeException("Error finding user by userID: " + e.getMessage());
         }
     }
     
@@ -153,7 +140,7 @@ public class UserRepository implements Repository<User, String> {
             }
             return users;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding all users", e);
+            throw new RuntimeException("Error finding all users: " + e.getMessage());
         }
     }
     
@@ -170,7 +157,7 @@ public class UserRepository implements Repository<User, String> {
             }
             return false;
         } catch (SQLException e) {
-            throw new RuntimeException("Error checking if user exists", e);
+            throw new RuntimeException("Error checking if user exists: " + e.getMessage());
         }
     }
     
@@ -178,8 +165,7 @@ public class UserRepository implements Repository<User, String> {
     public User authenticate(String username, String password) {
         String sql = "SELECT u.*, r.RoleID, r.RoleName, e.FullName as EmployeeName " +
                      "FROM Users u " +
-                     "join UserRoles ur on u.UserID = ur.UserID "+
-                     "LEFT JOIN Roles r ON ur.RoleID = r.RoleID " +
+                     "LEFT JOIN Roles r ON u.RoleID = r.RoleID " +
                      "LEFT JOIN Employees e ON u.EmployeeID = e.EmployeeID " +
                      "WHERE u.Username =  ?";
         
@@ -189,8 +175,7 @@ public class UserRepository implements Repository<User, String> {
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {
-                // System.err.println(resultSet.toString());
-                
+                    
                 String hashedPassword = resultSet.getString("PasswordHash");
                 if (!PCrypt.checkPassword(password, hashedPassword)) {
                     return null;
@@ -207,7 +192,7 @@ public class UserRepository implements Repository<User, String> {
             }
             return null;
         } catch (SQLException e) {
-            throw new RuntimeException("Xác thực người dùng thất bại: ( "+e.getMessage()+" )", e);
+            throw new RuntimeException("Authentication fail: ( "+e.getMessage()+" ): " + e.getMessage());
         }
     }
     
@@ -222,7 +207,7 @@ public class UserRepository implements Repository<User, String> {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating password", e);
+            throw new RuntimeException("Error updating password: " + e.getMessage());
         }
     }
     
@@ -245,7 +230,7 @@ public class UserRepository implements Repository<User, String> {
             }
             return users;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding users by role", e);
+            throw new RuntimeException("Error finding users by role: " + e.getMessage());
         }
     }
     
@@ -266,7 +251,7 @@ public class UserRepository implements Repository<User, String> {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding user by employee ID", e);
+            throw new RuntimeException("Error finding user by employee ID: " + e.getMessage());
         }
     }
     
@@ -283,7 +268,34 @@ public class UserRepository implements Repository<User, String> {
             }
             return 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error counting users by role", e);
+            throw new RuntimeException("Error counting users by role: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Tạo ID người dùng tự động theo quy tắc: U + số thứ tự 3 chữ số
+     * Thực hiện logic tương tự như trigger trg_GenerateUserID trong database
+     * @return ID mới cho người dùng
+     */
+    public String generateUserId() {
+        String sql = "SELECT MAX(CAST(SUBSTRING(UserID, 2, LEN(UserID)-1) AS INT)) AS MaxID FROM Users";
+        
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            
+            int nextId = 1; 
+            
+            if (resultSet.next()) {
+                Integer maxId = resultSet.getObject("MaxID", Integer.class);
+                if (maxId != null) {
+                    nextId = maxId + 1;
+                }
+            }
+            
+            return "U" + String.format("%03d", nextId);
+            
+        } catch (SQLException e) {
+            throw new RuntimeException("Error generating user ID: " + e.getMessage(), e);
         }
     }
     
@@ -297,7 +309,6 @@ public class UserRepository implements Repository<User, String> {
         user.setIsActive(resultSet.getBoolean("isActive"));
         String EmployeeId = resultSet.getString("EmployeeID");
 
-        // user.setStatus(resultSet.getBoolean("Status"));
         
         String sql = "SELECT * FROM Employees WHERE EmployeeID = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -313,7 +324,7 @@ public class UserRepository implements Repository<User, String> {
                 
             } 
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding employee by ID", e);
+            throw new RuntimeException("Error finding employee by ID: " + e.getMessage());
         }   
         
         return user;

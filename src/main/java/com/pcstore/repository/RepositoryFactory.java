@@ -27,7 +27,7 @@ public class RepositoryFactory {
     private static Connection currentConnection;
     
 
-    private RepositoryFactory(Connection connection) {
+    public RepositoryFactory(Connection connection) {
         this.connection = connection;
     }
     

@@ -135,6 +135,27 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
             throw new RuntimeException("Error deleting purchase order", e);
         }
     }
+
+    public String generatePurchaseOrderId() {
+        String prefix = "PO-";
+        String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String sql = "SELECT COUNT(*) AS count FROM purchase_orders WHERE order_date = CURDATE()";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                int count = rs.getInt("count") + 1; // Tăng số thứ tự lên 1
+                String formattedCount = String.format("%04d", count); // Định dạng số thứ tự thành 4 chữ số
+                return prefix + datePart + "-" + formattedCount;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Trả về mã mặc định nếu có lỗi
+        return prefix + datePart + "-0001";
+    }
     
     // Dùng id: String
     public Optional<PurchaseOrder> findById(String id) {
@@ -353,6 +374,50 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
             throw new RuntimeException("Error completing purchase order", e);
         }
     }
+
+    /**
+ * Lưu đơn nhập hàng, thực hiện tạo mới nếu chưa có ID hoặc cập nhật nếu đã có ID
+ * @param purchaseOrder Đơn nhập hàng cần lưu
+ * @return Mã đơn nhập hàng đã lưu
+ * @throws SQLException Nếu có lỗi khi thao tác với CSDL
+ */
+public String save(PurchaseOrder purchaseOrder) {
+    try {
+        if (purchaseOrder.getPurchaseOrderId() == null || purchaseOrder.getPurchaseOrderId().isEmpty()) {
+            // Nếu chưa có ID, tạo ID mới và thêm mới
+            purchaseOrder.setPurchaseOrderId(generatePurchaseOrderId());
+            add(purchaseOrder);
+        } else {
+            // Nếu đã có ID, kiểm tra xem đơn hàng đã tồn tại chưa
+            Optional<PurchaseOrder> existingOrder = findById(purchaseOrder.getPurchaseOrderId());
+            if (existingOrder.isPresent()) {
+                // Đã tồn tại, thực hiện cập nhật
+                update(purchaseOrder);
+            } else {
+                // Không tồn tại nhưng có ID, vẫn thêm mới
+                add(purchaseOrder);
+            }
+        }
+        
+        // Nếu có chi tiết đơn hàng, lưu từng chi tiết
+        if (purchaseOrder.getPurchaseOrderDetails() != null && !purchaseOrder.getPurchaseOrderDetails().isEmpty()) {
+            for (PurchaseOrderDetail detail : purchaseOrder.getPurchaseOrderDetails()) {
+                // Đảm bảo chi tiết có liên kết với đơn hàng
+                detail.setPurchaseOrder(purchaseOrder);
+                
+                // Lưu chi tiết thông qua repository tương ứng
+                RepositoryFactory.getPurchaseOrderDetailRepository().save(detail);
+            }
+        }
+        
+        // Cập nhật lại tổng tiền sau khi lưu chi tiết
+        updateTotalAmount(purchaseOrder.getPurchaseOrderId());
+        
+        return purchaseOrder.getPurchaseOrderId();
+    } catch (Exception e) {
+        throw new RuntimeException("Error saving purchase order", e);
+    }
+}
     
     private PurchaseOrder mapResultSetToPurchaseOrder(ResultSet resultSet) throws SQLException {
         PurchaseOrder purchaseOrder = new PurchaseOrder();

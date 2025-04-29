@@ -78,29 +78,29 @@ public class WareHouseForm extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Chức Năng ", "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"
+                "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -110,11 +110,10 @@ public class WareHouseForm extends javax.swing.JPanel {
         jTable1.setRowHeight(32);
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clButton")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clSupplier")); // NOI18N
-            jTable1.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clSupplier")); // NOI18N
+            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -158,7 +157,6 @@ public class WareHouseForm extends javax.swing.JPanel {
         btnCreatePurchaseOrder.setkEndColor(new java.awt.Color(0, 204, 51));
         btnCreatePurchaseOrder.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnCreatePurchaseOrder.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnCreatePurchaseOrder.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnCreatePurchaseOrder.setkStartColor(new java.awt.Color(0, 204, 51));
         btnCreatePurchaseOrder.setOpaque(true);
         btnCreatePurchaseOrder.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -177,7 +175,6 @@ public class WareHouseForm extends javax.swing.JPanel {
         btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(255, 102, 102));
         btnHistoryStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(255, 102, 102));
-        btnHistoryStockIn.setkStartColor(new java.awt.Color(102, 153, 255));
         btnHistoryStockIn.setOpaque(true);
         btnHistoryStockIn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {

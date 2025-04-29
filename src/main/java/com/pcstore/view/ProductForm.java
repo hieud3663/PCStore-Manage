@@ -34,6 +34,8 @@ public class ProductForm extends javax.swing.JPanel {
      */
     public ProductForm() {
         initComponents();
+
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         
         // 1. Khởi tạo combobox và các thành phần UI cơ bản
         categoryComboBox = (JComboBox<Category>) jComboBox1;
@@ -607,7 +609,15 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
     }
     
     private void kButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        controller.updateProduct();
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc muốn cập nhật sản phẩm này?",
+                "Xác nhận cập nhật",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+    
+        if (confirm == JOptionPane.YES_OPTION) {
+            controller.updateProduct(); // Gọi phương thức cập nhật sản phẩm
+        }
     }
 
     private void kButton2ActionPerformed(java.awt.event.ActionEvent evt) {
@@ -621,9 +631,10 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
     }
 
     /**
-     * Cập nhật ID tạm thời khi thay đổi danh mục
-     */
-    private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+ * Cập nhật ID tạm thời khi thay đổi danh mục
+ */
+private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+    if (controller.isAddingProduct()) {
         Category selectedCategory = (Category) categoryComboBox.getSelectedItem();
         if (selectedCategory != null) {
             jTextField2.setText(selectedCategory.getCategoryId() + "xxx"); // Hiển thị ID mẫu
@@ -631,7 +642,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
             jTextField2.setText("xxxxx"); // Mẫu mặc định
         }
     }
-
+}
     private void textFieldSearch1ActionPerformed(java.awt.event.ActionEvent evt) {
         controller.searchProducts(textFieldSearch1.getText());
     }

@@ -134,6 +134,50 @@ public class ProductRepository implements Repository<Product, String> {
             throw new RuntimeException("Error finding product by name", e);
         }
     }
+    /**
+ * Tìm sản phẩm theo tên hoặc mã chứa từ khóa
+ * @param keyword Từ khóa tìm kiếm
+ * @return Danh sách sản phẩm phù hợp
+ * @throws SQLException Nếu có lỗi truy vấn SQL
+ */
+public List<Product> findByNameOrIdContaining(String keyword) throws SQLException {
+    List<Product> products = new ArrayList<>();
+    String sql = "SELECT p.*, s.supplier_id, s.name as supplier_name, s.email, s.phone, s.address " +
+                 "FROM products p " +
+                 "LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id " +
+                 "WHERE p.product_id LIKE ? OR p.product_name LIKE ?";
+    
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        String searchPattern = "%" + keyword + "%";
+        stmt.setString(1, searchPattern);
+        stmt.setString(2, searchPattern);
+        
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Product product = new Product();
+                product.setProductId(rs.getString("product_id"));
+                product.setProductName(rs.getString("product_name"));
+                product.setDescription(rs.getString("description"));
+                product.setPrice(rs.getBigDecimal("price"));
+                product.setStockQuantity(rs.getInt("stock_quantity"));
+                // Xử lý thông tin nhà cung cấp
+                String supplierId = rs.getString("supplier_id");
+                if (supplierId != null) {
+                    Supplier supplier = new Supplier();
+                    supplier.setSupplierId(supplierId);
+                    supplier.setName(rs.getString("supplier_name"));
+                    supplier.setEmail(rs.getString("email"));
+                    supplier.setAddress(rs.getString("address"));
+                    product.setSupplier(supplier);
+                }
+                
+                products.add(product);
+            }
+        }
+    }
+    
+    return products;
+}
 
 
     /**
@@ -141,21 +185,38 @@ public class ProductRepository implements Repository<Product, String> {
      * @return danh sách sản phẩm
      */   
     @Override
-    public List<Product> findAll() {
-        String sql = "SELECT * FROM Products";
-        List<Product> products = new ArrayList<>();
+public List<Product> findAll() {
+    // Sửa truy vấn - kiểm tra tên cột thực tế trong DB
+    String sql = "SELECT p.*, c.CategoryName "
+            + "FROM Products p "
+            + "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID";
+    
+    // Hoặc nếu bảng Suppliers có cột tên khác:
+    // String sql = "SELECT p.*, c.CategoryName, s.CompanyName as SupplierName "
+    // + "FROM Products p "
+    // + "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID "
+    // + "LEFT JOIN Suppliers s ON p.SupplierID = s.SupplierID";
+    
+    List<Product> products = new ArrayList<>();
+    
+    try (Statement statement = connection.createStatement();
+         ResultSet resultSet = statement.executeQuery(sql)) {
         
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            
-            while (resultSet.next()) {
-                products.add(mapResultSetToProduct(resultSet));
+        while (resultSet.next()) {
+            try {
+                Product product = mapResultSetToProduct(resultSet);
+                products.add(product);
+            } catch (Exception e) {
+                System.err.println("Lỗi khi xử lý sản phẩm từ ResultSet: " + e.getMessage());
             }
-            return products;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error finding all products", e);
         }
+    } catch (SQLException e) {
+        System.err.println("SQL Exception trong findAll: " + e.getMessage());
+        e.printStackTrace();
     }
+    
+    return products;
+}
     
     @Override
     public boolean exists(String id) {
@@ -264,51 +325,60 @@ public class ProductRepository implements Repository<Product, String> {
     // Phương thức chuyển ResultSet thành đối tượng Product
     private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
         Product product = new Product();
-        product.setProductId(resultSet.getString("ProductID"));
-        product.setProductName(resultSet.getString("ProductName"));
-        // product.setCategory(resultSet.getString("CategoryID"));
-        product.setPrice(resultSet.getBigDecimal("Price"));
-        product.setStockQuantity(resultSet.getInt("StockQuantity"));
-        product.setSpecifications(resultSet.getString("Specifications"));
-        product.setDescription(resultSet.getString("Description"));
-        product.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
-        product.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
-
-        String categoryId = resultSet.getString("CategoryID");
-        String supplierId = resultSet.getString("SupplierID");
-
-        if (!categoryId.isEmpty()) {
-
-            String sqlCategory = "SELECT * FROM Categories WHERE CategoryID = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sqlCategory)) {
-                statement.setString(1, categoryId);
-                ResultSet rsCategory = statement.executeQuery();
-                if (rsCategory.next()) {
-                    product.setCategory(new Category(categoryId, rsCategory.getString("CategoryName"))); // Chỉ cần ID và tên
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Error finding category by ID", e);
-            }
-        } else {
-            product.setCategory(null); // Hoặc có thể ném ngoại lệ nếu cần
-        }
-
-        if (!supplierId.isEmpty()) {
-            String sqlSupplier = "SELECT * FROM Suppliers WHERE SupplierID = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sqlSupplier)) {
-                statement.setString(1, supplierId);
-                ResultSet rsSupplier = statement.executeQuery();
-                if (rsSupplier.next()) {
-                    product.setSupplier(new Supplier(supplierId, rsSupplier.getString("Name"), rsSupplier.getString("PhoneNumber"), rsSupplier.getString("Email"), rsSupplier.getString("Address"))); // Chỉ cần ID và tên
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException("Error finding supplier by ID", e);
-            }
-        } else {
-            product.setSupplier(null); // Hoặc có thể ném ngoại lệ nếu cần
+        
+        // Xử lý các trường cơ bản
+        try {
+            product.setProductId(resultSet.getString("ProductID"));
+            product.setProductName(resultSet.getString("ProductName"));
+            product.setStockQuantity(resultSet.getInt("StockQuantity"));
+            product.setPrice(resultSet.getBigDecimal("Price"));
+        } catch (SQLException e) {
+            throw new SQLException("Lỗi khi đọc dữ liệu sản phẩm cơ bản", e);
         }
         
-        // Lưu ý: Category và Supplier sẽ được load riêng hoặc lazy loaded;
+        // Xử lý các trường không bắt buộc
+        try {
+            product.setDescription(resultSet.getString("Description"));
+        } catch (SQLException e) {
+            // Không bắt buộc, bỏ qua lỗi
+            product.setDescription("");
+        }
+        
+        // Xử lý Category
+        try {
+            String categoryId = resultSet.getString("CategoryID");
+            if (categoryId != null) {
+                Category category = new Category();
+                category.setCategoryId(categoryId);
+                
+                try {
+                    category.setCategoryName(resultSet.getString("CategoryName"));
+                } catch (SQLException e) {
+                    category.setCategoryName("Chưa xác định");
+                }
+                
+                product.setCategory(category);
+            }
+        } catch (SQLException e) {
+            // Không có thông tin danh mục, gán null
+            product.setCategory(null);
+        }
+        
+        // Xử lý Supplier - bỏ qua hoặc chỉ lưu ID
+        try {
+            String supplierId = resultSet.getString("SupplierID");
+            if (supplierId != null) {
+                Supplier supplier = new Supplier();
+                supplier.setSupplierId(supplierId);
+                
+                // Không truy cập SupplierName nếu không chắc chắn có
+                product.setSupplier(supplier);
+            }
+        } catch (SQLException e) {
+            // Không có thông tin nhà cung cấp, gán null
+            product.setSupplier(null);
+        }
+        
         return product;
     }
 }

@@ -65,6 +65,92 @@ public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDe
             throw new RuntimeException("Error adding purchase order detail", e);
         }
     }
+    /**
+ * Lưu chi tiết đơn nhập hàng, thực hiện thêm mới nếu chưa có ID hoặc cập nhật nếu đã có ID
+ * @param detail Chi tiết đơn nhập hàng cần lưu
+ * @return Chi tiết đơn nhập hàng đã được lưu
+ */
+public PurchaseOrderDetail save(PurchaseOrderDetail detail) {
+    if (detail == null) {
+        throw new IllegalArgumentException("Purchase order detail cannot be null");
+    }
+    
+    try {
+        if (detail.getPurchaseOrderDetailId() == 0) {
+            // Nếu chưa có ID (ID = 0 hoặc null), thực hiện thêm mới
+            return add(detail);
+        } else {
+            // Nếu đã có ID, kiểm tra xem chi tiết này có tồn tại trong database không
+            if (exists(detail.getPurchaseOrderDetailId())) {
+                // Nếu tồn tại, thực hiện cập nhật
+                return update(detail);
+            } else {
+                // Nếu không tồn tại nhưng đã có ID, vẫn thực hiện thêm mới
+                return add(detail);
+            }
+        }
+    } catch (Exception e) {
+        throw new RuntimeException("Error saving purchase order detail", e);
+    }
+}
+
+/**
+ * Tìm chi tiết đơn nhập hàng dựa trên đơn hàng và sản phẩm
+ * @param purchaseOrderId ID của đơn nhập hàng
+ * @param productId ID của sản phẩm
+ * @return Chi tiết đơn nhập hàng tương ứng (nếu tồn tại)
+ */
+public Optional<PurchaseOrderDetail> findByPurchaseOrderIdAndProductId(String purchaseOrderId, String productId) {
+    String sql = "SELECT pod.*, p.ProductName " +
+                "FROM PurchaseOrderDetails pod " +
+                "JOIN Products p ON pod.ProductID = p.ProductID " +
+                "WHERE pod.PurchaseOrderID = ? AND pod.ProductID = ?";
+    
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setString(1, purchaseOrderId);
+        statement.setString(2, productId);
+        ResultSet resultSet = statement.executeQuery();
+        
+        if (resultSet.next()) {
+            return Optional.of(mapResultSetToDetail(resultSet));
+        }
+        return Optional.empty();
+    } catch (SQLException e) {
+        throw new RuntimeException("Error finding purchase order detail by purchase order ID and product ID", e);
+    }
+}
+
+/**
+ * Lưu chi tiết đơn nhập hàng dựa trên đơn hàng và sản phẩm (sẽ cập nhật nếu đã tồn tại)
+ * @param detail Chi tiết đơn nhập hàng cần lưu
+ * @return Chi tiết đơn nhập hàng đã được lưu
+ */
+public PurchaseOrderDetail saveByOrderAndProduct(PurchaseOrderDetail detail) {
+    if (detail == null || detail.getPurchaseOrder() == null || detail.getProduct() == null) {
+        throw new IllegalArgumentException("Purchase order detail, order, and product cannot be null");
+    }
+    
+    try {
+        // Tìm chi tiết đơn hàng dựa trên ID đơn hàng và ID sản phẩm
+        Optional<PurchaseOrderDetail> existingDetail = findByPurchaseOrderIdAndProductId(
+            detail.getPurchaseOrder().getPurchaseOrderId(),
+            detail.getProduct().getProductId()
+        );
+        
+        if (existingDetail.isPresent()) {
+            // Nếu đã tồn tại, cập nhật số lượng và đơn giá
+            PurchaseOrderDetail updatedDetail = existingDetail.get();
+            updatedDetail.setQuantity(detail.getQuantity());
+            updatedDetail.setUnitPrice(detail.getUnitPrice());
+            return update(updatedDetail);
+        } else {
+            // Nếu chưa tồn tại, thực hiện thêm mới
+            return add(detail);
+        }
+    } catch (Exception e) {
+        throw new RuntimeException("Error saving purchase order detail by order and product", e);
+    }
+}
     
     @Override
     public PurchaseOrderDetail update(PurchaseOrderDetail detail) {

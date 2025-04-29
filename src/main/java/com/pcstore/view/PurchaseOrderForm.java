@@ -100,43 +100,43 @@ public class PurchaseOrderForm extends JDialog {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Mã Máy", "Tên Máy", "Số Lượng", "Đơn Giá"
+                "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng", "Đơn Giá"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -148,8 +148,8 @@ public class PurchaseOrderForm extends JDialog {
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
             jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clPrice")); // NOI18N
+            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clPrice")); // NOI18N
         }
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
@@ -176,11 +176,11 @@ public class PurchaseOrderForm extends JDialog {
                 {null, null, null, null, null}
             },
             new String [] {
-                "STT", "Mã Máy", "Tên Máy", "Số Lượng", "Đơn Giá"
+                "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng", "Đơn Giá"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -189,8 +189,8 @@ public class PurchaseOrderForm extends JDialog {
         });
         jScrollPane2.setViewportView(jTable2);
         if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            jTable2.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            jTable2.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            jTable2.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
             jTable2.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
             jTable2.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clPrice")); // NOI18N
         }
@@ -199,7 +199,6 @@ public class PurchaseOrderForm extends JDialog {
         btnStockIn.setkBorderRadius(40);
         btnStockIn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnStockIn.setkHoverStartColor(new java.awt.Color(153, 255, 153));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel4.setText("Tổng Tiền:");
@@ -213,10 +212,13 @@ public class PurchaseOrderForm extends JDialog {
         kGradientPanel1Layout.setHorizontalGroup(
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(kGradientPanel1Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, kGradientPanel1Layout.createSequentialGroup()
@@ -248,7 +250,7 @@ public class PurchaseOrderForm extends JDialog {
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(kGradientPanel1Layout.createSequentialGroup()
                         .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -262,16 +264,16 @@ public class PurchaseOrderForm extends JDialog {
                             .addComponent(jLabel3)
                             .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnStockIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(kGradientPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnStockIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 467, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -346,7 +348,59 @@ public class PurchaseOrderForm extends JDialog {
     public javax.swing.JLabel getTxtTotalPrice() {
         return txtTotalPrice;
     }
+    public com.pcstore.utils.TextFieldSearch getTextFieldSearch() {
+        return textFieldSearch1;
+    }
+    public javax.swing.JComboBox getSupplierComboBox() {
+        return jComboBox1;
+    }
 
+    public javax.swing.JLabel getLblPurchaseOrderId(){
+        return null;
+    }
+    public javax.swing.JLabel getLblTotalAmount() {
+        return txtTotalPrice;
+    }
+    public javax.swing.JButton getBtnAddToCart() {
+        return null; 
+    }
+    public javax.swing.JButton getBtnRemoveItem() {
+        return null; 
+    }
+    public javax.swing.JButton getBtnCancel() {
+        return null;
+    }
+    public javax.swing.JButton getBtnClear() {
+        return null;
+    }
+
+    public JTable getTableProducts() {
+        return jTable1;
+    }
+
+    public JTable getTableSelectedProducts() {
+        return jTable2;
+    }
+
+    public JComboBox getComboBoxSupplier() {
+        return jComboBox1;
+    }
+
+    public JLabel getLabelTotalAmount() {
+        return txtTotalPrice;
+    }
+
+    public JButton getBtnAddProduct() {
+        return new JButton("Thêm"); // Tạo nút ảo nếu form không có
+    }
+
+    public JButton getBtnRemoveProduct() {
+        return new JButton("Xóa"); // Tạo nút ảo nếu form không có
+    }
+
+    public JButton getBtnSave() {
+        return btnStockIn;
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnStockIn;
     private javax.swing.JComboBox<String> jComboBox1;

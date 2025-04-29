@@ -56,16 +56,15 @@ public class ReturnController {
      * @param invoiceDetailId ID chi tiết hóa đơn
      * @param quantity Số lượng trả
      * @param reason Lý do trả
-     * @param notes Ghi chú (optional)
      * @return Đơn trả hàng mới tạo
      */
-    public Return createReturn(Integer invoiceDetailId, Integer quantity, String reason, String notes) {
+    public Return createReturn(Integer invoiceDetailId, int quantity, String reason) {
         try {
             System.out.println("ReturnController: Tạo đơn trả hàng mới với InvoiceDetailId=" + invoiceDetailId + 
-                              ", Quantity=" + quantity + ", Reason=" + reason);
+                             ", Reason=" + reason);
             
             // Kiểm tra tham số
-            if (invoiceDetailId == null || quantity == null || quantity <= 0 || reason == null || reason.trim().isEmpty()) {
+            if (invoiceDetailId == null || reason == null || reason.trim().isEmpty()) {
                 System.err.println("ReturnController: Tham số không hợp lệ");
                 return null;
             }
@@ -98,8 +97,19 @@ public class ReturnController {
             int remainingQuantity = detail.getQuantity() - returnedQuantity;
             System.out.println("ReturnController: Số lượng đã trả: " + returnedQuantity + ", Số lượng còn lại: " + remainingQuantity);
             
+            if (remainingQuantity <= 0) {
+                System.err.println("ReturnController: Không còn sản phẩm nào để trả");
+                return null;
+            }
+            
+            // Kiểm tra số lượng yêu cầu trả
             if (quantity > remainingQuantity) {
-                System.err.println("ReturnController: Số lượng trả (" + quantity + ") vượt quá số lượng còn lại (" + remainingQuantity + ")");
+                System.out.println("ReturnController: Số lượng trả vượt quá số còn lại, điều chỉnh về tối đa: " + remainingQuantity);
+                quantity = remainingQuantity;
+            }
+            
+            if (quantity <= 0) {
+                System.err.println("ReturnController: Số lượng trả phải lớn hơn 0");
                 return null;
             }
             
@@ -108,9 +118,13 @@ public class ReturnController {
             returnObj.setInvoiceDetail(detail);
             returnObj.setQuantity(quantity);
             returnObj.setReason(reason);
-            returnObj.setNotes(notes);
             returnObj.setStatus("Pending"); // Trạng thái mặc định khi tạo mới
             returnObj.setReturnDate(LocalDateTime.now());
+            
+            // Tính số tiền trả lại
+            java.math.BigDecimal unitPrice = detail.getUnitPrice();
+            java.math.BigDecimal returnAmount = unitPrice.multiply(new java.math.BigDecimal(quantity));
+            returnObj.setReturnAmount(returnAmount);
             
             // Lưu vào cơ sở dữ liệu
             System.out.println("ReturnController: Đang lưu đơn trả hàng vào cơ sở dữ liệu...");

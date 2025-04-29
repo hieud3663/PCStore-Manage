@@ -307,32 +307,9 @@ public class AddReturnProductForm extends javax.swing.JPanel {
                 }
             }
             
-            // Nhập số lượng trả
-            String quantityStr = JOptionPane.showInputDialog(this, 
-                "Nhập số lượng sản phẩm " + productName + " muốn trả (tối đa " + availableQuantity + "):",
-                "Nhập số lượng", JOptionPane.QUESTION_MESSAGE);
-            
-            if (quantityStr == null || quantityStr.trim().isEmpty()) {
-                return; // Người dùng hủy
-            }
-            
-            // Chuyển đổi và kiểm tra số lượng nhập vào
-            int quantity;
-            try {
-                quantity = Integer.parseInt(quantityStr.trim());
-                if (quantity <= 0) {
-                    JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                if (quantity > availableQuantity) {
-                    JOptionPane.showMessageDialog(this, "Số lượng không được vượt quá " + availableQuantity, "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
+            // Sử dụng toàn bộ số lượng có sẵn
+            int quantity = availableQuantity;
+           
             // Nhập lý do trả hàng
             String reason = JOptionPane.showInputDialog(this, 
                 "Nhập lý do trả hàng:", "Lý do", JOptionPane.QUESTION_MESSAGE);
@@ -341,16 +318,9 @@ public class AddReturnProductForm extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập lý do trả hàng", "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
-            // Nhập ghi chú (không bắt buộc)
-            String notes = JOptionPane.showInputDialog(this, 
-                "Nhập ghi chú (không bắt buộc):", "Ghi chú", JOptionPane.QUESTION_MESSAGE);
-            
-            System.out.println("Đang tạo đơn trả hàng với thông tin: InvoiceDetailID=" + invoiceDetailId + 
-                              ", Quantity=" + quantity + ", Reason=" + reason);
-            
-            // Tạo đơn trả hàng
-            Return returnObj = returnController.createReturn(invoiceDetailId, quantity, reason, notes);
+           
+            // Tạo đơn trả hàng với toàn bộ số lượng
+            Return returnObj = returnController.createReturn(invoiceDetailId, quantity, reason);
             
             if (returnObj != null) {
                 System.out.println("Tạo đơn trả hàng thành công: ID=" + returnObj.getReturnId());
@@ -431,8 +401,10 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         kGradientPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("ReTurnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel3.setkFillBackground(false);
+        kGradientPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm SĐT Khách Hàng\n"));
+        pnSearch.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtSearch.setToolTipText("");
         txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
@@ -441,35 +413,20 @@ public class AddReturnProductForm extends javax.swing.JPanel {
                 txtSearchActionPerformed(evt);
             }
         });
+        pnSearch.add(txtSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 19, 292, 32));
 
+        btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
         btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnReturnInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 255, 255));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnReturnInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 153, 153));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        pnSearch.add(btnReturnInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 20, 108, 32));
 
-        javax.swing.GroupLayout pnSearchLayout = new javax.swing.GroupLayout(pnSearch);
-        pnSearch.setLayout(pnSearchLayout);
-        pnSearchLayout.setHorizontalGroup(
-            pnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnSearchLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnReturnInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
-        );
-        pnSearchLayout.setVerticalGroup(
-            pnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnSearchLayout.createSequentialGroup()
-                .addGroup(pnSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnReturnInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 4, Short.MAX_VALUE))
-        );
+        kGradientPanel3.add(pnSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 41, 440, 60));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -494,11 +451,11 @@ public class AddReturnProductForm extends javax.swing.JPanel {
 
         btnWarranty.setText(bundle.getString("btnReturn")); // NOI18N
         btnWarranty.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnWarranty.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnWarranty.setkEndColor(new java.awt.Color(51, 255, 51));
         btnWarranty.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarranty.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnWarranty.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarranty.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnWarranty.setkStartColor(new java.awt.Color(51, 204, 255));
         btnWarranty.setMargin(new java.awt.Insets(2, 14, 0, 14));
 
         javax.swing.GroupLayout pnMainLayout = new javax.swing.GroupLayout(pnMain);
@@ -522,28 +479,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
                 .addContainerGap(56, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout kGradientPanel3Layout = new javax.swing.GroupLayout(kGradientPanel3);
-        kGradientPanel3.setLayout(kGradientPanel3Layout);
-        kGradientPanel3Layout.setHorizontalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pnMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(kGradientPanel3Layout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(pnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 496, Short.MAX_VALUE))
-        );
-        kGradientPanel3Layout.setVerticalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel3Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(pnSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(pnMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        kGradientPanel3.add(pnMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 119, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -552,7 +488,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(kGradientPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

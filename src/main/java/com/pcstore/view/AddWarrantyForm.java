@@ -210,16 +210,17 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         });
         jPanel2.add(txtSearch);
 
+        btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
-        btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnReturnInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 255, 255));
+        btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 153, 255));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnReturnInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 153, 153));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
-        btnReturnInformationLookup.setPreferredSize(new java.awt.Dimension(150, 35));
+        btnReturnInformationLookup.setPreferredSize(new java.awt.Dimension(120, 35));
         jPanel2.add(btnReturnInformationLookup);
 
         kGradientPanel1.add(jPanel2);
@@ -251,11 +252,11 @@ public class AddWarrantyForm extends javax.swing.JPanel {
 
         btnWarranty.setText(bundle.getString("btnWarranty")); // NOI18N
         btnWarranty.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnWarranty.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnWarranty.setkEndColor(new java.awt.Color(102, 255, 51));
         btnWarranty.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarranty.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnWarranty.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarranty.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnWarranty.setkStartColor(new java.awt.Color(51, 204, 255));
         btnWarranty.setMargin(new java.awt.Insets(2, 14, 0, 14));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

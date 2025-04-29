@@ -74,11 +74,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
         txtStatus.setText(translatedStatus);
 
         // Ghi chú (có thể null)
-        if (returnObj.getNotes() != null) {
-            txtNote.setText(returnObj.getNotes());
-        } else {
-            txtNote.setText("");
-        }
+        
 
         // Đảm bảo tất cả các trường là không thể chỉnh sửa
         txtID.setEditable(false);
@@ -88,7 +84,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
         txtReasonReturn.setEditable(false);
         txtReturnDate.setEditable(false);
         txtStatus.setEditable(false);
-        txtNote.setEditable(false);
+        
     }
 
     /**
@@ -122,9 +118,6 @@ public class ReturnDetailForm extends javax.swing.JPanel {
         panelStatus = new javax.swing.JPanel();
         lbStatus = new javax.swing.JLabel();
         txtStatus = new javax.swing.JTextField();
-        panelNote = new javax.swing.JPanel();
-        lbNote = new javax.swing.JLabel();
-        txtNote = new javax.swing.JTextField();
 
         panelInfoDetail.setBackground(new java.awt.Color(255, 255, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
@@ -233,19 +226,6 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         panelInfoDetail.add(panelStatus);
 
-        panelNote.setOpaque(false);
-        panelNote.setLayout(new java.awt.BorderLayout(0, 1));
-
-        lbNote.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        lbNote.setText(bundle.getString("lbNote")); // NOI18N
-        panelNote.add(lbNote, java.awt.BorderLayout.CENTER);
-
-        txtNote.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        txtNote.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
-        panelNote.add(txtNote, java.awt.BorderLayout.PAGE_END);
-
-        panelInfoDetail.add(panelNote);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -270,7 +250,6 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbID;
-    private javax.swing.JLabel lbNote;
     private javax.swing.JLabel lbProductID;
     private javax.swing.JLabel lbProductName;
     private javax.swing.JLabel lbQuantity;
@@ -279,7 +258,6 @@ public class ReturnDetailForm extends javax.swing.JPanel {
     private javax.swing.JLabel lbStatus;
     private javax.swing.JPanel paneIDCustomer;
     private com.k33ptoo.components.KGradientPanel panelInfoDetail;
-    private javax.swing.JPanel panelNote;
     private javax.swing.JPanel panelProductID;
     private javax.swing.JPanel panelProductName;
     private javax.swing.JPanel panelQuantity;
@@ -287,7 +265,6 @@ public class ReturnDetailForm extends javax.swing.JPanel {
     private javax.swing.JPanel panelReturnDate;
     private javax.swing.JPanel panelStatus;
     private javax.swing.JTextField txtID;
-    private javax.swing.JTextField txtNote;
     private javax.swing.JTextField txtProductID;
     private javax.swing.JTextField txtProductName;
     private javax.swing.JTextField txtQuantity;

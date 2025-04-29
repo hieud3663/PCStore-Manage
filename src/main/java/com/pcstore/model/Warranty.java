@@ -1,6 +1,7 @@
 package com.pcstore.model;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 import com.pcstore.model.base.BaseTimeEntity;
@@ -23,17 +24,7 @@ public class Warranty extends BaseTimeEntity {
     private transient Integer repairServiceId;
     private transient String repairStatus;
     private transient String customerPhone;
-
-    /**
-     * Lấy mã khách hàng
-     * @return Mã khách hàng
-     */
     private String customerId;
-
-    /**
-     * Lấy mã sản phẩm
-     * @return Mã sản phẩm
-     */
     private String productId;
 
     @Override
@@ -269,5 +260,111 @@ public class Warranty extends BaseTimeEntity {
             // Nếu không phải số nguyên hợp lệ
             return null;
         }
+    }
+
+    /**
+     * Lấy ngày bảo hành (tương thích với cột warranty_date trong DB)
+     * @return Ngày bảo hành dưới dạng LocalDate
+     */
+    public LocalDate getWarrantyDate() {
+        return startDate != null ? startDate.toLocalDate() : null;
+    }
+
+    /**
+     * Thiết lập ngày bảo hành (tương thích với cột warranty_date trong DB)
+     * @param warrantyDate Ngày bảo hành
+     */
+    public void setWarrantyDate(LocalDate warrantyDate) {
+        if (warrantyDate == null) {
+            this.startDate = null;
+        } else {
+            // Giữ nguyên giờ, phút, giây nếu có, chỉ thay đổi ngày tháng năm
+            LocalDateTime newDateTime;
+            if (this.startDate != null) {
+                newDateTime = LocalDateTime.of(
+                    warrantyDate, 
+                    this.startDate.toLocalTime()
+                );
+            } else {
+                newDateTime = LocalDateTime.of(warrantyDate, java.time.LocalTime.MIDNIGHT);
+            }
+            this.setStartDate(newDateTime);
+        }
+    }
+
+    /**
+     * Lấy thời hạn bảo hành tính theo tháng (tương thích với cột warranty_period trong DB)
+     * @return Thời hạn bảo hành theo tháng
+     */
+    public Integer getWarrantyPeriod() {
+        if (startDate == null || endDate == null) {
+            return null;
+        }
+        return (int) ChronoUnit.MONTHS.between(startDate, endDate);
+    }
+
+    /**
+     * Thiết lập thời hạn bảo hành theo tháng (tương thích với cột warranty_period trong DB)
+     * @param warrantyPeriod Thời hạn bảo hành theo tháng
+     */
+    public void setWarrantyPeriod(Integer warrantyPeriod) {
+        if (warrantyPeriod == null || warrantyPeriod <= 0) {
+            throw new IllegalArgumentException("Thời hạn bảo hành phải lớn hơn 0 tháng");
+        }
+        
+        if (this.startDate != null) {
+            this.setEndDate(this.startDate.plusMonths(warrantyPeriod));
+        }
+    }
+
+    /**
+     * Lấy mô tả bảo hành (tương thích với cột description trong DB)
+     * @return Mô tả bảo hành
+     */
+    public String getDescription() {
+        return warrantyTerms;
+    }
+
+    /**
+     * Thiết lập mô tả bảo hành (tương thích với cột description trong DB)
+     * @param description Mô tả bảo hành
+     */
+    public void setDescription(String description) {
+        this.setWarrantyTerms(description);
+    }
+
+    /**
+     * Kiểm tra trạng thái bảo hành (tương thích với cột status trong DB)
+     * @return true nếu bảo hành còn hiệu lực, false nếu không
+     */
+    public boolean isStatus() {
+        return !isUsed && isValid();
+    }
+
+    /**
+     * Thiết lập trạng thái bảo hành (tương thích với cột status trong DB)
+     * @param status Trạng thái bảo hành
+     */
+    public void setStatus(boolean status) {
+        this.isUsed = !status;
+    }
+
+    /**
+     * Lấy ID chi tiết hóa đơn (phương thức tiện ích)
+     * @return ID chi tiết hóa đơn hoặc null nếu không có
+     */
+    public Integer getInvoiceDetailId() {
+        return invoiceDetail != null ? invoiceDetail.getInvoiceDetailId() : null;
+    }
+
+    /**
+     * Thiết lập ID chi tiết hóa đơn (phương thức tiện ích)
+     * @param invoiceDetailId ID chi tiết hóa đơn
+     */
+    public void setInvoiceDetailId(Integer invoiceDetailId) {
+        if (this.invoiceDetail == null) {
+            this.invoiceDetail = new InvoiceDetail();
+        }
+        this.invoiceDetail.setInvoiceDetailId(invoiceDetailId);
     }
 }

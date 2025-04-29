@@ -5,8 +5,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -41,6 +45,7 @@ public class WarrantyController {
     private final InvoiceService invoiceService;
     private WarrantyServiceForm serviceForm;
     private WarrantyCardForm cardForm;
+    private static final Logger logger = Logger.getLogger(WarrantyController.class.getName());
     
     /**
      * Khởi tạo controller với kết nối CSDL được cung cấp
@@ -252,49 +257,26 @@ public class WarrantyController {
      * @param warranty Thông tin bảo hành
      */
     private void showWarrantyCard(Warranty warranty) {
-        if (cardForm == null) {
-            cardForm = new WarrantyCardForm();
-            cardForm.setController(this);
-        }
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        
-        // Thiết lập thông tin khách hàng
-        cardForm.getNameCustomerLabel().setText(warranty.getCustomerName() != null ? 
-            warranty.getCustomerName() : "");
-        cardForm.getAdressCustomerLabel().setText(""); // Nếu có địa chỉ trong CSDL thì hiển thị
-        cardForm.getSdtLabel().setText(warranty.getCustomerPhone() != null ? 
-            warranty.getCustomerPhone() : "");
-        
-        // Thiết lập ngày mua
-        String purchaseDate = warranty.getStartDate() != null ? 
-            warranty.getStartDate().format(formatter) : "";
-        cardForm.getDateOfPurchaseLabel().setText(purchaseDate);
-        
-        // Thiết lập thông tin sản phẩm và bảo hành
-        DefaultTableModel model = (DefaultTableModel) cardForm.getProductTable().getModel();
-        model.setRowCount(0);
-        
-        // Tính thời hạn bảo hành
-        if (warranty.getStartDate() != null && warranty.getEndDate() != null) {
-            long months = ChronoUnit.MONTHS.between(warranty.getStartDate(), warranty.getEndDate());
-            String endDate = warranty.getEndDate().format(formatter);
+        try {
+            // Create new form if it doesn't exist
+            if (cardForm == null) {
+                cardForm = new WarrantyCardForm();
+            }
             
-            model.addRow(new Object[] {
-                1, // STT
-                warranty.getProductName() != null ? warranty.getProductName() : "",
-                warranty.getInvoiceDetail() != null ? warranty.getInvoiceDetail().getQuantity() : 1,
-                months + " tháng (đến " + endDate + ")"
-            });
+            // Display all warranty information using the new method
+            cardForm.displayWarrantyInfo(warranty);
+            
+            // Display the form in a new window
+            javax.swing.JFrame frame = new javax.swing.JFrame("Thẻ Bảo Hành");
+            frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
+            frame.add(cardForm);
+            frame.pack();
+            frame.setLocationRelativeTo(serviceForm);
+            frame.setVisible(true);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Lỗi khi hiển thị thẻ bảo hành", e);
+            showError("Lỗi hiển thị thẻ bảo hành", e.getMessage());
         }
-        
-        // Hiển thị form
-        javax.swing.JFrame frame = new javax.swing.JFrame("Thẻ Bảo Hành");
-        frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-        frame.add(cardForm);
-        frame.pack();
-        frame.setLocationRelativeTo(serviceForm);
-        frame.setVisible(true);
     }
     
     /**
@@ -319,41 +301,77 @@ public class WarrantyController {
     }
     
     /**
-     * Tìm kiếm sản phẩm đã mua theo số điện thoại khách hàng
+     * Tìm sản phẩm đã mua theo số điện thoại khách hàng
      * @param phoneNumber Số điện thoại khách hàng
-     * @return Danh sách sản phẩm đã mua
+     * @return Danh sách chi tiết hóa đơn
      */
     public List<InvoiceDetail> findPurchasedProductsByPhone(String phoneNumber) {
+        List<InvoiceDetail> result = new ArrayList<>();
         try {
             // Tìm khách hàng theo số điện thoại
-            Optional<Customer> customerOpt = customerService.findCustomerByPhone(phoneNumber);
+            Optional<Customer> customer = customerService.findCustomerByPhone(phoneNumber);
             
-            if (!customerOpt.isPresent()) {
-                return new ArrayList<>(); 
-            }
-            
-            Customer customer = customerOpt.get();
-            
-            //Lấy hóa đơn của khách hàng
-            List<Invoice> listInvoices = invoiceService.findInvoicesByCustomer(customer.getCustomerId());
-            
-            if (listInvoices.isEmpty()) {
-                return new ArrayList<>(); // Không có hóa đơn nào
-            }
-
-            // Tìm các chi tiết hóa đơn của khách hàng
-            List<InvoiceDetail> allInvoiceDetails = new ArrayList<>();
-            for (Invoice invoice : listInvoices) {
-                if (invoice.getInvoiceDetails() != null) {
-                    allInvoiceDetails.addAll(invoice.getInvoiceDetails());
+            if (customer.isPresent()) {
+                logger.info("Tìm thấy khách hàng: " + customer.get().getCustomerId());
+                
+                // Tìm tất cả hóa đơn của khách hàng
+                List<Invoice> invoices = invoiceService.findInvoicesByCustomerForWarranty(customer.get().getCustomerId());
+                logger.info("Số hóa đơn tìm thấy: " + invoices.size());
+                
+                for (Invoice invoice : invoices) {
+                    logger.info("Xử lý hóa đơn ID: " + invoice.getInvoiceId() + 
+                               ", Ngày: " + (invoice.getInvoiceDate() != null ? invoice.getInvoiceDate() : "N/A"));
+                    
+                    if (invoice.getInvoiceDetails() != null) {
+                        for (InvoiceDetail detail : invoice.getInvoiceDetails()) {
+                            // Kiểm tra xem detail có đầy đủ thông tin không
+                            if (detail != null) {
+                                // Đảm bảo InvoiceDetail có reference đến Invoice
+                                detail.setInvoice(invoice);
+                                
+                                // Log thông tin chi tiết
+                                String productName = (detail.getProduct() != null && detail.getProduct().getProductName() != null) 
+                                    ? detail.getProduct().getProductName() : "Không có tên";
+                                logger.info("Chi tiết: " + detail.getInvoiceDetailId() + 
+                                          ", Sản phẩm: " + productName);
+                                
+                                result.add(detail);
+                            }
+                        }
+                    } else {
+                        logger.warning("Hóa đơn " + invoice.getInvoiceId() + " không có chi tiết");
+                    }
                 }
+            } else {
+                logger.warning("Không tìm thấy khách hàng với số điện thoại: " + phoneNumber);
             }
-            
-            return allInvoiceDetails;
         } catch (Exception e) {
-            showError("Lỗi khi tìm kiếm sản phẩm đã mua", e.getMessage());
-            return new ArrayList<>();
+            logger.log(Level.SEVERE, "Lỗi khi tìm sản phẩm đã mua theo số điện thoại", e);
+            throw new RuntimeException("Lỗi khi tìm sản phẩm đã mua: " + e.getMessage(), e);
         }
+        
+        logger.info("Đã tìm thấy " + result.size() + " chi tiết hóa đơn");
+        return result;
+    }
+    
+    /**
+     * Tìm kiếm sản phẩm đã mua theo SĐT và đã loại bỏ những sản phẩm đã có bảo hành
+     * @param phoneNumber Số điện thoại khách hàng
+     * @return Danh sách sản phẩm chưa đăng ký bảo hành
+     */
+    public List<InvoiceDetail> findPurchasedProductsWithoutWarranty(String phoneNumber) {
+        List<InvoiceDetail> allProducts = findPurchasedProductsByPhone(phoneNumber);
+        List<InvoiceDetail> productsWithoutWarranty = new ArrayList<>();
+        
+        for (InvoiceDetail detail : allProducts) {
+            // Kiểm tra xem sản phẩm đã có bảo hành chưa
+            Optional<Warranty> warranty = warrantyService.findWarrantyByInvoiceDetailId(detail.getInvoiceDetailId());
+            if (!warranty.isPresent()) {
+                productsWithoutWarranty.add(detail);
+            }
+        }
+        
+        return productsWithoutWarranty;
     }
     
     /**
@@ -389,32 +407,42 @@ public class WarrantyController {
      */
     public Warranty createWarrantyFromInvoiceDetail(InvoiceDetail invoiceDetail) {
         try {
-            // Kiểm tra xem đã có bảo hành cho chi tiết hóa đơn này chưa
-            Optional<Warranty> existingWarranty = warrantyService.findWarrantyByInvoiceDetailId(invoiceDetail.getInvoiceDetailId());
-            
-            if (existingWarranty.isPresent()) {
-                throw new IllegalArgumentException("Sản phẩm này đã được đăng ký bảo hành");
+            if (invoiceDetail == null) {
+                throw new IllegalArgumentException("Chi tiết hóa đơn không được null");
             }
             
-            // Lấy thông tin về sản phẩm
-            Optional<Product> productOpt = productService.findProductById(invoiceDetail.getProduct().getProductId());
-            
-            if (!productOpt.isPresent()) {
-                throw new IllegalArgumentException("Không tìm thấy thông tin sản phẩm");
+            // Kiểm tra các thông tin cần thiết
+            if (invoiceDetail.getProduct() == null) {
+                throw new IllegalArgumentException("Thông tin sản phẩm không được null");
             }
             
-            Product product = productOpt.get();
+            if (invoiceDetail.getInvoice() == null) {
+                throw new IllegalArgumentException("Thông tin hóa đơn không được null");
+            }
             
-            // Tạo mới thẻ bảo hành
+            // Tạo đối tượng bảo hành mới
             Warranty warranty = new Warranty();
+            
+            // Tạo mã bảo hành tự động nếu chưa có
+            if (warranty.getWarrantyId() == null || warranty.getWarrantyId().isEmpty()) {
+                String nextId = warrantyService.generateNextWarrantyId();
+                warranty.setWarrantyId(nextId);
+                logger.info("Tự động tạo mã bảo hành: " + nextId);
+            }
+            
+            // Thiết lập chi tiết hóa đơn
             warranty.setInvoiceDetail(invoiceDetail);
             
-            // Thiết lập thời gian bảo hành
+            // Thiết lập thời hạn bảo hành
             LocalDateTime now = LocalDateTime.now();
-            warranty.setStartDate(now);
+            if (invoiceDetail.getInvoice() != null && invoiceDetail.getInvoice().getInvoiceDate() != null) {
+                warranty.setStartDate(invoiceDetail.getInvoice().getInvoiceDate());
+            } else {
+                warranty.setStartDate(now);
+            }
             
-            // Thời hạn bảo hành là 12 tháng kể từ ngày tạo thẻ
-            warranty.setEndDate(now.plusMonths(12));
+            // Thời hạn bảo hành là 12 tháng kể từ ngày mua
+            warranty.setEndDate(warranty.getStartDate().plusMonths(12));
             
             // Thiết lập điều kiện bảo hành
             warranty.setWarrantyTerms("Bảo hành 12 tháng cho lỗi phần cứng");
@@ -427,6 +455,7 @@ public class WarrantyController {
             
             return savedWarranty;
         } catch (Exception e) {
+            logger.log(Level.SEVERE, "Lỗi khi tạo bảo hành", e);
             throw new RuntimeException("Lỗi khi tạo bảo hành: " + e.getMessage(), e);
         }
     }
@@ -437,7 +466,7 @@ public class WarrantyController {
      * @param warrantyId ID của bảo hành cần xóa
      * @return true nếu xóa thành công, ngược lại là false
      */
-    public boolean deleteWarranty(Integer warrantyId) {
+    public boolean deleteWarranty(String warrantyId) {
         try {
             if (warrantyId == null) {
                 System.err.println("Không thể xóa bảo hành với ID null");
@@ -459,4 +488,18 @@ public class WarrantyController {
             return false;
         }
     }
+    
+    /**
+     * Lấy đối tượng service bảo hành
+     * @return Service bảo hành
+     */
+    public WarrantyService getWarrantyService() {
+        return this.warrantyService;
+    }
+    
+    /**
+     * Hiển thị thẻ bảo hành
+     * @param warranty Thông tin bảo hành
+     */
+
 }

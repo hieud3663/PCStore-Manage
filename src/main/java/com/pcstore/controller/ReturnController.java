@@ -2,6 +2,7 @@ package com.pcstore.controller;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,58 +53,77 @@ public class ReturnController {
     /**
      * Tạo đơn trả hàng mới
      * 
-     * @param invoiceDetailId ID chi tiết hóa đơn muốn trả
-     * @param quantity Số lượng muốn trả
-     * @param reason Lý do trả hàng
-     * @param notes Ghi chú bổ sung (có thể null)
-     * @return Đơn trả hàng đã được tạo
+     * @param invoiceDetailId ID chi tiết hóa đơn
+     * @param quantity Số lượng trả
+     * @param reason Lý do trả
+     * @param notes Ghi chú (optional)
+     * @return Đơn trả hàng mới tạo
      */
-    public Return createReturn(Integer invoiceDetailId, int quantity, String reason, String notes) {
+    public Return createReturn(Integer invoiceDetailId, Integer quantity, String reason, String notes) {
         try {
-            // Kiểm tra chi tiết hóa đơn tồn tại
-            Optional<InvoiceDetail> invoiceDetailOpt = invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
-            if (!invoiceDetailOpt.isPresent()) {
-                throw new IllegalArgumentException("Chi tiết hóa đơn không tồn tại");
+            System.out.println("ReturnController: Tạo đơn trả hàng mới với InvoiceDetailId=" + invoiceDetailId + 
+                              ", Quantity=" + quantity + ", Reason=" + reason);
+            
+            // Kiểm tra tham số
+            if (invoiceDetailId == null || quantity == null || quantity <= 0 || reason == null || reason.trim().isEmpty()) {
+                System.err.println("ReturnController: Tham số không hợp lệ");
+                return null;
             }
             
-            InvoiceDetail invoiceDetail = invoiceDetailOpt.get();
+            // Lấy chi tiết hóa đơn
+            Optional<InvoiceDetail> detailOpt = invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
+            if (!detailOpt.isPresent()) {
+                System.err.println("ReturnController: Không tìm thấy chi tiết hóa đơn với ID: " + invoiceDetailId);
+                return null;
+            }
             
-            // Tính toán số lượng đã trả trước đó
+            InvoiceDetail detail = detailOpt.get();
+            System.out.println("ReturnController: Tìm thấy chi tiết hóa đơn: ProductID=" + 
+                              (detail.getProduct() != null ? detail.getProduct().getProductId() : "null") + 
+                              ", Quantity=" + detail.getQuantity());
+            
+            // Lấy danh sách trả hàng hiện có để kiểm tra số lượng còn lại
             List<Return> existingReturns = getReturnsByInvoiceDetail(invoiceDetailId);
-            int alreadyReturnedQuantity = 0;
+            int returnedQuantity = 0;
             
-            for (Return existingReturn : existingReturns) {
-                // Chỉ tính những đơn ở trạng thái đã phê duyệt hoặc đã hoàn thành
-                if ("Approved".equals(existingReturn.getStatus()) || 
-                    "Completed".equals(existingReturn.getStatus())) {
-                    alreadyReturnedQuantity += existingReturn.getQuantity();
+            if (existingReturns != null && !existingReturns.isEmpty()) {
+                for (Return ret : existingReturns) {
+                    if (ret != null && ("Approved".equals(ret.getStatus()) || "Completed".equals(ret.getStatus()))) {
+                        returnedQuantity += ret.getQuantity();
+                    }
                 }
             }
             
             // Tính số lượng còn lại có thể trả
-            int remainingQuantity = invoiceDetail.getQuantity() - alreadyReturnedQuantity;
+            int remainingQuantity = detail.getQuantity() - returnedQuantity;
+            System.out.println("ReturnController: Số lượng đã trả: " + returnedQuantity + ", Số lượng còn lại: " + remainingQuantity);
             
-            // Kiểm tra số lượng trả không vượt quá số lượng còn lại
-            if (quantity <= 0 || quantity > remainingQuantity) {
-                throw new IllegalArgumentException("Số lượng trả không hợp lệ. Số lượng tối đa có thể trả là: " + remainingQuantity);
+            if (quantity > remainingQuantity) {
+                System.err.println("ReturnController: Số lượng trả (" + quantity + ") vượt quá số lượng còn lại (" + remainingQuantity + ")");
+                return null;
             }
             
-            // Tạo đối tượng Return
+            // Tạo đối tượng Return mới
             Return returnObj = new Return();
-            returnObj.setInvoiceDetail(invoiceDetail);
+            returnObj.setInvoiceDetail(detail);
             returnObj.setQuantity(quantity);
             returnObj.setReason(reason);
+            returnObj.setNotes(notes);
+            returnObj.setStatus("Pending"); // Trạng thái mặc định khi tạo mới
             returnObj.setReturnDate(LocalDateTime.now());
-            returnObj.setStatus("Pending");
             
-            // Thêm ghi chú nếu có
-            if (notes != null && !notes.isEmpty()) {
-                returnObj.setNotes(notes);
-            }
+            // Lưu vào cơ sở dữ liệu
+            System.out.println("ReturnController: Đang lưu đơn trả hàng vào cơ sở dữ liệu...");
+            Return createdReturn = returnService.createReturn(returnObj);
             
-            return returnService.createReturn(returnObj);
+            System.out.println("ReturnController: Đã tạo đơn trả hàng thành công với ID: " + 
+                              (createdReturn != null ? createdReturn.getReturnId() : "null"));
+            
+            return createdReturn;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tạo đơn trả hàng: " + e.getMessage(), e);
+            System.err.println("ReturnController: Lỗi khi tạo đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
     
@@ -206,17 +226,23 @@ public class ReturnController {
     }
     
     /**
-     * Tìm đơn trả hàng theo chi tiết hóa đơn
+     * Lấy danh sách đơn trả hàng theo chi tiết hóa đơn
      * 
      * @param invoiceDetailId ID chi tiết hóa đơn
-     * @return Danh sách đơn trả hàng thuộc chi tiết hóa đơn
+     * @return Danh sách đơn trả hàng
      */
     public List<Return> getReturnsByInvoiceDetail(Integer invoiceDetailId) {
         try {
-            // Giả định có phương thức này trong returnService
+            if (invoiceDetailId == null) {
+                System.out.println("Warning: invoiceDetailId is null in getReturnsByInvoiceDetail");
+                return new ArrayList<>();
+            }
+            
             return returnService.findReturnsByInvoiceDetail(invoiceDetailId);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm đơn trả hàng theo chi tiết hóa đơn: " + e.getMessage(), e);
+            System.err.println("Lỗi khi tìm đơn trả hàng theo chi tiết hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
     
@@ -270,14 +296,42 @@ public class ReturnController {
     /**
      * Xóa đơn trả hàng
      * 
-     * @param returnId ID đơn trả hàng
-     * @return true nếu xóa thành công
+     * @param returnId ID của đơn trả hàng cần xóa
+     * @return true nếu xóa thành công, false nếu thất bại
      */
     public boolean deleteReturn(Integer returnId) {
         try {
-            return returnService.deleteReturn(returnId);
+            System.out.println("ReturnController: Đang xóa đơn trả hàng có ID=" + returnId);
+            
+            if (returnId == null) {
+                System.err.println("ReturnController: ID trả hàng không hợp lệ");
+                return false;
+            }
+            
+            // Lấy thông tin đơn trả hàng để kiểm tra
+            Optional<Return> returnOpt = returnService.findById(returnId);
+            if (!returnOpt.isPresent()) {
+                System.err.println("ReturnController: Không tìm thấy đơn trả hàng có ID=" + returnId);
+                return false;
+            }
+            
+            Return returnObj = returnOpt.get();
+            
+            // Kiểm tra trạng thái đơn trả hàng - chỉ cho phép xóa đơn trả có trạng thái Pending
+            if (!"Pending".equalsIgnoreCase(returnObj.getStatus())) {
+                System.err.println("ReturnController: Không thể xóa đơn trả hàng có trạng thái " + returnObj.getStatus());
+                return false;
+            }
+            
+            // Thực hiện xóa đơn trả hàng
+            boolean result = returnService.deleteReturn(returnId);
+            
+            System.out.println("ReturnController: Kết quả xóa đơn trả hàng: " + (result ? "Thành công" : "Thất bại"));
+            return result;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi xóa đơn trả hàng: " + e.getMessage(), e);
+            System.err.println("ReturnController: Lỗi khi xóa đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
     

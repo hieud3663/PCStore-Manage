@@ -113,16 +113,36 @@ public class ReturnRepository implements Repository<Return, Integer> {
         }
     }
     
+    /**
+     * Xóa đơn trả hàng theo ID
+     * 
+     * @param id ID đơn trả hàng cần xóa
+     * @return true nếu xóa thành công, false nếu thất bại
+     */
     @Override
     public boolean delete(Integer id) {
-        String sql = "DELETE FROM Returns WHERE ReturnID = ?";
-        
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
+        try {
+            System.out.println("ReturnRepository: Đang xóa đơn trả hàng có ID=" + id);
+            
+            if (id == null) {
+                System.err.println("ReturnRepository: ID trả hàng không hợp lệ");
+                return false;
+            }
+            
+            String sql = "DELETE FROM Returns WHERE ReturnID = ?";
+            
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, id);
+                
+                int rowsAffected = statement.executeUpdate();
+                
+                System.out.println("ReturnRepository: Số dòng bị ảnh hưởng khi xóa: " + rowsAffected);
+                return rowsAffected > 0;
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi khi xóa đơn trả hàng", e);
+            System.err.println("ReturnRepository: Lỗi SQL khi xóa đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
     
@@ -190,6 +210,99 @@ public class ReturnRepository implements Repository<Return, Integer> {
             return false;
         } catch (SQLException e) {
             throw new RuntimeException("Lỗi khi kiểm tra tồn tại đơn trả hàng", e);
+        }
+    }
+    
+    /**
+     * Lưu đơn trả hàng vào cơ sở dữ liệu
+     */
+
+    public Return save(Return entity) {
+        try {
+            System.out.println("ReturnRepository: Đang lưu đơn trả hàng vào cơ sở dữ liệu...");
+            
+            if (entity == null) {
+                System.err.println("ReturnRepository: entity là null");
+                return null;
+            }
+            
+            if (entity.getReturnId() == null) {
+                // Đây là thêm mới
+                String sql = "INSERT INTO Returns (InvoiceDetailID, Quantity, Reason, Notes, Status, ReturnDate) "
+                        + "VALUES (?, ?, ?, ?, ?, ?)";
+                
+                try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                    statement.setInt(1, entity.getInvoiceDetail().getInvoiceDetailId());
+                    statement.setInt(2, entity.getQuantity());
+                    statement.setString(3, entity.getReason());
+                    statement.setString(4, entity.getNotes());
+                    statement.setString(5, entity.getStatus());
+                    
+                    // Chuyển đổi LocalDateTime sang java.sql.Timestamp
+                    if (entity.getReturnDate() != null) {
+                        statement.setTimestamp(6, java.sql.Timestamp.valueOf(entity.getReturnDate()));
+                    } else {
+                        statement.setTimestamp(6, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+                    }
+                    
+                    int affectedRows = statement.executeUpdate();
+                    
+                    if (affectedRows > 0) {
+                        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                            if (generatedKeys.next()) {
+                                int returnId = generatedKeys.getInt(1);
+                                entity.setReturnId(returnId);
+                                
+                                System.out.println("ReturnRepository: Lưu thành công, ID=" + returnId);
+                                
+                                return findById(returnId).orElse(entity);
+                            }
+                        }
+                    }
+                    
+                    System.err.println("ReturnRepository: Không có dòng nào được thêm");
+                    return null;
+                }
+            } else {
+                // Cập nhật đơn trả hàng hiện có (nếu có ID)
+                String sql = "UPDATE Returns SET InvoiceDetailID = ?, Quantity = ?, "
+                        + "Reason = ?, Notes = ?, Status = ?, ReturnDate = ? "
+                        + "WHERE ReturnID = ?";
+                
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setInt(1, entity.getInvoiceDetail().getInvoiceDetailId());
+                    statement.setInt(2, entity.getQuantity());
+                    statement.setString(3, entity.getReason());
+                    statement.setString(4, entity.getNotes());
+                    statement.setString(5, entity.getStatus());
+                    
+                    // Chuyển đổi LocalDateTime sang java.sql.Timestamp
+                    if (entity.getReturnDate() != null) {
+                        statement.setTimestamp(6, java.sql.Timestamp.valueOf(entity.getReturnDate()));
+                    } else {
+                        statement.setTimestamp(6, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+                    }
+                    
+                    statement.setInt(7, entity.getReturnId());
+                    
+                    int rowsUpdated = statement.executeUpdate();
+                    if (rowsUpdated > 0) {
+                        System.out.println("ReturnRepository: Cập nhật thành công");
+                        return entity;
+                    }
+                    
+                    System.err.println("ReturnRepository: Không có dòng nào được cập nhật");
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("ReturnRepository: Lỗi SQL khi lưu đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        } catch (Exception e) {
+            System.err.println("ReturnRepository: Lỗi khi lưu đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
     
@@ -425,6 +538,32 @@ public class ReturnRepository implements Repository<Return, Integer> {
         }
         
         return returns;
+    }
+    
+    /**
+     * Lấy tổng số lượng đã trả cho một chi tiết hóa đơn
+     * @param invoiceDetailId ID chi tiết hóa đơn
+     * @return Số lượng đã trả
+     */
+    public int getReturnedQuantityForDetail(Integer invoiceDetailId) {
+        String sql = "SELECT SUM(Quantity) as TotalReturned FROM Returns " +
+                     "WHERE InvoiceDetailID = ? AND (Status = 'Approved' OR Status = 'Completed')";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, invoiceDetailId);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int quantity = resultSet.getInt("TotalReturned");
+                    return resultSet.wasNull() ? 0 : quantity;
+                }
+                return 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy số lượng đã trả cho chi tiết hóa đơn " + 
+                              invoiceDetailId + ": " + e.getMessage());
+            return 0; // Trả về 0 thay vì ném ngoại lệ
+        }
     }
     
     /**

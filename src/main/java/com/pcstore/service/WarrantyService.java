@@ -84,7 +84,7 @@ public class WarrantyService {
         validateBasicInfo(warranty);
         
         // Kiểm tra xem bảo hành đã được sử dụng chưa
-        if (warrantyRepository.isUsed(Integer.parseInt(warranty.getWarrantyId()))) {
+        if (warrantyRepository.isUsed((warranty.getWarrantyId()))) {
             throw new IllegalStateException("Không thể cập nhật bảo hành đã sử dụng");
         }
         
@@ -96,18 +96,24 @@ public class WarrantyService {
      * @param warrantyId Mã bảo hành
      * @return true nếu xóa thành công
      */
-    public boolean deleteWarranty(Integer warrantyId) {
+    public boolean deleteWarranty(String warrantyId) {
         // Kiểm tra tồn tại
         if (!warrantyRepository.exists(warrantyId)) {
             throw new IllegalArgumentException("Bảo hành không tồn tại");
         }
         
-        // Kiểm tra xem bảo hành đã được sử dụng chưa
-        if (warrantyRepository.isUsed(warrantyId)) {
-            throw new IllegalStateException("Không thể xóa bảo hành đã sử dụng");
+        try {
+            // Nếu bảo hành đang được sử dụng, thông báo lỗi
+            if (warrantyRepository.isUsed(warrantyId)) {
+                throw new IllegalStateException("Không thể xóa bảo hành đã sử dụng");
+            }
+            
+            return warrantyRepository.delete(warrantyId);
+        } catch (RuntimeException e) {
+            // Nếu có lỗi khi kiểm tra sử dụng, thử xóa trực tiếp
+            logger.warning("Không thể kiểm tra trạng thái sử dụng, tiến hành xóa trực tiếp: " + e.getMessage());
+            return warrantyRepository.delete(warrantyId);
         }
-        
-        return warrantyRepository.delete(warrantyId);
     }
     
     /**
@@ -236,7 +242,7 @@ public class WarrantyService {
      * @param warrantyId Mã bảo hành
      * @return true nếu đang sử dụng
      */
-    public boolean isWarrantyUsed(Integer warrantyId) {
+    public boolean isWarrantyUsed(String warrantyId) {
         return warrantyRepository.isUsed(warrantyId);
     }
     
@@ -263,6 +269,34 @@ public class WarrantyService {
         
         // Sử dụng factory method từ model Warranty
         return Warranty.createNew(invoiceDetail, LocalDateTime.now(), warrantyMonths, warrantyTerms);
+    }
+
+    
+    /**
+     * Tạo mã bảo hành tiếp theo dựa trên mã cao nhất trong CSDL
+     * @return Mã bảo hành mới
+     */
+    public String generateNextWarrantyId() {
+        
+        List<Warranty> warranties = getAllWarranties();
+        int maxId = 0;
+        
+        for (Warranty warranty : warranties) {
+            try {
+                if (warranty.getWarrantyId() != null && warranty.getWarrantyId().startsWith("BH")) {
+                    int id = Integer.parseInt(warranty.getWarrantyId().substring(2));
+                    if (id > maxId) {
+                        maxId = id;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Bỏ qua các mã không hợp lệ
+            }
+        }
+        
+        // Tạo mã mới tăng 1 đơn vị và định dạng với số 0 phía trước
+        int nextId = maxId + 1;
+        return String.format("BH%03d", nextId);
     }
     
     /**

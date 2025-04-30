@@ -12,6 +12,7 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
     private Product product;
     private int quantity;
     private BigDecimal unitPrice;
+    private Supplier supplier;
 
     @Override
     public Object getId() {
@@ -79,6 +80,13 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
             purchaseOrder.updateTotalAmount();
         }
     }
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
+    }
+    public Supplier getSupplier() {
+        return supplier;
+    }
+   
     
     // Phương thức tính thành tiền của chi tiết đơn nhập
     public BigDecimal getSubtotal() {

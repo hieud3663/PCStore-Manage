@@ -28,7 +28,7 @@ import com.pcstore.view.PurchaseOrderForm;
 /**
  * Controller để quản lý việc nhập hàng
  */
-public class StockInController {
+public class PurchaseOrderController {
     private PurchaseOrderForm purchaseOrderForm;
     private PurchaseOrderRepository purchaseOrderRepository;
     private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
@@ -47,7 +47,7 @@ public class StockInController {
      * @param purchaseOrderForm Form nhập hàng
      * @param sharedConnection Kết nối database dùng chung
      */
-    public StockInController(PurchaseOrderForm purchaseOrderForm, Connection sharedConnection) {
+    public PurchaseOrderController(PurchaseOrderForm purchaseOrderForm, Connection sharedConnection) {
         this.purchaseOrderForm = purchaseOrderForm;
         
         try {
@@ -220,46 +220,186 @@ public class StockInController {
         try {
             // Đảm bảo kết nối
             ensureConnection();
-            
+    
             System.out.println("StockInController: Đang tải sản phẩm...");
             List<Product> products = productRepository.findAll();
-            
-            if (products == null) {
-                System.out.println("StockInController: Danh sách sản phẩm là null");
+    
+            if (products == null || products.isEmpty()) {
+                System.out.println("StockInController: Không có sản phẩm nào để hiển thị");
                 products = new ArrayList<>();
             } else {
                 System.out.println("StockInController: Đã tìm thấy " + products.size() + " sản phẩm");
             }
-            
+    
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) purchaseOrderForm.getTableProducts().getModel();
-            
+    
             // Xóa dữ liệu cũ
             model.setRowCount(0);
-            
+    
             // Thêm dữ liệu mới
             for (Product product : products) {
                 try {
-                    String categoryName = product.getCategory() != null ? product.getCategory().getCategoryName() : "Chưa phân loại";
-                    model.addRow(new Object[] {
-                        product.getProductId(),
-                        product.getProductName(),
-                        categoryName,
-                        product.getStockQuantity(),
-                        product.getPrice()
+                    // Lấy thông tin cần thiết từ Product
+                    String productId = product.getProductId();
+                    String productName = product.getProductName();
+                    int stockQuantity = product.getStockQuantity();
+                    BigDecimal price = product.getPrice();
+    
+                    // Thêm vào bảng, nhưng để trống cột nhà cung cấp và cột xác nhận
+                    model.addRow(new Object[] { 
+                        productId, 
+                        productName, 
+                        null,  // Cột nhà cung cấp sẽ là ComboBox
+                        stockQuantity, 
+                        price,
+                        null   // Cột xác nhận sẽ được renderer đặc biệt xử lý
                     });
                 } catch (Exception e) {
-                    System.err.println("Lỗi khi thêm sản phẩm " + product.getProductId() + " vào bảng: " + e.getMessage());
+                    System.err.println("Lỗi khi thêm sản phẩm vào bảng: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
-            
+    
             System.out.println("StockInController: Đã cập nhật bảng sản phẩm thành công với " + products.size() + " sản phẩm");
         } catch (Exception e) {
             System.err.println("Lỗi khi tải danh sách sản phẩm: " + e.getMessage());
             e.printStackTrace();
         }
     }
+    public void addProductToCartByRow(int row) {
+        if (row < 0 || row >= purchaseOrderForm.getTableProducts().getRowCount()) {
+            return;
+        }
+        
+        try {
+            // Lấy thông tin sản phẩm được chọn
+            String productId = purchaseOrderForm.getTableProducts().getValueAt(row, 0).toString();
+            
+            // Lấy nhà cung cấp đã chọn trong ComboBox
+            Supplier supplier = purchaseOrderForm.getSelectedSupplierForRow(row);
+            
+            if (supplier == null) {
+                JOptionPane.showMessageDialog(purchaseOrderForm, 
+                    "Vui lòng chọn nhà cung cấp trước khi thêm sản phẩm", 
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            // Kiểm tra sản phẩm đã tồn tại trong phiếu chưa
+            for (PurchaseOrderDetail detail : selectedProducts) {
+                if (detail.getProduct().getProductId().equals(productId)) {
+                    int choice = JOptionPane.showConfirmDialog(purchaseOrderForm, 
+                            "Sản phẩm này đã được thêm vào phiếu nhập. Bạn có muốn cập nhật số lượng không?",
+                            "Thông báo", JOptionPane.YES_NO_OPTION);
+                    
+                    if (choice == JOptionPane.YES_OPTION) {
+                        // Cập nhật số lượng
+                        String quantityStr = JOptionPane.showInputDialog(purchaseOrderForm, 
+                                "Nhập số lượng mới:", 
+                                detail.getQuantity());
+                        
+                        if (quantityStr != null && !quantityStr.isEmpty()) {
+                            try {
+                                int newQuantity = Integer.parseInt(quantityStr);
+                                if (newQuantity > 0) {
+                                    detail.setQuantity(newQuantity);
+                                    updateSelectedProductsTable();
+                                    updateTotalAmount();
+                                } else {
+                                    JOptionPane.showMessageDialog(purchaseOrderForm, 
+                                            "Số lượng phải lớn hơn 0",
+                                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(purchaseOrderForm, 
+                                        "Số lượng không hợp lệ",
+                                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
+                    return;
+                }
+            }
+            
+            // Lấy thông tin chi tiết sản phẩm từ repository
+            ensureConnection();
+            Product product = productRepository.findById(productId).orElse(null);
+            
+            if (product != null) {
+                // Hiển thị dialog để nhập số lượng và đơn giá
+                String quantityStr = JOptionPane.showInputDialog(purchaseOrderForm, 
+                        "Nhập số lượng:", "1");
+                
+                if (quantityStr == null || quantityStr.isEmpty()) return; // Người dùng đã hủy
+                
+                int quantity;
+                try {
+                    quantity = Integer.parseInt(quantityStr);
+                    if (quantity <= 0) {
+                        JOptionPane.showMessageDialog(purchaseOrderForm, 
+                                "Số lượng phải lớn hơn 0",
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(purchaseOrderForm, 
+                            "Số lượng không hợp lệ",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                String priceStr = JOptionPane.showInputDialog(purchaseOrderForm, 
+                        "Nhập đơn giá:", product.getPrice().toString());
+                
+                if (priceStr == null || priceStr.isEmpty()) return; // Người dùng đã hủy
+                
+                BigDecimal price;
+                try {
+                    price = new BigDecimal(priceStr);
+                    if (price.compareTo(BigDecimal.ZERO) <= 0) {
+                        JOptionPane.showMessageDialog(purchaseOrderForm, 
+                                "Đơn giá phải lớn hơn 0",
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(purchaseOrderForm, 
+                            "Đơn giá không hợp lệ",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                // Tạo chi tiết phiếu nhập mới
+                PurchaseOrderDetail detail = new PurchaseOrderDetail();
+                detail.setProduct(product);
+                detail.setQuantity(quantity);
+                detail.setUnitPrice(price);
+                detail.setSupplier(supplier);
+                
+                // Thêm vào danh sách
+                selectedProducts.add(detail);
+                
+                // Cập nhật bảng sản phẩm đã chọn
+                updateSelectedProductsTable();
+                
+                // Cập nhật tổng tiền
+                updateTotalAmount();
+                
+                System.out.println("Đã thêm sản phẩm " + product.getProductName() + " vào giỏ hàng");
+            } else {
+                JOptionPane.showMessageDialog(purchaseOrderForm, 
+                        "Không tìm thấy thông tin sản phẩm",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(purchaseOrderForm, 
+                    "Lỗi khi thêm sản phẩm vào phiếu nhập: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
     
     /**
      * Tải danh sách nhà cung cấp
@@ -271,13 +411,8 @@ public class StockInController {
             
             List<Supplier> suppliers = supplierRepository.findAll();
             
-            // Xóa tất cả các item cũ
-            purchaseOrderForm.getComboBoxSupplier().removeAllItems();
-            
-            // Thêm các nhà cung cấp vào combobox
-            for (Supplier supplier : suppliers) {
-                purchaseOrderForm.getComboBoxSupplier().addItem(supplier);
-            }
+            // Cập nhật ComboBox trong PurchaseOrderForm
+            purchaseOrderForm.updateSupplierComboBoxes(suppliers);
             
             System.out.println("StockInController: Đã tải " + suppliers.size() + " nhà cung cấp");
         } catch (Exception e) {
@@ -518,12 +653,10 @@ public class StockInController {
             // Thêm các sản phẩm đã chọn vào bảng
             for (PurchaseOrderDetail detail : selectedProducts) {
                 try {
-                    BigDecimal subtotal = detail.getUnitPrice().multiply(BigDecimal.valueOf(detail.getQuantity()));
-                    
                     model.addRow(new Object[]{
                         detail.getProduct().getProductId(),
                         detail.getProduct().getProductName(),
-                        detail.getProduct().getCategory() != null ? detail.getProduct().getCategory().getCategoryName() : "",
+                        detail.getSupplier().getName(), // Hiển thị tên nhà cung cấp
                         detail.getQuantity(),
                         detail.getUnitPrice()
                     });

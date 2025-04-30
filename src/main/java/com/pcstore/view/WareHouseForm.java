@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
@@ -20,6 +21,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import com.pcstore.controller.WareHouseController;
+import com.pcstore.utils.DatabaseConnection;
 
 /**
  *
@@ -207,12 +209,30 @@ public class WareHouseForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private void btnCreatePurchaseOrderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCreatePurchaseOrderMouseClicked
+    private void btnCreatePurchaseOrderMouseClicked(java.awt.event.MouseEvent evt) {
+    try {
+        // Lấy instance của DashboardForm
         DashboardForm dashboardForm = DashboardForm.getInstance();
-        PurchaseOrderForm purchaseOrderForm = new PurchaseOrderForm(dashboardForm, true);
-        purchaseOrderForm.setLocationRelativeTo(purchaseOrderForm);
-        purchaseOrderForm.setVisible(true);
+        if (dashboardForm == null) {
+            JOptionPane.showMessageDialog(this, "DashboardForm chưa được khởi tạo!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
+        // Lấy kết nối cơ sở dữ liệu
+        Connection connection = DatabaseConnection.getInstance().getConnection();
+        if (connection == null || connection.isClosed()) {
+            JOptionPane.showMessageDialog(this, "Không thể kết nối cơ sở dữ liệu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Khởi tạo PurchaseOrderForm
+        PurchaseOrderForm purchaseOrderForm = new PurchaseOrderForm(dashboardForm, true, connection);
+        purchaseOrderForm.setLocationRelativeTo(this);
+        purchaseOrderForm.setVisible(true);
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi mở form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnCreatePurchaseOrderMouseClicked
 
     private void btnHistoryStockInMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHistoryStockInMouseClicked

@@ -242,7 +242,7 @@ public void deleteProduct(String productId) {
     private void createPurchaseOrder() {
         try {
             DashboardForm dashboardForm = DashboardForm.getInstance();
-            PurchaseOrderForm purchaseOrderForm = new PurchaseOrderForm(dashboardForm, true);
+            PurchaseOrderForm purchaseOrderForm = new PurchaseOrderForm(dashboardForm, true , connection);
             purchaseOrderForm.setLocationRelativeTo(dashboardForm);
             purchaseOrderForm.setVisible(true);
             

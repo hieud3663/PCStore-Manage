@@ -42,12 +42,12 @@ public class CustomerForm extends javax.swing.JPanel {
         panelHeader = new javax.swing.JPanel();
         lableTitle = new javax.swing.JLabel();
         panelAction = new javax.swing.JPanel();
-        btnAddCustomer = new com.k33ptoo.components.KButton();
+        btnAdd = new com.k33ptoo.components.KButton();
         btnUpdate = new com.k33ptoo.components.KButton();
-        btnDeleteCustomer = new com.k33ptoo.components.KButton();
+        btnDelete = new com.k33ptoo.components.KButton();
         btnRefresh = new com.k33ptoo.components.KButton();
         panelExport = new javax.swing.JPanel();
-        btnExportExcel = new javax.swing.JButton();
+        btnExportExcel = new com.k33ptoo.components.KButton();
         panelInfoDetail = new javax.swing.JPanel();
         panelCustomerID = new javax.swing.JPanel();
         labelCustomerID = new javax.swing.JLabel();
@@ -67,12 +67,10 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCreateAt = new javax.swing.JPanel();
         labelCreateAt = new javax.swing.JLabel();
         txtCreateAt = new javax.swing.JTextField();
-        panelCustomerGender = new javax.swing.JPanel();
-        labelCustomerGender = new javax.swing.JLabel();
-        txtCustomerGender = new javax.swing.JTextField();
         panelCustomerPoint = new javax.swing.JPanel();
         labelCustomerPoint = new javax.swing.JLabel();
         txtCustomerPoint = new javax.swing.JTextField();
+        panelCustomerGender = new javax.swing.JPanel();
         panelEmpty = new javax.swing.JPanel();
         labelESC = new javax.swing.JLabel();
         panelSort = new javax.swing.JPanel();
@@ -94,7 +92,7 @@ public class CustomerForm extends javax.swing.JPanel {
         panelHeader.setLayout(new java.awt.BorderLayout());
 
         lableTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        lableTitle.setForeground(new java.awt.Color(0, 51, 204));
+        lableTitle.setForeground(new java.awt.Color(30, 113, 195));
         lableTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lableTitle.setText(bundle.getString("lbMenuCustomer")); // NOI18N
@@ -106,56 +104,68 @@ public class CustomerForm extends javax.swing.JPanel {
         panelAction.setPreferredSize(new java.awt.Dimension(1197, 60));
         panelAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        btnAddCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-add_2.png"))); // NOI18N
-        btnAddCustomer.setText(bundle.getString("btnAddCustomer")); // NOI18N
-        btnAddCustomer.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        btnAddCustomer.setIconTextGap(15);
-        btnAddCustomer.setkBorderRadius(30);
-        btnAddCustomer.setkEndColor(new java.awt.Color(0, 255, 51));
-        btnAddCustomer.setkHoverEndColor(new java.awt.Color(0, 204, 255));
-        btnAddCustomer.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAddCustomer.setkHoverStartColor(new java.awt.Color(0, 204, 255));
-        btnAddCustomer.setkStartColor(new java.awt.Color(0, 204, 255));
-        btnAddCustomer.setPreferredSize(new java.awt.Dimension(185, 35));
-        panelAction.add(btnAddCustomer);
+        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-add_2.png"))); // NOI18N
+        btnAdd.setText(bundle.getString("btnAddCustomer")); // NOI18N
+        btnAdd.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnAdd.setIconTextGap(15);
+        btnAdd.setkAllowGradient(false);
+        btnAdd.setkBackGroundColor(new java.awt.Color(26, 162, 106));
+        btnAdd.setkBorderRadius(20);
+        btnAdd.setkEndColor(new java.awt.Color(0, 255, 51));
+        btnAdd.setkHoverColor(new java.awt.Color(26, 190, 62));
+        btnAdd.setkHoverEndColor(new java.awt.Color(0, 204, 255));
+        btnAdd.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAdd.setkHoverStartColor(new java.awt.Color(0, 204, 255));
+        btnAdd.setkStartColor(new java.awt.Color(0, 204, 255));
+        btnAdd.setPreferredSize(new java.awt.Dimension(185, 35));
+        panelAction.add(btnAdd);
 
         btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-pen.png"))); // NOI18N
         btnUpdate.setText(bundle.getString("btnUpdate")); // NOI18N
         btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         btnUpdate.setIconTextGap(15);
-        btnUpdate.setkBorderRadius(30);
+        btnUpdate.setkAllowGradient(false);
+        btnUpdate.setkBackGroundColor(new java.awt.Color(86, 167, 233));
+        btnUpdate.setkBorderRadius(20);
         btnUpdate.setkEndColor(new java.awt.Color(0, 153, 153));
+        btnUpdate.setkHoverColor(new java.awt.Color(122, 196, 235));
         btnUpdate.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnUpdate.setkHoverStartColor(new java.awt.Color(102, 102, 255));
         btnUpdate.setPreferredSize(new java.awt.Dimension(185, 35));
         panelAction.add(btnUpdate);
 
-        btnDeleteCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
-        btnDeleteCustomer.setText(bundle.getString("btnDeleteCustomer")); // NOI18N
-        btnDeleteCustomer.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
-        btnDeleteCustomer.setIconTextGap(15);
-        btnDeleteCustomer.setkBorderRadius(30);
-        btnDeleteCustomer.setkEndColor(new java.awt.Color(255, 102, 51));
-        btnDeleteCustomer.setkHoverEndColor(new java.awt.Color(255, 0, 51));
-        btnDeleteCustomer.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDeleteCustomer.setkHoverStartColor(new java.awt.Color(255, 102, 0));
-        btnDeleteCustomer.setkStartColor(new java.awt.Color(255, 0, 51));
-        btnDeleteCustomer.setLabel(bundle.getString("btnDeleteCustomer")); // NOI18N
-        btnDeleteCustomer.setPreferredSize(new java.awt.Dimension(185, 35));
-        btnDeleteCustomer.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
-        panelAction.add(btnDeleteCustomer);
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
+        btnDelete.setText(bundle.getString("btnDeleteCustomer")); // NOI18N
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnDelete.setIconTextGap(5);
+        btnDelete.setkAllowGradient(false);
+        btnDelete.setkBackGroundColor(new java.awt.Color(226, 21, 29));
+        btnDelete.setkBorderRadius(20);
+        btnDelete.setkEndColor(new java.awt.Color(255, 102, 51));
+        btnDelete.setkHoverColor(new java.awt.Color(252, 83, 0));
+        btnDelete.setkHoverEndColor(new java.awt.Color(255, 0, 51));
+        btnDelete.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnDelete.setkHoverStartColor(new java.awt.Color(255, 102, 0));
+        btnDelete.setkStartColor(new java.awt.Color(255, 0, 51));
+        btnDelete.setMinimumSize(new java.awt.Dimension(140, 25));
+        btnDelete.setPreferredSize(new java.awt.Dimension(140, 35));
+        btnDelete.setPressedIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
+        panelAction.add(btnDelete);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
         btnRefresh.setText(bundle.getString("btnRefresh")); // NOI18N
         btnRefresh.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         btnRefresh.setIconTextGap(20);
-        btnRefresh.setkBorderRadius(30);
+        btnRefresh.setkAllowGradient(false);
+        btnRefresh.setkBackGroundColor(new java.awt.Color(144, 194, 244));
+        btnRefresh.setkBorderRadius(20);
         btnRefresh.setkEndColor(new java.awt.Color(153, 204, 255));
+        btnRefresh.setkHoverColor(new java.awt.Color(144, 206, 245));
         btnRefresh.setkHoverEndColor(new java.awt.Color(102, 204, 255));
         btnRefresh.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnRefresh.setkHoverStartColor(new java.awt.Color(102, 204, 255));
         btnRefresh.setkStartColor(new java.awt.Color(153, 204, 255));
-        btnRefresh.setPreferredSize(new java.awt.Dimension(185, 35));
+        btnRefresh.setPreferredSize(new java.awt.Dimension(140, 35));
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRefreshActionPerformed(evt);
@@ -168,25 +178,22 @@ public class CustomerForm extends javax.swing.JPanel {
         panelExport.setPreferredSize(new java.awt.Dimension(350, 35));
         panelExport.setLayout(new java.awt.BorderLayout());
 
-        btnExportExcel.setBackground(new java.awt.Color(30, 113, 69));
-        btnExportExcel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnExportExcel.setForeground(new java.awt.Color(255, 255, 255));
-        btnExportExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/excel.png"))); // NOI18N
+        btnExportExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/xls.png"))); // NOI18N
         btnExportExcel.setText(bundle.getString("btnExportExcel")); // NOI18N
-        btnExportExcel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnExportExcel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExportExcelActionPerformed(evt);
-            }
-        });
-        panelExport.add(btnExportExcel, java.awt.BorderLayout.EAST);
+        btnExportExcel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnExportExcel.setkAllowGradient(false);
+        btnExportExcel.setkBackGroundColor(new java.awt.Color(26, 176, 114));
+        btnExportExcel.setkHoverColor(new java.awt.Color(26, 204, 89));
+        btnExportExcel.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnExportExcel.setPreferredSize(new java.awt.Dimension(120, 45));
+        panelExport.add(btnExportExcel, java.awt.BorderLayout.LINE_END);
 
         panelAction.add(panelExport);
 
         add(panelAction);
 
         panelInfoDetail.setBackground(new java.awt.Color(255, 255, 255));
-        panelInfoDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetails"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelInfoDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetails"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14), new java.awt.Color(30, 113, 195))); // NOI18N
         panelInfoDetail.setPreferredSize(new java.awt.Dimension(400, 200));
         panelInfoDetail.setLayout(new java.awt.GridLayout(4, 3, 30, 23));
 
@@ -199,7 +206,8 @@ public class CustomerForm extends javax.swing.JPanel {
         labelCustomerID.setPreferredSize(new java.awt.Dimension(120, 16));
         panelCustomerID.add(labelCustomerID, java.awt.BorderLayout.LINE_START);
 
-        txtCustomerID.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerID.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        txtCustomerID.setForeground(new java.awt.Color(30, 113, 195));
         txtCustomerID.setBorder(null);
         txtCustomerID.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCustomerID.setEnabled(false);
@@ -219,6 +227,7 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCustomerPhone.add(labelCustmerPhone, java.awt.BorderLayout.LINE_START);
 
         txtCustomerPhone.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerPhone.setForeground(new java.awt.Color(30, 113, 195));
         txtCustomerPhone.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCustomerPhone.setOpaque(true);
         txtCustomerPhone.setPreferredSize(new java.awt.Dimension(100, 2));
@@ -236,7 +245,9 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCreateUpdate.add(labeCreateUpdate, java.awt.BorderLayout.LINE_START);
 
         txtCreateUpdate.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCreateUpdate.setForeground(new java.awt.Color(30, 113, 195));
         txtCreateUpdate.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtCreateUpdate.setEnabled(false);
         txtCreateUpdate.setOpaque(true);
         txtCreateUpdate.setPreferredSize(new java.awt.Dimension(100, 2));
         panelCreateUpdate.add(txtCreateUpdate, java.awt.BorderLayout.CENTER);
@@ -253,6 +264,7 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCustomerName.add(labelCustomerName, java.awt.BorderLayout.LINE_START);
 
         txtCustomerName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerName.setForeground(new java.awt.Color(30, 113, 195));
         txtCustomerName.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCustomerName.setOpaque(true);
         txtCustomerName.setPreferredSize(new java.awt.Dimension(100, 2));
@@ -270,6 +282,7 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCustomerEmail.add(labelCustomerEmail, java.awt.BorderLayout.LINE_START);
 
         txtCustomerEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerEmail.setForeground(new java.awt.Color(30, 113, 195));
         txtCustomerEmail.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCustomerEmail.setOpaque(true);
         txtCustomerEmail.setPreferredSize(new java.awt.Dimension(100, 2));
@@ -287,29 +300,14 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCreateAt.add(labelCreateAt, java.awt.BorderLayout.LINE_START);
 
         txtCreateAt.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCreateAt.setForeground(new java.awt.Color(30, 113, 195));
         txtCreateAt.setDisabledTextColor(new java.awt.Color(0, 0, 0));
+        txtCreateAt.setEnabled(false);
         txtCreateAt.setOpaque(true);
         txtCreateAt.setPreferredSize(new java.awt.Dimension(100, 2));
         panelCreateAt.add(txtCreateAt, java.awt.BorderLayout.CENTER);
 
         panelInfoDetail.add(panelCreateAt);
-
-        panelCustomerGender.setOpaque(false);
-        panelCustomerGender.setLayout(new java.awt.BorderLayout(15, 0));
-
-        labelCustomerGender.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        labelCustomerGender.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        labelCustomerGender.setText(bundle.getString("lbGender")); // NOI18N
-        labelCustomerGender.setPreferredSize(new java.awt.Dimension(120, 16));
-        panelCustomerGender.add(labelCustomerGender, java.awt.BorderLayout.LINE_START);
-
-        txtCustomerGender.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        txtCustomerGender.setDisabledTextColor(new java.awt.Color(0, 0, 0));
-        txtCustomerGender.setOpaque(true);
-        txtCustomerGender.setPreferredSize(new java.awt.Dimension(100, 2));
-        panelCustomerGender.add(txtCustomerGender, java.awt.BorderLayout.CENTER);
-
-        panelInfoDetail.add(panelCustomerGender);
 
         panelCustomerPoint.setOpaque(false);
         panelCustomerPoint.setLayout(new java.awt.BorderLayout(15, 0));
@@ -321,12 +319,17 @@ public class CustomerForm extends javax.swing.JPanel {
         panelCustomerPoint.add(labelCustomerPoint, java.awt.BorderLayout.LINE_START);
 
         txtCustomerPoint.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtCustomerPoint.setForeground(new java.awt.Color(30, 113, 195));
         txtCustomerPoint.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         txtCustomerPoint.setOpaque(true);
         txtCustomerPoint.setPreferredSize(new java.awt.Dimension(100, 2));
         panelCustomerPoint.add(txtCustomerPoint, java.awt.BorderLayout.CENTER);
 
         panelInfoDetail.add(panelCustomerPoint);
+
+        panelCustomerGender.setOpaque(false);
+        panelCustomerGender.setLayout(new java.awt.BorderLayout(15, 0));
+        panelInfoDetail.add(panelCustomerGender);
 
         panelEmpty.setOpaque(false);
         panelEmpty.setLayout(new java.awt.BorderLayout(15, 0));
@@ -345,6 +348,7 @@ public class CustomerForm extends javax.swing.JPanel {
         panelSort.setPreferredSize(new java.awt.Dimension(1197, 70));
         panelSort.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 20));
 
+        textFieldSearch.setForeground(new java.awt.Color(30, 113, 195));
         textFieldSearch.setPreferredSize(new java.awt.Dimension(450, 31));
         panelSort.add(textFieldSearch);
 
@@ -372,7 +376,7 @@ public class CustomerForm extends javax.swing.JPanel {
         add(panelSort);
 
         panelListCustomer.setBackground(new java.awt.Color(255, 255, 255));
-        panelListCustomer.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("txtListCustomer"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelListCustomer.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("txtListCustomer"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14), new java.awt.Color(30, 113, 195))); // NOI18N
         panelListCustomer.setMinimumSize(new java.awt.Dimension(1197, 200));
         panelListCustomer.setOpaque(false);
         panelListCustomer.setPreferredSize(new java.awt.Dimension(1197, 400));
@@ -425,18 +429,14 @@ public class CustomerForm extends javax.swing.JPanel {
 
     }
 
-    private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportExcelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnExportExcelActionPerformed
-
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnRefreshActionPerformed
-
     private void btnResetSortMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetSortMouseClicked
         cbbSortCustomer.setSelectedIndex(0);
         cbbSort.setSelectedIndex(0);
     }//GEN-LAST:event_btnResetSortMouseClicked
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
     
     public TableRowSorter<TableModel> getTableListCustomerSorter() {
@@ -444,11 +444,11 @@ public class CustomerForm extends javax.swing.JPanel {
     }
 
     public com.k33ptoo.components.KButton getBtnAddCustomer() {
-        return btnAddCustomer;
+        return btnAdd;
     }
 
     public com.k33ptoo.components.KButton getBtnDeleteCustomer() {
-        return btnDeleteCustomer;
+        return btnDelete;
     }
 
     public javax.swing.JButton getBtnExportExcel() {
@@ -495,9 +495,6 @@ public class CustomerForm extends javax.swing.JPanel {
         return txtCustomerEmail;
     }
 
-    public javax.swing.JTextField getTxtCustomerGender() {
-        return txtCustomerGender;
-    }
 
     public javax.swing.JTextField getTxtCustomerID() {
         return txtCustomerID;
@@ -524,9 +521,9 @@ public class CustomerForm extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAddCustomer;
-    private com.k33ptoo.components.KButton btnDeleteCustomer;
-    private javax.swing.JButton btnExportExcel;
+    private com.k33ptoo.components.KButton btnAdd;
+    private com.k33ptoo.components.KButton btnDelete;
+    private com.k33ptoo.components.KButton btnExportExcel;
     private com.k33ptoo.components.KButton btnRefresh;
     private javax.swing.JButton btnResetSort;
     private com.k33ptoo.components.KButton btnUpdate;
@@ -536,7 +533,6 @@ public class CustomerForm extends javax.swing.JPanel {
     private javax.swing.JLabel labelCreateAt;
     private javax.swing.JLabel labelCustmerPhone;
     private javax.swing.JLabel labelCustomerEmail;
-    private javax.swing.JLabel labelCustomerGender;
     private javax.swing.JLabel labelCustomerID;
     private javax.swing.JLabel labelCustomerName;
     private javax.swing.JLabel labelCustomerPoint;
@@ -564,7 +560,6 @@ public class CustomerForm extends javax.swing.JPanel {
     private javax.swing.JTextField txtCreateAt;
     private javax.swing.JTextField txtCreateUpdate;
     private javax.swing.JTextField txtCustomerEmail;
-    private javax.swing.JTextField txtCustomerGender;
     private javax.swing.JTextField txtCustomerID;
     private javax.swing.JTextField txtCustomerName;
     private javax.swing.JTextField txtCustomerPhone;

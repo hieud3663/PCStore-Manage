@@ -2,7 +2,9 @@ package com.pcstore.service;
 
 import com.pcstore.model.User;
 import com.pcstore.repository.impl.UserRepository;
+
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +14,6 @@ import java.util.Optional;
  */
 public class UserService {
     private final UserRepository userRepository;
-    
     /**
      * Khởi tạo service với repository
      * @param connection Kết nối đến database
@@ -38,13 +39,25 @@ public class UserService {
     public User authenticate(String username, String password) {
         User user = userRepository.authenticate(username, password);
         if (user != null) {
-            // Cập nhật thời gian đăng nhập cuối cùng
             user.updateLastLogin();
             userRepository.update(user);
-            
+        }
+        return user;
+
+    }
+
+
+    public User saveUser(User user) {
+        if (userRepository.exists(user.getUsername())) {
+            throw new IllegalArgumentException("Username " + user.getUsername() + " existed");
         }
         
-        return user;
+        validateUserBasicInfo(user);
+        
+        String newUserId = userRepository.generateUserId();
+        user.setUserId(newUserId);
+        
+        return userRepository.save(user);
     }
     
     /**
@@ -58,7 +71,6 @@ public class UserService {
             throw new IllegalArgumentException("Tên đăng nhập " + user.getUsername() + " đã tồn tại");
         }
         
-        // Kiểm tra thông tin cơ bản
         validateUserBasicInfo(user);
         
         return userRepository.add(user);
@@ -70,12 +82,10 @@ public class UserService {
      * @return Người dùng đã được cập nhật
      */
     public User updateUser(User user) {
-        // Kiểm tra tồn tại
         if (!userRepository.exists(user.getUsername())) {
             throw new IllegalArgumentException("Người dùng với tên đăng nhập " + user.getUsername() + " không tồn tại");
         }
         
-        // Kiểm tra thông tin cơ bản
         validateUserBasicInfo(user);
         
         return userRepository.update(user);
@@ -88,12 +98,10 @@ public class UserService {
      * @return true nếu cập nhật thành công
      */
     public boolean updatePassword(String username, String newPassword) {
-        // Kiểm tra tồn tại
         if (!userRepository.exists(username)) {
             throw new IllegalArgumentException("Người dùng với tên đăng nhập " + username + " không tồn tại");
         }
         
-        // Kiểm tra mật khẩu mới
         if (newPassword == null || newPassword.trim().isEmpty()) {
             throw new IllegalArgumentException("Mật khẩu mới không được để trống");
         }
@@ -106,11 +114,12 @@ public class UserService {
     
     /**
      * Xóa người dùng
-     * @param username Tên đăng nhập
+     * @param userId ID của người dùng cần xóa
      * @return true nếu xóa thành công
      */
-    public boolean deleteUser(String username) {
-        return userRepository.delete(username);
+    public boolean deleteUser(String userId) {
+        // Đoạn code này giả định rằng userId là username
+        return userRepository.delete(userId);
     }
     
     /**
@@ -119,7 +128,17 @@ public class UserService {
      * @return Optional người dùng
      */
     public Optional<User> findUserByUsername(String username) {
-        return userRepository.findById(username);
+        return userRepository.findByIdOrUsername(username);
+    }
+    
+    /**
+     * Tìm người dùng theo ID
+     * @param userId ID của người dùng
+     * @return Optional người dùng
+     * @throws SQLException Nếu có lỗi khi truy vấn database
+     */
+    public Optional<User> getUserById(String userId) throws SQLException {
+        return userRepository.findByIdOrUsername(userId);
     }
     
     /**
@@ -134,8 +153,9 @@ public class UserService {
     /**
      * Lấy danh sách tất cả người dùng
      * @return Danh sách người dùng
+     * @throws SQLException Nếu có lỗi khi truy vấn database
      */
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers() throws SQLException {
         return userRepository.findAll();
     }
     
@@ -204,5 +224,25 @@ public class UserService {
         if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("Mật khẩu không được để trống");
         }
+    }
+
+    /**
+     * Kiểm tra xem người dùng có tồn tại hay không
+     * @param username Tên đăng nhập cần kiểm tra
+     * @return true nếu username đã tồn tại, false nếu chưa tồn tại
+     */
+    public boolean isUsernameExists(String username) {
+        return userRepository.exists(username);
+    }
+
+    //generate id
+    public String generateUserId() {
+        return userRepository.generateUserId();
+    }
+    
+    //Tìm email
+    public Optional<User> findUserByEmail(String email) {
+        
+        return userRepository.findByEmail(email);
     }
 }

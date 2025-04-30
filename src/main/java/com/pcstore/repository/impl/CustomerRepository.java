@@ -242,6 +242,7 @@ public class CustomerRepository implements Repository<Customer, String> {
         customer.setPoints(resultSet.getInt("Point"));
         customer.setAddress(resultSet.getString("Address"));
         customer.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
+        customer.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
         
         // Không cần phải load invoices và repairServices ở đây
         // Chúng sẽ được load khi cần thông qua InvoiceRepository và RepairServiceRepository

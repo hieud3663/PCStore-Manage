@@ -87,10 +87,10 @@ public class TextFieldSearch extends javax.swing.JPanel {
         btnSearch.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         btnSearch.setIconTextGap(15);
         btnSearch.setkBorderRadius(30);
-        btnSearch.setkEndColor(new java.awt.Color(153, 255, 153));
+        btnSearch.setkEndColor(new java.awt.Color(30, 113, 195));
         btnSearch.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnSearch.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnSearch.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnSearch.setkStartColor(new java.awt.Color(30, 113, 195));
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSearchActionPerformed(evt);
@@ -144,13 +144,6 @@ public class TextFieldSearch extends javax.swing.JPanel {
         this.kPanelFieldSearch = kPanelFieldSearch;
     }
     
-//    public void setPlaceHolder(String text) {
-//        placeHolder(txtSearchField, text);
-//    }
-
-
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnSearch;
     private com.k33ptoo.components.KGradientPanel kPanelFieldSearch;

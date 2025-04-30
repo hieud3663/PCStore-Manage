@@ -1,4 +1,4 @@
-CREATE TRIGGER trg_GenerateUserID
+CREATE OR ALTER TRIGGER trg_GenerateUserID
 ON Users
 INSTEAD OF INSERT
 AS
@@ -11,14 +11,15 @@ BEGIN
         Username NVARCHAR(50),
         PasswordHash NVARCHAR(255),
         EmployeeID VARCHAR(10),
+        RoleID INT,
         IsActive BIT,
         LastLogin DATETIME,
         CreatedAt DATETIME
     );
     
     -- Đưa dữ liệu vào bảng tạm
-    INSERT INTO @InsertedUsers (Username, PasswordHash, EmployeeID, IsActive, LastLogin, CreatedAt)
-    SELECT Username, PasswordHash, EmployeeID, IsActive, LastLogin, CreatedAt
+    INSERT INTO @InsertedUsers (Username, PasswordHash, EmployeeID, RoleID, IsActive, LastLogin, CreatedAt)
+    SELECT Username, PasswordHash, EmployeeID, RoleID, IsActive, LastLogin, CreatedAt
     FROM inserted;
     
     -- Lấy ID tiếp theo
@@ -27,9 +28,9 @@ BEGIN
     FROM Users;
     
     -- Thêm dữ liệu với ID đã tạo
-    INSERT INTO Users (UserID, Username, PasswordHash, EmployeeID, IsActive, LastLogin, CreatedAt)
+    INSERT INTO Users (UserID, Username, PasswordHash, EmployeeID, RoleID, IsActive, LastLogin, CreatedAt)
     SELECT 'U' + RIGHT('000' + CAST((@NextUserID + RowNum - 1) AS VARCHAR(3)), 3),
-           Username, PasswordHash, EmployeeID, 
+           Username, PasswordHash, EmployeeID, RoleID, 
            ISNULL(IsActive, 1), 
            LastLogin, 
            ISNULL(CreatedAt, GETDATE())
@@ -399,7 +400,6 @@ BEGIN
 END;
 GO
 
--- Tương tự cho các bảng liên quan
 -- Cập nhật trigger tự động tạo mã nhân viên và thiết lập UpdatedAt = CreatedAt
 ALTER TRIGGER trg_GenerateEmployeeID
 ON Employees
@@ -413,14 +413,16 @@ BEGIN
         RowNum INT IDENTITY(1,1),
         FullName NVARCHAR(255),
         PhoneNumber NVARCHAR(15),
+        Gender NVARCHAR(10),
+        DateOfBirth DATE,
         Email NVARCHAR(255),
         Position NVARCHAR(50),
         CreatedAt DATETIME
     );
     
     -- Đưa dữ liệu vào bảng tạm
-    INSERT INTO @InsertedEmployees (FullName, PhoneNumber, Email, Position, CreatedAt)
-    SELECT FullName, PhoneNumber, Email, Position, ISNULL(CreatedAt, GETDATE())
+    INSERT INTO @InsertedEmployees (FullName, PhoneNumber, Gender, DateOfBirth, Email, Position, CreatedAt)
+    SELECT FullName, PhoneNumber, Gender, DateOfBirth, Email, Position, ISNULL(CreatedAt, GETDATE())
     FROM inserted;
     
     -- Lấy mã tiếp theo
@@ -429,11 +431,13 @@ BEGIN
     FROM Employees;
     
     -- Thêm dữ liệu với mã đã tạo và UpdatedAt = CreatedAt
-    INSERT INTO Employees (EmployeeID, FullName, PhoneNumber, Email, Position, CreatedAt, UpdatedAt)
+    INSERT INTO Employees (EmployeeID, FullName, PhoneNumber, Gender, DateOfBirth, Email, Position, CreatedAt, UpdatedAt)
     SELECT 
         'NV' + RIGHT('0' + CAST((@NextEmployeeID + RowNum - 1) AS VARCHAR(2)), 2),
         FullName, 
         PhoneNumber, 
+        Gender,
+        DateOfBirth,
         Email, 
         Position,
         CreatedAt,
@@ -450,7 +454,7 @@ AS
 BEGIN
     -- Chỉ cập nhật UpdatedAt nếu có trường nào đó thay đổi (trừ UpdatedAt)
     IF UPDATE(FullName) OR UPDATE(PhoneNumber) OR UPDATE(Email) 
-       OR UPDATE(Position)
+       OR UPDATE(Position) OR UPDATE(Gender) OR UPDATE(DateOfBirth)
     BEGIN
         UPDATE Employees
         SET UpdatedAt = GETDATE()

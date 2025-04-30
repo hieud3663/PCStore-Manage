@@ -20,6 +20,7 @@ public class ErrorMessage {
     // public static final String EMPLOYEE_PHONE_INVALID = "Số điện thoại không hợp lệ";
     public static final String EMPLOYEE_NAME_TOO_SHORT = "Tên nhân viên phải có ít nhất 2 ký tự";
     public static final String INVALID_EMPLOYEE_POSITION = "Chức vụ không hợp lệ";
+    public static final String EMPLOYEE_AGE_18 = "Nhân viên phải từ 18 tuổi trở lên";
 
     //customer messages
     public static final String CUSTOMER_NAME_TOO_SHORT = "Tên khách hàng phải có ít nhất 2 ký tự";

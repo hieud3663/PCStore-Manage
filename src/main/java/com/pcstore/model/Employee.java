@@ -10,6 +10,7 @@ import com.pcstore.utils.ErrorMessage;
 public class Employee extends BasePerson {
     private String employeeId;
     private EmployeePositionEnum position;
+    private String avatar; //lưu dạng base64
     
     private static String currentID;
 
@@ -33,7 +34,6 @@ public class Employee extends BasePerson {
     public Employee() {
         //TODO Auto-generated constructor stub
     }
-
 
     @Override
     public Object getId() {
@@ -119,6 +119,17 @@ public class Employee extends BasePerson {
         }
         this.address = address;
     }
+   
+    
+    public String getAvatar() {
+        return avatar;
+    }
+
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
 
     // Factory method để tạo nhân viên mới
     public static Employee createNew(String employeeId, String fullName, 

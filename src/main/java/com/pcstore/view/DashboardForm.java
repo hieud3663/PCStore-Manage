@@ -34,7 +34,7 @@ public class DashboardForm extends JFrame {
     private HomeForm homForm;
     private SellForm sellForm;
     private ProductForm productForm;
-    private EmployeeForm employeeForm;
+    private EmployeeManageForm employeeManageForm;
     private WareHouseForm wareHouseForm;
     private InvoiceForm invoiceForm;
     private CustomerForm customerForm;
@@ -64,7 +64,7 @@ public class DashboardForm extends JFrame {
         homForm = new HomeForm();
         sellForm = new SellForm();
         productForm = new ProductForm();
-        employeeForm = new EmployeeForm();
+        employeeManageForm = new EmployeeManageForm();
         invoiceForm = new InvoiceForm();
         wareHouseForm = new WareHouseForm();
         customerForm = new CustomerForm();
@@ -351,6 +351,7 @@ public class DashboardForm extends JFrame {
         cbLanguage.setForeground(new java.awt.Color(255, 255, 255));
         cbLanguage.setMaximumRowCount(10);
         cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Việt Nam", "English" }));
+        cbLanguage.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelLanguage.add(cbLanguage);
 
         PanelNavigation.add(panelLanguage);
@@ -478,7 +479,7 @@ public class DashboardForm extends JFrame {
         } else if (panel == kPanelWareHouse) {
             selectMenu(panel, label, wareHouseForm);
         } else if (panel == kPanelEmployee) {
-            selectMenu(panel, label, employeeForm);
+            selectMenu(panel, label, employeeManageForm);
         } else if (panel == kPanelCustomer) {
             selectMenu(panel, label, customerForm);
         } else if (panel == kPanelService) {

@@ -208,6 +208,8 @@ public class CustomerController {
         try {
             customerList = customerService.findAllCustomers();
             updateCustomerTable(customerList);
+            
+            TableStyleUtil.refreshSorter(customerForm.getTableCustomers());
         } catch (Exception e) {
             if (customerForm != null) {
                 JOptionPane.showMessageDialog(customerForm, 

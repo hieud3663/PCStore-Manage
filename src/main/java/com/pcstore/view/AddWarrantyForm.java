@@ -5,13 +5,27 @@
 package com.pcstore.view;
 
 import com.pcstore.controller.WarrantyController;
-import com.pcstore.model.InvoiceDetail;
-import com.pcstore.model.Warranty;
+import com.pcstore.model.*;
+
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.time.LocalDateTime;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.RowFilter;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
+import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
 /**
  *
@@ -19,16 +33,147 @@ import java.util.List;
  */
 public class AddWarrantyForm extends javax.swing.JPanel {
     private WarrantyController controller;
-    private List<InvoiceDetail> currentInvoiceDetails;
+    private List<InvoiceDetail> currentInvoiceDetails; // Thêm biến này
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     /**
-     * Creates new form AddWarranty
+     * Constructor với reference đến controller và service form cha
      */
     public AddWarrantyForm(WarrantyController controller) {
         this.controller = controller;
         initComponents();
+        
         setupListeners();
+        setupTable();
+        setupStatusFilter();
+        
+        // Focus vào ô tìm kiếm khi hiển thị form
+        txtSearch.requestFocus();
+        
+        // Vô hiệu hóa nút bảo hành ban đầu khi chưa có dữ liệu
+        btnWarranty.setEnabled(false);
+    }
+
+    /**
+     * Thiết lập các thuộc tính cho bảng
+     */
+    private void setupTable() {
+        // Đặt tên cột
+        String[] columnNames = {
+            "Mã Chi Tiết Hóa Đơn", 
+            "Mã Sản Phẩm", 
+            "Tên Sản Phẩm", 
+            "Ngày Mua", 
+            "Hạn Bảo Hành", 
+            "Tên Khách Hàng", 
+            "Số Điện Thoại",
+            "Trạng Thái"  // Thêm cột mới
+        };
+        
+        // Tạo model
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa
+            }
+            
+            @Override
+            public Class<?> getColumnClass(int column) {
+                if (column == 0) return Integer.class; // ID là kiểu Integer
+                return String.class; // Các cột khác là String
+            }
+        };
+        
+        // Thiết lập model cho bảng
+        jTable1.setModel(model);
+        
+        // Tùy chỉnh giao diện
+        jTable1.setRowHeight(25);
+        jTable1.setAutoCreateRowSorter(true);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        
+        // Căn giữa nội dung các cột
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        
+        for (int i = 0; i < jTable1.getColumnCount(); i++) {
+            jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+        
+        // Cập nhật renderer với trạng thái mới
+        jTable1.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                
+                // Nếu là cột trạng thái
+                if (column == 7 && value != null) {
+                    String status = value.toString();
+                    if (status.equals("Hết hạn")) {
+                        c.setForeground(Color.RED);
+                    } else if (status.equals("Đã bảo hành")) {
+                        c.setForeground(new Color(128, 0, 128)); // Purple
+                    } else if (status.equals("Hợp lệ")) {
+                        c.setForeground(new Color(0, 128, 0)); // Green
+                    } else if (status.equals("Sắp hết hạn")) {
+                        c.setForeground(new Color(255, 140, 0)); // Orange
+                    }
+                } else {
+                    c.setForeground(Color.BLACK); // Màu mặc định cho các cột khác
+                }
+                
+                // Highlight cả dòng nếu sắp hết hạn
+                if (!isSelected) {
+                    String status = table.getValueAt(row, 7).toString();
+                    if (status.equals("Sắp hết hạn")) {
+                        c.setBackground(new Color(255, 255, 204)); // Light yellow
+                    } else {
+                        c.setBackground(table.getBackground());
+                    }
+                }
+                
+                return c;
+            }
+        });
+        
+        // Thêm tooltip
+        jTable1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                int row = jTable1.rowAtPoint(evt.getPoint());
+                int col = jTable1.columnAtPoint(evt.getPoint());
+                
+                if (row >= 0 && col >= 0) {
+                    String status = jTable1.getValueAt(row, 7).toString();
+                    String productName = jTable1.getValueAt(row, 2).toString();
+                    String warrantyDate = jTable1.getValueAt(row, 4).toString();
+                    
+                    StringBuilder tooltip = new StringBuilder();
+                    tooltip.append("<html><b>").append(productName).append("</b><br>");
+                    
+                    if ("Hợp lệ".equals(status)) {
+                        tooltip.append("Sản phẩm này đủ điều kiện bảo hành<br>");
+                        tooltip.append("Hạn bảo hành: ").append(warrantyDate);
+                    } else if ("Sắp hết hạn".equals(status)) {
+                        tooltip.append("<font color='orange'>Sản phẩm này sắp hết hạn bảo hành</font><br>");
+                        tooltip.append("Hạn bảo hành: ").append(warrantyDate);
+                    } else if ("Hết hạn".equals(status)) {
+                        tooltip.append("<font color='red'>Sản phẩm này đã hết hạn bảo hành</font><br>");
+                        tooltip.append("Đã hết hạn vào: ").append(warrantyDate);
+                    } else if ("Đã bảo hành".equals(status)) {
+                        tooltip.append("<font color='purple'>Sản phẩm này đã được đăng ký bảo hành</font>");
+                    }
+                    
+                    tooltip.append("</html>");
+                    jTable1.setToolTipText(tooltip.toString());
+                    return;
+                }
+                
+                jTable1.setToolTipText(null);
+            }
+        });
     }
 
     /**
@@ -42,7 +187,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
 
         kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
         jPanel2 = new javax.swing.JPanel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearch = new javax.swing.JTextField();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -50,78 +195,68 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         btnWarranty = new com.k33ptoo.components.KButton();
 
         kGradientPanel1.setkFillBackground(false);
+        kGradientPanel1.setLayout(new javax.swing.BoxLayout(kGradientPanel1, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
 
-        jTextField1.setToolTipText("");
-        jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtSearch.setToolTipText("");
+        txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
+        txtSearch.setPreferredSize(new java.awt.Dimension(300, 35));
+        txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtSearchActionPerformed(evt);
             }
         });
+        jPanel2.add(txtSearch);
 
+        btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
-        btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnReturnInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 255, 255));
+        btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 153, 255));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnReturnInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 153, 153));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        btnReturnInformationLookup.setPreferredSize(new java.awt.Dimension(120, 35));
+        jPanel2.add(btnReturnInformationLookup);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnReturnInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnReturnInformationLookup, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 4, Short.MAX_VALUE))
-        );
+        kGradientPanel1.add(jPanel2);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnListOfPurchasedProducts"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Hãng Sản Xuất", "Ngày Mua", "Hạn Bảo Hành", "Tên Khách Hàng", "Số Điện Thoại"
+                "Mã Chi Tiết Hóa Đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Ngày Mua", "Hạn Bảo Hành", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái Bảo Hành"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
         if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductCode")); // NOI18N
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clManufacturer")); // NOI18N
+            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("InvoiceDetailCode")); // NOI18N
+            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductCode")); // NOI18N
+            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
             jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
             jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clWarrantyPeriod")); // NOI18N
             jTable1.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
             jTable1.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clSDT")); // NOI18N
+            jTable1.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("clWarrantyStatus")); // NOI18N
         }
 
         btnWarranty.setText(bundle.getString("btnWarranty")); // NOI18N
         btnWarranty.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnWarranty.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnWarranty.setkEndColor(new java.awt.Color(102, 255, 51));
         btnWarranty.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarranty.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnWarranty.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnWarranty.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnWarranty.setkStartColor(new java.awt.Color(51, 204, 255));
         btnWarranty.setMargin(new java.awt.Insets(2, 14, 0, 14));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -130,7 +265,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 913, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 947, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -144,29 +279,10 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnWarranty, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
-        kGradientPanel1.setLayout(kGradientPanel1Layout);
-        kGradientPanel1Layout.setHorizontalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
-        );
-        kGradientPanel1Layout.setVerticalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
-        );
+        kGradientPanel1.add(jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -176,66 +292,204 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtSearchActionPerformed
 
     private void setupListeners() {
+        // Thiết lập listener cho nút tìm kiếm
         btnReturnInformationLookup.addActionListener(evt -> searchProductsByPhone());
+        
+        // Thiết lập listener cho nút bảo hành (disable ban đầu)
+        btnWarranty.setEnabled(false);
         btnWarranty.addActionListener(evt -> createWarranty());
+        
+        // Thiết lập listener cho phím Enter trong ô tìm kiếm
+        txtSearch.addActionListener(evt -> searchProductsByPhone());
+        
+        // Thiết lập listener cho double click trên bảng
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+                    createWarranty();
+                }
+            }
+        });
     }
 
     private void searchProductsByPhone() {
-        String phoneNumber = jTextField1.getText().trim();
-
+        String phoneNumber = txtSearch.getText().trim();
+        
         if (phoneNumber.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Vui lòng nhập số điện thoại khách hàng",
-                "Thông báo",
-                JOptionPane.WARNING_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập số điện thoại", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // Gọi controller để tìm kiếm sản phẩm đã mua
-        List<InvoiceDetail> invoiceDetails = controller.findPurchasedProductsByPhone(phoneNumber);
-
-        if (invoiceDetails.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Không tìm thấy sản phẩm nào đã mua với số điện thoại này",
-                "Thông báo",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+        
+        try {
+            // Tìm kiếm tất cả sản phẩm đã mua theo số điện thoại
+            List<InvoiceDetail> invoiceDetails = controller.findPurchasedProductsByPhone(phoneNumber);
+            
+            if (invoiceDetails.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm nào theo số điện thoại này", 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Lưu lại danh sách để sử dụng khi người dùng chọn một dòng
+            currentInvoiceDetails = invoiceDetails;
+            
+            // Cập nhật bảng với kết quả tìm kiếm
+            updateProductTable(invoiceDetails);
+            
+            // Cho phép đăng ký bảo hành nếu có dữ liệu
+            btnWarranty.setEnabled(true);
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm sản phẩm: " + e.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-
-        // Cập nhật bảng
-        updateProductTable(invoiceDetails);
     }
 
     private void updateProductTable(List<InvoiceDetail> invoiceDetails) {
-        this.currentInvoiceDetails = invoiceDetails;
-
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0);
-
-        for (InvoiceDetail detail : invoiceDetails) {
-            model.addRow(new Object[]{
-                detail.getProduct().getProductId(),
-                detail.getProduct().getProductName(),
-                detail.getProduct().getSupplier() != null ? detail.getProduct().getSupplier() : "N/A",
-                detail.getCreatedAt() != null ? detail.getCreatedAt().format(dateFormatter) : "",
-                detail.getWarranty() != null && detail.getWarranty().getEndDate() != null ? 
-                detail.getWarranty().getEndDate().format(dateFormatter) : "12 tháng",
-                detail.getInvoice().getCustomer().getFullName(),
-                detail.getInvoice().getCustomer().getPhoneNumber()
-            });
+        
+        currentInvoiceDetails = new ArrayList<>(invoiceDetails);
+        
+        if (invoiceDetails.isEmpty()) {
+            System.out.println("Không có dữ liệu để hiển thị");
+            btnWarranty.setEnabled(false);
+            return;
         }
+        
+        LocalDateTime now = LocalDateTime.now();
+        
+        // Thống kê để hiển thị thông tin tổng quan
+        int validCount = 0;
+        int expiredCount = 0;
+        int alreadyWarrantyCount = 0;
+        int nearExpiryCount = 0;
+        
+        for (InvoiceDetail detail : invoiceDetails) {
+            // Kiểm tra null
+            if (detail == null) continue;
+            
+            // Lấy dữ liệu từ đối tượng
+            Product product = detail.getProduct();
+            Invoice invoice = detail.getInvoice();
+            Customer customer = invoice != null ? invoice.getCustomer() : null;
+            
+            if (product == null) continue;
+            
+            // Kiểm tra xem sản phẩm này đã có bảo hành chưa và có hết hạn không
+            boolean hasWarranty = false;
+            boolean isExpired = false;
+            String warrantyStatus = ""; // Trạng thái bảo hành để hiển thị
+            
+            // Kiểm tra nếu đã có bảo hành
+            try {
+                Optional<Warranty> warranty = controller.getWarrantyService().findWarrantyByInvoiceDetailId(detail.getInvoiceDetailId());
+                if (warranty.isPresent()) {
+                    hasWarranty = true;
+                    warrantyStatus = "Đã bảo hành";
+                    System.out.println("Sản phẩm có ID chi tiết " + detail.getInvoiceDetailId() + " đã có bảo hành");
+                }
+            } catch (Exception e) {
+                System.err.println("Lỗi kiểm tra bảo hành: " + e.getMessage());
+            }
+            
+            // Kiểm tra hạn bảo hành
+            LocalDateTime warrantyEndDate = null;
+            if (invoice != null && invoice.getInvoiceDate() != null) {
+                warrantyEndDate = invoice.getInvoiceDate().plusMonths(12);
+                isExpired = warrantyEndDate.isBefore(now);
+                
+                if (isExpired && warrantyStatus.isEmpty()) {
+                    warrantyStatus = "Hết hạn";
+                    System.out.println("Sản phẩm có ID chi tiết " + detail.getInvoiceDetailId() + " đã hết hạn bảo hành");
+                }
+            }
+            
+            // Hạn bảo hành (12 tháng) - Cập nhật hiển thị
+            String warrantyPeriod = "";
+            long daysLeft = 0;
+            if (warrantyEndDate != null) {
+                // Tính số ngày còn lại
+                daysLeft = java.time.temporal.ChronoUnit.DAYS.between(now, warrantyEndDate);
+                
+                if (daysLeft > 0) {
+                    warrantyPeriod = dateFormatter.format(warrantyEndDate) + " (" + daysLeft + " ngày)";
+                } else {
+                    warrantyPeriod = dateFormatter.format(warrantyEndDate);
+                }
+            }
+            
+            // Trạng thái đủ điều kiện bảo hành - Thêm chi tiết
+            if (warrantyStatus.isEmpty()) {
+                if (daysLeft < 30 && daysLeft > 0) {
+                    warrantyStatus = "Sắp hết hạn";
+                } else {
+                    warrantyStatus = "Hợp lệ";
+                }
+            }
+            
+            // Chuẩn bị dữ liệu hiển thị
+            String productId = product.getProductId() != null ? product.getProductId() : "";
+            String productName = product.getProductName() != null ? product.getProductName() : "";
+            
+            // Ngày mua
+            String purchaseDate = "";
+            if (invoice != null && invoice.getInvoiceDate() != null) {
+                purchaseDate = dateFormatter.format(invoice.getInvoiceDate());
+            }
+            
+            // Thông tin khách hàng
+            String customerName = "";
+            String customerPhone = "";
+            if (customer != null) {
+                customerName = customer.getFullName() != null ? customer.getFullName() : "";
+                customerPhone = customer.getPhoneNumber() != null ? customer.getPhoneNumber() : "";
+            }
+            
+            // Thêm vào bảng
+            model.addRow(new Object[]{
+                detail.getInvoiceDetailId(), // Mã Chi Tiết Hóa Đơn
+                productId,                   // Mã Sản Phẩm
+                productName,                 // Tên Sản Phẩm
+                purchaseDate,                // Ngày Mua
+                warrantyPeriod,              // Hạn Bảo Hành
+                customerName,                // Tên Khách Hàng
+                customerPhone,               // Số Điện Thoại
+                warrantyStatus               // Trạng thái bảo hành
+            });
+            
+            // Cập nhật thống kê
+            if ("Hợp lệ".equals(warrantyStatus)) {
+                validCount++;
+            } else if ("Hết hạn".equals(warrantyStatus)) {
+                expiredCount++;
+            } else if ("Đã bảo hành".equals(warrantyStatus)) {
+                alreadyWarrantyCount++;
+            } else if ("Sắp hết hạn".equals(warrantyStatus)) {
+                nearExpiryCount++;
+            }
+        }
+        
+        // Hiển thị thông tin thống kê
+        String summary = String.format("Tìm thấy %d sản phẩm: %d hợp lệ, %d sắp hết hạn, %d đã bảo hành, %d hết hạn",
+                model.getRowCount(), validCount, nearExpiryCount, alreadyWarrantyCount, expiredCount);
+        
+        // Hiển thị thông tin ở dưới bảng (cần thêm một JLabel vào giao diện)
+        // lblSummary.setText(summary);
+        System.out.println(summary);
+        
+        // Cho phép đăng ký bảo hành nếu có sản phẩm hợp lệ
+        btnWarranty.setEnabled(validCount > 0 || nearExpiryCount > 0);
     }
 
     private void createWarranty() {
@@ -251,9 +505,81 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             return;
         }
 
-        InvoiceDetail selectedDetail = currentInvoiceDetails.get(selectedRow);
-
         try {
+            // Kiểm tra trạng thái bảo hành từ cột trạng thái
+            String warrantyStatus = (String) jTable1.getValueAt(selectedRow, 7);
+            
+            if ("Hết hạn".equals(warrantyStatus)) {
+                // Lấy ngày hết hạn từ cột thứ 4
+                String expiryDate = (String) jTable1.getValueAt(selectedRow, 4);
+                
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Sản phẩm này đã hết hạn bảo hành vào ngày " + expiryDate + ".\n" +
+                    "Vui lòng liên hệ nhân viên để được hỗ trợ thêm!",
+                    "Không thể bảo hành",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+            
+            if ("Đã bảo hành".equals(warrantyStatus)) {
+                // Thêm code để lấy thông tin về phiếu bảo hành hiện có
+                Integer selectedDetailId = (Integer) jTable1.getValueAt(selectedRow, 0);
+                Optional<Warranty> warranty = controller.getWarrantyService()
+                    .findWarrantyByInvoiceDetailId(selectedDetailId);
+                
+                String message = "Sản phẩm này đã được đăng ký bảo hành trước đó!";
+                if (warranty.isPresent()) {
+                    message += "\nMã bảo hành: " + warranty.get().getWarrantyId() + 
+                              "\nNgày đăng ký: " + dateFormatter.format(warranty.get().getCreatedAt());
+                }
+                
+                JOptionPane.showMessageDialog(
+                    this,
+                    message,
+                    "Không thể bảo hành",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+            
+            // Lấy mã chi tiết hóa đơn từ cột đầu tiên của dòng được chọn
+            Integer selectedDetailId = (Integer) jTable1.getValueAt(selectedRow, 0);
+            
+            System.out.println("Đã chọn chi tiết hóa đơn ID: " + selectedDetailId);
+            
+            // Tìm chi tiết hóa đơn trong danh sách đã lưu
+            InvoiceDetail selectedDetail = null;
+            for (InvoiceDetail detail : currentInvoiceDetails) {
+                if (detail != null && detail.getInvoiceDetailId() != null && 
+                    detail.getInvoiceDetailId().equals(selectedDetailId)) {
+                    selectedDetail = detail;
+                    break;
+                }
+            }
+            
+            if (selectedDetail == null) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Không thể tìm thấy thông tin chi tiết của sản phẩm đã chọn",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+            
+            // In thông tin để debug
+            System.out.println("Thông tin chi tiết đã chọn:");
+            System.out.println("- ID: " + selectedDetail.getInvoiceDetailId());
+            System.out.println("- Sản phẩm: " + (selectedDetail.getProduct() != null ? 
+                              selectedDetail.getProduct().getProductName() : "null"));
+            
+            Invoice invoice = selectedDetail.getInvoice();
+            System.out.println("- Hóa đơn: " + (invoice != null ? invoice.getInvoiceId() : "null"));
+            System.out.println("- Ngày mua: " + (invoice != null && invoice.getInvoiceDate() != null ? 
+                              invoice.getInvoiceDate() : "null"));
+            
             // Gọi controller để tạo phiếu bảo hành
             Warranty warranty = controller.createWarrantyFromInvoiceDetail(selectedDetail);
 
@@ -264,8 +590,8 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 JOptionPane.INFORMATION_MESSAGE
             );
 
-            // Đóng form sau khi đăng ký thành công
-            javax.swing.SwingUtilities.getWindowAncestor(this).dispose();
+            // Cập nhật trạng thái sản phẩm đã được đăng ký bảo hành
+            jTable1.setValueAt("Đã bảo hành", selectedRow, 7);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                 this, 
@@ -273,7 +599,45 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 "Lỗi",
                 JOptionPane.ERROR_MESSAGE
             );
+            e.printStackTrace();
         }
+    }
+
+    private void setupStatusFilter() {
+        JComboBox<String> statusFilter = new JComboBox<>(
+                new String[]{"Tất cả", "Hợp lệ", "Sắp hết hạn", "Hết hạn", "Đã bảo hành"}
+        );
+        
+        statusFilter.addActionListener(e -> {
+            String selected = (String) statusFilter.getSelectedItem();
+            filterTableByStatus(selected);
+        });
+        
+        // Thêm vào panel trên cùng của bảng
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        filterPanel.add(new JLabel("Lọc theo trạng thái:"));
+        filterPanel.add(statusFilter);
+        
+        // Thêm vào layout
+        jPanel1.add(filterPanel, BorderLayout.NORTH);
+    }
+
+    private void filterTableByStatus(String status) {
+        if (currentInvoiceDetails == null || currentInvoiceDetails.isEmpty()) {
+            return;
+        }
+        
+        if ("Tất cả".equals(status)) {
+            updateProductTable(currentInvoiceDetails);
+            return;
+        }
+        
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        jTable1.setRowSorter(sorter);
+        
+        // Lọc theo cột trạng thái (cột 7)
+        sorter.setRowFilter(RowFilter.regexFilter("^" + status + "$", 7));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -283,7 +647,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

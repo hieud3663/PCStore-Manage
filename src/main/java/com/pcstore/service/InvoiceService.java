@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Return;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.InvoiceRepository;
 import com.pcstore.repository.impl.ProductRepository;
+import com.pcstore.repository.impl.ReturnRepository;
 import com.pcstore.utils.DatabaseConnection;
 
 /**
@@ -20,8 +23,7 @@ import com.pcstore.utils.DatabaseConnection;
 public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ProductRepository productRepository;
-    private  InvoiceDetailService invoiceDetailService;
-
+    private InvoiceDetailService invoiceDetailService;
 
     public InvoiceService() {
         Connection connection = DatabaseConnection.getInstance().getConnection();
@@ -155,7 +157,14 @@ public class InvoiceService {
         return new ArrayList<>();
     }
 
-    
+    /**
+     * Tìm hóa đơn theo khách hàng - dành riêng cho chức năng bảo hành
+     * @param customerId ID khách hàng
+     * @return Danh sách hóa đơn
+     */
+    public List<Invoice> findInvoicesByCustomerForWarranty(String customerId) {
+        return invoiceRepository.findByCustomerIdWarranty(customerId);
+    }
     
     /**
      * Tìm hóa đơn theo nhân viên
@@ -196,5 +205,80 @@ public class InvoiceService {
         return invoices.stream()
                 .map(Invoice::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    /**
+     * Tìm tất cả hóa đơn có thể trả hàng
+     * @return Danh sách hóa đơn có thể trả hàng
+     */
+    public List<Invoice> findAllInvoicesForReturn() {
+        try {
+            List<Invoice> invoices = invoiceRepository.findAllInvoicesForReturn();
+            
+            if (invoices == null) {
+                return new ArrayList<>();
+            }
+            
+            // Tải chi tiết hóa đơn và lọc sản phẩm có thể trả
+            for (Invoice invoice : invoices) {
+                try {
+                    List<InvoiceDetail> allDetails = invoiceDetailService.findInvoiceDetailsByInvoiceId(invoice.getInvoiceId());
+                    List<InvoiceDetail> returnableDetails = new ArrayList<>();
+                    
+                    // Chỉ giữ lại những chi tiết hóa đơn có sản phẩm có thể trả hàng
+                    if (allDetails != null) {
+                        for (InvoiceDetail detail : allDetails) {
+                            // Kiểm tra sản phẩm đã trả hết chưa
+                            boolean canReturn = isDetailReturnable(detail);
+                            if (canReturn) {
+                                returnableDetails.add(detail);
+                            }
+                        }
+                    }
+                    
+                    invoice.setInvoiceDetails(returnableDetails);
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi tải chi tiết cho hóa đơn " + invoice.getInvoiceId() + ": " + e.getMessage());
+                    invoice.setInvoiceDetails(new ArrayList<>());
+                }
+            }
+            
+            // Chỉ giữ lại hóa đơn còn sản phẩm có thể trả
+            return invoices.stream()
+                    .filter(invoice -> invoice.getInvoiceDetails() != null && !invoice.getInvoiceDetails().isEmpty())
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm hóa đơn có thể trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Kiểm tra xem một chi tiết hóa đơn có thể trả hàng không
+     * @param detail Chi tiết hóa đơn cần kiểm tra
+     * @return true nếu có thể trả hàng, false nếu không
+     */
+    private boolean isDetailReturnable(InvoiceDetail detail) {
+        if (detail == null || detail.getProduct() == null) {
+            return false;
+        }
+        
+        try {
+            // Khởi tạo ReturnRepository để lấy số lượng đã trả
+            ReturnRepository returnRepo = new ReturnRepository(
+                ServiceFactory.getInstance().getConnection()
+            );
+            
+            // Lấy số lượng đã trả từ repository
+            int returnedQuantity = returnRepo.getReturnedQuantityForDetail(detail.getInvoiceDetailId());
+            
+            // Nếu số lượng còn lại lớn hơn 0, có thể trả hàng
+            return (detail.getQuantity() - returnedQuantity) > 0;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi kiểm tra khả năng trả hàng: " + e.getMessage());
+            // Mặc định là có thể trả nếu có lỗi
+            return true;
+        }
     }
 }

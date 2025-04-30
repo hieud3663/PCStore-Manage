@@ -28,7 +28,7 @@ import com.pcstore.repository.impl.WarrantyRepository;
 
 /**
  *
- * @author DUC ANH
+ * @author 
  */
 public class WarrantyServiceForm extends javax.swing.JPanel {
 
@@ -90,17 +90,16 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel5 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        pnWarrantyMain = new javax.swing.JPanel();
+        pnFunctions = new javax.swing.JPanel();
         btnWarrantyRegistration = new com.k33ptoo.components.KButton();
         btnRemoveRepair = new com.k33ptoo.components.KButton();
         btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
         jPanel3 = new javax.swing.JPanel();
         btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
         jTextField1 = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPaneTable = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        jPanel4 = new javax.swing.JPanel();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("WarrantyService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
@@ -109,12 +108,12 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(1153, 713));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel5.setMaximumSize(new java.awt.Dimension(1360, 600));
-        jPanel5.setMinimumSize(new java.awt.Dimension(1360, 600));
-        jPanel5.setPreferredSize(new java.awt.Dimension(1360, 600));
-        jPanel5.setLayout(new javax.swing.BoxLayout(jPanel5, javax.swing.BoxLayout.Y_AXIS));
+        pnWarrantyMain.setMaximumSize(new java.awt.Dimension(1360, 600));
+        pnWarrantyMain.setMinimumSize(new java.awt.Dimension(1360, 600));
+        pnWarrantyMain.setPreferredSize(new java.awt.Dimension(1360, 600));
+        pnWarrantyMain.setLayout(new javax.swing.BoxLayout(pnWarrantyMain, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 10));
+        pnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 10));
 
         btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
         btnWarrantyRegistration.setkBorderRadius(40);
@@ -128,7 +127,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
                 btnWarrantyRegistrationActionPerformed(evt);
             }
         });
-        jPanel2.add(btnWarrantyRegistration);
+        pnFunctions.add(btnWarrantyRegistration);
 
         btnRemoveRepair.setText(bundle.getString("btnRemoveRepair")); // NOI18N
         btnRemoveRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -148,7 +147,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
                 btnRemoveRepairActionPerformed(evt);
             }
         });
-        jPanel2.add(btnRemoveRepair);
+        pnFunctions.add(btnRemoveRepair);
 
         btnDetailWarrantyCard.setText(bundle.getString("btnDetailWarrantyCard")); // NOI18N
         btnDetailWarrantyCard.setkBorderRadius(40);
@@ -162,7 +161,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
                 btnDetailWarrantyCardActionPerformed(evt);
             }
         });
-        jPanel2.add(btnDetailWarrantyCard);
+        pnFunctions.add(btnDetailWarrantyCard);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
         jPanel3.setPreferredSize(new java.awt.Dimension(425, 65));
@@ -191,11 +190,11 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
         jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 310, 30));
 
-        jPanel2.add(jPanel3);
+        pnFunctions.add(jPanel3);
 
-        jPanel5.add(jPanel2);
+        pnWarrantyMain.add(pnFunctions);
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(452, 500));
+        jScrollPaneTable.setPreferredSize(new java.awt.Dimension(452, 500));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -208,14 +207,11 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
                 "Mã Bảo Hành ", "Ngày Yêu Cầu", "Mã Khách Hàng", "Tên Khách Hàng", "Số Điện Thoại", "Tên sản Phẩm ", "Mã Sản Phẩm", "Tình Trạng"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPaneTable.setViewportView(jTable1);
 
-        jPanel5.add(jScrollPane1);
+        pnWarrantyMain.add(jScrollPaneTable);
 
-        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 20));
-        jPanel5.add(jPanel4);
-
-        add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 35, 1080, 530));
+        add(pnWarrantyMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 35, 1080, 530));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyRegistrationActionPerformed
@@ -261,85 +257,72 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnRemoveRepairMouseClicked
 
     private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveRepairActionPerformed
-        try {
-            // Kiểm tra xem có hàng nào được chọn không
-            int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow == -1) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Vui lòng chọn một bảo hành để xóa.",
-                    "Thông báo",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            // Lấy ID của bảo hành được chọn
-            Object warrantyIdObj = jTable1.getValueAt(selectedRow, 0);
-            if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Bảo hành không có ID hợp lệ.",
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            Integer warrantyId = null;
-            // try {
-            //     warrantyId = Integer.parseInt(warrantyIdObj.toString());
-            // } catch (NumberFormatException e) {
-            //     javax.swing.JOptionPane.showMessageDialog(this,
-            //         "ID bảo hành không hợp lệ: " + warrantyIdObj,
-            //         "Lỗi",
-            //         javax.swing.JOptionPane.ERROR_MESSAGE);
-            //     return;
-            // }
-
-            // Kiểm tra controller
-            if (controller == null) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Controller chưa được khởi tạo.",
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Xác nhận trước khi xóa
-            int choice = javax.swing.JOptionPane.showConfirmDialog(this,
-                "Bạn có chắc chắn muốn xóa bảo hành này không?",
-                "Xác nhận xóa",
-                javax.swing.JOptionPane.YES_NO_OPTION,
-                javax.swing.JOptionPane.WARNING_MESSAGE);
-
-            if (choice != javax.swing.JOptionPane.YES_OPTION) {
-                return; // Người dùng đã hủy việc xóa
-            }
-
-            // Tiến hành xóa bảo hành
-            boolean success = controller.deleteWarranty(warrantyId);
-
-            if (success) {
-                // Hiển thị thông báo thành công
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Đã xóa bảo hành thành công!",
-                    "Thành công",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-                // Cập nhật lại bảng
-                controller.loadWarranties();
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Không thể xóa bảo hành. Vui lòng thử lại sau.",
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+    try {
+        // Kiểm tra xem có hàng nào được chọn không
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Lỗi khi xóa bảo hành: " + e.getMessage(),
+                "Vui lòng chọn một bảo hành để xóa.",
+                "Thông báo",
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Lấy ID của bảo hành được chọn dưới dạng chuỗi
+        Object warrantyIdObj = jTable1.getValueAt(selectedRow, 0);
+        if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Bảo hành không có ID hợp lệ.",
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // Sử dụng ID bảo hành dưới dạng chuỗi
+        String warrantyId = warrantyIdObj.toString();
+
+        // Kiểm tra controller
+        if (controller == null) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Controller chưa được khởi tạo.",
+                "Lỗi",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Xác nhận trước khi xóa
+        int choice = javax.swing.JOptionPane.showConfirmDialog(this,
+            "Bạn có chắc chắn muốn xóa bảo hành này không?",
+            "Xác nhận xóa",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+
+        if (choice != javax.swing.JOptionPane.YES_OPTION) {
+            return; // Người dùng đã hủy việc xóa
+        }
+
+        // Tiến hành xóa bảo hành với ID dạng chuỗi
+        boolean success = controller.deleteWarranty(warrantyId);
+
+        if (success) {
+            // Hiển thị thông báo thành công
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Đã xóa bảo hành thành công!",
+                "Thành công",
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+            // Cập nhật lại bảng
+            controller.loadWarranties();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Không thể xóa bảo hành. Vui lòng thử lại sau.",
                 "Lỗi",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_btnRemoveRepairActionPerformed
+    } catch (Exception e) {
+
+    }
+}//GEN-LAST:event_btnRemoveRepairActionPerformed
 
     private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailWarrantyCardActionPerformed
         if (controller != null) {
@@ -458,12 +441,11 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnRemoveRepair;
     private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
     private com.k33ptoo.components.KButton btnWarrantyRegistration;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPaneTable;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel pnFunctions;
+    private javax.swing.JPanel pnWarrantyMain;
     // End of variables declaration//GEN-END:variables
 }

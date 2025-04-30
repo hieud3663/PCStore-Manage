@@ -16,6 +16,8 @@ import java.util.logging.Logger;
 import com.pcstore.model.Customer;
 import com.pcstore.model.Employee;
 import com.pcstore.model.Invoice;
+import com.pcstore.model.InvoiceDetail;
+import com.pcstore.model.Product;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.repository.Repository;
@@ -283,6 +285,63 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         return invoices;
     }
     
+    /**
+     * Tìm hóa đơn theo ID khách hàng - dùng riêng cho chức năng bảo hành
+     * @param customerId ID của khách hàng
+     * @return Danh sách các hóa đơn của khách hàng đó
+     */
+    public List<Invoice> findByCustomerIdWarranty(String customerId) {
+        List<Invoice> invoices = new ArrayList<>();
+        
+        String sql = "SELECT I.InvoiceID, I.CustomerID, I.InvoiceDate, I.TotalAmount, " +
+                     "C.FullName, C.PhoneNumber, C.Email, C.Address " +
+                     "FROM Invoices I " +
+                     "JOIN Customers C ON I.CustomerID = C.CustomerID " +
+                     "WHERE I.CustomerID = ? " +
+                     "ORDER BY I.InvoiceDate DESC";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, customerId);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    Invoice invoice = new Invoice();
+                    invoice.setInvoiceId(rs.getInt("InvoiceID"));
+                    
+                    // Tạo đối tượng Customer với thông tin đầy đủ
+                    Customer customer = new Customer();
+                    customer.setCustomerId(customerId);
+                    customer.setFullName(rs.getString("FullName"));
+                    customer.setPhoneNumber(rs.getString("PhoneNumber"));
+                    customer.setEmail(rs.getString("Email"));
+                    customer.setAddress(rs.getString("Address"));
+                    invoice.setCustomer(customer);
+                    
+                    if (rs.getTimestamp("InvoiceDate") != null) {
+                        invoice.setInvoiceDate(rs.getTimestamp("InvoiceDate").toLocalDateTime());
+                    }
+                    
+                    invoice.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    
+                    // Tải chi tiết hóa đơn
+                    try {
+                        List<InvoiceDetail> details = loadInvoiceDetails(invoice.getInvoiceId());
+                        invoice.setInvoiceDetails(details);
+                    } catch (Exception e) {
+                        logger.log(Level.SEVERE, "Error loading invoice details for invoice " + invoice.getInvoiceId(), e);
+                    }
+                    
+                    invoices.add(invoice);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error finding invoices for customer " + customerId, e);
+            throw new RuntimeException("Error finding invoices for customer " + customerId, e);
+        }
+        
+        return invoices;
+    }
+    
     // Tìm hóa đơn theo nhân viên
     public List<Invoice> findByEmployeeId(String employeeId) {
         String sql = "SELECT i.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
@@ -390,9 +449,126 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
     }
     
     // Load tất cả chi tiết của hóa đơn
-    public Invoice loadInvoiceDetails(Invoice invoice) {
-        invoice.setInvoiceDetails(RepositoryFactory.getInvoiceDetailRepository().findByInvoiceId(invoice.getInvoiceId()));
-        return invoice;
+    public List<InvoiceDetail> loadInvoiceDetails(int invoiceId) {
+        List<InvoiceDetail> details = new ArrayList<>();
+        
+        String sql = "SELECT ID.InvoiceDetailID, ID.InvoiceID, ID.ProductID, ID.Quantity, ID.UnitPrice, "
+                   + "P.ProductName, P.Description AS ProductDescription, "
+                   + "I.InvoiceDate, I.CustomerID, "
+                   + "C.FullName AS CustomerName, C.PhoneNumber AS CustomerPhone "
+                   + "FROM InvoiceDetails ID "
+                   + "LEFT JOIN Products P ON ID.ProductID = P.ProductID "
+                   + "JOIN Invoices I ON ID.InvoiceID = I.InvoiceID "
+                   + "LEFT JOIN Customers C ON I.CustomerID = C.CustomerID "
+                   + "WHERE ID.InvoiceID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, invoiceId);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    InvoiceDetail detail = new InvoiceDetail();
+                    detail.setInvoiceDetailId(rs.getInt("InvoiceDetailID"));
+                    detail.setQuantity(rs.getInt("Quantity"));
+                    detail.setUnitPrice(rs.getBigDecimal("UnitPrice"));
+                    
+                    // Tạo đối tượng Invoice với thông tin đầy đủ
+                    Invoice invoice = new Invoice();
+                    invoice.setInvoiceId(invoiceId);
+                    
+                    if (rs.getTimestamp("InvoiceDate") != null) {
+                        invoice.setInvoiceDate(rs.getTimestamp("InvoiceDate").toLocalDateTime());
+                    }
+                    
+                    // Tạo đối tượng Customer với thông tin đầy đủ
+                    String customerId = rs.getString("CustomerID");
+                    if (customerId != null) {
+                        Customer customer = new Customer();
+                        customer.setCustomerId(customerId);
+                        customer.setFullName(rs.getString("CustomerName"));
+                        customer.setPhoneNumber(rs.getString("CustomerPhone"));
+                        invoice.setCustomer(customer);
+                    }
+                    
+                    detail.setInvoice(invoice);
+                    
+                    // Tạo đối tượng Product
+                    Product product = new Product();
+                    product.setProductId(rs.getString("ProductID"));
+                    product.setProductName(rs.getString("ProductName"));
+                    product.setDescription(rs.getString("ProductDescription"));
+                    
+                    detail.setProduct(product);
+                    
+                    details.add(detail);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error loading invoice details for invoice " + invoiceId, e);
+        }
+        
+        return details;
+    }
+    
+    /**
+     * Tìm tất cả hóa đơn có thể trả hàng
+     * @return Danh sách các hóa đơn có thể trả hàng
+     */
+    public List<Invoice> findAllInvoicesForReturn() {
+        // Lấy hóa đơn đã thanh toán và còn trong thời gian cho phép trả hàng (ví dụ: 30 ngày)
+        String sql = "SELECT i.*, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "e.FullName as EmployeeName, " +
+                     "s.StatusName as StatusName, p.MethodName as PaymentMethodName " +
+                     "FROM Invoices i " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
+                     "LEFT JOIN InvoiceStatus s ON i.StatusID = s.StatusID " +
+                     "LEFT JOIN PaymentMethods p ON i.PaymentMethodID = p.PaymentMethodID " +
+                     "WHERE i.StatusID = 2 " + // Giả sử 2 là mã trạng thái "Đã thanh toán"
+                    //  "AND i.InvoiceDate >= DATEADD(day, -30, GETDATE()) " + // Chỉ lấy hóa đơn trong vòng 30 ngày
+                     "ORDER BY i.InvoiceDate DESC";
+        
+        List<Invoice> invoices = new ArrayList<>();
+        
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+             
+            while (resultSet.next()) {
+                try {
+                    Invoice invoice = mapResultSetToInvoice(resultSet);
+                    
+                    // Thêm thông tin khách hàng vào hóa đơn
+                    String customerID = resultSet.getString("CustomerID");
+                    if (customerID != null) {
+                        Customer customer = new Customer();
+                        customer.setCustomerId(customerID); // Sửa từ setId thành setCustomerId
+                        customer.setFullName(resultSet.getString("CustomerName"));
+                        customer.setPhoneNumber(resultSet.getString("CustomerPhone"));
+                        invoice.setCustomer(customer);
+                    }
+
+                    // Thêm thông tin nhân viên vào hóa đơn
+                    String employeeID = resultSet.getString("EmployeeID");
+                    if (employeeID != null) {
+                        Employee employee = new Employee();
+                        employee.setEmployeeId(employeeID); // Sửa từ setId thành setEmployeeId
+                        employee.setFullName(resultSet.getString("EmployeeName"));
+                        invoice.setEmployee(employee);
+                    }
+                    
+                    invoices.add(invoice);
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi xử lý hóa đơn từ ResultSet: " + e.getMessage());
+                    // Tiếp tục với hóa đơn tiếp theo
+                }
+            }
+            
+            return invoices;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi tìm hóa đơn cho trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi khi tìm hóa đơn cho trả hàng", e);
+        }
     }
     
     private Invoice mapResultSetToInvoice(ResultSet resultSet) throws SQLException {
@@ -445,5 +621,8 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         }
         
         return invoice;
-    }
+    
 }
+    
+}
+

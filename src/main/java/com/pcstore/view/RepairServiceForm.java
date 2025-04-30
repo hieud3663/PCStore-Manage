@@ -45,7 +45,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
             System.out.println("Đang tải danh sách dịch vụ sửa chữa...");
             
             // Xóa dữ liệu hiện tại trong bảng
-            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) RepairTable.getModel();
             model.setRowCount(0);
             
             if (repairController == null) {
@@ -110,26 +110,24 @@ public class RepairServiceForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
-        jPanel1 = new javax.swing.JPanel();
+        pnMainRepair = new com.k33ptoo.components.KGradientPanel();
+        pnRepairFunctions = new javax.swing.JPanel();
         btnAddRepair = new com.k33ptoo.components.KButton();
         btnDetail = new com.k33ptoo.components.KButton();
         btnRemoveRepair = new com.k33ptoo.components.KButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
-        btnDetailCard = new com.k33ptoo.components.KButton();
+        jScrollPaneTable = new javax.swing.JScrollPane();
+        RepairTable = new javax.swing.JTable();
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("RepairService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         setPreferredSize(new java.awt.Dimension(1153, 713));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        kGradientPanel2.setkFillBackground(false);
-        kGradientPanel2.setPreferredSize(new java.awt.Dimension(1120, 713));
-        kGradientPanel2.setLayout(new javax.swing.BoxLayout(kGradientPanel2, javax.swing.BoxLayout.Y_AXIS));
+        pnMainRepair.setkFillBackground(false);
+        pnMainRepair.setPreferredSize(new java.awt.Dimension(1120, 713));
+        pnMainRepair.setLayout(new javax.swing.BoxLayout(pnMainRepair, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 15));
+        pnRepairFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 15));
 
         btnAddRepair.setText(bundle.getString("btnAddRepair")); // NOI18N
         btnAddRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -149,7 +147,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 btnAddRepairActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAddRepair);
+        pnRepairFunctions.add(btnAddRepair);
 
         btnDetail.setText(bundle.getString("btnDetail")); // NOI18N
         btnDetail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -169,7 +167,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 btnDetailActionPerformed(evt);
             }
         });
-        jPanel1.add(btnDetail);
+        pnRepairFunctions.add(btnDetail);
 
         btnRemoveRepair.setText(bundle.getString("btnRemoveRepair")); // NOI18N
         btnRemoveRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -189,11 +187,11 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 btnRemoveRepairActionPerformed(evt);
             }
         });
-        jPanel1.add(btnRemoveRepair);
+        pnRepairFunctions.add(btnRemoveRepair);
 
-        kGradientPanel2.add(jPanel1);
+        pnMainRepair.add(pnRepairFunctions);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        RepairTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -237,43 +235,11 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPaneTable.setViewportView(RepairTable);
 
-        kGradientPanel2.add(jScrollPane1);
+        pnMainRepair.add(jScrollPaneTable);
 
-        btnDetailCard.setText(bundle.getString("btnDetailCard")); // NOI18N
-        btnDetailCard.setkBorderRadius(30);
-        btnDetailCard.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnDetailCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnDetailCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDetailCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnDetailCard.setkStartColor(new java.awt.Color(102, 153, 255));
-        btnDetailCard.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnDetailCardMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(973, Short.MAX_VALUE)
-                .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(btnDetailCard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
-        );
-
-        kGradientPanel2.add(jPanel2);
-
-        add(kGradientPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 28, 1110, 570));
+        add(pnMainRepair, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 28, 1110, 540));
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddRepairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAddRepairMouseClicked
@@ -329,7 +295,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
     private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
         try {
             // Kiểm tra xem có hàng nào được chọn không
-            int selectedRow = jTable1.getSelectedRow();
+            int selectedRow = RepairTable.getSelectedRow();
             if (selectedRow == -1) {
                 javax.swing.JOptionPane.showMessageDialog(this,
                     "Vui lòng chọn một dịch vụ sửa chữa để xem chi tiết.",
@@ -339,7 +305,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
 
             // Lấy ID của dịch vụ sửa chữa được chọn
-            Object repairIdObj = jTable1.getValueAt(selectedRow, 0);
+            Object repairIdObj = RepairTable.getValueAt(selectedRow, 0);
             if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
                 javax.swing.JOptionPane.showMessageDialog(this,
                     "Dịch vụ sửa chữa không có ID hợp lệ.",
@@ -413,7 +379,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
     private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveRepairActionPerformed
         try {
             // Kiểm tra xem có hàng nào được chọn không
-            int selectedRow = jTable1.getSelectedRow();
+            int selectedRow = RepairTable.getSelectedRow();
             if (selectedRow == -1) {
                 javax.swing.JOptionPane.showMessageDialog(this,
                     "Vui lòng chọn một dịch vụ sửa chữa để xóa.",
@@ -423,7 +389,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
 
             // Lấy ID của dịch vụ sửa chữa được chọn
-            Object repairIdObj = jTable1.getValueAt(selectedRow, 0);
+            Object repairIdObj = RepairTable.getValueAt(selectedRow, 0);
             if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
                 javax.swing.JOptionPane.showMessageDialog(this,
                     "Dịch vụ sửa chữa không có ID hợp lệ.",
@@ -491,23 +457,17 @@ public class RepairServiceForm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnRemoveRepairActionPerformed
 
-    private void btnDetailCardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDetailCardMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDetailCardMouseClicked
-
     /**
      * Open the Add Repair form in a dialog
      */
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable RepairTable;
     private com.k33ptoo.components.KButton btnAddRepair;
     private com.k33ptoo.components.KButton btnDetail;
-    private com.k33ptoo.components.KButton btnDetailCard;
     private com.k33ptoo.components.KButton btnRemoveRepair;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
+    private javax.swing.JScrollPane jScrollPaneTable;
+    private com.k33ptoo.components.KGradientPanel pnMainRepair;
+    private javax.swing.JPanel pnRepairFunctions;
     // End of variables declaration//GEN-END:variables
 }

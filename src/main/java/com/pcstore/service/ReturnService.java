@@ -80,23 +80,29 @@ public class ReturnService {
     
     /**
      * Xóa đơn trả hàng theo ID
-     * @param returnId ID của đơn trả hàng
-     * @return true nếu xóa thành công, ngược lại là false
+     * 
+     * @param returnId ID đơn trả hàng cần xóa
+     * @return true nếu xóa thành công, false nếu thất bại
      */
     public boolean deleteReturn(Integer returnId) {
-        // Kiểm tra tồn tại
-        Optional<Return> existingReturn = returnRepository.findById(returnId);
-        if (!existingReturn.isPresent()) {
-            throw new IllegalArgumentException("Đơn trả hàng không tồn tại");
+        try {
+            System.out.println("ReturnService: Đang xóa đơn trả hàng có ID=" + returnId);
+            
+            if (returnId == null) {
+                System.err.println("ReturnService: ID trả hàng không hợp lệ");
+                return false;
+            }
+            
+            // Gọi repository để xóa đơn trả hàng
+            boolean result = returnRepository.delete(returnId);
+            
+            System.out.println("ReturnService: Kết quả xóa đơn trả hàng: " + (result ? "Thành công" : "Thất bại"));
+            return result;
+        } catch (Exception e) {
+            System.err.println("ReturnService: Lỗi khi xóa đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
-        
-        // Kiểm tra trạng thái có cho phép xóa không
-        String currentStatus = existingReturn.get().getStatus();
-        if (!"Đang xử lý".equals(currentStatus)) {
-            throw new IllegalStateException("Chỉ có thể xóa đơn trả hàng ở trạng thái đang xử lý");
-        }
-        
-        return returnRepository.delete(returnId);
     }
     
     /**
@@ -106,6 +112,38 @@ public class ReturnService {
      */
     public Optional<Return> findReturnById(Integer returnId) {
         return returnRepository.findById(returnId);
+    }
+    
+    /**
+     * Tìm đơn trả hàng theo ID
+     * 
+     * @param id ID đơn trả hàng cần tìm
+     * @return Optional chứa đơn trả hàng nếu tìm thấy
+     */
+    public Optional<Return> findById(Integer id) {
+        try {
+            System.out.println("ReturnService: Đang tìm đơn trả hàng với ID=" + id);
+            
+            if (id == null) {
+                System.err.println("ReturnService: ID trả hàng không hợp lệ");
+                return Optional.empty();
+            }
+            
+            // Gọi repository để tìm đơn trả hàng
+            Optional<Return> result = returnRepository.findById(id);
+            
+            if (result.isPresent()) {
+                System.out.println("ReturnService: Tìm thấy đơn trả hàng có ID=" + id);
+            } else {
+                System.out.println("ReturnService: Không tìm thấy đơn trả hàng có ID=" + id);
+            }
+            
+            return result;
+        } catch (Exception e) {
+            System.err.println("ReturnService: Lỗi khi tìm đơn trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
+        }
     }
     
     /**

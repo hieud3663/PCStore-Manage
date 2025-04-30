@@ -3,6 +3,8 @@ package com.pcstore.service;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.pcstore.model.Customer;
 import com.pcstore.repository.impl.CustomerRepository;
@@ -12,6 +14,7 @@ import com.pcstore.repository.impl.CustomerRepository;
  */
 public class CustomerService {
     private final CustomerRepository customerRepository;
+    private static final Logger logger = Logger.getLogger(CustomerService.class.getName());
     
     /**
      * Khởi tạo service với csd
@@ -118,6 +121,20 @@ public class CustomerService {
      */
     public Optional<Customer> findCustomerById(String customerId) {
         return customerRepository.findById(customerId);
+    }
+    
+    /**
+     * Tìm khách hàng theo ID cho hiển thị thẻ bảo hành
+     * @param customerId ID của khách hàng
+     * @return Optional<Customer> đối tượng khách hàng với đầy đủ thông tin
+     */
+    public Optional<Customer> findCustomerByIdForWarranty(String customerId) {
+        try {
+            return customerRepository.findByIdWarranty(customerId);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error finding customer by ID for warranty", e);
+            return Optional.empty();
+        }
     }
     
     /**

@@ -11,12 +11,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Repository implementation cho Customer entity
  */
 public class CustomerRepository implements Repository<Customer, String> {
     private Connection connection;
+    private static final Logger logger = Logger.getLogger(CustomerRepository.class.getName());
     
     public CustomerRepository(Connection connection) {
         this.connection = connection;
@@ -244,5 +247,89 @@ public class CustomerRepository implements Repository<Customer, String> {
         // Chúng sẽ được load khi cần thông qua InvoiceRepository và RepairServiceRepository
         
         return customer;
+    }
+
+    public Optional<Customer> findByPhone(String phoneNumber) {
+        String sql = "SELECT CustomerID, FullName, PhoneNumber, Email, Address, CreatedAt, Point " +
+                     "FROM Customers WHERE PhoneNumber = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, phoneNumber);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Customer customer = new Customer();
+                    customer.setCustomerId(rs.getString("CustomerID"));
+                    customer.setFullName(rs.getString("FullName"));
+                    customer.setPhoneNumber(rs.getString("PhoneNumber"));
+                    customer.setEmail(rs.getString("Email"));
+                    customer.setAddress(rs.getString("Address"));
+                    
+                    if (rs.getTimestamp("CreatedAt") != null) {
+                        customer.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
+                    }
+                    
+                    customer.setPoints(rs.getInt("Point"));
+                    
+                    return Optional.of(customer);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error finding customer by phone: " + phoneNumber, e);
+        }
+        
+        return Optional.empty();
+    }
+
+    /**
+     * Tìm khách hàng theo ID cho mục đích hiển thị thẻ bảo hành
+     * Đảm bảo trả về đầy đủ thông tin bao gồm địa chỉ
+     *
+     * @param customerId ID của khách hàng
+     * @return Optional<Customer> với đầy đủ thông tin nếu tìm thấy
+     */
+    public Optional<Customer> findByIdWarranty(String customerId) {
+        if (customerId == null || customerId.trim().isEmpty()) {
+            logger.warning("CustomerID is null or empty");
+            return Optional.empty();
+        }
+        
+        String sql = "SELECT CustomerID, FullName, PhoneNumber, Email, Address, CreatedAt, Point " +
+                     "FROM Customers WHERE CustomerID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, customerId);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Customer customer = new Customer();
+                    customer.setCustomerId(rs.getString("CustomerID"));
+                    customer.setFullName(rs.getString("FullName"));
+                    customer.setPhoneNumber(rs.getString("PhoneNumber"));
+                    customer.setEmail(rs.getString("Email"));
+                    
+                    // Đảm bảo đọc địa chỉ và xử lý null
+                    String address = rs.getString("Address");
+                    customer.setAddress(address != null ? address : "");
+                    
+                    // Log địa chỉ để debug
+                    logger.info("Customer found with ID: " + customerId + ", Address: " + (address != null ? address : "null"));
+                    
+                    if (rs.getTimestamp("CreatedAt") != null) {
+                        customer.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
+                    }
+                    
+                    customer.setPoints(rs.getInt("Point"));
+                    
+                    return Optional.of(customer);
+                } else {
+                    logger.warning("No customer found with ID: " + customerId);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error finding customer by ID for warranty: " + customerId, e);
+        }
+        
+        return Optional.empty();
     }
 }

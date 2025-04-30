@@ -85,7 +85,8 @@ public class ButtonUtils {
                 button.kStartColor,
                 button.kEndColor,
                 button.kHoverStartColor,
-                button.kHoverEndColor
+                button.kHoverEndColor,
+                button.kHoverColor
             };
             button.putClientProperty("original_colors", colors);
         }
@@ -102,15 +103,16 @@ public class ButtonUtils {
                 button.setkEndColor(colors[3]);
                 button.setkHoverStartColor(colors[4]);
                 button.setkHoverEndColor(colors[5]);
+                button.setkHoverColor(colors[6]);
             }
             
             SwingUtilities.invokeLater(() -> {
                 button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             });
 
-            button.setkAllowGradient(true);
+            button.setkAllowGradient(false);
+            
         } else {
-            // Khi disable, sử dụng màu xám
             Color disabledBg = new Color(220, 220, 220); // Xám nhạt
             Color disabledFg = new Color(120, 120, 120); // Xám đậm
             
@@ -119,8 +121,9 @@ public class ButtonUtils {
             button.setkStartColor(disabledBg);
             button.setkEndColor(disabledBg);
             
-            // Tắt hiệu ứng gradient khi disabled
             button.setkAllowGradient(false);
+            button.setkHoverColor(new Color(220, 220, 220));
+            
         }
         
         // Cập nhật giao diện

@@ -17,14 +17,20 @@ import com.pcstore.repository.impl.EmployeeRepository;
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final Connection connection;
-    
+    private final UserService userService;
     /**
      * Khởi tạo service với csdl
      * @param connection Kết nối csdl
      */
     public EmployeeService(Connection connection) {
-        this.employeeRepository = new EmployeeRepository(connection);
-        this.connection = connection;
+        try{
+            this.employeeRepository = new EmployeeRepository(connection);
+            this.connection = connection;
+            this.userService = ServiceFactory.getUserService();
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi khởi tạo EmployeeService: " + e.getMessage(), e);
+        }
+        
     }
 
     /**
@@ -32,8 +38,13 @@ public class EmployeeService {
      * @param employeeRepository Repository nhân viên
      */
     public EmployeeService(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
-        this.connection = null;
+        try{
+            this.employeeRepository = employeeRepository;
+            this.userService = ServiceFactory.getUserService();
+            this.connection = null;
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi khởi tạo EmployeeService: " + e.getMessage(), e);
+        }
     }
     
     /**
@@ -45,7 +56,6 @@ public class EmployeeService {
         // Kiểm tra trùng lặp email và số điện thoại
         validateUniqueFields(employee);
         
-        // Nếu không có mã nhân viên, tạo mã mới
         if (employee.getEmployeeId() == null || employee.getEmployeeId().isEmpty()) {
             employee.setEmployeeId(employeeRepository.generateEmployeeId());
         }
@@ -131,6 +141,11 @@ public class EmployeeService {
         return employeeRepository.generateEmployeeId();
     }
     
+
+    public boolean hasUserAccount(String employeeId) {
+        return userService.findUserByEmployeeId(employeeId).isPresent();
+    }
+
     /**
      * Kiểm tra các trường dữ liệu độc nhất
      * @param employee Nhân viên cần kiểm tra
@@ -153,39 +168,5 @@ public class EmployeeService {
         }
     }
 
-    /**
-     * Lấy danh sách tất cả nhân viên
-     * 
-     * @return Danh sách tất cả nhân viên
-     * @throws Exception Nếu có lỗi xảy ra
-     */
-    public List<Employee> getAllEmployees() throws Exception {
-        List<Employee> employees = new ArrayList<>();
-        
-        try (PreparedStatement stmt = connection.prepareStatement(
-                "SELECT * FROM Employees WHERE Position IN ('Manager', 'Sales', 'Stock Keeper')")) {
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Employee employee = new Employee();
-                    employee.setEmployeeId(rs.getString("EmployeeID"));
-                    employee.setFullName(rs.getString("FullName"));
-                    employee.setEmail(rs.getString("Email"));
-                    // employee.setPhone(rs.getString("PhoneNumber"));
-                    // employee.setRole(rs.getString("Position"));
-                    
-                    // Các trường khác nếu cần
-                    // employee.setAddress(rs.getString("Address"));
-                    // employee.setSalary(rs.getBigDecimal("Salary"));
-                    // employee.setHireDate(rs.getDate("HireDate") != null ? rs.getDate("HireDate").toLocalDate() : null);
-                    
-                    employees.add(employee);
-                }
-            }
-        } catch (SQLException e) {
-            throw new Exception("Lỗi khi lấy danh sách nhân viên: " + e.getMessage(), e);
-        }
-        
-        return employees;
-    }
+  
 }

@@ -61,9 +61,6 @@
 --     - Mỗi tài khoản có thể liên kết với **một nhân viên**.
 --     - Nếu nhân viên bị xóa, tài khoản giữ nguyên (`SET NULL`).
 
--- 17. **Users (Tài khoản) ↔ Roles (Phân quyền)**
---     - Một tài khoản có thể có **nhiều vai trò**.
-
 -- 18. **Returns (Trả hàng)**
 --     - Một chi tiết hóa đơn có thể **bị trả lại một phần hoặc toàn bộ**.
 --     - Nếu sản phẩm bị đổi, liên kết với sản phẩm mới (`NewProductID`).
@@ -296,14 +293,6 @@ CREATE TABLE Roles (
     Description NVARCHAR(255)
 );
 
--- Bảng phân quyền cho người dùng
-CREATE TABLE UserRoles (
-    UserID VARCHAR(10) NOT NULL,
-    RoleID INT NOT NULL,
-    PRIMARY KEY (UserID, RoleID),
-    FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID) ON DELETE CASCADE
-);
 
 -- Bảng quản lý trả hàng và đổi sản phẩm
 CREATE TABLE Returns (
@@ -330,6 +319,15 @@ CREATE TABLE Returns (
 ALTER TABLE Employees
 ADD Gender NVARCHAR(10) CHECK (Gender IN ('Male', 'Female', 'Other'));
 
+-- thêm trường ngày sinh cho employees
+ALTER TABLE Employees
+ADD DateOfBirth DATE;
+GO
+-- Thêm trường avatar trong bảng Employees
+
+ALTER TABLE Employees
+ADD Avatar VARCHAR(MAX);
+
 -- Thêm trường point cho khách hàng
 ALTER TABLE Customers
 ADD Point INT DEFAULT 0 CHECK (Point >= 0);
@@ -347,4 +345,9 @@ WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
 
 
 
-SELECT * FROM Products
+-- Thêm trường RoleID vào bẳng Users
+ALTER TABLE Users
+ADD RoleID INT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;

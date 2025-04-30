@@ -7,6 +7,9 @@ import javax.swing.RowSorter.SortKey;
 import javax.swing.RowFilter;
 import javax.swing.SortOrder;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 
 public class TableStyleUtil {
@@ -18,6 +21,27 @@ public class TableStyleUtil {
         applyCenterAlignment(table);
         
         TableRowSorter<TableModel> sorter = setupSorting(table);
+        
+        // Thêm comparator đặc biệt cho cột STT
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            
+                final int columnIndex = i;
+                sorter.setComparator(columnIndex, new Comparator<Object>() {
+                    @Override
+                    public int compare(Object o1, Object o2) {
+                        if (o1 instanceof Integer && o2 instanceof Integer) {
+                            return ((Integer) o1).compareTo((Integer) o2);
+                        }
+                        try {
+                            int val1 = Integer.parseInt(o1.toString());
+                            int val2 = Integer.parseInt(o2.toString());
+                            return Integer.compare(val1, val2);
+                        } catch (NumberFormatException e) {
+                            return o1.toString().compareTo(o2.toString());
+                        }
+                    }
+                });
+        }
         
         table.setRowHeight(30);
         table.setShowGrid(true);
@@ -178,21 +202,39 @@ public class TableStyleUtil {
      * Thiết lập bộ lọc cho bảng dựa trên từ khóa tìm kiếm
      * @param sorter TableRowSorter để thiết lập bộ lọc
      * @param searchText Từ khóa tìm kiếm
-     * @param columns Các cột cần tìm kiếm
+     * @param columns Các cột cần tìm kiếm (nếu không chỉ định, tìm trên tất cả các cột)
      */
     public static void applyFilter(TableRowSorter<TableModel> sorter, String searchText, int... columns) {
-        if (searchText.trim().isEmpty()) {
+        if (searchText == null || searchText.trim().isEmpty()) {
             sorter.setRowFilter(null);
         } else {
             try {
-                RowFilter<TableModel, Object> filter = RowFilter.regexFilter("(?i)" + Pattern.quote(searchText.trim()));
-                sorter.setRowFilter(filter);
+                String regex = "(?i)" + Pattern.quote(searchText.trim()); 
+                
+                if (columns.length > 0) {
+                    List<RowFilter<TableModel, Object>> filters = new ArrayList<>();
+                    for (int column : columns) {
+                        filters.add(RowFilter.regexFilter(regex, column));
+                    }
+                    sorter.setRowFilter(RowFilter.orFilter(filters));
+                } else {
+                    sorter.setRowFilter(RowFilter.regexFilter(regex));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
     
+
+    //refresh sorter cho bảng
+    
+    public static void refreshSorter(JTable table) {
+        if (table.getRowSorter() != null) {
+            table.getRowSorter().setSortKeys(null);
+        }
+    }
+
     /**
      * Thiết lập kích thước cột và ẩn/hiện cột
      * @param table Bảng cần tùy chỉnh

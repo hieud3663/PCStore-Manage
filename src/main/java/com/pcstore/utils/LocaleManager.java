@@ -2,6 +2,7 @@ package com.pcstore.utils;
 
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -163,6 +164,9 @@ public class LocaleManager {
     }
 
     public DateTimeFormatter getDateFormatter() {
-        return DateTimeFormatter.ofPattern("dd/MM/yyyy", currentLocale);
+        // Creates a formatter that first tries dd/MM/yyyy, then dd-MM-yyyy
+        return new DateTimeFormatterBuilder()
+            .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            .toFormatter(currentLocale);
     }
 }

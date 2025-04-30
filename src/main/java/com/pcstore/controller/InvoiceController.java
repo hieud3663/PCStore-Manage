@@ -598,7 +598,7 @@ public class InvoiceController {
             String sql = "SELECT i.InvoiceID, i.CustomerID, i.EmployeeID, i.TotalAmount, i.InvoiceDate, " +
                          "i.StatusID, i.PaymentMethodID, " +
                          "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
-                         "e.FullName as EmployeeName " +
+                         "e.FullName as FullName " +
                          "FROM Invoices i " +
                          "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
                          "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
@@ -655,7 +655,7 @@ public class InvoiceController {
                     if (employeeId != null) {
                         Employee employee = new Employee();
                         employee.setEmployeeId(employeeId);
-                        employee.setFullName(resultSet.getString("EmployeeName"));
+                        employee.setFullName(resultSet.getString("FullName"));
                         invoice.setEmployee(employee);
                     }
                     
@@ -851,7 +851,7 @@ public class InvoiceController {
             String sql = "SELECT i.InvoiceID, i.CustomerID, i.EmployeeID, i.TotalAmount, i.InvoiceDate, " +
                          "i.StatusID, i.PaymentMethodID, " +
                          "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
-                         "e.FullName as EmployeeName " +
+                         "e.FullName as FullName " +
                          "FROM Invoices i " +
                          "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
                          "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
@@ -908,7 +908,7 @@ public class InvoiceController {
                     if (employeeId != null) {
                         Employee employee = new Employee();
                         employee.setEmployeeId(employeeId);
-                        employee.setFullName(resultSet.getString("EmployeeName"));
+                        employee.setFullName(resultSet.getString("FullName"));
                         invoice.setEmployee(employee);
                     }
                     
@@ -992,13 +992,12 @@ public class InvoiceController {
             Optional<Customer> customerOpt = customerService.findCustomerByPhone(phoneNumber);
             
             if (customerOpt.isPresent()) {
-                // Nếu tìm thấy khách hàng, lấy danh sách hóa đơn của họ
                 return invoiceService.findInvoicesByCustomer(customerOpt.get().getCustomerId());
             } else {
-                // Không tìm thấy khách hàng
                 return new ArrayList<>();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi lấy hóa đơn theo số điện thoại: " + e.getMessage(), e);
         }
     }

@@ -616,7 +616,11 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         if (employeeId != null) {
             Employee employee = new Employee();
             employee.setEmployeeId(employeeId);
-            employee.setFullName(resultSet.getString("EmployeeName"));
+            try {
+                employee.setFullName(resultSet.getString("EmployeeName"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             invoice.setEmployee(employee);
         }
         

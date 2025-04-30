@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import com.pcstore.repository.RepositoryFactory;
+import com.pcstore.service.RevenueService;
 import com.pcstore.utils.DatabaseConnection;
 
 /**
@@ -25,6 +26,7 @@ public class ServiceFactory {
     private static RepairService repairServiceService;
     private static WarrantyService warrantyService;
     private static ReturnService returnService;
+    private static RevenueService revenueService;
     // private static UserService userService;
     
     /**
@@ -185,6 +187,17 @@ public class ServiceFactory {
         return returnService;
     }
 
+    /**
+     * Lấy RevenueService
+     * @return RevenueService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static RevenueService getRevenueService() throws SQLException {
+        if (revenueService == null) {
+            revenueService = new RevenueService(getInstance().getConnection());
+        }
+        return revenueService;
+    }
     
     /**
      * Đóng kết nối đến cơ sở dữ liệu
@@ -205,6 +218,7 @@ public class ServiceFactory {
             repairServiceService = null;
             warrantyService = null;
             returnService = null;
+            revenueService = null;
             
             instance = null;
         }

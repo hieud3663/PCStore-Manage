@@ -351,3 +351,8 @@ ADD RoleID INT NULL,
     FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
     ON DELETE SET NULL
     ON UPDATE CASCADE;
+
+
+--Thểm cột notes cho bảng Returns
+ALTER TABLE Returns
+ADD Notes NVARCHAR(MAX) DEFAULT '';

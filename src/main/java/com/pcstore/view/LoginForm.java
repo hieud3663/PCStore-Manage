@@ -62,7 +62,7 @@ public class LoginForm extends JFrame {
         
         txtUsername.requestFocus();
 
-        //checkLogin(); //auto login
+        checkLogin(); //auto login
 
     }
 
@@ -272,11 +272,11 @@ public class LoginForm extends JFrame {
 
 
     public void checkLogin(){
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
+        // String username = txtUsername.getText();
+        // String password = txtPassword.getText();
 
-        // String username = "admin";
-        // String password = "admin";
+        String username = "admin";
+        String password = "admin";
 
         if(username.isEmpty() && password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);

@@ -6,6 +6,7 @@ package com.pcstore.view;
 
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.repository.*;
 import com.pcstore.service.*;
 
@@ -41,6 +42,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         try {
             initComponents();
             initController();
+            TableStyleUtil.applyDefaultStyle(tableListWarranty);
         } catch (Exception e) {
             System.err.println("Error initializing WarrantyServiceForm: " + e.getMessage());
             e.printStackTrace();
@@ -98,30 +100,38 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
         jTextField1 = new javax.swing.JTextField();
+        panelBody = new javax.swing.JPanel();
         jScrollPaneTable = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableListWarranty = new javax.swing.JTable();
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("WarrantyService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(1153, 713));
         setMinimumSize(new java.awt.Dimension(1153, 713));
         setPreferredSize(new java.awt.Dimension(1153, 713));
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setLayout(new java.awt.BorderLayout());
 
+        pnWarrantyMain.setBackground(new java.awt.Color(255, 255, 255));
         pnWarrantyMain.setMaximumSize(new java.awt.Dimension(1360, 600));
         pnWarrantyMain.setMinimumSize(new java.awt.Dimension(1360, 600));
         pnWarrantyMain.setPreferredSize(new java.awt.Dimension(1360, 600));
         pnWarrantyMain.setLayout(new javax.swing.BoxLayout(pnWarrantyMain, javax.swing.BoxLayout.Y_AXIS));
 
+        pnFunctions.setBackground(new java.awt.Color(255, 255, 255));
         pnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 10));
 
-        btnWarrantyRegistration.setText(bundle.getString("btnWarrantyRegistration")); // NOI18N
-        btnWarrantyRegistration.setkBorderRadius(40);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        btnWarrantyRegistration.setText(bundle.getString("btnReturnProduct")); // NOI18N
+        btnWarrantyRegistration.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnWarrantyRegistration.setkAllowGradient(false);
+        btnWarrantyRegistration.setkBackGroundColor(new java.awt.Color(0, 190, 94));
+        btnWarrantyRegistration.setkBorderRadius(30);
         btnWarrantyRegistration.setkEndColor(new java.awt.Color(0, 255, 51));
+        btnWarrantyRegistration.setkFocusColor(new java.awt.Color(255, 255, 255));
+        btnWarrantyRegistration.setkHoverColor(new java.awt.Color(0, 190, 94));
         btnWarrantyRegistration.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarrantyRegistration.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnWarrantyRegistration.setkHoverForeGround(new java.awt.Color(50, 100, 255));
         btnWarrantyRegistration.setkStartColor(new java.awt.Color(0, 204, 255));
+        btnWarrantyRegistration.setPreferredSize(new java.awt.Dimension(150, 35));
         btnWarrantyRegistration.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnWarrantyRegistrationActionPerformed(evt);
@@ -130,13 +140,16 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         pnFunctions.add(btnWarrantyRegistration);
 
         btnRemoveRepair.setText(bundle.getString("btnRemoveRepair")); // NOI18N
-        btnRemoveRepair.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnRemoveRepair.setkBorderRadius(40);
+        btnRemoveRepair.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnRemoveRepair.setkAllowGradient(false);
+        btnRemoveRepair.setkBackGroundColor(new java.awt.Color(255, 0, 51));
+        btnRemoveRepair.setkBorderRadius(30);
         btnRemoveRepair.setkEndColor(new java.awt.Color(255, 102, 51));
+        btnRemoveRepair.setkHoverColor(new java.awt.Color(255, 39, 51));
         btnRemoveRepair.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnRemoveRepair.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnRemoveRepair.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnRemoveRepair.setkHoverForeGround(new java.awt.Color(50, 100, 255));
         btnRemoveRepair.setkStartColor(new java.awt.Color(255, 0, 51));
+        btnRemoveRepair.setPreferredSize(new java.awt.Dimension(150, 35));
         btnRemoveRepair.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRemoveRepairMouseClicked(evt);
@@ -149,13 +162,16 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         });
         pnFunctions.add(btnRemoveRepair);
 
-        btnDetailWarrantyCard.setText(bundle.getString("btnDetailWarrantyCard")); // NOI18N
-        btnDetailWarrantyCard.setkBorderRadius(40);
+        btnDetailWarrantyCard.setText(bundle.getString("btnDetailReturnCard")); // NOI18N
+        btnDetailWarrantyCard.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDetailWarrantyCard.setkAllowGradient(false);
+        btnDetailWarrantyCard.setkBackGroundColor(new java.awt.Color(102, 153, 255));
         btnDetailWarrantyCard.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnDetailWarrantyCard.setkHoverColor(new java.awt.Color(102, 185, 241));
         btnDetailWarrantyCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnDetailWarrantyCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDetailWarrantyCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnDetailWarrantyCard.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnDetailWarrantyCard.setkIndicatorThickness(255);
+        btnDetailWarrantyCard.setPreferredSize(new java.awt.Dimension(150, 35));
         btnDetailWarrantyCard.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDetailWarrantyCardActionPerformed(evt);
@@ -163,6 +179,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         });
         pnFunctions.add(btnDetailWarrantyCard);
 
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
         jPanel3.setPreferredSize(new java.awt.Dimension(425, 65));
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -177,7 +194,6 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         btnWarrantyInformationLookup.setkEndColor(new java.awt.Color(153, 153, 153));
         btnWarrantyInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarrantyInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarrantyInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnWarrantyInformationLookup.setkStartColor(new java.awt.Color(204, 204, 204));
         btnWarrantyInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
         btnWarrantyInformationLookup.addActionListener(new java.awt.event.ActionListener() {
@@ -194,9 +210,11 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
 
         pnWarrantyMain.add(pnFunctions);
 
+        panelBody.setLayout(new java.awt.BorderLayout());
+
         jScrollPaneTable.setPreferredSize(new java.awt.Dimension(452, 500));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableListWarranty.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -206,12 +224,22 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             new String [] {
                 "Mã Bảo Hành ", "Ngày Yêu Cầu", "Mã Khách Hàng", "Tên Khách Hàng", "Số Điện Thoại", "Tên sản Phẩm ", "Mã Sản Phẩm", "Tình Trạng"
             }
-        ));
-        jScrollPaneTable.setViewportView(jTable1);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
 
-        pnWarrantyMain.add(jScrollPaneTable);
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPaneTable.setViewportView(tableListWarranty);
 
-        add(pnWarrantyMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(35, 35, 1080, 530));
+        panelBody.add(jScrollPaneTable, java.awt.BorderLayout.CENTER);
+
+        pnWarrantyMain.add(panelBody);
+
+        add(pnWarrantyMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyRegistrationActionPerformed
@@ -259,7 +287,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveRepairActionPerformed
     try {
         // Kiểm tra xem có hàng nào được chọn không
-        int selectedRow = jTable1.getSelectedRow();
+        int selectedRow = tableListWarranty.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this,
                 "Vui lòng chọn một bảo hành để xóa.",
@@ -269,7 +297,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         }
 
         // Lấy ID của bảo hành được chọn dưới dạng chuỗi
-        Object warrantyIdObj = jTable1.getValueAt(selectedRow, 0);
+        Object warrantyIdObj = tableListWarranty.getValueAt(selectedRow, 0);
         if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this,
                 "Bảo hành không có ID hợp lệ.",
@@ -326,7 +354,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
 
     private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailWarrantyCardActionPerformed
         if (controller != null) {
-            int selectedRow = jTable1.getSelectedRow();
+            int selectedRow = tableListWarranty.getSelectedRow();
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(
                     this,
@@ -338,7 +366,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             }
             
             // Lấy mã bảo hành từ dòng đã chọn
-            String warrantyId = jTable1.getValueAt(selectedRow, 0).toString();
+            String warrantyId = tableListWarranty.getValueAt(selectedRow, 0).toString();
             controller.viewWarrantyDetail(warrantyId);
         }
     }//GEN-LAST:event_btnDetailWarrantyCardActionPerformed
@@ -359,7 +387,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     public void updateWarrantyTable(List<Warranty> warranties) {
         System.out.println("Updating warranty table with " + (warranties != null ? warranties.size() : 0) + " items");
         
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) tableListWarranty.getModel();
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
         
         if (warranties == null || warranties.isEmpty()) {
@@ -401,7 +429,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
      * Xóa tất cả dữ liệu trong bảng
      */
     public void clearWarrantyTable() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) tableListWarranty.getModel();
         model.setRowCount(0);
     }
 
@@ -410,7 +438,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
      * @return Bảng bảo hành
      */
     public JTable getWarrantyTable() {
-        return jTable1;
+        return tableListWarranty;
     }
 
     /**
@@ -443,9 +471,10 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnWarrantyRegistration;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPaneTable;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel panelBody;
     private javax.swing.JPanel pnFunctions;
     private javax.swing.JPanel pnWarrantyMain;
+    private javax.swing.JTable tableListWarranty;
     // End of variables declaration//GEN-END:variables
 }

@@ -2,6 +2,9 @@ package com.pcstore.controller;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +15,7 @@ import com.pcstore.model.Employee;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Product;
+import com.pcstore.model.Return;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.repository.RepositoryFactory;
@@ -541,17 +545,385 @@ public class InvoiceController {
     
     /**
      * Lấy danh sách tất cả hóa đơn
-     * 
      * @return Danh sách hóa đơn
      */
     public List<Invoice> getAllInvoices() {
         try {
-            return invoiceService.findAllInvoices();
+            System.out.println("Đang lấy danh sách tất cả hóa đơn...");
+            List<Invoice> invoices = invoiceService.findAllInvoices();
+            
+            if (invoices == null) {
+                System.err.println("InvoiceService.findAllInvoices() trả về null");
+                return new ArrayList<>();
+            }
+            
+            System.out.println("Lấy được " + invoices.size() + " hóa đơn");
+            return invoices;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi lấy danh sách hóa đơn: " + e.getMessage(), e);
+            System.err.println("Lỗi khi lấy danh sách hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
     
+    /**
+     * Lấy danh sách tất cả hóa đơn có thể trả hàng
+     * @return Danh sách hóa đơn có thể trả hàng
+     */
+    public List<Invoice> getAllInvoicesForReturn() {
+        try {
+            System.out.println("Đang lấy danh sách hóa đơn có thể trả hàng...");
+            List<Invoice> invoices = invoiceService.findAllInvoicesForReturn();
+            
+            if (invoices == null) {
+                System.out.println("Không có hóa đơn nào có thể trả hàng.");
+                return new ArrayList<>();
+            }
+            
+            System.out.println("Tìm thấy " + invoices.size() + " hóa đơn có thể trả hàng.");
+            return invoices;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy hóa đơn cho trả hàng: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Lấy danh sách tất cả hóa đơn cho màn hình bảo hành
+     * @return Danh sách hóa đơn với chi tiết sản phẩm
+     */
+    public List<Invoice> getAllInvoicesForWarranty() {
+        try {
+            String sql = "SELECT i.InvoiceID, i.CustomerID, i.EmployeeID, i.TotalAmount, i.InvoiceDate, " +
+                         "i.StatusID, i.PaymentMethodID, " +
+                         "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                         "e.FullName as EmployeeName " +
+                         "FROM Invoices i " +
+                         "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                         "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
+                         "WHERE i.StatusID = 2 OR i.StatusID = 3 " + // Chỉ lấy hoá đơn đã thanh toán hoặc hoàn thành
+                         "ORDER BY i.InvoiceDate DESC";
+                         
+            List<Invoice> invoices = new ArrayList<>();
+            Connection connection = ServiceFactory.getInstance().getConnection();
+            
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+                 
+                while (resultSet.next()) {
+                    Invoice invoice = new Invoice();
+                    invoice.setInvoiceId(resultSet.getInt("InvoiceID"));
+                    invoice.setTotalAmount(resultSet.getBigDecimal("TotalAmount"));
+                    invoice.setInvoiceDate(resultSet.getObject("InvoiceDate", LocalDateTime.class));
+                    
+                    // Map status from ID to enum
+                    int statusId = resultSet.getInt("StatusID");
+                    switch (statusId) {
+                        case 0: invoice.setStatus(InvoiceStatusEnum.PENDING); break;
+                        case 1: invoice.setStatus(InvoiceStatusEnum.CONFIRMED); break;
+                        case 2: invoice.setStatus(InvoiceStatusEnum.DELIVERED); break;
+                        case 3: invoice.setStatus(InvoiceStatusEnum.COMPLETED); break;
+                        case 4: invoice.setStatus(InvoiceStatusEnum.CANCELLED); break;
+                        case 5: invoice.setStatus(InvoiceStatusEnum.PROCESSING); break;
+                        default: invoice.setStatus(InvoiceStatusEnum.PENDING);
+                    }
+                    
+                    // Map payment method from ID to enum
+                    int paymentMethodId = resultSet.getInt("PaymentMethodID");
+                    switch (paymentMethodId) {
+                        case 1: invoice.setPaymentMethod(PaymentMethodEnum.CASH); break;
+                        case 2: invoice.setPaymentMethod(PaymentMethodEnum.MOMO); break;
+                        case 3: invoice.setPaymentMethod(PaymentMethodEnum.ZALOPAY); break;
+                        case 4: invoice.setPaymentMethod(PaymentMethodEnum.BANK_TRANSFER); break;
+                        case 5: invoice.setPaymentMethod(PaymentMethodEnum.CREDIT_CARD); break;
+                        default: invoice.setPaymentMethod(PaymentMethodEnum.CASH);
+                    }
+                    
+                    // Tạo và thiết lập thông tin khách hàng
+                    String customerId = resultSet.getString("CustomerID");
+                    if (customerId != null) {
+                        Customer customer = new Customer();
+                        customer.setCustomerId(customerId);
+                        customer.setFullName(resultSet.getString("CustomerName"));
+                        customer.setPhoneNumber(resultSet.getString("CustomerPhone"));
+                        invoice.setCustomer(customer);
+                    }
+                    
+                    // Tạo và thiết lập thông tin nhân viên
+                    String employeeId = resultSet.getString("EmployeeID");
+                    if (employeeId != null) {
+                        Employee employee = new Employee();
+                        employee.setEmployeeId(employeeId);
+                        employee.setFullName(resultSet.getString("EmployeeName"));
+                        invoice.setEmployee(employee);
+                    }
+                    
+                    // Lấy chi tiết hóa đơn
+                    List<InvoiceDetail> details = getInvoiceDetailsForWarranty(invoice.getInvoiceId());
+                    invoice.setInvoiceDetails(details);
+                    
+                    // Chỉ thêm hóa đơn có chi tiết
+                    if (details != null && !details.isEmpty()) {
+                        invoices.add(invoice);
+                    }
+                }
+                
+                return invoices;
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy danh sách hóa đơn cho bảo hành: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Lấy danh sách chi tiết hóa đơn cho màn hình bảo hành
+     * @param invoiceId ID hóa đơn
+     * @return Danh sách chi tiết hóa đơn với thông tin sản phẩm
+     */
+    private List<InvoiceDetail> getInvoiceDetailsForWarranty(Integer invoiceId) {
+        try {
+            String sql = "SELECT id.InvoiceDetailID, id.InvoiceID, id.ProductID, id.Quantity, " +
+                         "id.UnitPrice, p.ProductName, p.CategoryID, p.WarrantyPeriod " +
+                         "FROM InvoiceDetails id " +
+                         "JOIN Products p ON id.ProductID = p.ProductID " +
+                         "WHERE id.InvoiceID = ? AND p.WarrantyPeriod > 0";
+                         
+            List<InvoiceDetail> details = new ArrayList<>();
+            Connection connection = ServiceFactory.getInstance().getConnection();
+            
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, invoiceId);
+                
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        InvoiceDetail detail = new InvoiceDetail();
+                        detail.setInvoiceDetailId(resultSet.getInt("InvoiceDetailID"));
+                        detail.getInvoice().setInvoiceId(resultSet.getInt("InvoiceID"));
+                        detail.setQuantity(resultSet.getInt("Quantity"));
+                        detail.setUnitPrice(resultSet.getBigDecimal("UnitPrice"));
+                        
+                        // Tạo đối tượng Product
+                        Product product = new Product();
+                        product.setProductId(resultSet.getString("ProductID"));
+                        product.setProductName(resultSet.getString("ProductName"));
+//                        product.setCategoryId(resultSet.getString("CategoryID"));
+//                        product.setWarrantyPeriod(resultSet.getInt("WarrantyPeriod"));
+                        
+                        // Gán Product cho InvoiceDetail
+                        detail.setProduct(product);
+                        
+                        // Thiết lập liên kết ngược với Invoice (tùy chọn)
+                        detail.setInvoice(getInvoiceObject(invoiceId));
+                        
+                        details.add(detail);
+                    }
+                }
+            }
+            
+            return details;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy chi tiết hóa đơn cho bảo hành: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Lấy thông tin cơ bản của hóa đơn từ ID
+     */
+    private Invoice getInvoiceObject(Integer invoiceId) {
+        try {
+            String sql = "SELECT i.InvoiceID, i.CustomerID, i.InvoiceDate, " +
+                         "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone " +
+                         "FROM Invoices i " +
+                         "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                         "WHERE i.InvoiceID = ?";
+                         
+            Connection connection = ServiceFactory.getInstance().getConnection();
+            
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, invoiceId);
+                
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        Invoice invoice = new Invoice();
+                        invoice.setInvoiceId(invoiceId);
+                        invoice.setInvoiceDate(resultSet.getObject("InvoiceDate", LocalDateTime.class));
+                        
+                        // Tạo và thiết lập thông tin khách hàng
+                        String customerId = resultSet.getString("CustomerID");
+                        if (customerId != null) {
+                            Customer customer = new Customer();
+                            customer.setCustomerId(customerId);
+                            customer.setFullName(resultSet.getString("CustomerName"));
+                            customer.setPhoneNumber(resultSet.getString("CustomerPhone"));
+                            invoice.setCustomer(customer);
+                        }
+                        
+                        return invoice;
+                    }
+                }
+            }
+            
+            // Trả về đối tượng đơn giản với chỉ ID nếu không tìm thấy thông tin đầy đủ
+            Invoice simple = new Invoice();
+            simple.setInvoiceId(invoiceId);
+            return simple;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy thông tin hóa đơn: " + e.getMessage());
+            e.printStackTrace();
+            
+            // Trả về đối tượng đơn giản với chỉ ID
+            Invoice simple = new Invoice();
+            simple.setInvoiceId(invoiceId);
+            return simple;
+        }
+    }
+
+    /**
+     * Lấy danh sách chi tiết hóa đơn có thể trả hàng
+     * @param invoiceId ID hóa đơn cần lấy chi tiết
+     * @return Danh sách chi tiết hóa đơn có thể trả hàng
+     */
+    public List<InvoiceDetail> getReturnableInvoiceDetails(Integer invoiceId) {
+        try {
+            if (invoiceId == null) {
+                return new ArrayList<>();
+            }
+            
+            List<InvoiceDetail> allDetails = getInvoiceDetails(invoiceId);
+            List<InvoiceDetail> returnableDetails = new ArrayList<>();
+            
+            // Lấy thông tin về các đơn trả hàng đã có
+            ReturnController returnController = new ReturnController(
+                ServiceFactory.getInstance().getConnection(),
+                ServiceFactory.getInvoiceService(), 
+                ServiceFactory.getProductService()
+            );
+            
+            for (InvoiceDetail detail : allDetails) {
+                try {
+                    // Lấy số lượng đã trả
+                    List<Return> returns = returnController.getReturnsByInvoiceDetail(detail.getInvoiceDetailId());
+                    int returnedQuantity = 0;
+                    
+                    if (returns != null) {
+                        for (Return ret : returns) {
+                            if (ret != null && ("Approved".equals(ret.getStatus()) || 
+                                               "Completed".equals(ret.getStatus()))) {
+                                returnedQuantity += ret.getQuantity();
+                            }
+                        }
+                    }
+                    
+                    // Tính số lượng còn lại có thể trả
+                    int remainingQuantity = detail.getQuantity() - returnedQuantity;
+                    
+                    // Nếu còn có thể trả, thêm vào danh sách
+                    if (remainingQuantity > 0) {
+                        // Thay vì sử dụng setAvailableQuantity, lưu tạm thời trong một map
+                        detail.setExtraData("availableQuantity", remainingQuantity);
+                        // Hoặc nếu không có phương thức setExtraData, chỉ thêm vào danh sách
+                        returnableDetails.add(detail);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Lỗi khi xử lý chi tiết hóa đơn " + detail.getInvoiceDetailId() + ": " + e.getMessage());
+                }
+            }
+            
+            return returnableDetails;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy chi tiết hóa đơn có thể trả: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Lấy danh sách tất cả hóa đơn cho màn hình trả hàng
+     * @return Danh sách hóa đơn đơn giản
+     */
+    public List<Invoice> getAllInvoicesSimple() {
+        try {
+            String sql = "SELECT i.InvoiceID, i.CustomerID, i.EmployeeID, i.TotalAmount, i.InvoiceDate, " +
+                         "i.StatusID, i.PaymentMethodID, " +
+                         "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                         "e.FullName as EmployeeName " +
+                         "FROM Invoices i " +
+                         "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                         "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
+                         "WHERE i.StatusID = 2 OR i.StatusID = 3 " + // Chỉ lấy hoá đơn đã thanh toán hoặc hoàn thành
+                         "ORDER BY i.InvoiceDate DESC";
+                         
+            List<Invoice> invoices = new ArrayList<>();
+            Connection connection = ServiceFactory.getInstance().getConnection();
+            
+            try (Statement statement = connection.createStatement();
+                 ResultSet resultSet = statement.executeQuery(sql)) {
+                 
+                while (resultSet.next()) {
+                    Invoice invoice = new Invoice();
+                    invoice.setInvoiceId(resultSet.getInt("InvoiceID"));
+                    invoice.setTotalAmount(resultSet.getBigDecimal("TotalAmount"));
+                    invoice.setInvoiceDate(resultSet.getObject("InvoiceDate", LocalDateTime.class));
+                    
+                    // Map status from ID to enum
+                    int statusId = resultSet.getInt("StatusID");
+                    switch (statusId) {
+                        case 0: invoice.setStatus(InvoiceStatusEnum.PENDING); break;
+                        case 1: invoice.setStatus(InvoiceStatusEnum.CONFIRMED); break;
+                        case 2: invoice.setStatus(InvoiceStatusEnum.DELIVERED); break;
+                        case 3: invoice.setStatus(InvoiceStatusEnum.COMPLETED); break;
+                        case 4: invoice.setStatus(InvoiceStatusEnum.CANCELLED); break;
+                        case 5: invoice.setStatus(InvoiceStatusEnum.PROCESSING); break;
+                        default: invoice.setStatus(InvoiceStatusEnum.PENDING);
+                    }
+                    
+                    // Map payment method from ID to enum
+                    int paymentMethodId = resultSet.getInt("PaymentMethodID");
+                    switch (paymentMethodId) {
+                        case 1: invoice.setPaymentMethod(PaymentMethodEnum.CASH); break;
+                        case 2: invoice.setPaymentMethod(PaymentMethodEnum.MOMO); break;
+                        case 3: invoice.setPaymentMethod(PaymentMethodEnum.ZALOPAY); break;
+                        case 4: invoice.setPaymentMethod(PaymentMethodEnum.BANK_TRANSFER); break;
+                        case 5: invoice.setPaymentMethod(PaymentMethodEnum.CREDIT_CARD); break;
+                        default: invoice.setPaymentMethod(PaymentMethodEnum.CASH);
+                    }
+                    
+                    // Tạo và thiết lập thông tin khách hàng
+                    String customerId = resultSet.getString("CustomerID");
+                    if (customerId != null) {
+                        Customer customer = new Customer();
+                        customer.setCustomerId(customerId);
+                        customer.setFullName(resultSet.getString("CustomerName"));
+                        customer.setPhoneNumber(resultSet.getString("CustomerPhone"));
+                        invoice.setCustomer(customer);
+                    }
+                    
+                    // Tạo và thiết lập thông tin nhân viên
+                    String employeeId = resultSet.getString("EmployeeID");
+                    if (employeeId != null) {
+                        Employee employee = new Employee();
+                        employee.setEmployeeId(employeeId);
+                        employee.setFullName(resultSet.getString("EmployeeName"));
+                        invoice.setEmployee(employee);
+                    }
+                    
+                    invoices.add(invoice);
+                }
+                
+                return invoices;
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi lấy danh sách hóa đơn đơn giản: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
     /**
      * Lấy hóa đơn theo ID
      * 

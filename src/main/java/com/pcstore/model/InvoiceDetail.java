@@ -2,6 +2,8 @@ package com.pcstore.model;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import com.pcstore.model.base.BaseTimeEntity;
@@ -17,6 +19,8 @@ public class InvoiceDetail extends BaseTimeEntity {
     private BigDecimal discountAmount;
     private String notes;
 
+    // Thêm một map để lưu trữ dữ liệu tạm thời
+    private Map<String, Object> extraData = new HashMap<>();
 
     public InvoiceDetail(Integer invoiceDetailId, Invoice invoice, Product product, Warranty warranty, int quantity,
             BigDecimal unitPrice, BigDecimal discountAmount, String notes) {
@@ -203,6 +207,36 @@ public class InvoiceDetail extends BaseTimeEntity {
         
         // Mặc định, mọi chi tiết đều có thể trả lại
         return quantityToReturn <= quantity;
+    }
+
+    /**
+     * Lưu trữ dữ liệu tạm thời
+     * @param key Khóa
+     * @param value Giá trị
+     */
+    public void setExtraData(String key, Object value) {
+        extraData.put(key, value);
+    }
+    
+    /**
+     * Lấy dữ liệu tạm thời
+     * @param key Khóa
+     * @return Giá trị
+     */
+    public Object getExtraData(String key) {
+        return extraData.get(key);
+    }
+    
+    /**
+     * Lấy số lượng có thể trả
+     * @return Số lượng có thể trả
+     */
+    public int getAvailableQuantity() {
+        Object value = extraData.get("availableQuantity");
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        return quantity; // Mặc định trả về tổng số lượng nếu chưa tính
     }
 
     @Override

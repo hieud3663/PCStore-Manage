@@ -25,7 +25,7 @@ public class PCStoreManage {
 
     public static void main(String[] args) {
 
-        LocaleManager.getInstance().setLocale(LocaleManager.LOCALE_VIETNAM);
+        // LocaleManager.getInstance().setLocale(LocaleManager.LOCALE_VIETNAM);
         
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());

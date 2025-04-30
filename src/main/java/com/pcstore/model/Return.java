@@ -167,20 +167,18 @@ public class Return extends BaseTimeEntity {
     }
 
     // Factory method để tạo đơn trả hàng mới
-    public static Return createNew(InvoiceDetail invoiceDetail, int quantity, String reason) {
+    public static Return createNew(InvoiceDetail invoiceDetail, String reason) {
         if (invoiceDetail == null) {
             throw new IllegalArgumentException("Chi tiết hóa đơn không được để trống");
         }
-        if (quantity <= 0) {
-            throw new IllegalArgumentException("Số lượng trả phải lớn hơn 0");
-        }
+        
         if (reason == null || reason.trim().isEmpty()) {
             throw new IllegalArgumentException("Lý do trả hàng không được để trống");
         }
 
         Return returnItem = new Return();
         returnItem.setInvoiceDetail(invoiceDetail);
-        returnItem.setQuantity(quantity); // Kiểm tra số lượng đã được thực hiện ở controller
+     
         returnItem.setReason(reason);
         returnItem.setReturnDate(LocalDateTime.now());
         returnItem.setStatus("Pending");
@@ -206,11 +204,24 @@ public class Return extends BaseTimeEntity {
     }
 
     /**
+     * Lấy số tiền hoàn trả
+     * @return Số tiền hoàn trả
+     */
+    public java.math.BigDecimal getReturnAmount() {
+        return returnAmount;
+    }
+
+    /**
      * Thiết lập số tiền hoàn trả
-     * 
      * @param returnAmount Số tiền hoàn trả
      */
     public void setReturnAmount(java.math.BigDecimal returnAmount) {
+        if (returnAmount == null) {
+            throw new IllegalArgumentException("Số tiền hoàn trả không được để trống");
+        }
+        if (returnAmount.compareTo(java.math.BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Số tiền hoàn trả không được âm");
+        }
         this.returnAmount = returnAmount;
     }
 

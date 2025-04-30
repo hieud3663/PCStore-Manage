@@ -55,7 +55,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         kGradientPanel4 = new com.k33ptoo.components.KGradientPanel();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        WareHouseTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnCreatePurchaseOrder = new com.k33ptoo.components.KButton();
         btnHistoryStockIn = new com.k33ptoo.components.KButton();
@@ -78,7 +78,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        WareHouseTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -109,13 +109,13 @@ public class WareHouseForm extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        jTable1.setRowHeight(32);
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clSupplier")); // NOI18N
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+        WareHouseTable.setRowHeight(32);
+        jScrollPane1.setViewportView(WareHouseTable);
+        if (WareHouseTable.getColumnModel().getColumnCount() > 0) {
+            WareHouseTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            WareHouseTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            WareHouseTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clSupplier")); // NOI18N
+            WareHouseTable.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -233,7 +233,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Lỗi khi mở form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-    }//GEN-LAST:event_btnCreatePurchaseOrderMouseClicked
+    }                                                   
 
     private void btnHistoryStockInMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHistoryStockInMouseClicked
         DashboardForm dashboardForm = DashboardForm.getInstance();
@@ -246,25 +246,25 @@ public class WareHouseForm extends javax.swing.JPanel {
         // Tạo mô hình bảng cho phép kiểm soát tính chỉnh sửa
         String[] columns = {"Chức Năng ", "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"};
         EditableTableModel model = new EditableTableModel(new Object[0][0], columns);
-        jTable1.setModel(model);
+        WareHouseTable.setModel(model);
         
         // Thiết lập renderer và editor cho cột chứa các nút
-        jTable1.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer());
-        jTable1.getColumnModel().getColumn(0).setCellEditor(new ButtonEditor(jTable1));
+        WareHouseTable.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer());
+        WareHouseTable.getColumnModel().getColumn(0).setCellEditor(new ButtonEditor(WareHouseTable));
         
         // Lưu controller vào thuộc tính của bảng để sử dụng trong ButtonEditor
-        jTable1.putClientProperty("controller", controller);
+        WareHouseTable.putClientProperty("controller", controller);
         
         // Thiết lập độ rộng cho các cột
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(50);
-        jTable1.getColumnModel().getColumn(2).setPreferredWidth(150);
-        jTable1.getColumnModel().getColumn(3).setPreferredWidth(300);
-        jTable1.getColumnModel().getColumn(4).setPreferredWidth(200);
-        jTable1.getColumnModel().getColumn(5).setPreferredWidth(100);
+        WareHouseTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+        WareHouseTable.getColumnModel().getColumn(1).setPreferredWidth(50);
+        WareHouseTable.getColumnModel().getColumn(2).setPreferredWidth(150);
+        WareHouseTable.getColumnModel().getColumn(3).setPreferredWidth(300);
+        WareHouseTable.getColumnModel().getColumn(4).setPreferredWidth(200);
+        WareHouseTable.getColumnModel().getColumn(5).setPreferredWidth(100);
         
         // Thiết lập độ cao cho hàng
-        jTable1.setRowHeight(32);
+        WareHouseTable.setRowHeight(32);
     }
    
     
@@ -508,7 +508,7 @@ public class WareHouseForm extends javax.swing.JPanel {
      * Getter cho bảng sản phẩm
      */
     public JTable getTable() {
-        return jTable1;
+        return WareHouseTable;
     }
 
     /**
@@ -535,12 +535,12 @@ public class WareHouseForm extends javax.swing.JPanel {
    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable WareHouseTable;
     public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
     public com.k33ptoo.components.KButton btnHistoryStockIn;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel2;
     private com.k33ptoo.components.KGradientPanel kGradientPanel3;
     private com.k33ptoo.components.KGradientPanel kGradientPanel4;

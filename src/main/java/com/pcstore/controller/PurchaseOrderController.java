@@ -23,6 +23,7 @@ import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
 import com.pcstore.repository.impl.SupplierRepository;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.SessionManager;
 import com.pcstore.view.PurchaseOrderForm;
 
 /**
@@ -656,7 +657,7 @@ public class PurchaseOrderController {
                     model.addRow(new Object[]{
                         detail.getProduct().getProductId(),
                         detail.getProduct().getProductName(),
-                        detail.getSupplier().getName(), // Hiển thị tên nhà cung cấp
+                        // detail.getSupplier().getName(), // Hiển thị tên nhà cung cấp
                         detail.getQuantity(),
                         detail.getUnitPrice()
                     });
@@ -802,9 +803,7 @@ public class PurchaseOrderController {
     private Employee getCurrentEmployee() {
         if (currentEmployee == null) {
             // Tạo nhân viên mặc định cho demo
-            currentEmployee = new Employee();
-            currentEmployee.setEmployeeId("EMP001");
-            currentEmployee.setFullName("Admin");
+            currentEmployee = SessionManager.getInstance().getCurrentUser().getEmployee();
         }
         
         // Hiển thị thông tin nhân viên trên form

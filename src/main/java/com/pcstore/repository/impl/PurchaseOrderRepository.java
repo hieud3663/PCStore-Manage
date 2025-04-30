@@ -53,13 +53,6 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
             
             statement.executeUpdate();
             
-            // // Lấy ID được tự động tạo
-            // ResultSet generatedKeys = statement.getGeneratedKeys();
-            // if (generatedKeys.next()) {
-            //     int generatedId = generatedKeys.getInt(1);
-            //     purchaseOrder.setPurchaseOrderId(generatedId);
-            // }
-            
             LocalDateTime now = LocalDateTime.now();
             purchaseOrder.setCreatedAt(now);
             purchaseOrder.setUpdatedAt(now);
@@ -139,21 +132,23 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
     public String generatePurchaseOrderId() {
         String prefix = "PO-";
         String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String sql = "SELECT COUNT(*) AS count FROM purchase_orders WHERE order_date = CURDATE()";
+        
+        // Fix: Use correct table name "PurchaseOrders" instead of "purchase_orders"
+        String sql = "SELECT COUNT(*) AS count FROM PurchaseOrders WHERE CONVERT(DATE, OrderDate) = CONVERT(DATE, GETDATE())";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
-                int count = rs.getInt("count") + 1; // Tăng số thứ tự lên 1
-                String formattedCount = String.format("%04d", count); // Định dạng số thứ tự thành 4 chữ số
+                int count = rs.getInt("count") + 1;
+                String formattedCount = String.format("%04d", count);
                 return prefix + datePart + "-" + formattedCount;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Trả về mã mặc định nếu có lỗi
+        // Return default if error occurs
         return prefix + datePart + "-0001";
     }
     

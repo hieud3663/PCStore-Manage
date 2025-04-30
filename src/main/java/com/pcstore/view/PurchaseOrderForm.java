@@ -72,9 +72,9 @@ public class PurchaseOrderForm extends JDialog {
         jLabel3 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        ProductTable = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        SelectedProduct = new javax.swing.JTable();
         btnStockIn = new com.k33ptoo.components.KButton();
         jLabel4 = new javax.swing.JLabel();
         txtTotalPrice = new javax.swing.JLabel();
@@ -102,15 +102,18 @@ public class PurchaseOrderForm extends JDialog {
                 .addContainerGap(11, Short.MAX_VALUE))
         );
 
-        jLabel1.setText("Mã Phiếu Nhập");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        jLabel1.setText(bundle.getString("lbPurchaseOrderId")); // NOI18N
 
+        jTextField2.setText(bundle.getString("txtPurchaseOrderID")); // NOI18N
         jTextField2.setEnabled(false);
 
-        jLabel3.setText("Người Tạo Phiếu");
+        jLabel3.setText(bundle.getString("lbEmloyeesCreate")); // NOI18N
 
+        jTextField4.setText(bundle.getString("txtEmloyeesCreate")); // NOI18N
         jTextField4.setEnabled(false);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        ProductTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -162,15 +165,14 @@ public class PurchaseOrderForm extends JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clPrice")); // NOI18N
+        jScrollPane1.setViewportView(ProductTable);
+        if (ProductTable.getColumnModel().getColumnCount() > 0) {
+            ProductTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            ProductTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            ProductTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clPrice")); // NOI18N
         }
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        SelectedProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -212,12 +214,12 @@ public class PurchaseOrderForm extends JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            jTable2.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            jTable2.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
-            jTable2.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clPrice")); // NOI18N
+        jScrollPane2.setViewportView(SelectedProduct);
+        if (SelectedProduct.getColumnModel().getColumnCount() > 0) {
+            SelectedProduct.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            SelectedProduct.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            SelectedProduct.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+            SelectedProduct.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clPrice")); // NOI18N
         }
 
         btnStockIn.setText(bundle.getString("btnStockIn")); // NOI18N
@@ -226,11 +228,11 @@ public class PurchaseOrderForm extends JDialog {
         btnStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel4.setText("Tổng Tiền:");
+        jLabel4.setText(bundle.getString("lbTotalMoney")); // NOI18N
 
         txtTotalPrice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtTotalPrice.setForeground(new java.awt.Color(255, 51, 51));
-        txtTotalPrice.setText("0đ");
+        txtTotalPrice.setText(bundle.getString("lbTotalPrice")); // NOI18N
 
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
         kGradientPanel1.setLayout(kGradientPanel1Layout);
@@ -315,12 +317,12 @@ public class PurchaseOrderForm extends JDialog {
     private void setupTableColumns() {
         // Đảm bảo ComboBox cho cột nhà cung cấp được khởi tạo đúng
         JComboBox<Supplier> supplierComboBox = new JComboBox<>();
-        jTable1.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(supplierComboBox));
+        ProductTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(supplierComboBox));
         
         // Cài đặt buttons cho cột xác nhận (cột 4 hoặc 5 tùy vào thiết kế của bạn)
         int confirmColumnIndex = 4; // Điều chỉnh index này tùy thuộc vào thiết kế của bạn
-        jTable1.getColumnModel().getColumn(confirmColumnIndex).setCellRenderer(new ButtonRenderer());
-        jTable1.getColumnModel().getColumn(confirmColumnIndex).setCellEditor(new ButtonEditor());
+        ProductTable.getColumnModel().getColumn(confirmColumnIndex).setCellRenderer(new ButtonRenderer());
+        ProductTable.getColumnModel().getColumn(confirmColumnIndex).setCellEditor(new ButtonEditor());
     }
     private class ButtonRenderer extends JPanel implements TableCellRenderer {
     private JButton acceptButton = new JButton("✓");
@@ -370,7 +372,7 @@ private class ButtonEditor extends AbstractCellEditor implements TableCellEditor
         // Xử lý sự kiện khi nhấn nút tích
         acceptButton.addActionListener(e -> {
             // Kiểm tra xem đã chọn nhà cung cấp chưa
-            Object supplier = jTable1.getValueAt(clickedRow, 2);
+            Object supplier = ProductTable.getValueAt(clickedRow, 2);
             if (supplier == null || !(supplier instanceof Supplier)) {
                 JOptionPane.showMessageDialog(PurchaseOrderForm.this, 
                     "Vui lòng chọn nhà cung cấp trước khi thêm sản phẩm", 
@@ -403,7 +405,7 @@ private class ButtonEditor extends AbstractCellEditor implements TableCellEditor
 }
 public void updateSupplierComboBoxes(List<Supplier> suppliers) {
     // Lấy ra ComboBox renderer từ cột 2
-    TableColumn supplierColumn = jTable1.getColumnModel().getColumn(2);
+    TableColumn supplierColumn = ProductTable.getColumnModel().getColumn(2);
     JComboBox<Supplier> comboBox = (JComboBox<Supplier>) ((DefaultCellEditor) supplierColumn.getCellEditor()).getComponent();
     
     // Xóa tất cả item cũ
@@ -415,7 +417,7 @@ public void updateSupplierComboBoxes(List<Supplier> suppliers) {
     }
 }
 public Supplier getSelectedSupplierForRow(int row) {
-    Object supplierObj = jTable1.getValueAt(row, 2);
+    Object supplierObj = ProductTable.getValueAt(row, 2);
     if (supplierObj instanceof Supplier) {
         return (Supplier) supplierObj;
     }
@@ -454,11 +456,11 @@ public Supplier getSelectedSupplierForRow(int row) {
 
     // Getter cho các bảng
     public javax.swing.JTable getJTable1() {
-        return jTable1;
+        return ProductTable;
     }
 
     public javax.swing.JTable getJTable2() {
-        return jTable2;
+        return SelectedProduct;
     }
 
     // Getter cho nút nhập kho
@@ -494,11 +496,11 @@ public Supplier getSelectedSupplierForRow(int row) {
     }
 
     public JTable getTableProducts() {
-        return jTable1;
+        return ProductTable;
     }
 
     public JTable getTableSelectedProducts() {
-        return jTable2;
+        return SelectedProduct;
     }
 
     public JLabel getLabelTotalAmount() {
@@ -517,7 +519,7 @@ public Supplier getSelectedSupplierForRow(int row) {
         return btnStockIn;
     }
     public JComboBox<Supplier> getComboBoxSupplier() {
-        TableColumn supplierColumn = jTable1.getColumnModel().getColumn(2);
+        TableColumn supplierColumn = ProductTable.getColumnModel().getColumn(2);
         DefaultCellEditor editor = (DefaultCellEditor) supplierColumn.getCellEditor();
         return (JComboBox<Supplier>) editor.getComponent();
     }
@@ -527,6 +529,8 @@ public Supplier getSelectedSupplierForRow(int row) {
         return comboBox != null ? (Supplier) comboBox.getSelectedItem() : null;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable ProductTable;
+    private javax.swing.JTable SelectedProduct;
     private com.k33ptoo.components.KButton btnStockIn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
@@ -534,8 +538,6 @@ public Supplier getSelectedSupplierForRow(int row) {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField4;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;

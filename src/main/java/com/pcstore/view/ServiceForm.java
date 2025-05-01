@@ -60,85 +60,94 @@ public class ServiceForm extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelNav = new JPanel();
-        panelWarranty = new KGradientPanel();
-        lbWarranty = new JLabel();
-        panelReturn = new KGradientPanel();
-        lbReturn = new JLabel();
-        panelRepair = new KGradientPanel();
-        lbRepair = new JLabel();
-        panelContent = new JPanel();
+        panelNav = new javax.swing.JPanel();
+        panelWarranty = new com.k33ptoo.components.KGradientPanel();
+        lbWarranty = new javax.swing.JLabel();
+        panelReturn = new com.k33ptoo.components.KGradientPanel();
+        lbReturn = new javax.swing.JLabel();
+        panelRepair = new com.k33ptoo.components.KGradientPanel();
+        lbRepair = new javax.swing.JLabel();
+        panelContent = new javax.swing.JPanel();
 
-        setBackground(new Color(255, 255, 255));
-        setMinimumSize(new Dimension(1153, 713));
-        setPreferredSize(new Dimension(1153, 713));
-        setLayout(new BorderLayout());
+        setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(1153, 713));
+        setPreferredSize(new java.awt.Dimension(1153, 713));
+        setLayout(new java.awt.BorderLayout());
 
-        panelNav.setBackground(new Color(102, 153, 255));
+        panelNav.setBackground(new java.awt.Color(102, 153, 255));
+        panelNav.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
         panelNav.setOpaque(false);
-        panelNav.setPreferredSize(new Dimension(530, 40));
-        panelNav.setLayout(new FlowLayout(FlowLayout.LEFT, 20, 5));
+        panelNav.setPreferredSize(new java.awt.Dimension(530, 40));
+        panelNav.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        panelWarranty.setkBorderRadius(25);
+        panelWarranty.setBackground(new java.awt.Color(255, 255, 255));
+        panelWarranty.setkBorderRadius(20);
         panelWarranty.setkFillBackground(false);
         panelWarranty.setOpaque(false);
-        panelWarranty.setPreferredSize(new Dimension(150, 35));
-        panelWarranty.setLayout(new BorderLayout());
+        panelWarranty.setPreferredSize(new java.awt.Dimension(150, 35));
+        panelWarranty.setLayout(new java.awt.BorderLayout());
 
-        lbWarranty.setBackground(new Color(255, 255, 255));
-        lbWarranty.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
-        lbWarranty.setHorizontalAlignment(SwingConstants.CENTER);
+        lbWarranty.setBackground(new java.awt.Color(255, 255, 255));
+        lbWarranty.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbWarranty.setForeground(new java.awt.Color(30, 113, 195));
+        lbWarranty.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lbWarranty.setText(bundle.getString("WarrantyServiceW")); // NOI18N
-        lbWarranty.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        panelWarranty.add(lbWarranty, BorderLayout.CENTER);
+        lbWarranty.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        panelWarranty.add(lbWarranty, java.awt.BorderLayout.CENTER);
 
         panelNav.add(panelWarranty);
 
-        panelReturn.setkBorderRadius(25);
+        panelReturn.setBackground(new java.awt.Color(255, 255, 255));
+        panelReturn.setkBorderRadius(20);
         panelReturn.setkFillBackground(false);
         panelReturn.setOpaque(false);
-        panelReturn.setPreferredSize(new Dimension(150, 35));
-        panelReturn.setLayout(new BorderLayout());
+        panelReturn.setPreferredSize(new java.awt.Dimension(185, 35));
+        panelReturn.setLayout(new java.awt.BorderLayout());
 
-        lbReturn.setBackground(new Color(255, 255, 255));
-        lbReturn.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
-        lbReturn.setHorizontalAlignment(SwingConstants.CENTER);
+        lbReturn.setBackground(new java.awt.Color(255, 255, 255));
+        lbReturn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbReturn.setForeground(new java.awt.Color(30, 113, 195));
+        lbReturn.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbReturn.setText(bundle.getString("ReTurnService")); // NOI18N
-        lbReturn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        panelReturn.add(lbReturn, BorderLayout.CENTER);
+        lbReturn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        panelReturn.add(lbReturn, java.awt.BorderLayout.CENTER);
 
         panelNav.add(panelReturn);
 
-        panelRepair.setkBorderRadius(25);
+        panelRepair.setBackground(new java.awt.Color(255, 255, 255));
+        panelRepair.setkBorderRadius(20);
         panelRepair.setkFillBackground(false);
         panelRepair.setOpaque(false);
-        panelRepair.setPreferredSize(new Dimension(150, 35));
-        panelRepair.setLayout(new BorderLayout());
+        panelRepair.setPreferredSize(new java.awt.Dimension(150, 35));
+        panelRepair.setLayout(new java.awt.BorderLayout());
 
-        lbRepair.setBackground(new Color(255, 255, 255));
-        lbRepair.setFont(new Font("Segoe UI", 1, 14)); // NOI18N
-        lbRepair.setHorizontalAlignment(SwingConstants.CENTER);
+        lbRepair.setBackground(new java.awt.Color(255, 255, 255));
+        lbRepair.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbRepair.setForeground(new java.awt.Color(30, 113, 195));
+        lbRepair.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbRepair.setText(bundle.getString("RepairService")); // NOI18N
-        lbRepair.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        panelRepair.add(lbRepair, BorderLayout.CENTER);
+        lbRepair.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        panelRepair.add(lbRepair, java.awt.BorderLayout.CENTER);
 
         panelNav.add(panelRepair);
 
-        add(panelNav, BorderLayout.NORTH);
+        add(panelNav, java.awt.BorderLayout.NORTH);
 
-        GroupLayout panelContentLayout = new GroupLayout(panelContent);
+        panelContent.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout panelContentLayout = new javax.swing.GroupLayout(panelContent);
         panelContent.setLayout(panelContentLayout);
         panelContentLayout.setHorizontalGroup(
-            panelContentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            panelContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1153, Short.MAX_VALUE)
         );
         panelContentLayout.setVerticalGroup(
-            panelContentLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            panelContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        add(panelContent, BorderLayout.CENTER);
+        add(panelContent, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -284,13 +293,13 @@ public class ServiceForm extends JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JLabel lbRepair;
-    private JLabel lbReturn;
-    private JLabel lbWarranty;
-    private JPanel panelContent;
-    private JPanel panelNav;
-    private KGradientPanel panelRepair;
-    private KGradientPanel panelReturn;
-    private KGradientPanel panelWarranty;
+    private javax.swing.JLabel lbRepair;
+    private javax.swing.JLabel lbReturn;
+    private javax.swing.JLabel lbWarranty;
+    private javax.swing.JPanel panelContent;
+    private javax.swing.JPanel panelNav;
+    private com.k33ptoo.components.KGradientPanel panelRepair;
+    private com.k33ptoo.components.KGradientPanel panelReturn;
+    private com.k33ptoo.components.KGradientPanel panelWarranty;
     // End of variables declaration//GEN-END:variables
 }

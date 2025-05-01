@@ -285,7 +285,21 @@ public class Invoice extends BaseTimeEntity {
     }
 
     public BigDecimal getDiscountAmount() {
-        return discountAmount;
+        // Nếu giá trị có thể null, trả về 0
+        if (discountAmount == null) {
+            return BigDecimal.ZERO;
+        }
+        
+        // Nếu giá trị là String hoặc kiểu không phải số, chuyển đổi nó
+        if (!(discountAmount instanceof BigDecimal)) {
+            try {
+                return new BigDecimal(discountAmount.toString());
+            } catch (Exception e) {
+                return BigDecimal.ZERO;
+            }
+        }
+        
+        return (BigDecimal) discountAmount;
     }
 
     public void setDiscountAmount(BigDecimal discountAmount) {

@@ -110,11 +110,13 @@ public class SellForm extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
         panelTitle = new com.k33ptoo.components.KGradientPanel();
         labelTitle = new javax.swing.JLabel();
         panelNav = new javax.swing.JPanel();
         textFieldSearch = new com.pcstore.utils.TextFieldSearch();
+        panelNote = new javax.swing.JPanel();
+        lbNote = new javax.swing.JLabel();
         paneBody = new javax.swing.JPanel();
         panelListProduct = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -129,16 +131,13 @@ public class SellForm extends JPanel {
         panelCustomerName = new javax.swing.JPanel();
         labelCustomerName = new javax.swing.JLabel();
         txtNameKH = new javax.swing.JTextField();
-        panelCustomerPromotion = new javax.swing.JPanel();
-        labelVoucher = new javax.swing.JLabel();
-        cbbVoucher = new javax.swing.JComboBox<>();
+        panelCustomerPoint = new javax.swing.JPanel();
+        labelCustomerPoint = new javax.swing.JLabel();
+        txtPointKH = new javax.swing.JTextField();
         panelCustomerPhone = new javax.swing.JPanel();
         labelCustomerPhone = new javax.swing.JLabel();
         txtPhoneNumberKH = new javax.swing.JTextField();
         btnApplyVoucher = new com.k33ptoo.components.KButton();
-        panelCustomerPoint = new javax.swing.JPanel();
-        labelCustomerPoint = new javax.swing.JLabel();
-        txtPointKH = new javax.swing.JTextField();
         panelCustomerDiscount = new javax.swing.JPanel();
         labelDiscount = new javax.swing.JLabel();
         txtDiscountAmount = new javax.swing.JTextField();
@@ -151,15 +150,15 @@ public class SellForm extends JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setAlignmentX(2.0F);
-        kGradientPanel1.setAlignmentY(2.0F);
-        kGradientPanel1.setkEndColor(new java.awt.Color(153, 255, 153));
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setkStartColor(new java.awt.Color(102, 153, 255));
-        kGradientPanel1.setMinimumSize(new java.awt.Dimension(1153, 713));
-        kGradientPanel1.setPreferredSize(new java.awt.Dimension(1153, 713));
-        kGradientPanel1.setLayout(new javax.swing.BoxLayout(kGradientPanel1, javax.swing.BoxLayout.Y_AXIS));
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
+        panelMain.setAlignmentX(2.0F);
+        panelMain.setAlignmentY(2.0F);
+        panelMain.setkEndColor(new java.awt.Color(153, 255, 153));
+        panelMain.setkFillBackground(false);
+        panelMain.setkStartColor(new java.awt.Color(102, 153, 255));
+        panelMain.setMinimumSize(new java.awt.Dimension(1153, 713));
+        panelMain.setPreferredSize(new java.awt.Dimension(1153, 713));
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
         panelTitle.setkBorderRadius(12);
         panelTitle.setkFillBackground(false);
@@ -167,14 +166,14 @@ public class SellForm extends JPanel {
         panelTitle.setPreferredSize(new java.awt.Dimension(1153, 50));
 
         labelTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        labelTitle.setForeground(new java.awt.Color(102, 0, 204));
+        labelTitle.setForeground(new java.awt.Color(0, 54, 204));
         labelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         labelTitle.setText(bundle.getString("txtMenuSell")); // NOI18N
         labelTitle.setToolTipText(bundle.getString("txtMenuSell")); // NOI18N
         panelTitle.add(labelTitle);
 
-        kGradientPanel1.add(panelTitle);
+        panelMain.add(panelTitle);
 
         panelNav.setMinimumSize(new java.awt.Dimension(1153, 50));
         panelNav.setOpaque(false);
@@ -182,18 +181,25 @@ public class SellForm extends JPanel {
         panelNav.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
         panelNav.add(textFieldSearch);
 
-        kGradientPanel1.add(panelNav);
+        panelMain.add(panelNav);
+
+        panelNote.setOpaque(false);
+        panelNote.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        lbNote.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lbNote.setText(bundle.getString("lbNoteSell")); // NOI18N
+        panelNote.add(lbNote);
+
+        panelMain.add(panelNote);
 
         paneBody.setPreferredSize(new java.awt.Dimension(100, 300));
         paneBody.setLayout(new javax.swing.BoxLayout(paneBody, javax.swing.BoxLayout.LINE_AXIS));
 
         panelListProduct.setBackground(new java.awt.Color(255, 255, 255));
-        panelListProduct.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("titileBorderListProduct"))); // NOI18N
+        panelListProduct.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("titileBorderListProduct"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 13), new java.awt.Color(0, 61, 179))); // NOI18N
         panelListProduct.setMinimumSize(new java.awt.Dimension(500, 39));
         panelListProduct.setPreferredSize(new java.awt.Dimension(800, 425));
         panelListProduct.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane1.setPreferredSize(null);
 
         tableListProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -218,7 +224,6 @@ public class SellForm extends JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tableListProduct.setPreferredSize(null);
         tableListProduct.getTableHeader().setReorderingAllowed(false);
         tableListProduct.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -248,9 +253,8 @@ public class SellForm extends JPanel {
         panelRight.setLayout(new javax.swing.BoxLayout(panelRight, javax.swing.BoxLayout.Y_AXIS));
 
         panelCart.setBackground(new java.awt.Color(255, 255, 255));
-        panelCart.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("lbCart"))); // NOI18N
+        panelCart.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("lbCart"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 13), new java.awt.Color(0, 61, 179))); // NOI18N
         panelCart.setkFillBackground(false);
-        panelCart.setOpaque(false);
         panelCart.setLayout(new java.awt.BorderLayout());
 
         jScrollPane3.setPreferredSize(new java.awt.Dimension(452, 200));
@@ -355,18 +359,21 @@ public class SellForm extends JPanel {
 
         panelCustomerInfo.add(panelCustomerName);
 
-        panelCustomerPromotion.setOpaque(false);
-        panelCustomerPromotion.setLayout(new javax.swing.BoxLayout(panelCustomerPromotion, javax.swing.BoxLayout.LINE_AXIS));
+        panelCustomerPoint.setOpaque(false);
+        panelCustomerPoint.setLayout(new javax.swing.BoxLayout(panelCustomerPoint, javax.swing.BoxLayout.LINE_AXIS));
 
-        labelVoucher.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        labelVoucher.setText(bundle.getString("lbDiscount")); // NOI18N
-        panelCustomerPromotion.add(labelVoucher);
+        labelCustomerPoint.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        labelCustomerPoint.setText(bundle.getString("lbPointKH")); // NOI18N
+        labelCustomerPoint.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 10));
+        panelCustomerPoint.add(labelCustomerPoint);
 
-        cbbVoucher.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cbbVoucher.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(51, 51, 51)));
-        panelCustomerPromotion.add(cbbVoucher);
+        txtPointKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
+        txtPointKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtPointKH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
+        txtPointKH.setEnabled(false);
+        panelCustomerPoint.add(txtPointKH);
 
-        panelCustomerInfo.add(panelCustomerPromotion);
+        panelCustomerInfo.add(panelCustomerPoint);
 
         panelCustomerPhone.setOpaque(false);
         panelCustomerPhone.setLayout(new javax.swing.BoxLayout(panelCustomerPhone, javax.swing.BoxLayout.LINE_AXIS));
@@ -385,35 +392,19 @@ public class SellForm extends JPanel {
 
         btnApplyVoucher.setText(bundle.getString("btnApplyVoucher")); // NOI18N
         btnApplyVoucher.setToolTipText("");
-        btnApplyVoucher.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
+        btnApplyVoucher.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnApplyVoucher.setIconTextGap(3);
         btnApplyVoucher.setkBorderRadius(45);
-        btnApplyVoucher.setkEndColor(new java.awt.Color(153, 255, 153));
+        btnApplyVoucher.setkEndColor(new java.awt.Color(102, 153, 255));
         btnApplyVoucher.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnApplyVoucher.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnApplyVoucher.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnApplyVoucher.setkShowFocusBorder(true);
         btnApplyVoucher.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnApplyVoucherMouseClicked(evt);
             }
         });
         panelCustomerInfo.add(btnApplyVoucher);
-
-        panelCustomerPoint.setOpaque(false);
-        panelCustomerPoint.setLayout(new javax.swing.BoxLayout(panelCustomerPoint, javax.swing.BoxLayout.LINE_AXIS));
-
-        labelCustomerPoint.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        labelCustomerPoint.setText(bundle.getString("lbPointKH")); // NOI18N
-        labelCustomerPoint.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 10));
-        panelCustomerPoint.add(labelCustomerPoint);
-
-        txtPointKH.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
-        txtPointKH.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtPointKH.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(102, 102, 102)));
-        txtPointKH.setEnabled(false);
-        panelCustomerPoint.add(txtPointKH);
-
-        panelCustomerInfo.add(panelCustomerPoint);
 
         panelCustomerDiscount.setOpaque(false);
         panelCustomerDiscount.setLayout(new javax.swing.BoxLayout(panelCustomerDiscount, javax.swing.BoxLayout.LINE_AXIS));
@@ -458,14 +449,15 @@ public class SellForm extends JPanel {
         btnReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
         btnReset.setText(bundle.getString("btnReset")); // NOI18N
         btnReset.setToolTipText("");
-        btnReset.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnReset.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnReset.setIconTextGap(45);
         btnReset.setInheritsPopupMenu(true);
         btnReset.setkBorderRadius(40);
-        btnReset.setkEndColor(new java.awt.Color(0, 204, 0));
+        btnReset.setkEndColor(new java.awt.Color(0, 153, 255));
         btnReset.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnReset.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnReset.setkStartColor(new java.awt.Color(102, 255, 0));
+        btnReset.setkHoverStartColor(new java.awt.Color(0, 153, 255));
+        btnReset.setkShowFocusBorder(true);
+        btnReset.setkStartColor(new java.awt.Color(0, 204, 255));
         btnReset.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnResetMouseClicked(evt);
@@ -475,13 +467,14 @@ public class SellForm extends JPanel {
 
         btnPay.setText(bundle.getString("btnPay")); // NOI18N
         btnPay.setToolTipText("");
-        btnPay.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnPay.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnPay.setIconTextGap(3);
         btnPay.setkBorderRadius(45);
-        btnPay.setkEndColor(new java.awt.Color(153, 255, 153));
+        btnPay.setkEndColor(new java.awt.Color(69, 195, 91));
         btnPay.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnPay.setkHoverStartColor(new java.awt.Color(0, 153, 153));
-        btnPay.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnPay.setkShowFocusBorder(true);
+        btnPay.setkStartColor(new java.awt.Color(69, 195, 91));
         btnPay.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnPayMouseClicked(evt);
@@ -493,9 +486,9 @@ public class SellForm extends JPanel {
 
         paneBody.add(panelRight);
 
-        kGradientPanel1.add(paneBody);
+        panelMain.add(paneBody);
 
-        add(kGradientPanel1, java.awt.BorderLayout.CENTER);
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -890,17 +883,15 @@ public class SellForm extends JPanel {
     private javax.swing.JButton btnDeleteItemCart;
     private com.k33ptoo.components.KButton btnPay;
     private com.k33ptoo.components.KButton btnReset;
-    private javax.swing.JComboBox<String> cbbVoucher;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel labelCustomerName;
     private javax.swing.JLabel labelCustomerPhone;
     private javax.swing.JLabel labelCustomerPoint;
     private javax.swing.JLabel labelCustomerTotalAmonut;
     private javax.swing.JLabel labelDiscount;
     private javax.swing.JLabel labelTitle;
-    private javax.swing.JLabel labelVoucher;
+    private javax.swing.JLabel lbNote;
     private javax.swing.JPanel paneBody;
     private javax.swing.JPanel panelButtonAction;
     private com.k33ptoo.components.KGradientPanel panelCart;
@@ -909,11 +900,12 @@ public class SellForm extends JPanel {
     private javax.swing.JPanel panelCustomerName;
     private javax.swing.JPanel panelCustomerPhone;
     private javax.swing.JPanel panelCustomerPoint;
-    private javax.swing.JPanel panelCustomerPromotion;
     private javax.swing.JPanel panelCustomerTotalAmount;
     private javax.swing.JPanel panelDelete;
     private javax.swing.JPanel panelListProduct;
+    private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel panelNav;
+    private javax.swing.JPanel panelNote;
     private javax.swing.JPanel panelRight;
     private com.k33ptoo.components.KGradientPanel panelTitle;
     private javax.swing.JTable tableCart;

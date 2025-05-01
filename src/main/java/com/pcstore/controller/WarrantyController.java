@@ -30,6 +30,7 @@ import com.pcstore.service.InvoiceDetailService;
 import com.pcstore.service.InvoiceService;
 import com.pcstore.service.ProductService;
 import com.pcstore.service.WarrantyService;
+import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.view.AddWarrantyForm;
 import com.pcstore.view.WarrantyCardForm;
 import com.pcstore.view.WarrantyServiceForm;
@@ -65,6 +66,7 @@ public class WarrantyController {
         this.invoiceDetailService = new InvoiceDetailService(invoiceDetailRepository, productRepository);
         this.productService = new ProductService(productRepository);
         this.customerService = new CustomerService(repositoryFactory.getCustomerRepository());
+
 
     }
     

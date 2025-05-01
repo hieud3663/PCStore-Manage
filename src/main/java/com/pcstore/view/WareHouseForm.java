@@ -270,24 +270,6 @@ public class WareHouseForm extends javax.swing.JPanel {
             panel.add(btnEdit);
             panel.add(btnDelete);
     
-            // Xử lý sự kiện cho nút "Sửa"
-            btnEdit.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    int selectedRow = table.getSelectedRow();
-                    if (selectedRow != -1) {
-                        // Hiển thị form EditQuantityForm
-                        javax.swing.JFrame frame = new javax.swing.JFrame("Edit Quantity");
-                        frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-                        frame.setContentPane(new EditQuantityForm());
-                        frame.pack();
-                        frame.setLocationRelativeTo(null);
-                        frame.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(table, "Không có dòng nào được chọn để sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            });
     
             // Xử lý sự kiện cho nút "Xóa"
             btnDelete.addActionListener(new ActionListener() {

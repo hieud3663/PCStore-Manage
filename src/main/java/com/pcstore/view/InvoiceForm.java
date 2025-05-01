@@ -95,7 +95,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        lbTitle.setForeground(new java.awt.Color(0, 0, 255));
+        lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lbTitle.setText(bundle.getString("txtMenuInvoice")); // NOI18N
@@ -128,7 +128,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         panelBody.setPreferredSize(new java.awt.Dimension(1137, 600));
         panelBody.setLayout(new java.awt.BorderLayout(0, 10));
 
-        panelInvoice.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtInvoice"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16))); // NOI18N
+        panelInvoice.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtInvoice"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 16), new java.awt.Color(30, 113, 195))); // NOI18N
         panelInvoice.setOpaque(false);
         panelInvoice.setLayout(new java.awt.BorderLayout());
 
@@ -140,14 +140,14 @@ public class InvoiceForm extends javax.swing.JPanel  {
 
             },
             new String [] {
-                "", "STT", "Mã hóa đơn", "Ngày tạo hóa đơn", "Nhân viên", "Tổng giảm giá", "Tổng tiền", "Phương thức thanh toán", "Khách hàng", "Trạng thái", "Ghi chú"
+                "", "STT", "Mã hóa đơn", "Ngày tạo hóa đơn", "Nhân viên", "Tổng giảm giá", "Tổng tiền", "Phương thức thanh toán", "Khách hàng", "Số điện thoại", "Trạng thái", "Ghi chú"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Boolean.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Boolean.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, true, false, false, false, false, false
+                true, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -168,6 +168,8 @@ public class InvoiceForm extends javax.swing.JPanel  {
             tableInvoice.getColumnModel().getColumn(1).setMaxWidth(60);
             tableInvoice.getColumnModel().getColumn(2).setPreferredWidth(80);
             tableInvoice.getColumnModel().getColumn(2).setMaxWidth(80);
+            tableInvoice.getColumnModel().getColumn(11).setPreferredWidth(80);
+            tableInvoice.getColumnModel().getColumn(11).setMaxWidth(80);
         }
 
         panelInvoice.add(jScrollPaneInvoice, java.awt.BorderLayout.CENTER);
@@ -177,7 +179,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         panelAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 10, 5));
 
         btnExportInvoice.setText(bundle.getString("btnPrintInvoice")); // NOI18N
-        btnExportInvoice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnExportInvoice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnExportInvoice.setkBackGroundColor(new java.awt.Color(51, 204, 0));
         btnExportInvoice.setkBorderRadius(30);
         btnExportInvoice.setkEndColor(new java.awt.Color(51, 204, 0));
@@ -189,7 +191,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         panelAction.add(btnExportInvoice);
 
         btnPaymentInvoice.setText(bundle.getString("btnPaymentInvoice")); // NOI18N
-        btnPaymentInvoice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnPaymentInvoice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnPaymentInvoice.setkBackGroundColor(new java.awt.Color(0, 204, 204));
         btnPaymentInvoice.setkBorderRadius(30);
         btnPaymentInvoice.setkEndColor(new java.awt.Color(0, 204, 204));
@@ -201,7 +203,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         panelAction.add(btnPaymentInvoice);
 
         btnDeleteInvoice.setText(bundle.getString("btnDeleteInvoice")); // NOI18N
-        btnDeleteInvoice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnDeleteInvoice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnDeleteInvoice.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDeleteInvoice.setkBorderRadius(30);
         btnDeleteInvoice.setkEndColor(new java.awt.Color(255, 51, 51));
@@ -217,7 +219,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         panelBody.add(panelInvoice, java.awt.BorderLayout.PAGE_START);
 
         panelInovoiceDetail.setBackground(new java.awt.Color(255, 255, 255));
-        panelInovoiceDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("InvoiceDetails"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 16))); // NOI18N
+        panelInovoiceDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("InvoiceDetails"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 16), new java.awt.Color(30, 113, 195))); // NOI18N
         panelInovoiceDetail.setPreferredSize(new java.awt.Dimension(500, 120));
         panelInovoiceDetail.setLayout(new java.awt.BorderLayout());
 

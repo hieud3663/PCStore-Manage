@@ -187,7 +187,7 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
     
     @Override
     public Optional<Invoice> findById(Integer id) {
-        String sql = "SELECT i.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
+        String sql = "SELECT i.*, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, e.FullName as EmployeeName " +
                      "FROM Invoices i " +
                      "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
@@ -213,7 +213,7 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
     
     @Override
     public List<Invoice> findAll() {
-        String sql = "SELECT i.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
+        String sql = "SELECT i.*, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, e.FullName as EmployeeName " +
                      "FROM Invoices i " +
                      "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
@@ -448,6 +448,33 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         }
     }
     
+    /**
+     * Đếm số lượng hóa đơn trong khoảng thời gian
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Số lượng hóa đơn
+     */
+    public int countInvoicesByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        String sql = "SELECT COUNT(*) FROM Invoices " +
+                     "WHERE InvoiceDate BETWEEN ? AND ? " +
+                     "AND StatusID IN (1, 2, 3)"; // Chỉ đếm hóa đơn đã xác nhận/thanh toán/hoàn thành
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, startDate);
+            statement.setObject(2, endDate);
+            
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
+            return 0;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi đếm số lượng hóa đơn trong khoảng thời gian", e);
+            throw new RuntimeException("Lỗi khi đếm số lượng hóa đơn trong khoảng thời gian", e);
+        }
+    }
+    
     // Load tất cả chi tiết của hóa đơn
     public List<InvoiceDetail> loadInvoiceDetails(int invoiceId) {
         List<InvoiceDetail> details = new ArrayList<>();
@@ -571,6 +598,234 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         }
     }
     
+    /**
+     * Tìm tất cả hóa đơn có thể áp dụng cho bảo hành
+     * @return Danh sách hóa đơn với chi tiết sản phẩm có bảo hành
+     */
+    public List<Invoice> findAllInvoicesForWarranty() {
+        List<Invoice> result = new ArrayList<>();
+        
+        String sql = "SELECT DISTINCT i.InvoiceID, i.CustomerID, i.InvoiceDate, i.TotalAmount, " +
+                     "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "c.Email, c.Address " +
+                     "FROM Invoices i " +
+                     "JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID " +
+                     "JOIN Warranties w ON id.InvoiceDetailID = w.InvoiceDetailID " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "WHERE i.StatusID IN (1, 2, 3) " + // Chỉ lấy hóa đơn đã xác nhận/thanh toán/hoàn thành
+                     "ORDER BY i.InvoiceDate DESC";
+        
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Invoice invoice = new Invoice();
+                invoice.setInvoiceId(rs.getInt("InvoiceID"));
+                
+                // Tạo đối tượng Customer với thông tin đầy đủ
+                String customerId = rs.getString("CustomerID");
+                if (customerId != null) {
+                    Customer customer = new Customer();
+                    customer.setCustomerId(customerId);
+                    customer.setFullName(rs.getString("CustomerName"));
+                    customer.setPhoneNumber(rs.getString("CustomerPhone"));
+                    customer.setEmail(rs.getString("Email"));
+                    customer.setAddress(rs.getString("Address"));
+                    invoice.setCustomer(customer);
+                }
+                
+                if (rs.getTimestamp("InvoiceDate") != null) {
+                    invoice.setInvoiceDate(rs.getTimestamp("InvoiceDate").toLocalDateTime());
+                }
+                
+                invoice.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                
+                result.add(invoice);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi lấy danh sách hóa đơn cho bảo hành", e);
+            throw new RuntimeException("Lỗi khi lấy danh sách hóa đơn cho bảo hành", e);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Tìm chi tiết hóa đơn cho chức năng bảo hành
+     * @param invoiceId ID hóa đơn
+     * @return Danh sách chi tiết hóa đơn có bảo hành
+     */
+    public List<InvoiceDetail> findInvoiceDetailsForWarranty(Integer invoiceId) {
+        List<InvoiceDetail> details = new ArrayList<>();
+        
+        String sql = "SELECT id.InvoiceDetailID, id.InvoiceID, id.ProductID, id.Quantity, " +
+                     "id.UnitPrice, p.ProductName, p.CategoryID, w.WarrantyID, " +
+                     "w.StartDate, w.EndDate " +
+                     "FROM InvoiceDetails id " +
+                     "JOIN Products p ON id.ProductID = p.ProductID " +
+                     "JOIN Warranties w ON id.InvoiceDetailID = w.InvoiceDetailID " +
+                     "WHERE id.InvoiceID = ?";
+                     
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, invoiceId);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    InvoiceDetail detail = new InvoiceDetail();
+                    detail.setInvoiceDetailId(resultSet.getInt("InvoiceDetailID"));
+                    
+                    // Tạo đối tượng Invoice trước khi sử dụng
+                    Invoice invoice = new Invoice();
+                    invoice.setInvoiceId(resultSet.getInt("InvoiceID"));
+                    detail.setInvoice(invoice);
+                    
+                    detail.setQuantity(resultSet.getInt("Quantity"));
+                    detail.setUnitPrice(resultSet.getBigDecimal("UnitPrice"));
+                    
+                    // Tạo đối tượng Product
+                    Product product = new Product();
+                    product.setProductId(resultSet.getString("ProductID"));
+                    product.setProductName(resultSet.getString("ProductName"));
+                    
+                    // Gán Product cho InvoiceDetail
+                    detail.setProduct(product);
+                    
+                    details.add(detail);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi lấy chi tiết hóa đơn cho bảo hành: " + invoiceId, e);
+            throw new RuntimeException("Lỗi khi lấy chi tiết hóa đơn cho bảo hành", e);
+        }
+        
+        return details;
+    }
+    
+    /**
+     * Tìm thông tin cơ bản của hóa đơn theo ID
+     * @param invoiceId ID hóa đơn
+     * @return Optional chứa hóa đơn với thông tin cơ bản
+     */
+    public Optional<Invoice> findSimpleInvoiceById(Integer invoiceId) {
+        String sql = "SELECT i.InvoiceID, i.CustomerID, i.EmployeeID, i.TotalAmount, " +
+                     "i.InvoiceDate, i.StatusID, i.PaymentMethodID, " +
+                     "c.FullName as CustomerName, c.PhoneNumber as CustomerPhone " +
+                     "FROM Invoices i " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "WHERE i.InvoiceID = ?";
+                     
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, invoiceId);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    Invoice invoice = new Invoice();
+                    invoice.setInvoiceId(rs.getInt("InvoiceID"));
+                    invoice.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                    
+                    if (rs.getTimestamp("InvoiceDate") != null) {
+                        invoice.setInvoiceDate(rs.getTimestamp("InvoiceDate").toLocalDateTime());
+                    }
+                    
+                    // Tạo đối tượng Customer với thông tin cơ bản
+                    String customerId = rs.getString("CustomerID");
+                    if (customerId != null) {
+                        Customer customer = new Customer();
+                        customer.setCustomerId(customerId);
+                        customer.setFullName(rs.getString("CustomerName"));
+                        customer.setPhoneNumber(rs.getString("CustomerPhone"));
+                        invoice.setCustomer(customer);
+                    }
+                    
+                    return Optional.of(invoice);
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi tìm thông tin cơ bản hóa đơn: " + invoiceId, e);
+            return Optional.empty();
+        }
+    }
+    
+    /**
+     * Tìm tất cả hóa đơn với thông tin đơn giản (không bao gồm chi tiết)
+     * @return Danh sách hóa đơn đơn giản
+     */
+    public List<Invoice> findAllInvoicesSimple() {
+        List<Invoice> invoices = new ArrayList<>();
+        
+        String sql = "SELECT i.InvoiceID, i.CustomerID, i.EmployeeID, i.TotalAmount, i.InvoiceDate, " +
+                     "i.StatusID, i.PaymentMethodID, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "e.FullName as EmployeeName " +
+                     "FROM Invoices i " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
+                     "ORDER BY i.InvoiceDate DESC";
+        
+        try (Statement statement = connection.createStatement();
+             ResultSet rs = statement.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Invoice invoice = new Invoice();
+                invoice.setInvoiceId(rs.getInt("InvoiceID"));
+                invoice.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                
+                if (rs.getTimestamp("InvoiceDate") != null) {
+                    invoice.setInvoiceDate(rs.getTimestamp("InvoiceDate").toLocalDateTime());
+                }
+                
+                // Map status from ID to enum
+                int statusId = rs.getInt("StatusID");
+                switch (statusId) {
+                    case 0: invoice.setStatus(InvoiceStatusEnum.PENDING); break;
+                    case 1: invoice.setStatus(InvoiceStatusEnum.CONFIRMED); break;
+                    case 2: invoice.setStatus(InvoiceStatusEnum.DELIVERED); break;
+                    case 3: invoice.setStatus(InvoiceStatusEnum.COMPLETED); break;
+                    case 4: invoice.setStatus(InvoiceStatusEnum.CANCELLED); break;
+                    case 5: invoice.setStatus(InvoiceStatusEnum.PROCESSING); break;
+                    default: invoice.setStatus(InvoiceStatusEnum.PENDING);
+                }
+                
+                // Map payment method from ID to enum
+                int paymentMethodId = rs.getInt("PaymentMethodID");
+                switch (paymentMethodId) {
+                    case 1: invoice.setPaymentMethod(PaymentMethodEnum.CASH); break;
+                    case 2: invoice.setPaymentMethod(PaymentMethodEnum.MOMO); break;
+                    case 3: invoice.setPaymentMethod(PaymentMethodEnum.ZALOPAY); break;
+                    case 4: invoice.setPaymentMethod(PaymentMethodEnum.BANK_TRANSFER); break;
+                    case 5: invoice.setPaymentMethod(PaymentMethodEnum.CREDIT_CARD); break;
+                    default: invoice.setPaymentMethod(PaymentMethodEnum.CASH);
+                }
+                
+                // Tạo và thiết lập thông tin khách hàng
+                String customerId = rs.getString("CustomerID");
+                if (customerId != null) {
+                    Customer customer = new Customer();
+                    customer.setCustomerId(customerId);
+                    customer.setFullName(rs.getString("CustomerName"));
+                    customer.setPhoneNumber(rs.getString("CustomerPhone"));
+                    invoice.setCustomer(customer);
+                }
+                
+                // Tạo và thiết lập thông tin nhân viên
+                String employeeId = rs.getString("EmployeeID");
+                if (employeeId != null) {
+                    Employee employee = new Employee();
+                    employee.setEmployeeId(employeeId);
+                    employee.setFullName(rs.getString("EmployeeName"));
+                    invoice.setEmployee(employee);
+                }
+                
+                invoices.add(invoice);
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi tìm tất cả hóa đơn đơn giản", e);
+            throw new RuntimeException("Lỗi khi tìm tất cả hóa đơn đơn giản", e);
+        }
+        
+        return invoices;
+    }
+    
     private Invoice mapResultSetToInvoice(ResultSet resultSet) throws SQLException {
         Invoice invoice = new Invoice();
         invoice.setInvoiceId(resultSet.getInt("InvoiceID"));
@@ -608,6 +863,7 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             Customer customer = new Customer();
             customer.setCustomerId(customerId);
             customer.setFullName(resultSet.getString("CustomerName"));
+            customer.setPhoneNumber(resultSet.getString("CustomerPhone"));
             invoice.setCustomer(customer);
         }
         
@@ -616,7 +872,11 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         if (employeeId != null) {
             Employee employee = new Employee();
             employee.setEmployeeId(employeeId);
-            employee.setFullName(resultSet.getString("EmployeeName"));
+            try {
+                employee.setFullName(resultSet.getString("EmployeeName"));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             invoice.setEmployee(employee);
         }
         

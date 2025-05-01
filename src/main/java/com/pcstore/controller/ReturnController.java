@@ -1,6 +1,9 @@
 package com.pcstore.controller;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,7 @@ public class ReturnController {
     private final InvoiceService invoiceService;
     private final ProductService productService;
     private final InvoiceDetailService invoiceDetailService;
+    private final Connection connection;
 
     /**
      * Khởi tạo controller với các service cần thiết
@@ -48,6 +52,7 @@ public class ReturnController {
         this.invoiceService = invoiceService;
         this.productService = productService;
         this.invoiceDetailService = new InvoiceDetailService(invoiceDetailRepository, productRepository);
+        this.connection = connection;
     }
 
     /**
@@ -487,6 +492,74 @@ public class ReturnController {
             return returnService.findAllReturns();
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi tìm kiếm đơn trả hàng: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Cập nhật trạng thái đơn trả hàng
+     * @param returnId ID của đơn trả hàng
+     * @param newStatus Trạng thái mới
+     * @return true nếu cập nhật thành công, false nếu thất bại
+     */
+    public boolean updateReturnStatus(int returnId, String newStatus) throws SQLException {
+        // Lấy đối tượng Return hiện tại để kiểm tra
+        Optional<Return> currentReturn = getReturnById(returnId);
+        if (currentReturn.isEmpty()) {
+            return false;
+        }
+        
+        Return returnObj = currentReturn.get();
+        String currentStatus = returnObj.getStatus();
+        
+        // Kiểm tra logic chuyển đổi trạng thái
+        // Ví dụ: không cho phép chuyển từ Rejected về Pending
+        if ("Rejected".equals(currentStatus) && "Pending".equals(newStatus)) {
+            throw new IllegalStateException("Không thể chuyển từ trạng thái 'Đã từ chối' về 'Đang chờ xử lý'");
+        }
+        
+        // Cập nhật trạng thái trong cơ sở dữ liệu
+        String sql = "UPDATE Returns SET Status = ? WHERE ReturnID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, newStatus);
+            stmt.setInt(2, returnId);
+            int rowsUpdated = stmt.executeUpdate();
+            
+            // Nếu là "Completed", cập nhật lại số lượng trong kho
+            if (rowsUpdated > 0 && "Completed".equals(newStatus) && !"Completed".equals(currentStatus)) {
+                // Lấy thông tin sản phẩm và số lượng
+                String productId = returnObj.getInvoiceDetail().getProduct().getProductId();
+                int quantity = returnObj.getQuantity();
+                
+                // Cập nhật số lượng trong kho
+                updateProductStock(productId, quantity);
+            }
+            
+            return rowsUpdated > 0;
+        }
+    }
+
+    /**
+     * Cập nhật số lượng sản phẩm trong kho
+     */
+    private void updateProductStock(String productId, int quantity) throws SQLException {
+        // Lấy số lượng hiện tại
+        String selectSql = "SELECT StockQuantity FROM Products WHERE ProductID = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(selectSql)) {
+            stmt.setString(1, productId);
+            ResultSet rs = stmt.executeQuery(); 
+            
+            if (rs.next()) {
+                int currentStock = rs.getInt("StockQuantity");
+                int newStock = currentStock + quantity;
+                
+                // Cập nhật số lượng mới
+                String updateSql = "UPDATE Products SET StockQuantity = ? WHERE ProductID = ?";
+                try (PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {
+                    updateStmt.setInt(1, newStock);
+                    updateStmt.setString(2, productId);
+                    updateStmt.executeUpdate();
+                }
+            }
         }
     }
 }

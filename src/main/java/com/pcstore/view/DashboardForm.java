@@ -20,6 +20,10 @@ import javax.swing.SwingUtilities;
 import com.k33ptoo.components.KButton;
 import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.controller.DashboardController;
+import com.pcstore.controller.RepairController;
+import com.pcstore.service.CustomerService;
+import com.pcstore.service.EmployeeService;
+import com.pcstore.service.WarrantyService;
 import com.pcstore.utils.DatabaseConnection;
 
 /**
@@ -74,6 +78,15 @@ public class DashboardForm extends JFrame {
         initializeHoverEffects();
         selectMenu(kPanelHome, lbMenuHome, activePanel);
 
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+
+  
+        dashboardController = new DashboardController(this);
+
         // Thêm sự kiện window listener để xử lý đóng cửa sổ
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -83,13 +96,12 @@ public class DashboardForm extends JFrame {
             }
         });
 
-        // Khởi tạo các controllers cho dịch vụ
-        // Giả sử bạn đã có sẵn các services từ trước
-        com.pcstore.controller.RepairController repairController = new com.pcstore.controller.RepairController(
-            com.pcstore.utils.DatabaseConnection.getInstance().getConnection(),
-            new com.pcstore.service.CustomerService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection()),
-            new com.pcstore.service.EmployeeService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection()),
-            new com.pcstore.service.WarrantyService(com.pcstore.utils.DatabaseConnection.getInstance().getConnection())
+        
+        RepairController repairController = new RepairController(
+            DatabaseConnection.getInstance().getConnection(),
+            new CustomerService(DatabaseConnection.getInstance().getConnection()),
+            new EmployeeService(DatabaseConnection.getInstance().getConnection()),
+            new WarrantyService(DatabaseConnection.getInstance().getConnection())
         );
 
         // Thiết lập controller cho form dịch vụ
@@ -121,11 +133,13 @@ public class DashboardForm extends JFrame {
         lbMenuEmployee = new javax.swing.JLabel();
         kPanelService = new com.k33ptoo.components.KGradientPanel();
         lbMenuService = new javax.swing.JLabel();
-        kPanelReport = new com.k33ptoo.components.KGradientPanel();
-        lbMenuReport = new javax.swing.JLabel();
         kPanelCustomer = new com.k33ptoo.components.KGradientPanel();
         lbMenuCustomer = new javax.swing.JLabel();
+        kPanelReport = new com.k33ptoo.components.KGradientPanel();
+        lbMenuReport = new javax.swing.JLabel();
         PanelNavigation = new com.k33ptoo.components.KGradientPanel();
+        panelEmpty = new javax.swing.JPanel();
+        lbTImeNow = new javax.swing.JLabel();
         panelLanguage = new javax.swing.JPanel();
         cbLanguage = new javax.swing.JComboBox<>();
         lbNameUser = new javax.swing.JLabel();
@@ -133,7 +147,8 @@ public class DashboardForm extends JFrame {
         kMainPanel = new com.k33ptoo.components.KGradientPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("QUẢN LÝ CỬA HÀNG BÁN MÁY TÍNH HAL_STORE");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        setTitle(bundle.getString("titleApp")); // NOI18N
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImages(null);
 
@@ -145,7 +160,8 @@ public class DashboardForm extends JFrame {
         PanelMenu.setPreferredSize(new java.awt.Dimension(220, 680));
         PanelMenu.setLayout(new java.awt.GridLayout(11, 1, 0, 25));
 
-        lbMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/icons8_menu_48px_1.png"))); // NOI18N
+        lbMenu.setForeground(new java.awt.Color(255, 255, 255));
+        lbMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/x-button.png"))); // NOI18N
         lbMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         PanelMenu.add(lbMenu);
 
@@ -160,7 +176,6 @@ public class DashboardForm extends JFrame {
         lbMenuHome.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuHome.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/home_24px.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lbMenuHome.setText(bundle.getString("txtMenuHome")); // NOI18N
         lbMenuHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuHome.setMaximumSize(new java.awt.Dimension(104, 30));
@@ -290,27 +305,6 @@ public class DashboardForm extends JFrame {
 
         PanelMenu.add(kPanelService);
 
-        kPanelReport.setkBorderRadius(30);
-        kPanelReport.setkEndColor(new java.awt.Color(255, 255, 255));
-        kPanelReport.setkFillBackground(false);
-        kPanelReport.setkStartColor(new java.awt.Color(255, 255, 255));
-        kPanelReport.setOpaque(false);
-        kPanelReport.setPreferredSize(new java.awt.Dimension(200, 10));
-        kPanelReport.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 5));
-
-        lbMenuReport.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lbMenuReport.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuReport.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/account_24px.png"))); // NOI18N
-        lbMenuReport.setText(bundle.getString("txtMenuIReport")); // NOI18N
-        lbMenuReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbMenuReport.setMaximumSize(new java.awt.Dimension(200, 30));
-        lbMenuReport.setMinimumSize(new java.awt.Dimension(200, 30));
-        lbMenuReport.setPreferredSize(new java.awt.Dimension(200, 30));
-        kPanelReport.add(lbMenuReport);
-
-        PanelMenu.add(kPanelReport);
-
         kPanelCustomer.setkBorderRadius(30);
         kPanelCustomer.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelCustomer.setkFillBackground(false);
@@ -333,13 +327,46 @@ public class DashboardForm extends JFrame {
 
         PanelMenu.add(kPanelCustomer);
 
+        kPanelReport.setkBorderRadius(30);
+        kPanelReport.setkEndColor(new java.awt.Color(255, 255, 255));
+        kPanelReport.setkFillBackground(false);
+        kPanelReport.setkStartColor(new java.awt.Color(255, 255, 255));
+        kPanelReport.setOpaque(false);
+        kPanelReport.setPreferredSize(new java.awt.Dimension(200, 10));
+        kPanelReport.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 20, 5));
+
+        lbMenuReport.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
+        lbMenuReport.setForeground(new java.awt.Color(255, 255, 255));
+        lbMenuReport.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/account_24px.png"))); // NOI18N
+        lbMenuReport.setText(bundle.getString("txtMenuIReport")); // NOI18N
+        lbMenuReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbMenuReport.setMaximumSize(new java.awt.Dimension(200, 30));
+        lbMenuReport.setMinimumSize(new java.awt.Dimension(200, 30));
+        lbMenuReport.setPreferredSize(new java.awt.Dimension(200, 30));
+        kPanelReport.add(lbMenuReport);
+
+        PanelMenu.add(kPanelReport);
+
         getContentPane().add(PanelMenu, java.awt.BorderLayout.LINE_START);
 
+        PanelNavigation.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         PanelNavigation.setkEndColor(new java.awt.Color(102, 153, 255));
         PanelNavigation.setkStartColor(new java.awt.Color(153, 255, 153));
-        java.awt.FlowLayout flowLayout3 = new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT, 30, 5);
-        flowLayout3.setAlignOnBaseline(true);
-        PanelNavigation.setLayout(flowLayout3);
+        PanelNavigation.setLayout(new javax.swing.BoxLayout(PanelNavigation, javax.swing.BoxLayout.LINE_AXIS));
+
+        panelEmpty.setOpaque(false);
+        panelEmpty.setPreferredSize(new java.awt.Dimension(850, 10));
+        panelEmpty.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        lbTImeNow.setBackground(new java.awt.Color(255, 255, 255));
+        lbTImeNow.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbTImeNow.setForeground(new java.awt.Color(255, 255, 255));
+        lbTImeNow.setText("timeNow");
+        lbTImeNow.setToolTipText("");
+        panelEmpty.add(lbTImeNow);
+
+        PanelNavigation.add(panelEmpty);
 
         panelLanguage.setMinimumSize(new java.awt.Dimension(150, 30));
         panelLanguage.setOpaque(false);
@@ -358,9 +385,10 @@ public class DashboardForm extends JFrame {
 
         lbNameUser.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbNameUser.setForeground(new java.awt.Color(255, 255, 255));
-        lbNameUser.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        lbNameUser.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         lbNameUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/circle-user.png"))); // NOI18N
         lbNameUser.setText(bundle.getString("titleLogo")); // NOI18N
+        lbNameUser.setPreferredSize(new java.awt.Dimension(200, 32));
         PanelNavigation.add(lbNameUser);
 
         btnSignOut.setText(bundle.getString("btnSignOut")); // NOI18N
@@ -515,20 +543,13 @@ public class DashboardForm extends JFrame {
      * @param panel Panel cần hiển thị
      */
     private void showComponent(Component component) {
-        // Xóa tất cả các panel đang hiển thị
         kMainPanel.removeAll();
         
-        // Thiết lập layout cho kMainPanel là BorderLayout
         kMainPanel.setLayout(new BorderLayout());
         
-        // Thêm panel mới
-        // kMainPanel.add(panel, BorderLayout.CENTER);
-        // Cập nhật hiển thị
-        // Thêm component vào kMainPanel
         if (component instanceof JPanel) {
             kMainPanel.add((JPanel)component, BorderLayout.CENTER);
         } else {
-            // Thêm homPanel mặc định nếu component không phải JPanel
             kMainPanel.add(homForm, BorderLayout.CENTER);
         }
 
@@ -582,37 +603,82 @@ public class DashboardForm extends JFrame {
         return btnSignOut;
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    // public static void main(String args[]) {
-    //     /* Set the Nimbus look and feel */
-    //     //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-    //     /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-    //      * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-    //      */
-    //     try{
-    //         UIManager.setLookAndFeel(new FlatLightLaf());
-    //     }catch(Exception e){
-    //         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    //     }
-    //     //</editor-fold>
-    //     //</editor-fold>
 
-    //     /* Create and display the form */
-    //     /* Create and display the form */
-    //     SwingUtilities.invokeLater(new Runnable() {
-    //         public void run() {
-    //             DashboardForm dashBoard = DashboardForm.getInstance();
-    //             dashBoard.setVisible(true);
-    //         }
-    //     });
-    // }
+    public javax.swing.JLabel getLbTImeNow() {
+        return lbTImeNow;
+    }
 
-    // Thêm biến để theo dõi panel đang được chọn
+    public KGradientPanel getPanelMenu() {
+        return PanelMenu;
+    }
+
+    public JLabel getLbMenu() {
+        return lbMenu;
+    }
+      
+
+    public javax.swing.JComboBox<String> getCbLanguage() {
+        return cbLanguage;
+    }
+
+    public javax.swing.JLabel getLbMenuCustomer() {
+        return lbMenuCustomer;
+    }
+
+    public javax.swing.JLabel getLbMenuEmployee() {
+        return lbMenuEmployee;
+    }
+
+    public javax.swing.JLabel getLbMenuHome() {
+        return lbMenuHome;
+    }
+
+    public javax.swing.JLabel getLbMenuInvoice() {
+        return lbMenuInvoice;
+    }
+
+    public javax.swing.JLabel getLbMenuReport() {
+        return lbMenuReport;
+    }
+
+    public javax.swing.JLabel getLbMenuService() {
+        return lbMenuService;
+    }
+
+    public javax.swing.JLabel getLbMenuWareHouse() {
+        return lbMenuWareHouse;
+    }
+
+    public javax.swing.JLabel getLbProductMenu() {
+        return lbProductMenu;
+    }
+
+    public javax.swing.JLabel getLbSell() {
+        return lbSell;
+    }
+
+
+
+
+
     private KGradientPanel activePanel = null;
     private JLabel activeLabel = null;
 
+    // Thêm phương thức formWindowClosing để dọn dẹp resources khi đóng cửa sổ
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {
+        if (dashboardController != null) {
+            dashboardController.cleanup();
+        }
+    }
+
+    // Khi ứng dụng đóng
+    public void dispose() {
+        if (dashboardController != null) {
+            dashboardController.cleanup();
+        }
+        super.dispose();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KGradientPanel PanelMenu;
     private com.k33ptoo.components.KGradientPanel PanelNavigation;
@@ -639,6 +705,8 @@ public class DashboardForm extends JFrame {
     private javax.swing.JLabel lbNameUser;
     private javax.swing.JLabel lbProductMenu;
     private javax.swing.JLabel lbSell;
+    private javax.swing.JLabel lbTImeNow;
+    private javax.swing.JPanel panelEmpty;
     private javax.swing.JPanel panelLanguage;
     // End of variables declaration//GEN-END:variables
 }

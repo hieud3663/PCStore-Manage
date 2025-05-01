@@ -208,6 +208,23 @@ public class InvoiceService {
     }
 
     /**
+     * Đếm số lượng hóa đơn trong khoảng thời gian
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Số lượng hóa đơn
+     */
+    public int countInvoicesByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        try {
+            // Gọi phương thức mới trong repository
+            return invoiceRepository.countInvoicesByDateRange(startDate, endDate);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi đếm số lượng hóa đơn trong khoảng thời gian: " + e.getMessage());
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    /**
      * Tìm tất cả hóa đơn có thể trả hàng
      * @return Danh sách hóa đơn có thể trả hàng
      */
@@ -279,6 +296,64 @@ public class InvoiceService {
             System.err.println("Lỗi khi kiểm tra khả năng trả hàng: " + e.getMessage());
             // Mặc định là có thể trả nếu có lỗi
             return true;
+        }
+    }
+
+    /**
+     * Tìm tất cả hóa đơn có thể áp dụng cho bảo hành
+     * @return Danh sách hóa đơn với chi tiết sản phẩm có bảo hành
+     */
+    public List<Invoice> findAllInvoicesForWarranty() {
+        try {
+            return invoiceRepository.findAllInvoicesForWarranty();
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm hóa đơn cho bảo hành: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm chi tiết hóa đơn dành cho bảo hành
+     * @param invoiceId ID hóa đơn
+     * @return Danh sách chi tiết hóa đơn có sản phẩm bảo hành
+     */
+    public List<InvoiceDetail> findInvoiceDetailsForWarranty(Integer invoiceId) {
+        try {
+            return invoiceRepository.findInvoiceDetailsForWarranty(invoiceId);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm chi tiết hóa đơn cho bảo hành: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tìm hóa đơn đơn giản (chỉ thông tin cơ bản) theo ID
+     * @param invoiceId ID hóa đơn
+     * @return Optional chứa hóa đơn với thông tin cơ bản nếu tìm thấy
+     */
+    public Optional<Invoice> findSimpleInvoiceById(Integer invoiceId) {
+        try {
+            return invoiceRepository.findSimpleInvoiceById(invoiceId);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm hóa đơn đơn giản: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Tìm tất cả hóa đơn với thông tin đơn giản
+     * @return Danh sách hóa đơn với thông tin đơn giản
+     */
+    public List<Invoice> findAllInvoicesSimple() {
+        try {
+            return invoiceRepository.findAllInvoicesSimple();
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm hóa đơn đơn giản: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
         }
     }
 }

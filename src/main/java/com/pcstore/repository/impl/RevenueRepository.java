@@ -2,10 +2,12 @@ package com.pcstore.repository.impl;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -389,5 +391,126 @@ public class RevenueRepository implements iRevenueRepository {
         }
         
         return topEmployees;
+    }
+
+    public List<Map<String, Object>> getEmployeeDailyRevenueData(String employeeId, 
+                                                                LocalDateTime fromDate, 
+                                                                LocalDateTime toDate) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        String sql = "SELECT CAST(i.InvoiceDate AS DATE) AS InvoiceDate, " +
+                    "SUM(id.Quantity) AS ProductCount, " +
+                    "SUM(id.Quantity * id.UnitPrice) AS Revenue " +
+                    "FROM Invoices i " +
+                    "JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID " +
+                    "WHERE i.EmployeeID = ? " +
+                    "AND i.InvoiceDate BETWEEN ? AND ? " +
+                    "AND i.StatusID = 3 " + // Chỉ tính hóa đơn hoàn thành
+                    "GROUP BY CAST(i.InvoiceDate AS DATE) " +
+                    "ORDER BY CAST(i.InvoiceDate AS DATE)";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, employeeId);
+            statement.setObject(2, fromDate);
+            statement.setObject(3, toDate);
+            
+            ResultSet rs = statement.executeQuery();
+            
+            while (rs.next()) {
+                Map<String, Object> data = new HashMap<>();
+                
+                // Lấy ngày từ kết quả truy vấn
+                Date sqlDate = rs.getDate("InvoiceDate");
+                LocalDate date = sqlDate.toLocalDate();
+                
+                data.put("date", date);
+                data.put("productCount", rs.getInt("ProductCount"));
+                data.put("revenue", rs.getBigDecimal("Revenue"));
+                
+                result.add(data);
+            }
+            
+            return result;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting daily revenue data for employee", e);
+        }
+    }
+
+    /**
+     * Tính tổng doanh thu trong khoảng thời gian
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Tổng doanh thu
+     */
+    public BigDecimal calculateTotalRevenueByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        String sql = "SELECT SUM(id.Quantity * id.UnitPrice) AS TotalRevenue " +
+                     "FROM Invoices i " +
+                     "JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID " +
+                     "WHERE i.InvoiceDate BETWEEN ? AND ? " +
+                     "AND i.StatusID IN (1, 2, 3)"; // Chỉ tính hóa đơn đã xác nhận/thanh toán/hoàn thành
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, startDate);
+            statement.setObject(2, endDate);
+            
+            ResultSet resultSet = statement.executeQuery();
+            
+            if (resultSet.next()) {
+                BigDecimal total = resultSet.getBigDecimal("TotalRevenue");
+                return total != null ? total : BigDecimal.ZERO;
+            }
+            return BigDecimal.ZERO;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi tính tổng doanh thu trong khoảng thời gian", e);
+            throw new RuntimeException("Lỗi khi tính tổng doanh thu trong khoảng thời gian", e);
+        }
+    }
+
+    /**
+     * Lấy dữ liệu doanh thu theo ngày trong khoảng thời gian
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Danh sách dữ liệu doanh thu theo ngày
+     */
+    public List<Map<String, Object>> getDailyRevenueData(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        String sql = "SELECT CAST(i.InvoiceDate AS DATE) AS SaleDate, " +
+                     "COUNT(DISTINCT i.InvoiceID) AS OrderCount, " +
+                     "SUM(id.Quantity) AS ProductCount, " +
+                     "SUM(id.Quantity * id.UnitPrice) AS Revenue " +
+                     "FROM Invoices i " +
+                     "JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID " +
+                     "WHERE i.InvoiceDate BETWEEN ? AND ? " +
+                     "AND i.StatusID IN (1, 2, 3) " + // Chỉ tính hóa đơn đã xác nhận/thanh toán/hoàn thành
+                     "GROUP BY CAST(i.InvoiceDate AS DATE) " +
+                     "ORDER BY CAST(i.InvoiceDate AS DATE)";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, startDate);
+            statement.setObject(2, endDate);
+            
+            ResultSet rs = statement.executeQuery();
+            
+            while (rs.next()) {
+                Map<String, Object> dailyData = new HashMap<>();
+                
+                // Lấy ngày từ kết quả truy vấn (chuyển từ java.sql.Date sang LocalDate)
+                Date sqlDate = rs.getDate("SaleDate");
+                LocalDate date = sqlDate.toLocalDate();
+                
+                dailyData.put("date", date);
+                dailyData.put("orderCount", rs.getInt("OrderCount"));
+                dailyData.put("productCount", rs.getInt("ProductCount"));
+                dailyData.put("revenue", rs.getBigDecimal("Revenue"));
+                
+                result.add(dailyData);
+            }
+            
+            return result;
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi lấy dữ liệu doanh thu theo ngày", e);
+            throw new RuntimeException("Lỗi khi lấy dữ liệu doanh thu theo ngày", e);
+        }
     }
 }

@@ -18,7 +18,7 @@ public class Product extends BaseTimeEntity {
     private String description;
     private Category category;
     private Supplier supplier;
-    
+    private String manufacturer;    
 
     
 
@@ -129,12 +129,10 @@ public class Product extends BaseTimeEntity {
         this.supplier = supplier;
     }
    
-    // Phương thức kiểm tra xem có đủ số lượng tồn kho không
     public boolean hasEnoughStock(int quantity) {
         return this.stockQuantity >= quantity;
     }
     
-    // Phương thức giảm số lượng tồn kho khi bán
     public void decreaseStock(int quantity) {
         if (!hasEnoughStock(quantity)) {
             throw new IllegalArgumentException(
@@ -143,7 +141,6 @@ public class Product extends BaseTimeEntity {
         setStockQuantity(this.stockQuantity - quantity);
     }
     
-    // Phương thức tăng số lượng tồn kho khi nhập hàng
     public void increaseStock(int quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
@@ -151,17 +148,24 @@ public class Product extends BaseTimeEntity {
         setStockQuantity(this.stockQuantity + quantity);
     }
     
-    // Phương thức getter cho số lượng tồn kho (alias cho getStockQuantity để tương thích với InvoiceDetail)
     public int getQuantityInStock() {
         return getStockQuantity();
     }
     
-    // Phương thức kiểm tra sản phẩm có bảo hành không
     public boolean hasWarranty() {
-        // Mặc định là có bảo hành, có thể thay đổi logic tùy theo yêu cầu kinh doanh
         return true;
     }
     
+    
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+
     // Factory method để tạo sản phẩm mới
     public static Product createNew(String productId, String productName, 
                                  BigDecimal price, Category category,

@@ -5,8 +5,11 @@ import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.pcstore.repository.iRevenueRepository;
 import com.pcstore.repository.impl.RevenueRepository;
@@ -16,6 +19,7 @@ import com.pcstore.repository.impl.RevenueRepository;
  */
 public class RevenueService {
     private final RevenueRepository revenueRepository;
+    private static final Logger logger = Logger.getLogger(RevenueService.class.getName());
 
     /**
      * Constructor with repository parameter
@@ -165,5 +169,46 @@ public class RevenueService {
      */
     public List<Map<String, Object>> getTopPerformingEmployees(int limit, LocalDateTime startDate, LocalDateTime endDate) {
         return revenueRepository.getTopPerformingEmployees(limit, startDate, endDate);
+    }
+
+    /**
+     * Lấy dữ liệu doanh thu theo ngày của một nhân viên cụ thể
+     * @param employeeId ID của nhân viên
+     * @param fromDate Ngày bắt đầu
+     * @param toDate Ngày kết thúc
+     * @return Danh sách dữ liệu doanh thu theo ngày
+     */
+    public List<Map<String, Object>> getEmployeeDailyRevenueData(String employeeId,  LocalDateTime fromDate, LocalDateTime toDate) {
+        return revenueRepository.getEmployeeDailyRevenueData(employeeId, fromDate, toDate);
+    }
+
+    /**
+     * Lấy dữ liệu doanh thu theo ngày trong khoảng thời gian
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Danh sách dữ liệu doanh thu theo ngày
+     */
+    public List<Map<String, Object>> getDailyRevenueData(LocalDateTime startDate, LocalDateTime endDate) {
+        try {
+            return revenueRepository.getDailyRevenueData(startDate, endDate);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Lỗi khi lấy dữ liệu doanh thu theo ngày", e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Tính tổng doanh thu trong khoảng thời gian
+     * @param startDate Ngày bắt đầu
+     * @param endDate Ngày kết thúc
+     * @return Tổng doanh thu
+     */
+    public BigDecimal getTotalRevenueByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
+        try {
+            return revenueRepository.calculateTotalRevenueByDateRange(startDate, endDate);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Lỗi khi tính tổng doanh thu trong khoảng thời gian", e);
+            return BigDecimal.ZERO;
+        }
     }
 }

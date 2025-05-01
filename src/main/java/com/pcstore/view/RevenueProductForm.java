@@ -51,11 +51,13 @@ public class RevenueProductForm extends javax.swing.JPanel {
         lbToDate = new javax.swing.JLabel();
         txtToDate = new javax.swing.JTextField();
         btnToDate = new javax.swing.JButton();
+        btnApply = new com.k33ptoo.components.KButton();
         btnExportReport = new com.k33ptoo.components.KButton();
         panelEmpty = new javax.swing.JPanel();
         panelBody = new javax.swing.JPanel();
         jScrollPane = new javax.swing.JScrollPane();
         tableRevenue = new javax.swing.JTable();
+        panelChart = new javax.swing.JPanel();
         panelFooter = new javax.swing.JPanel();
         lbTotal = new javax.swing.JLabel();
         Revenue = new javax.swing.JLabel();
@@ -142,6 +144,19 @@ public class RevenueProductForm extends javax.swing.JPanel {
 
         panelDate.add(panelToDate);
 
+        btnApply.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/filter.png"))); // NOI18N
+        btnApply.setText(bundle.getString("btnApply")); // NOI18N
+        btnApply.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnApply.setkAllowGradient(false);
+        btnApply.setkBackGroundColor(new java.awt.Color(0, 189, 225));
+        btnApply.setkBorderRadius(20);
+        btnApply.setkFocusColor(new java.awt.Color(255, 255, 255));
+        btnApply.setkHoverColor(new java.awt.Color(0, 102, 255));
+        btnApply.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnApply.setkShowFocusBorder(true);
+        btnApply.setPreferredSize(new java.awt.Dimension(130, 32));
+        panelDate.add(btnApply);
+
         panelAction.add(panelDate, java.awt.BorderLayout.LINE_START);
 
         btnExportReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/xls.png"))); // NOI18N
@@ -166,11 +181,11 @@ public class RevenueProductForm extends javax.swing.JPanel {
         panelEmpty.setLayout(panelEmptyLayout);
         panelEmptyLayout.setHorizontalGroup(
             panelEmptyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 245, Short.MAX_VALUE)
+            .addGap(0, 105, Short.MAX_VALUE)
         );
         panelEmptyLayout.setVerticalGroup(
             panelEmptyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
+            .addGap(0, 39, Short.MAX_VALUE)
         );
 
         panelAction.add(panelEmpty, java.awt.BorderLayout.CENTER);
@@ -213,6 +228,12 @@ public class RevenueProductForm extends javax.swing.JPanel {
         }
 
         panelBody.add(jScrollPane, java.awt.BorderLayout.CENTER);
+
+        panelChart.setMinimumSize(new java.awt.Dimension(100, 250));
+        panelChart.setOpaque(false);
+        panelChart.setPreferredSize(new java.awt.Dimension(100, 250));
+        panelChart.setLayout(new java.awt.BorderLayout());
+        panelBody.add(panelChart, java.awt.BorderLayout.PAGE_START);
 
         add(panelBody);
 
@@ -279,11 +300,19 @@ public class RevenueProductForm extends javax.swing.JPanel {
         return txtToDate;
     }
 
-
+    public KButton getBtnApply() {
+        return btnApply;
+    }
+    
+    
+    public javax.swing.JPanel getPanelChart() {
+        return panelChart;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Revenue;
+    private com.k33ptoo.components.KButton btnApply;
     private com.k33ptoo.components.KButton btnExportReport;
     private javax.swing.JButton btnFromDate;
     private javax.swing.JButton btnToDate;
@@ -296,6 +325,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
     private javax.swing.JLabel lbTotal;
     private javax.swing.JPanel panelAction;
     private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelChart;
     private javax.swing.JPanel panelDate;
     private javax.swing.JPanel panelEmpty;
     private javax.swing.JPanel panelFooter;

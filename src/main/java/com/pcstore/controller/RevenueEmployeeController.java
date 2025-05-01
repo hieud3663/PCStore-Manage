@@ -1,7 +1,14 @@
 package com.pcstore.controller;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.Font;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +30,8 @@ import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.view.RevenueEmployeeForm;
+import com.pcstore.chart.Chart;
+import com.pcstore.chart.ModelChart;
 
 /**
  * Controller để quản lý thống kê doanh thu của nhân viên
@@ -153,6 +163,30 @@ public class RevenueEmployeeController {
                 // Date picker sẽ cập nhật text field và DocumentListener sẽ xử lý
             }
         });
+
+        revenueEmployeeForm.getBtnApply().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                loadRevenueData();
+            }
+        });
+        
+        revenueEmployeeForm.getTableRevenue().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent evt) {
+                if (evt.getClickCount() == 2) { // Double click
+                    int row = revenueEmployeeForm.getTableRevenue().getSelectedRow();
+                    if (row >= 0) {
+                        // Lấy thông tin nhân viên từ dòng được chọn (cột 1 là ID, cột 2 là tên)
+                        String employeeId = revenueEmployeeForm.getTableRevenue().getValueAt(row, 1).toString();
+                        String employeeName = revenueEmployeeForm.getTableRevenue().getValueAt(row, 2).toString();
+                        
+                        // Hiển thị biểu đồ chi tiết
+                        showEmployeeDailyChart(employeeId, employeeName);
+                    }
+                }
+            }
+        });
     }
     
     /**
@@ -250,13 +284,16 @@ public class RevenueEmployeeController {
             
             List<Map<String, Object>> revenueData = revenueService.getEmployeeRevenueData(fromDateTime, toDateTime);
             
+            // Sắp xếp dữ liệu theo doanh thu giảm dần
+            List<Map<String, Object>> sortedData = sortRevenueData(revenueData);
+            
             DefaultTableModel model = (DefaultTableModel) revenueEmployeeForm.getTableRevenue().getModel();
             model.setRowCount(0);
             
             BigDecimal totalRevenue = BigDecimal.ZERO;
             int stt = 0;
             
-            for (Map<String, Object> data : revenueData) {
+            for (Map<String, Object> data : sortedData) {
                 stt++;
                 String employeeId = (String) data.get("employeeId");
                 String employeeName = (String) data.get("employeeName");
@@ -276,6 +313,9 @@ public class RevenueEmployeeController {
             }
             
             revenueEmployeeForm.getLbTotal().setText(currencyFormatter.format(totalRevenue));
+            
+            // Cập nhật biểu đồ với dữ liệu đã sắp xếp
+            updateChart(sortedData);
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -400,5 +440,191 @@ public class RevenueEmployeeController {
         }
         
         loadRevenueData();
+    }
+    
+    /**
+     * Thêm phương thức mới để cập nhật biểu đồ
+     */
+    private void updateChart(List<Map<String, Object>> revenueData) {
+        try {
+            
+            Chart chart = (Chart) revenueEmployeeForm.getPanelChartView(); 
+            chart.clear();
+
+            revenueEmployeeForm.getPanelChartView().removeAll();
+            chart = new Chart();
+            revenueEmployeeForm.getPanelChartView().setLayout(new BorderLayout());
+            revenueEmployeeForm.getPanelChartView().add(chart, BorderLayout.CENTER);
+        
+            
+            chart.addLegend("Doanh thu (triệu đồng)", new Color(26, 162, 106));
+            chart.addLegend("Số lượng sản phẩm", new Color(30, 113, 195));
+            
+            int maxToShow = Math.min(revenueData.size(), 8);
+            
+            // Thêm dữ liệu vào biểu đồ
+            for (int i = 0; i < maxToShow; i++) {
+                Map<String, Object> data = revenueData.get(i);
+                String employeeName = (String) data.get("employeeName");
+                BigDecimal revenue = (BigDecimal) data.get("revenue");
+                int productCount = (int) data.get("productCount");
+                
+                double revenueInMillions = revenue.doubleValue() / 1000000.0;
+                
+                // Thêm dữ liệu vào biểu đồ (tên nhân viên, mảng giá trị [doanh thu, số lượng])
+                chart.addData(new ModelChart(
+                    employeeName, 
+                    new double[]{revenueInMillions, productCount}
+                ));
+            }
+            
+            // Bắt đầu hiệu ứng biểu đồ
+            chart.start();
+        } catch (Exception e) {
+            System.err.println("Lỗi khi cập nhật biểu đồ: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Sắp xếp dữ liệu doanh thu theo thứ tự giảm dần
+     * @param revenueData Dữ liệu doanh thu chưa sắp xếp
+     * @return Dữ liệu doanh thu đã sắp xếp theo thứ tự giảm dần
+     */
+    private List<Map<String, Object>> sortRevenueData(List<Map<String, Object>> revenueData) {
+        // Tạo bản sao của danh sách để không ảnh hưởng đến danh sách gốc
+        List<Map<String, Object>> sortedData = new ArrayList<>(revenueData);
+        
+        // Sắp xếp theo doanh thu giảm dần
+        sortedData.sort((data1, data2) -> {
+            BigDecimal revenue1 = (BigDecimal) data1.get("revenue");
+            BigDecimal revenue2 = (BigDecimal) data2.get("revenue");
+            return revenue2.compareTo(revenue1); // Sắp xếp giảm dần
+        });
+        
+        return sortedData;
+    }
+    
+    /**
+     * Lấy dữ liệu doanh thu theo ngày của một nhân viên cụ thể
+     * @param employeeId ID của nhân viên cần lấy dữ liệu
+     * @param fromDate Ngày bắt đầu
+     * @param toDate Ngày kết thúc
+     * @return Danh sách dữ liệu doanh thu theo ngày
+     */
+    private List<Map<String, Object>> getEmployeeDailyRevenueData(String employeeId) {
+        try {
+            java.time.LocalDateTime fromDateTime = fromDate.atStartOfDay();
+            java.time.LocalDateTime toDateTime = toDate.atTime(23, 59, 59);
+            
+            return revenueService.getEmployeeDailyRevenueData(employeeId, fromDateTime, toDateTime);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lấy dữ liệu doanh thu theo ngày: " + e.getMessage(), 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return new ArrayList<>();
+        }
+    }
+    
+    /**
+     * Hiển thị biểu đồ chi tiết doanh thu theo ngày của nhân viên được chọn
+     * @param employeeId ID của nhân viên
+     * @param employeeName Tên của nhân viên để hiển thị tiêu đề
+     */
+    private void showEmployeeDailyChart(String employeeId, String employeeName) {
+        try {
+            // Lấy dữ liệu doanh thu theo ngày
+            List<Map<String, Object>> dailyData = getEmployeeDailyRevenueData(employeeId);
+            
+            if (dailyData.isEmpty()) {
+                JOptionPane.showMessageDialog(revenueEmployeeForm, 
+                    "Không có dữ liệu doanh thu theo ngày cho nhân viên này trong khoảng thời gian đã chọn", 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
+            // Tìm giá trị lớn nhất của số lượng sản phẩm để scale
+            int maxProductCount = 0;
+            BigDecimal maxRevenue = BigDecimal.ZERO;
+            
+            for (Map<String, Object> data : dailyData) {
+                int productCount = (int) data.get("productCount");
+                BigDecimal revenue = (BigDecimal) data.get("revenue");
+                
+                if (productCount > maxProductCount) {
+                    maxProductCount = productCount;
+                }
+                
+                if (revenue.compareTo(maxRevenue) > 0) {
+                    maxRevenue = revenue;
+                }
+            }
+            
+            // Tính tỷ lệ để hiển thị hài hòa
+            double scaleFactor = maxRevenue.doubleValue() > 0 ? 
+                Math.min(10.0, maxProductCount / Math.max(1, maxRevenue.doubleValue() / 1000000.0)) : 1.0;
+            
+            // Tạo dialog và các thành phần UI...
+            javax.swing.JDialog dialog = new javax.swing.JDialog();
+            dialog.setTitle("Biểu đồ doanh thu theo ngày - " + employeeName);
+            dialog.setSize(800, 500);
+            dialog.setLocationRelativeTo(revenueEmployeeForm);
+            dialog.setModal(true);
+            dialog.setLayout(new BorderLayout());
+            
+            // Tạo panel chứa biểu đồ
+            Chart dailyChart = new Chart();
+            
+            // Thêm legend cho biểu đồ
+            dailyChart.addLegend("Doanh thu (triệu đồng)", new Color(26, 162, 106));
+            dailyChart.addLegend("Số lượng sản phẩm", new Color(30, 113, 195));
+            
+            // Thêm dữ liệu vào biểu đồ
+            for (Map<String, Object> data : dailyData) {
+                LocalDate date = (LocalDate) data.get("date");
+                BigDecimal dailyRevenue = (BigDecimal) data.get("revenue");
+                int productCount = (int) data.get("productCount");
+                
+                double revenueInMillions = dailyRevenue.doubleValue() / 1000000.0;
+                
+                // Scale số lượng sản phẩm để hiển thị cân đối với doanh thu
+                double scaledProductCount = productCount / scaleFactor;
+                
+                String dateLabel = date.format(DateTimeFormatter.ofPattern("dd/MM"));
+                
+                dailyChart.addData(new ModelChart(dateLabel, new double[]{revenueInMillions, scaledProductCount}));
+            }
+            
+            javax.swing.JPanel headerPanel = new javax.swing.JPanel();
+            headerPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+            
+            javax.swing.JLabel titleLabel = new javax.swing.JLabel("Doanh thu của " + employeeName + 
+                    " từ " + fromDate.format(dateFormatter) + " đến " + toDate.format(dateFormatter));
+            titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            headerPanel.add(titleLabel);
+            
+            javax.swing.JLabel scaleLabel = new javax.swing.JLabel("(* Số lượng sản phẩm đã được điều chỉnh tỷ lệ để hiển thị)");
+            scaleLabel.setFont(new Font("Segoe UI", Font.ITALIC, 12));
+            headerPanel.add(scaleLabel);
+            
+            dialog.add(headerPanel, BorderLayout.NORTH);
+            dialog.add(dailyChart, BorderLayout.CENTER);
+            
+            javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
+            javax.swing.JButton closeButton = new javax.swing.JButton("Đóng");
+            closeButton.addActionListener(e -> dialog.dispose());
+            buttonPanel.add(closeButton);
+            dialog.add(buttonPanel, BorderLayout.SOUTH);
+            
+            dailyChart.start();
+            
+            dialog.setVisible(true);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(revenueEmployeeForm, 
+                "Lỗi khi hiển thị biểu đồ: " + e.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

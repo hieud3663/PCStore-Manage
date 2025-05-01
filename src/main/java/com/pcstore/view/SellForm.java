@@ -115,6 +115,8 @@ public class SellForm extends JPanel {
         labelTitle = new javax.swing.JLabel();
         panelNav = new javax.swing.JPanel();
         textFieldSearch = new com.pcstore.utils.TextFieldSearch();
+        panelNote = new javax.swing.JPanel();
+        lbNote = new javax.swing.JLabel();
         paneBody = new javax.swing.JPanel();
         panelListProduct = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -164,7 +166,7 @@ public class SellForm extends JPanel {
         panelTitle.setPreferredSize(new java.awt.Dimension(1153, 50));
 
         labelTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        labelTitle.setForeground(new java.awt.Color(102, 0, 204));
+        labelTitle.setForeground(new java.awt.Color(0, 54, 204));
         labelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         labelTitle.setText(bundle.getString("txtMenuSell")); // NOI18N
@@ -181,11 +183,20 @@ public class SellForm extends JPanel {
 
         panelMain.add(panelNav);
 
+        panelNote.setOpaque(false);
+        panelNote.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        lbNote.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lbNote.setText(bundle.getString("lbNoteSell")); // NOI18N
+        panelNote.add(lbNote);
+
+        panelMain.add(panelNote);
+
         paneBody.setPreferredSize(new java.awt.Dimension(100, 300));
         paneBody.setLayout(new javax.swing.BoxLayout(paneBody, javax.swing.BoxLayout.LINE_AXIS));
 
         panelListProduct.setBackground(new java.awt.Color(255, 255, 255));
-        panelListProduct.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("titileBorderListProduct"))); // NOI18N
+        panelListProduct.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("titileBorderListProduct"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 13), new java.awt.Color(0, 61, 179))); // NOI18N
         panelListProduct.setMinimumSize(new java.awt.Dimension(500, 39));
         panelListProduct.setPreferredSize(new java.awt.Dimension(800, 425));
         panelListProduct.setLayout(new java.awt.BorderLayout());
@@ -242,9 +253,8 @@ public class SellForm extends JPanel {
         panelRight.setLayout(new javax.swing.BoxLayout(panelRight, javax.swing.BoxLayout.Y_AXIS));
 
         panelCart.setBackground(new java.awt.Color(255, 255, 255));
-        panelCart.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("lbCart"))); // NOI18N
+        panelCart.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("lbCart"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 13), new java.awt.Color(0, 61, 179))); // NOI18N
         panelCart.setkFillBackground(false);
-        panelCart.setOpaque(false);
         panelCart.setLayout(new java.awt.BorderLayout());
 
         jScrollPane3.setPreferredSize(new java.awt.Dimension(452, 200));
@@ -881,6 +891,7 @@ public class SellForm extends JPanel {
     private javax.swing.JLabel labelCustomerTotalAmonut;
     private javax.swing.JLabel labelDiscount;
     private javax.swing.JLabel labelTitle;
+    private javax.swing.JLabel lbNote;
     private javax.swing.JPanel paneBody;
     private javax.swing.JPanel panelButtonAction;
     private com.k33ptoo.components.KGradientPanel panelCart;
@@ -894,6 +905,7 @@ public class SellForm extends JPanel {
     private javax.swing.JPanel panelListProduct;
     private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel panelNav;
+    private javax.swing.JPanel panelNote;
     private javax.swing.JPanel panelRight;
     private com.k33ptoo.components.KGradientPanel panelTitle;
     private javax.swing.JTable tableCart;

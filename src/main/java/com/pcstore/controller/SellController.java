@@ -221,7 +221,7 @@ public class SellController {
                 product.getProductId(),
                 product.getProductName(),
                 product.getCategory() != null ? product.getCategory().getCategoryName() : "",
-                product.getSupplier() != null ? product.getSupplier().getName() : "",
+                product.getManufacturer() != null ? product.getManufacturer() : "N/A",
                 product.getQuantityInStock(),
                 formatter.format(product.getPrice())
          };

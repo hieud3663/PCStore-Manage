@@ -385,13 +385,18 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
      * @param warranties Danh sách bảo hành để hiển thị
      */
     public void updateWarrantyTable(List<Warranty> warranties) {
-        System.out.println("Updating warranty table with " + (warranties != null ? warranties.size() : 0) + " items");
+        // System.out.println("Updating warranty table with " + (warranties != null ? warranties.size() : 0) + " items");
         
         DefaultTableModel model = (DefaultTableModel) tableListWarranty.getModel();
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
         
         if (warranties == null || warranties.isEmpty()) {
-            System.out.println("No warranties to display");
+            JOptionPane.showMessageDialog(
+                this,
+                "Không có dữ liệu bảo hành nào để hiển thị.",
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE
+            );
             return;
         }
         
@@ -401,7 +406,6 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         // Thêm dữ liệu từ danh sách bảo hành
         for (Warranty warranty : warranties) {
             try {
-                System.out.println("Adding warranty: ID=" + warranty.getWarrantyId());
                 
                 String startDateStr = warranty.getStartDate() != null ? 
                     warranty.getStartDate().format(formatter) : "";
@@ -422,7 +426,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             }
         }
         
-        System.out.println("Table updated with " + model.getRowCount() + " rows");
+        // System.out.println("Table updated with " + model.getRowCount() + " rows");
     }
 
     /**
@@ -449,20 +453,6 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         return jTextField1;
     }
 
-    /**
-     * Test trực tiếp tải dữ liệu từ service
-     */
-    private void testDirectServiceCall() {
-        try {
-            WarrantyService service = ServiceFactory.getWarrantyService();
-            List<Warranty> warranties = service.getAllWarranties();
-            System.out.println("Direct service call: Found " + warranties.size() + " warranties");
-            updateWarrantyTable(warranties);
-        } catch (Exception e) {
-            System.err.println("Direct service call failed: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnDetailWarrantyCard;

@@ -29,8 +29,8 @@ public class ProductRepository implements Repository<Product, String> {
     @Override
     public Product add(Product product) {
         String sql = "INSERT INTO Products (ProductID, ProductName, CategoryID, SupplierID, Price, " +
-                     "StockQuantity, Specifications, Description) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                     "StockQuantity, Specifications, Description, Manufacturer) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, product.getProductId());
@@ -42,6 +42,8 @@ public class ProductRepository implements Repository<Product, String> {
             statement.setInt(6, product.getStockQuantity());
             statement.setString(7, product.getSpecifications());
             statement.setString(8, product.getDescription());
+            
+            statement.setString(9, product.getManufacturer());
             
             LocalDateTime now = LocalDateTime.now();
             product.setCreatedAt(now);
@@ -57,7 +59,8 @@ public class ProductRepository implements Repository<Product, String> {
     @Override
     public Product update(Product product) {
         String sql = "UPDATE Products SET ProductName = ?, Price = ?, StockQuantity = ?, " +
-                "Specifications = ?, Description = ?, CategoryID = ?, SupplierID = ?, UpdatedAt = ? " +
+                "Specifications = ?, Description = ?, CategoryID = ?, SupplierID = ?, " +
+                "UpdatedAt = ?, Manufacturer = ? " +
                 "WHERE ProductID = ?";
                 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -72,7 +75,8 @@ public class ProductRepository implements Repository<Product, String> {
             
             product.setUpdatedAt(LocalDateTime.now());
             statement.setObject(8, product.getUpdatedAt());
-            statement.setString(9, product.getProductId());
+            statement.setString(9, product.getManufacturer());
+            statement.setString(10, product.getProductId());
             
             statement.executeUpdate();
             return product;
@@ -247,6 +251,26 @@ public class ProductRepository implements Repository<Product, String> {
         }
     }
 
+    //Tìm kiếm theo giá trị Id, tên sản phẩm hoặc hãng sản xuất
+    public List<Product> findByIdOrNameOrManufacturer(String keyword) {
+        String sql = "SELECT * FROM Products WHERE ProductID LIKE ? OR ProductName LIKE ? OR Manufacturer LIKE ?";
+        List<Product> products = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + keyword + "%");
+            statement.setString(2, "%" + keyword + "%");
+            statement.setString(3, "%" + keyword + "%");
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                products.add(mapResultSetToProduct(resultSet));
+            }
+            return products;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding product by keyword", e);
+        }
+    }
+
     // Cập nhật số lượng tồn kho của sản phẩm
     public boolean updateStockQuantity(String productId, int quantity) {
         String sql = "UPDATE Products SET StockQuantity = ? WHERE ProductID = ?";
@@ -261,18 +285,42 @@ public class ProductRepository implements Repository<Product, String> {
         }
     }
     
+    /**
+     * Tìm sản phẩm theo hãng sản xuất
+     * @param manufacturer tên hãng sản xuất
+     * @return danh sách sản phẩm từ hãng sản xuất
+     */
+    public List<Product> findByManufacturer(String manufacturer) {
+        String sql = "SELECT * FROM Products WHERE Manufacturer LIKE ?";
+        List<Product> products = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + manufacturer + "%");
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                products.add(mapResultSetToProduct(resultSet));
+            }
+            return products;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error finding products by manufacturer", e);
+        }
+    }
+    
     // Phương thức chuyển ResultSet thành đối tượng Product
     private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
         Product product = new Product();
         product.setProductId(resultSet.getString("ProductID"));
         product.setProductName(resultSet.getString("ProductName"));
-        // product.setCategory(resultSet.getString("CategoryID"));
         product.setPrice(resultSet.getBigDecimal("Price"));
         product.setStockQuantity(resultSet.getInt("StockQuantity"));
         product.setSpecifications(resultSet.getString("Specifications"));
         product.setDescription(resultSet.getString("Description"));
         product.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
         product.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
+        
+        // Đọc trường Manufacturer
+        product.setManufacturer(resultSet.getString("Manufacturer"));
 
         String categoryId = resultSet.getString("CategoryID");
         String supplierId = resultSet.getString("SupplierID");

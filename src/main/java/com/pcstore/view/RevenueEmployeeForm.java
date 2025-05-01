@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.k33ptoo.components.KButton;
+import com.pcstore.chart.Chart;
 import com.pcstore.controller.RevenueEmployeeController;
 
 /**
@@ -14,12 +16,13 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
 
 
     private RevenueEmployeeController revenueEmployeeController;
-    
+    private com.pcstore.chart.Chart panelChartView;
     /**
      * Creates new form RevenueDaily
      */
     public RevenueEmployeeForm() {
         initComponents();
+        initComponents1();
     }
 
     /**
@@ -45,11 +48,13 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         lbToDate = new javax.swing.JLabel();
         txtToDate = new javax.swing.JTextField();
         btnToDate = new javax.swing.JButton();
+        btnApply = new com.k33ptoo.components.KButton();
         btnExportReport = new com.k33ptoo.components.KButton();
         panelEmpty = new javax.swing.JPanel();
         panelBody = new javax.swing.JPanel();
         jScrollPane = new javax.swing.JScrollPane();
         tableRevenue = new javax.swing.JTable();
+        panelChart = new com.k33ptoo.components.KGradientPanel();
         panelFooter = new javax.swing.JPanel();
         lbTotal = new javax.swing.JLabel();
         Revenue = new javax.swing.JLabel();
@@ -100,6 +105,11 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         btnFromDate.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnFromDate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/schedule.png"))); // NOI18N
         btnFromDate.setText(bundle.getString("Date")); // NOI18N
+        btnFromDate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnFromDateMouseClicked(evt);
+            }
+        });
         panelFromDate.add(btnFromDate);
 
         panelDate.add(panelFromDate);
@@ -120,9 +130,27 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         btnToDate.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnToDate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/schedule.png"))); // NOI18N
         btnToDate.setText(bundle.getString("Date")); // NOI18N
+        btnToDate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnToDateMouseClicked(evt);
+            }
+        });
         panelToDate.add(btnToDate);
 
         panelDate.add(panelToDate);
+
+        btnApply.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/filter.png"))); // NOI18N
+        btnApply.setText(bundle.getString("btnApply")); // NOI18N
+        btnApply.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnApply.setkAllowGradient(false);
+        btnApply.setkBackGroundColor(new java.awt.Color(0, 189, 225));
+        btnApply.setkBorderRadius(20);
+        btnApply.setkFocusColor(new java.awt.Color(255, 255, 255));
+        btnApply.setkHoverColor(new java.awt.Color(0, 102, 255));
+        btnApply.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnApply.setkShowFocusBorder(true);
+        btnApply.setPreferredSize(new java.awt.Dimension(130, 32));
+        panelDate.add(btnApply);
 
         panelAction.add(panelDate, java.awt.BorderLayout.LINE_START);
 
@@ -148,11 +176,11 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         panelEmpty.setLayout(panelEmptyLayout);
         panelEmptyLayout.setHorizontalGroup(
             panelEmptyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 245, Short.MAX_VALUE)
+            .addGap(0, 105, Short.MAX_VALUE)
         );
         panelEmptyLayout.setVerticalGroup(
             panelEmptyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 38, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         panelAction.add(panelEmpty, java.awt.BorderLayout.CENTER);
@@ -194,6 +222,13 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
 
         panelBody.add(jScrollPane, java.awt.BorderLayout.CENTER);
 
+        panelChart.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        panelChart.setkFillBackground(false);
+        panelChart.setOpaque(false);
+        panelChart.setPreferredSize(new java.awt.Dimension(980, 250));
+        panelChart.setLayout(new java.awt.BorderLayout());
+        panelBody.add(panelChart, java.awt.BorderLayout.PAGE_START);
+
         add(panelBody);
 
         panelFooter.setBackground(new java.awt.Color(255, 255, 255));
@@ -218,10 +253,34 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         add(panelFooter);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnFromDateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFromDateMouseClicked
+        dateChooserFromDate.showPopup();
+    }//GEN-LAST:event_btnFromDateMouseClicked
+
+    private void btnToDateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnToDateMouseClicked
+        dateChooserToDate.showPopup();
+    }//GEN-LAST:event_btnToDateMouseClicked
+
+
+    private void initComponents1() {
+        panelChartView = new Chart();
+        panelChartView.setOpaque(false);
+        panelChart.add(panelChartView, java.awt.BorderLayout.CENTER);
+    }
+
     public void setController(RevenueEmployeeController revenueEmployeeController) {
         this.revenueEmployeeController = revenueEmployeeController;
     }
-   
+
+
+
+    /**
+     * Lấy đối tượng chart view
+     * @return Panel chứa biểu đồ
+     */
+    public com.pcstore.chart.Chart getPanelChartView() {
+        return panelChartView;
+    }
 
     public com.k33ptoo.components.KButton getBtnExportReport() {
         return btnExportReport;
@@ -251,11 +310,14 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         return txtToDate;
     }
 
-
+    public KButton getBtnApply() {
+        return btnApply;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Revenue;
+    private com.k33ptoo.components.KButton btnApply;
     private com.k33ptoo.components.KButton btnExportReport;
     private javax.swing.JButton btnFromDate;
     private javax.swing.JButton btnToDate;
@@ -268,6 +330,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
     private javax.swing.JLabel lbTotal;
     private javax.swing.JPanel panelAction;
     private javax.swing.JPanel panelBody;
+    private com.k33ptoo.components.KGradientPanel panelChart;
     private javax.swing.JPanel panelDate;
     private javax.swing.JPanel panelEmpty;
     private javax.swing.JPanel panelFooter;

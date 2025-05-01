@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.model.*;
 import com.pcstore.utils.ButtonUtils;
@@ -222,7 +224,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         panelHeader.add(txtSearch);
 
         btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
         btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 255, 255));
         btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 153, 255));

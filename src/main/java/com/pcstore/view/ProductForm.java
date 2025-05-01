@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author nloc2
@@ -82,7 +84,7 @@ public class ProductForm extends javax.swing.JPanel {
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         jLabel2.setText(bundle.getString("txtMenuProduct")); // NOI18N
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jLabel2.setMaximumSize(new java.awt.Dimension(32828, 1600000));

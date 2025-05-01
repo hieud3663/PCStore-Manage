@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import com.pcstore.controller.HomeController;
 
 /**
@@ -94,7 +96,7 @@ public class HomeForm extends javax.swing.JPanel {
 
         lbTitleInfo.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbTitleInfo.setForeground(new java.awt.Color(51, 8, 176));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitleInfo.setText(bundle.getString("lbHeaderInfo")); // NOI18N
         lbTitleInfo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         pnHeaderInfo.add(lbTitleInfo, java.awt.BorderLayout.CENTER);

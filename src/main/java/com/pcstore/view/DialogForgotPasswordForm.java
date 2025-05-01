@@ -1,5 +1,7 @@
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import javax.swing.JPasswordField;
 
 import com.pcstore.controller.DialogForgotPasswordController;
@@ -55,7 +57,7 @@ public class DialogForgotPasswordForm extends javax.swing.JDialog {
         btnClose = new com.k33ptoo.components.KButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         setTitle(bundle.getString("ForgotPassword")); // NOI18N
         setMinimumSize(new java.awt.Dimension(435, 443));
         setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);

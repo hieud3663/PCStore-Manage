@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -34,6 +36,13 @@ public class LoginForm extends JFrame {
             instance = new LoginForm();
         }
         return instance;
+    }
+
+    public static void restartInstance() {
+        if (instance != null) {
+            instance.dispose();
+        }
+        instance = new LoginForm();
     }
 
     public static void resetInstance() {
@@ -108,7 +117,7 @@ public class LoginForm extends JFrame {
 
         title1.setFont(new Font("Segoe UI", 1, 23)); // NOI18N
         title1.setForeground(new Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         title1.setText(bundle.getString("titleName")); // NOI18N
         PanelContentLogin.add(title1);
 

@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package com.pcstore.view;
+
+import com.pcstore.utils.LocaleManager;
 import com.k33ptoo.components.*;
 import java.awt.*;
 import javax.swing.*;
@@ -138,7 +140,7 @@ public class PurchaseOrderForm extends JDialog {
             }
         });
         jScrollPane1.setViewportView(jTable1);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         if (jTable1.getColumnModel().getColumnCount() > 0) {
             jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
             jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N

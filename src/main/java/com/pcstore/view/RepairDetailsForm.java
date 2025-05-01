@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author DUC ANH
@@ -56,7 +58,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtCost = new javax.swing.JTextField();
 
         panelInfoDetail1.setBackground(new java.awt.Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         panelInfoDetail1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 24))); // NOI18N
         panelInfoDetail1.setkBorderRadius(15);
         panelInfoDetail1.setkEndColor(new java.awt.Color(0, 0, 0));

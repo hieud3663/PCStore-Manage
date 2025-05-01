@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author MSII
@@ -46,7 +48,7 @@ public class EmployeeManageForm extends javax.swing.JPanel {
         panelEmployee.setkBorderSize(2.0F);
         panelEmployee.setkFillBackground(false);
         panelEmployee.setLayout(new java.awt.BorderLayout());
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         jTabbed.addTab(bundle.getString("txtEmployee"), new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/employees.png")), panelEmployee); // NOI18N
 
         panelUser.setBackground(new java.awt.Color(255, 255, 255));

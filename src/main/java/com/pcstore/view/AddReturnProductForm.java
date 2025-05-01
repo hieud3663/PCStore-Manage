@@ -1,5 +1,7 @@
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import com.pcstore.controller.ReturnController;
 import com.pcstore.controller.InvoiceController;
 import com.pcstore.model.Invoice;
@@ -411,7 +413,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
 
         panelMain.setBackground(new java.awt.Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         panelMain.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("ReTurnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         panelMain.setkFillBackground(false);
         panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));

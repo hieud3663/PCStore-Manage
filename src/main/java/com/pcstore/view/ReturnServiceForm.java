@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import com.pcstore.controller.ReturnController;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
@@ -508,7 +510,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         pnReturnFunctions.setBackground(new java.awt.Color(255, 255, 255));
         pnReturnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 5));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnReturnProduct.setText(bundle.getString("btnReturnProduct")); // NOI18N
         btnReturnProduct.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnReturnProduct.setkAllowGradient(false);

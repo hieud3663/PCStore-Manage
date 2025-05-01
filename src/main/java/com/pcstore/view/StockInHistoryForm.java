@@ -3,6 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package com.pcstore.view;
+
+import com.pcstore.utils.LocaleManager;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import javax.swing.*;
@@ -66,7 +68,7 @@ public class StockInHistoryForm extends JDialog {
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnClose.setText(bundle.getString("btnClose")); // NOI18N
         btnClose.setkBorderRadius(30);
         btnClose.setkEndColor(new java.awt.Color(102, 153, 255));

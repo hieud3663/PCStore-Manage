@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -103,7 +105,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
 
         kGradientPanel1.add(ScrollTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 230, 622, 257));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnPrintCard.setText(bundle.getString("btnDetailCard")); // NOI18N
         btnPrintCard.setkBorderRadius(30);
         btnPrintCard.setkEndColor(new java.awt.Color(102, 153, 255));

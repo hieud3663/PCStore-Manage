@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author nloc2
@@ -151,7 +153,7 @@ public class CategoryForm extends javax.swing.JDialog {
 
         kGradientPanel4.setkFillBackground(false);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbID.setText(bundle.getString("lbID")); // NOI18N
 
         lbTypeName.setText(bundle.getString("lbTypeName")); // NOI18N

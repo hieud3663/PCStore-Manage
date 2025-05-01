@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import javax.swing.JFrame;
 
 /**
@@ -45,7 +47,7 @@ public class StockInConfirmForm extends javax.swing.JDialog {
         kGradientPanel1.setkFillBackground(false);
 
         lbStockInID.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbStockInID.setText(bundle.getString("lbStockInID")); // NOI18N
         lbStockInID.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
 

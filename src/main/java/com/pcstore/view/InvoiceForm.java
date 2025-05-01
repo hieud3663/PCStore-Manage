@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import java.awt.*;
 import java.util.ResourceBundle;
 
@@ -97,7 +99,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("txtMenuInvoice")); // NOI18N
         lbTitle.setFocusable(false);
         lbTitle.setPreferredSize(new java.awt.Dimension(1173, 50));

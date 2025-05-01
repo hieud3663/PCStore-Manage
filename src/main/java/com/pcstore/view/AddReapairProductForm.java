@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 import javax.swing.JDialog;
 import java.util.List;
 
@@ -156,7 +158,7 @@ public class AddReapairProductForm extends JDialog {
         jLabel1.setBackground(new java.awt.Color(0, 153, 255));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 153, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         jLabel1.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
         jLabel1.setMaximumSize(new java.awt.Dimension(346, 100));
         jLabel1.setMinimumSize(new java.awt.Dimension(346, 100));

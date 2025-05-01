@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.LocaleManager;
+
 /**
  *
  * @author nloc2
@@ -50,7 +52,7 @@ public class StockInConfirm extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
 
         btnExportPDF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/pdf.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnExportPDF.setText(bundle.getString("btnExportPDF")); // NOI18N
         btnExportPDF.setkBorderRadius(30);
         btnExportPDF.setkEndColor(new java.awt.Color(102, 153, 255));

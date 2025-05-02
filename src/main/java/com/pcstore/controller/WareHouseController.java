@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import com.pcstore.model.Product;
@@ -71,51 +73,54 @@ public class WareHouseController {
             });
         }
         
-        // Sử dụng ButtonRenderer và ButtonEditor đã được định nghĩa trong WareHouseForm
-        setupTableButtons();
     }
     
-    /**
-     * Thiết lập các nút trong bảng
-     */
-    private void setupTableButtons() {
-        JTable table = wareHouseForm.getTable();
-        if (table != null && table.getColumnCount() > 0) {
-            // Sử dụng các renderer và editor được định nghĩa trong WareHouseForm
-            table.getColumnModel().getColumn(0).setCellRenderer(wareHouseForm.new ButtonRenderer());
-            table.getColumnModel().getColumn(0).setCellEditor(wareHouseForm.new ButtonEditor(table));
-        }
-    }
     
     /**
      * Tải dữ liệu sản phẩm vào bảng
      */
-    public void loadProducts() {
+    /**
+ * Tải dữ liệu sản phẩm vào bảng
+ */
+public void loadProducts() {
     try {
         List<Product> products = productRepository.findAll();
         
-        // Đảm bảo model là EditableTableModel
-        if (!(wareHouseForm.getTable().getModel() instanceof EditableTableModel)) {
-            initTable();  // Khởi tạo bảng nếu chưa có
-        }
-        
-        EditableTableModel model = (EditableTableModel) wareHouseForm.getTable().getModel();
+        // Sử dụng DefaultTableModel thông thường thay vì EditableTableModel
+        DefaultTableModel model = (DefaultTableModel) wareHouseForm.getTable().getModel();
         model.setRowCount(0); // Xóa tất cả các dòng hiện tại
         
         int stt = 1;
         for (Product product : products) {
-            model.addRow(new Object[]{
-                null, // Cột nút (sẽ được render bởi ButtonRenderer)
-                stt++,
-                product.getProductId(),
-                product.getProductName(),
-                product.getSupplier() != null ? product.getSupplier().getName() : "",
-                product.getStockQuantity()
-            });
+            // Kiểm tra số lượng dòng và cột trong model
+            System.out.println("Columns in model: " + model.getColumnCount());
+            
+            Object[] rowData;
+            // Kiểm tra số lượng cột để xác định đúng cấu trúc dữ liệu cần thêm vào
+            if (model.getColumnCount() == 4) {
+                // Model có 4 cột: STT, Mã Máy, Tên Máy, Số Lượng
+                rowData = new Object[]{
+                    stt++,
+                    product.getProductId(),
+                    product.getProductName(),
+                    product.getStockQuantity()  // Số lượng ở vị trí thứ 3 (index 3)
+                };
+            } else {
+                // Model có 5 cột: STT, Mã Máy, Tên Máy, Nhà Cung Cấp, Số Lượng
+                rowData = new Object[]{
+                    stt++,
+                    product.getProductId(),
+                    product.getProductName(),
+                    product.getSupplier() != null ? product.getSupplier().getName() : "",
+                    product.getStockQuantity()  // Số lượng ở vị trí thứ 4 (index 4)
+                };
+            }
+            
+            // Thêm dữ liệu vào bảng
+            model.addRow(rowData);
         }
         
-        // Đảm bảo không có hàng nào đang ở chế độ chỉnh sửa
-        model.setEditableRow(-1);
+        System.out.println("Loaded " + products.size() + " products");
         
     } catch (Exception e) {
         JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi tải dữ liệu: " + e.getMessage(), 
@@ -128,22 +133,28 @@ public class WareHouseController {
  * Khởi tạo bảng với EditableTableModel
  */
 private void initTable() {
-    // Tương tự phương thức initTable trong WareHouseForm
-    // Nhưng vì đang ở controller nên cần thao tác với wareHouseForm.getTable()
-    
     JTable table = wareHouseForm.getTable();
     
     // Tạo mô hình bảng mới
-    String[] columns = {"Chức Năng", "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"};
-    EditableTableModel model = wareHouseForm.new EditableTableModel(new Object[0][0], columns);
+    String[] columns = {"STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"};
+    DefaultTableModel model = new DefaultTableModel(new Object[0][0], columns);
     table.setModel(model);
     
-    // Thiết lập renderer và editor
-    table.getColumnModel().getColumn(0).setCellRenderer(wareHouseForm.new ButtonRenderer());
-    table.getColumnModel().getColumn(0).setCellEditor(wareHouseForm.new ButtonEditor(table));
+    // Tạo renderer căn giữa
+    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
     
-    // Lưu controller
-    table.putClientProperty("controller", this);
+    // Áp dụng cho tất cả các cột
+    for (int i = 0; i < table.getColumnCount(); i++) {
+        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+    }
+    
+    // Thiết lập độ rộng cho các cột
+    table.getColumnModel().getColumn(0).setPreferredWidth(50);  // STT
+    table.getColumnModel().getColumn(1).setPreferredWidth(150); // Mã Máy
+    table.getColumnModel().getColumn(2).setPreferredWidth(300); // Tên Máy
+    table.getColumnModel().getColumn(3).setPreferredWidth(200); // Nhà Cung Cấp
+    table.getColumnModel().getColumn(4).setPreferredWidth(100); // Số Lượng
 }
 
 /**
@@ -221,7 +232,6 @@ public void deleteProduct(String productId) {
             int stt = 1;
             for (Product product : products) {
                 model.addRow(new Object[]{
-                    null, // Cột nút (sẽ được render bởi ButtonRenderer)
                     stt++,
                     product.getProductId(),
                     product.getProductName(),

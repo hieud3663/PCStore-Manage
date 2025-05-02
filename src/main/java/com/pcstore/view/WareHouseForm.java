@@ -80,29 +80,29 @@ public class WareHouseForm extends javax.swing.JPanel {
 
         WareHouseTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"
+                "STT", "Mã Máy", "Tên Máy", "Số Lượng"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -114,8 +114,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         if (WareHouseTable.getColumnModel().getColumnCount() > 0) {
             WareHouseTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductID")); // NOI18N
             WareHouseTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            WareHouseTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clSupplier")); // NOI18N
-            WareHouseTable.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+            WareHouseTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
         }
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

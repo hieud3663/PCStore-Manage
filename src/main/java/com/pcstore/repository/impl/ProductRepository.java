@@ -32,16 +32,14 @@ public class ProductRepository implements Repository<Product, String> {
                      "StockQuantity, Specifications, Description) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                      
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, product.getProductId());
-            statement.setString(2, product.getProductName());
-            statement.setString(3, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
-            statement.setString(4, product.getSupplier() != null ? 
-                    (String) product.getSupplier().getId() : null);
-            statement.setBigDecimal(5, product.getPrice());
-            statement.setInt(6, product.getStockQuantity());
-            statement.setString(7, product.getSpecifications());
-            statement.setString(8, product.getDescription());
+                     try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                        statement.setString(1, product.getProductId());
+                        statement.setString(2, product.getProductName());
+                        statement.setString(3, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+                        statement.setBigDecimal(4, product.getPrice());
+                        statement.setInt(5, product.getStockQuantity());
+                        statement.setString(6, product.getSpecifications());
+                        statement.setString(7, product.getDescription());
             
             LocalDateTime now = LocalDateTime.now();
             product.setCreatedAt(now);
@@ -57,18 +55,16 @@ public class ProductRepository implements Repository<Product, String> {
     @Override
     public Product update(Product product) {
         String sql = "UPDATE Products SET ProductName = ?, Price = ?, StockQuantity = ?, " +
-                "Specifications = ?, Description = ?, CategoryID = ?, SupplierID = ?, UpdatedAt = ? " +
+                "Specifications = ?, Description = ?, CategoryID = ?,, UpdatedAt = ? " +
                 "WHERE ProductID = ?";
                 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, product.getProductName());
-            statement.setBigDecimal(2, product.getPrice());
-            statement.setInt(3, product.getStockQuantity());
-            statement.setString(4, product.getSpecifications());
-            statement.setString(5, product.getDescription());
-            statement.setString(6, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
-            statement.setString(7, product.getSupplier() != null ? 
-                    (String) product.getSupplier().getId() : null);
+        statement.setString(1, product.getProductName());
+        statement.setBigDecimal(2, product.getPrice());
+        statement.setInt(3, product.getStockQuantity());
+        statement.setString(4, product.getSpecifications());
+        statement.setString(5, product.getDescription());
+        statement.setString(6, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
             
             product.setUpdatedAt(LocalDateTime.now());
             statement.setObject(8, product.getUpdatedAt());
@@ -95,21 +91,39 @@ public class ProductRepository implements Repository<Product, String> {
     }
     
     @Override
-    public Optional<Product> findById(String id) {
-        String sql = "SELECT * FROM Products WHERE ProductID = ?";
+public Optional<Product> findById(String id) {
+    // Đảm bảo truy vấn chọn rõ cột Specifications và Description
+    String sql = "SELECT p.ProductID, p.ProductName, p.CategoryID, p.StockQuantity, " +
+                 "p.Price, p.Specifications, p.Description, " +
+                 "c.CategoryName FROM Products p " +
+                 "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
+                 "WHERE p.ProductID = ?";
+    
+    System.out.println("Executing SQL: " + sql + " with ID: " + id); // Debug log
+    
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setString(1, id);
         
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            
+        try (ResultSet resultSet = statement.executeQuery()) {
             if (resultSet.next()) {
-                return Optional.of(mapResultSetToProduct(resultSet));
+                // Debug log
+                try {
+                    String specs = resultSet.getString("Specifications");
+                    System.out.println("DB value for Specifications: " + (specs == null ? "NULL" : "'" + specs + "'"));
+                } catch (Exception e) {
+                    System.err.println("Error reading Specifications: " + e.getMessage());
+                }
+                
+                Product product = mapResultSetToProduct(resultSet);
+                return Optional.of(product);
             }
             return Optional.empty();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error finding product by ID", e);
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return Optional.empty();
     }
+}
 
 
     /**
@@ -321,31 +335,48 @@ public List<Product> findAll() {
             throw new RuntimeException("Error updating stock quantity", e);
         }
     }
+    // Phương thức để tăng/giảm số lượng tồn kho
+public boolean adjustStockQuantity(String productId, int adjustment) {
+    String sql = "UPDATE Products SET StockQuantity = StockQuantity + ? WHERE ProductID = ?";
+    
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setInt(1, adjustment); // Giá trị dương để tăng, âm để giảm
+        statement.setString(2, productId);
+        int rowsAffected = statement.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        throw new RuntimeException("Error adjusting stock quantity", e);
+    }
+}
     
     // Phương thức chuyển ResultSet thành đối tượng Product
     private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
         Product product = new Product();
         
-        // Xử lý các trường cơ bản
         try {
             product.setProductId(resultSet.getString("ProductID"));
             product.setProductName(resultSet.getString("ProductName"));
             product.setStockQuantity(resultSet.getInt("StockQuantity"));
             product.setPrice(resultSet.getBigDecimal("Price"));
-        } catch (SQLException e) {
-            throw new SQLException("Lỗi khi đọc dữ liệu sản phẩm cơ bản", e);
-        }
-        
-        // Xử lý các trường không bắt buộc
-        try {
-            product.setDescription(resultSet.getString("Description"));
-        } catch (SQLException e) {
-            // Không bắt buộc, bỏ qua lỗi
-            product.setDescription("");
-        }
-        
-        // Xử lý Category
-        try {
+            
+            // Cẩn thận xử lý trường không bắt buộc
+            try {
+                String specs = resultSet.getString("Specifications");
+                product.setSpecifications(specs);
+                System.out.println("Read Specifications: " + (specs == null ? "NULL" : specs));
+            } catch (SQLException e) {
+                product.setSpecifications("");
+                System.err.println("Error reading Specifications: " + e.getMessage());
+            }
+            
+            try {
+                String desc = resultSet.getString("Description");
+                product.setDescription(desc);
+            } catch (SQLException e) {
+                product.setDescription("");
+            }
+            
+            // Xử lý Category
             String categoryId = resultSet.getString("CategoryID");
             if (categoryId != null) {
                 Category category = new Category();
@@ -354,29 +385,15 @@ public List<Product> findAll() {
                 try {
                     category.setCategoryName(resultSet.getString("CategoryName"));
                 } catch (SQLException e) {
-                    category.setCategoryName("Chưa xác định");
+                    category.setCategoryName("Unknown");
                 }
                 
                 product.setCategory(category);
             }
+            
+            // QUAN TRỌNG: KHÔNG đọc Supplier
         } catch (SQLException e) {
-            // Không có thông tin danh mục, gán null
-            product.setCategory(null);
-        }
-        
-        // Xử lý Supplier - bỏ qua hoặc chỉ lưu ID
-        try {
-            String supplierId = resultSet.getString("SupplierID");
-            if (supplierId != null) {
-                Supplier supplier = new Supplier();
-                supplier.setSupplierId(supplierId);
-                
-                // Không truy cập SupplierName nếu không chắc chắn có
-                product.setSupplier(supplier);
-            }
-        } catch (SQLException e) {
-            // Không có thông tin nhà cung cấp, gán null
-            product.setSupplier(null);
+            throw new SQLException("Error mapping product from ResultSet", e);
         }
         
         return product;

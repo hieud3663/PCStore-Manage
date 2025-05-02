@@ -294,7 +294,7 @@ public class LoginForm extends JFrame {
         // String password = txtPassword.getText();
 
         String username = "admin";
-        String password = "123456";
+        String password = "admin";
 
         if(username.isEmpty() && password.isEmpty()){
             JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);

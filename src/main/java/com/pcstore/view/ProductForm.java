@@ -25,9 +25,8 @@ import javax.swing.JOptionPane;
 public class ProductForm extends javax.swing.JPanel {
 
     private ProductController controller;
-
     private JComboBox<Category> categoryComboBox;
-    private JComboBox<Supplier> supplierComboBox;
+
 
     /**
      * Creates new form Product
@@ -38,16 +37,16 @@ public class ProductForm extends javax.swing.JPanel {
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         
         // 1. Khởi tạo combobox và các thành phần UI cơ bản
-        categoryComboBox = (JComboBox<Category>) jComboBox1;
-        supplierComboBox = (JComboBox<Supplier>) jComboBox2;
+        categoryComboBox = (JComboBox<Category>) cbbClassfication;
         
+
         // 2. Khởi tạo controller TRƯỚC khi sử dụng trong các sự kiện
         controller = new ProductController(this);
         
         // 3. Thiết lập các thuộc tính và listeners cho UI
         // Vô hiệu hóa trường ProductID
-        jTextField2.setEditable(false);
-        jTextField2.setBackground(new Color(240, 240, 240));
+        txtProductID.setEditable(false);
+        txtProductID.setBackground(new Color(240, 240, 240));
         
         // Thiết lập renderer cho combobox danh mục
         categoryComboBox.setRenderer(new DefaultListCellRenderer() {
@@ -61,20 +60,9 @@ public class ProductForm extends javax.swing.JPanel {
             }
         });
         
-        // Thiết lập renderer cho combobox nhà cung cấp
-        supplierComboBox.setRenderer(new DefaultListCellRenderer() {
-            @Override
-            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                if (value instanceof Supplier) {
-                    setText(((Supplier) value).getName());
-                }
-                return this;
-            }
-        });
         
         // Thêm ràng buộc nhập liệu cho trường số lượng (chỉ cho nhập số)
-        jTextField5.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtQuantity.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 char c = evt.getKeyChar();
                 if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
@@ -82,9 +70,18 @@ public class ProductForm extends javax.swing.JPanel {
                 }
             }
         });
+        txtTechnicalSpecifications.setLineWrap(true);
+        txtTechnicalSpecifications.setWrapStyleWord(true);
+        
+        txtDescribe.setLineWrap(true);
+        txtDescribe.setWrapStyleWord(true);
+        
+        // Cần thiết để tránh các vấn đề về focus
+        txtTechnicalSpecifications.setCaretPosition(0);
+        txtDescribe.setCaretPosition(0);
         
         // Thêm ràng buộc nhập liệu cho trường giá (số và dấu chấm)
-        jTextField6.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtPrice.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 char c = evt.getKeyChar();
                 if (!Character.isDigit(c) && c != '.' && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
@@ -246,32 +243,27 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jPanel2 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtProductID = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtProductName = new javax.swing.JTextField();
         jPanel7 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jPanel8 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        cbbClassfication = new javax.swing.JComboBox<>();
         jPanel9 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtQuantity = new javax.swing.JTextField();
         jPanel10 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtPrice = new javax.swing.JTextField();
         panelDetail2 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        txtTechnicalSpecifications = new javax.swing.JTextArea();
         panelDetail = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtDescribe = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         kButton3 = new com.k33ptoo.components.KButton();
         kButton2 = new com.k33ptoo.components.KButton();
@@ -359,29 +351,29 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Phân Loại", "Nhà Cung Cấp", "Số Lượng", "Giá Bán", "Thông Số Kỹ Thuật", "Mô Tả"
+                "Mã Sản Phẩm", "Tên Sản Phẩm", "Phân Loại", "Số Lượng", "Giá Bán", "Thông Số Kỹ Thuật", "Mô Tả"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -415,7 +407,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel3.setText(bundle.getString("lbProductID")); // NOI18N
         jLabel3.setOpaque(true);
         jPanel6.add(jLabel3);
-        jPanel6.add(jTextField2);
+        jPanel6.add(txtProductID);
 
         jPanel2.add(jPanel6);
 
@@ -427,7 +419,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel4.setText(bundle.getString("lbProductName")); // NOI18N
         jLabel4.setOpaque(true);
         jPanel3.add(jLabel4);
-        jPanel3.add(jTextField1);
+        jPanel3.add(txtProductName);
 
         jPanel2.add(jPanel3);
 
@@ -440,24 +432,10 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel5.setOpaque(true);
         jPanel7.add(jLabel5);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel7.add(jComboBox1);
+        cbbClassfication.setModel(new javax.swing.DefaultComboBoxModel<Category>());
+        jPanel7.add(cbbClassfication);
 
         jPanel2.add(jPanel7);
-
-        jPanel8.setPreferredSize(new java.awt.Dimension(250, 50));
-        jPanel8.setLayout(new java.awt.GridLayout(2, 0));
-
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel6.setText(bundle.getString("lbSupplier")); // NOI18N
-        jLabel6.setOpaque(true);
-        jPanel8.add(jLabel6);
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel8.add(jComboBox2);
-
-        jPanel2.add(jPanel8);
 
         jPanel9.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel9.setLayout(new java.awt.GridLayout(2, 0));
@@ -467,7 +445,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel7.setText(bundle.getString("lbQuantity")); // NOI18N
         jLabel7.setOpaque(true);
         jPanel9.add(jLabel7);
-        jPanel9.add(jTextField5);
+        jPanel9.add(txtQuantity);
 
         jPanel2.add(jPanel9);
 
@@ -479,7 +457,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel8.setText(bundle.getString("lbPrice")); // NOI18N
         jLabel8.setOpaque(true);
         jPanel10.add(jLabel8);
-        jPanel10.add(jTextField6);
+        jPanel10.add(txtPrice);
 
         jPanel2.add(jPanel10);
 
@@ -497,18 +475,13 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
 
         jScrollPane4.setMinimumSize(new java.awt.Dimension(16, 50));
 
-        jTextArea3.setColumns(20);
-        jTextArea3.setRows(5);
-        jTextArea3.setAutoscrolls(false);
-        jScrollPane4.setViewportView(jTextArea3);
+        txtTechnicalSpecifications.setColumns(20);
+        txtTechnicalSpecifications.setRows(5);
+        txtTechnicalSpecifications.setAutoscrolls(false);
+        jScrollPane4.setViewportView(txtTechnicalSpecifications);
 
         panelDetail2.add(jScrollPane4);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane3.setViewportView(jTextArea2);
-
-        panelDetail2.add(jScrollPane3);
 
         jPanel2.add(panelDetail2);
         panelDetail2.getAccessibleContext().setAccessibleDescription("");
@@ -525,9 +498,9 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
 
         jScrollPane2.setMinimumSize(new java.awt.Dimension(16, 50));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        txtDescribe.setColumns(20);
+        txtDescribe.setRows(5);
+        jScrollPane2.setViewportView(txtDescribe);
 
         panelDetail.add(jScrollPane2);
 
@@ -542,6 +515,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         kButton3.setText(bundle.getString("btnExport")); // NOI18N
+        kButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         kButton3.setkAllowGradient(false);
         kButton3.setkBackGroundColor(new java.awt.Color(0, 204, 102));
         kButton3.setkBorderRadius(30);
@@ -558,7 +532,8 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jPanel1.add(kButton3);
 
         kButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
-        kButton2.setText("Xóa");
+        kButton2.setText(bundle.getString("btnDeleteFromListProduct")); // NOI18N
+        kButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         kButton2.setkAllowGradient(false);
         kButton2.setkBackGroundColor(new java.awt.Color(255, 51, 51));
         kButton2.setkBorderRadius(30);
@@ -570,7 +545,8 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jPanel1.add(kButton2);
 
         kButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
-        kButton1.setText("Cập nhật");
+        kButton1.setText(bundle.getString("btnUpdate")); // NOI18N
+        kButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         kButton1.setkBorderRadius(30);
         kButton1.setkEndColor(new java.awt.Color(102, 153, 255));
         kButton1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
@@ -579,6 +555,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jPanel1.add(kButton1);
 
         btnAdd4.setText(bundle.getString("btnAddProduct")); // NOI18N
+        btnAdd4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnAdd4.setkAllowGradient(false);
         btnAdd4.setkBackGroundColor(new java.awt.Color(0, 102, 255));
         btnAdd4.setkBorderRadius(30);
@@ -598,7 +575,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
 
     private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {
         // Xử lý sự kiện khi nhấn Enter trong jTextField6
-        String inputText = jTextField6.getText();
+        String inputText = txtPrice.getText();
         System.out.println("Nội dung nhập: " + inputText);
         // Thêm logic xử lý khác nếu cần
     }
@@ -637,9 +614,9 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     if (controller.isAddingProduct()) {
         Category selectedCategory = (Category) categoryComboBox.getSelectedItem();
         if (selectedCategory != null) {
-            jTextField2.setText(selectedCategory.getCategoryId() + "xxx"); // Hiển thị ID mẫu
+            txtProductID.setText(selectedCategory.getCategoryId() + "xxx"); // Hiển thị ID mẫu
         } else {
-            jTextField2.setText("xxxxx"); // Mẫu mặc định
+            txtProductID.setText("xxxxx"); // Mẫu mặc định
         }
     }
 }
@@ -679,11 +656,11 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     }
 
     public javax.swing.JTextField getIdField() {
-        return jTextField2;  // ID
+        return txtProductID;  // ID
     }
 
     public javax.swing.JTextField getNameField() {
-        return jTextField1;  // Name
+        return txtProductName;  // Name
     }
 
     public JComboBox<Category> getCategoryComboBox() {
@@ -691,23 +668,23 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     }
 
     public JComboBox<Supplier> getSupplierComboBox() {
-        return supplierComboBox;  // Supplier
+        return null;  // Supplier
     }
 
     public javax.swing.JTextField getQuantityField() {
-        return jTextField5;  // Quantity
+        return txtQuantity;  // Quantity
     }
 
     public javax.swing.JTextField getPriceField() {
-        return jTextField6;  // Price
+        return txtPrice;  // Price
     }
 
     public javax.swing.JTextArea getSpecificationsArea() {
-        return jTextArea3;  // Specifications
+        return txtTechnicalSpecifications;  // Specifications
     }
 
     public javax.swing.JTextArea getDescriptionArea() {
-        return jTextArea1;  // Description
+        return txtDescribe;  // Description
     }
 
     public com.pcstore.utils.TextFieldSearch getTextFieldSearch() {
@@ -772,11 +749,11 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
      * Reset form nhập liệu
      */
     public void resetForm() {
-        jTextField1.setText(""); // Tên sản phẩm
-        jTextField5.setText("0"); // Số lượng
-        jTextField6.setText("0"); // Giá
-        jTextArea3.setText(""); // Thông số kỹ thuật
-        jTextArea1.setText(""); // Mô tả
+        txtProductName.setText(""); // Tên sản phẩm
+        txtQuantity.setText("0"); // Số lượng
+        txtPrice.setText("0"); // Giá
+        txtTechnicalSpecifications.setText(""); // Thông số kỹ thuật
+        txtDescribe.setText(""); // Mô tả
         
         // Cập nhật ID tạm thời
         categoryComboBoxActionPerformed(null);
@@ -785,10 +762,9 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAdd4;
     private javax.swing.JButton btnResetSort;
+    private JComboBox<Category> cbbClassfication;
     private javax.swing.JComboBox<String> cbbSort;
     private javax.swing.JComboBox<String> cbbSortCustomer;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
@@ -796,7 +772,6 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
@@ -806,20 +781,12 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+
     private com.k33ptoo.components.KButton kButton1;
     private com.k33ptoo.components.KButton kButton2;
     private com.k33ptoo.components.KButton kButton3;
@@ -832,5 +799,11 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     private javax.swing.JPanel panelDetails;
     private javax.swing.JPanel panelHeader;
     private com.pcstore.utils.TextFieldSearch textFieldSearch1;
+    private javax.swing.JTextArea txtDescribe;
+    private javax.swing.JTextField txtPrice;
+    private javax.swing.JTextField txtProductID;
+    private javax.swing.JTextField txtProductName;
+    private javax.swing.JTextField txtQuantity;
+    private javax.swing.JTextArea txtTechnicalSpecifications;
     // End of variables declaration//GEN-END:variables
 }

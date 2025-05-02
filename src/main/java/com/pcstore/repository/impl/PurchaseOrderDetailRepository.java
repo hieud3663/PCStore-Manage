@@ -22,49 +22,88 @@ import java.util.Optional;
  */
 public class PurchaseOrderDetailRepository implements Repository<PurchaseOrderDetail, Integer> {
     private Connection connection;
-    private RepositoryFactory RepositoryFactory;
+    private RepositoryFactory rFactory;
     
-    public PurchaseOrderDetailRepository(Connection connection, RepositoryFactory RepositoryFactory) {
+    public PurchaseOrderDetailRepository(Connection connection, RepositoryFactory repositoryFactory) {
         this.connection = connection;
-        this.RepositoryFactory = RepositoryFactory;
+        this.rFactory = repositoryFactory; // Đảm bảo gán cho biến thành viên
+        
+        System.out.println("PurchaseOrderDetailRepository created with repositoryFactory: " + 
+                         (repositoryFactory != null ? "not null" : "null"));
     }
     
     @Override
-    public PurchaseOrderDetail add(PurchaseOrderDetail detail) {
-        String sql = "INSERT INTO PurchaseOrderDetails (PurchaseOrderID, ProductID, Quantity, UnitPrice) " +
-                    "VALUES (?, ?, ?, ?)";
-                    
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, detail.getPurchaseOrder().getPurchaseOrderId());
-            statement.setString(2, detail.getProduct().getProductId());
-            statement.setInt(3, detail.getQuantity());
-            statement.setBigDecimal(4, detail.getUnitPrice());
-            
-            statement.executeUpdate();
-            
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                detail.setPurchaseOrderDetailId(generatedKeys.getInt(1));
-            }
-            
-            LocalDateTime now = LocalDateTime.now();
-            detail.setCreatedAt(now);
-            detail.setUpdatedAt(now);
-            
-            // Cập nhật tổng tiền đơn nhập hàng
-            // RepositoryFactory.getPurchaseOrderRepository().updateTotalAmount(detail.getPurchaseOrder().getPurchaseOrderId());
-            
-            // Nếu đơn nhập hàng đã hoàn thành, cập nhật số lượng tồn kho
-            PurchaseOrder order = detail.getPurchaseOrder();
-            if ("Completed".equals(order.getStatus())) {
-                detail.updateStock();
-            }
-            
-            return detail;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error adding purchase order detail", e);
-        }
+public PurchaseOrderDetail add(PurchaseOrderDetail detail) {
+    // Kiểm tra null
+    if (detail == null) {
+        throw new IllegalArgumentException("Purchase order detail cannot be null");
     }
+    if (detail.getPurchaseOrder() == null) {
+        throw new IllegalArgumentException("Purchase order cannot be null");
+    }
+    if (detail.getProduct() == null) {
+        throw new IllegalArgumentException("Product cannot be null");
+    }
+    if (detail.getPurchaseOrder().getPurchaseOrderId() == null) {
+        throw new IllegalArgumentException("Purchase order ID cannot be null");
+    }
+    if (detail.getProduct().getProductId() == null) {
+        throw new IllegalArgumentException("Product ID cannot be null");
+    }
+    
+    // Kiểm tra giá trị hợp lệ
+    if (detail.getQuantity() <= 0) {
+        throw new IllegalArgumentException("Quantity must be positive");
+    }
+    if (detail.getUnitPrice() == null || detail.getUnitPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        throw new IllegalArgumentException("Unit price must be positive");
+    }
+
+    String sql = "INSERT INTO PurchaseOrderDetails (PurchaseOrderID, ProductID, Quantity, UnitCost) " +
+                "VALUES (?, ?, ?, ?)";
+                
+    try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        statement.setString(1, detail.getPurchaseOrder().getPurchaseOrderId());
+        statement.setString(2, detail.getProduct().getProductId());
+        statement.setInt(3, detail.getQuantity());
+        statement.setBigDecimal(4, detail.getUnitPrice());
+        
+        // Thực thi và lấy key
+        int rowsAffected = statement.executeUpdate();
+        
+        if (rowsAffected == 0) {
+            throw new SQLException("Creating purchase order detail failed, no rows affected.");
+        }
+        
+        ResultSet generatedKeys = statement.getGeneratedKeys();
+        if (generatedKeys.next()) {
+            detail.setPurchaseOrderDetailId(generatedKeys.getInt(1));
+        } else {
+            throw new SQLException("Creating purchase order detail failed, no ID obtained.");
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
+        detail.setCreatedAt(now);
+        detail.setUpdatedAt(now);
+        rFactory.getPurchaseOrderRepository().updateTotalAmount(detail.getPurchaseOrder().getPurchaseOrderId());
+        
+        // Kiểm tra status trước khi gọi updateStock
+        PurchaseOrder order = detail.getPurchaseOrder();
+        if (order != null && "Completed".equals(order.getStatus())) {
+            try {
+                detail.updateStock();
+            } catch (Exception e) {
+                System.err.println("Error updating stock: " + e.getMessage());
+                e.printStackTrace();
+                // Không throw exception để vẫn lưu được chi tiết phiếu nhập
+            }
+        }
+        
+        return detail;
+    } catch (SQLException e) {
+        throw new RuntimeException("Error adding purchase order detail: " + e.getMessage(), e);
+    }
+}
     /**
  * Lưu chi tiết đơn nhập hàng, thực hiện thêm mới nếu chưa có ID hoặc cập nhật nếu đã có ID
  * @param detail Chi tiết đơn nhập hàng cần lưu
@@ -178,7 +217,7 @@ public PurchaseOrderDetail saveByOrderAndProduct(PurchaseOrderDetail detail) {
             detail.setUpdatedAt(LocalDateTime.now());
             
             // Cập nhật tổng tiền đơn nhập hàng
-            RepositoryFactory.getPurchaseOrderRepository().updateTotalAmount(detail.getPurchaseOrder().getPurchaseOrderId());
+            rFactory.getPurchaseOrderRepository().updateTotalAmount(detail.getPurchaseOrder().getPurchaseOrderId());
             
             // Nếu đơn nhập hàng đã hoàn thành và số lượng thay đổi, cập nhật tồn kho
             PurchaseOrder order = detail.getPurchaseOrder();
@@ -211,7 +250,7 @@ public PurchaseOrderDetail saveByOrderAndProduct(PurchaseOrderDetail detail) {
             
             if (rowsAffected > 0) {
                 // Cập nhật tổng tiền đơn nhập hàng
-                RepositoryFactory.getPurchaseOrderRepository().updateTotalAmount(purchaseOrderId);
+                rFactory.getPurchaseOrderRepository().updateTotalAmount(purchaseOrderId);
                 
                 // Nếu đơn nhập hàng đã hoàn thành, cập nhật số lượng tồn kho
                 PurchaseOrder order = detail.getPurchaseOrder();
@@ -363,8 +402,10 @@ public PurchaseOrderDetail saveByOrderAndProduct(PurchaseOrderDetail detail) {
     private PurchaseOrderDetail mapResultSetToDetail(ResultSet resultSet) throws SQLException {
         PurchaseOrderDetail detail = new PurchaseOrderDetail();
         detail.setPurchaseOrderDetailId(resultSet.getInt("PurchaseOrderDetailID"));
+        
+        // Lấy giá trị từ cột UnitCost nhưng gán vào thuộc tính unitPrice
+        detail.setUnitPrice(resultSet.getBigDecimal("UnitCost"));
         detail.setQuantity(resultSet.getInt("Quantity"));
-        detail.setUnitPrice(resultSet.getBigDecimal("UnitPrice"));
         
         // Tạo đối tượng PurchaseOrder giả lập chỉ với ID
         PurchaseOrder order = new PurchaseOrder();

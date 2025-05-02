@@ -24,6 +24,7 @@ public class PurchaseOrder extends BaseTimeEntity {
         return purchaseOrderId;
     }
 
+
     public String getPurchaseOrderId() {
         return purchaseOrderId;
     }
@@ -160,7 +161,7 @@ public class PurchaseOrder extends BaseTimeEntity {
         if (purchaseOrderDetails.isEmpty()) {
             throw new IllegalStateException("Đơn nhập hàng chưa có chi tiết");
         }
-        return "Processing".equals(status);
+        return "Delivering".equals(status);
     }
     
     private boolean hasSupplier() {
@@ -236,7 +237,7 @@ public class PurchaseOrder extends BaseTimeEntity {
     
     private boolean isValidStatus(String status) {
         return status.equals("Pending") || 
-               status.equals("Processing") ||
+                status.equals("Delivering") ||
                status.equals("Completed") ||
                status.equals("Cancelled");
     }

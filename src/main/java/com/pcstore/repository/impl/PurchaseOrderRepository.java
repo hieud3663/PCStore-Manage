@@ -29,48 +29,61 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         this.connection = connection;
         this.RepositoryFactory = RepositoryFactory;
     }
-    
-    @Override
-    public PurchaseOrder add(PurchaseOrder purchaseOrder) {
-        String sql = "INSERT INTO PurchaseOrders (SupplierID, EmployeeID, OrderDate, TotalAmount, Status) " +
-                    "VALUES (?, ?, ?, ?, ?)";
-                    
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, purchaseOrder.getSupplier() != null ? 
-                    purchaseOrder.getSupplier().getSupplierId() : null);
-            statement.setString(2, purchaseOrder.getEmployee() != null ? 
-                    purchaseOrder.getEmployee().getEmployeeId() : null);
-            
-            // Nếu ngày đặt hàng chưa được thiết lập, sử dụng thời gian hiện tại
-            if (purchaseOrder.getOrderDate() == null) {
-                purchaseOrder.setOrderDate(LocalDateTime.now());
-            }
-            statement.setObject(3, purchaseOrder.getOrderDate());
-            
-            statement.setBigDecimal(4, purchaseOrder.getTotalAmount() != null ? 
-                    purchaseOrder.getTotalAmount() : BigDecimal.ZERO);
-            statement.setString(5, purchaseOrder.getStatus());
-            
-            statement.executeUpdate();
-            
-            LocalDateTime now = LocalDateTime.now();
-            purchaseOrder.setCreatedAt(now);
-            purchaseOrder.setUpdatedAt(now);
-            
-            // Lưu các chi tiết đơn nhập hàng nếu có
-            if (purchaseOrder.getPurchaseOrderDetails() != null && 
-                    !purchaseOrder.getPurchaseOrderDetails().isEmpty()) {
-                for (PurchaseOrderDetail detail : purchaseOrder.getPurchaseOrderDetails()) {
-                    detail.setPurchaseOrder(purchaseOrder);
-                    RepositoryFactory.getPurchaseOrderDetailRepository().add(detail);
-                }
-            }
-            
-            return purchaseOrder;
-        } catch (SQLException e) {
-            throw new RuntimeException("Error adding purchase order", e);
-        }
+    /**
+ * Thêm phiếu nhập mới
+ */
+@Override
+public PurchaseOrder add(PurchaseOrder purchaseOrder) {
+    // Kiểm tra dữ liệu đầu vào
+    if (purchaseOrder == null) {
+        throw new IllegalArgumentException("PurchaseOrder cannot be null");
     }
+    
+    // Tạo mã phiếu nhập mới nếu chưa có
+    if (purchaseOrder.getPurchaseOrderId() == null || purchaseOrder.getPurchaseOrderId().trim().isEmpty()) {
+        String newId = generatePurchaseOrderId();
+        purchaseOrder.setPurchaseOrderId(newId);
+    }
+    
+    // Thêm cột Status vào câu lệnh SQL INSERT
+    String sql = "INSERT INTO PurchaseOrders (PurchaseOrderID, OrderDate, SupplierID, EmployeeID, Status) " +
+                "VALUES (?, ?, ?, ?, ?)";
+    
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        // Debug log để kiểm tra các giá trị
+        System.out.println("===== Debug PurchaseOrder Insert =====");
+        System.out.println("PurchaseOrderID: " + purchaseOrder.getPurchaseOrderId());
+        System.out.println("OrderDate: " + purchaseOrder.getOrderDate());
+        System.out.println("SupplierID: " + (purchaseOrder.getSupplier() != null ? 
+                           purchaseOrder.getSupplier().getSupplierId() : "null"));
+        System.out.println("EmployeeID: " + (purchaseOrder.getEmployee() != null ? 
+                           purchaseOrder.getEmployee().getEmployeeId() : "null"));
+        System.out.println("Status: " + purchaseOrder.getStatus());
+        System.out.println("=====================================");
+        
+        statement.setString(1, purchaseOrder.getPurchaseOrderId());
+        statement.setTimestamp(2, purchaseOrder.getOrderDate() != null ? 
+                              java.sql.Timestamp.valueOf(purchaseOrder.getOrderDate()) : null);
+        statement.setString(3, purchaseOrder.getSupplier() != null ? 
+                           purchaseOrder.getSupplier().getSupplierId() : null);
+        statement.setString(4, purchaseOrder.getEmployee() != null ? 
+                           purchaseOrder.getEmployee().getEmployeeId() : null);
+        statement.setString(5, purchaseOrder.getStatus()); // Thêm trạng thái vào câu lệnh
+        
+        int rowsAffected = statement.executeUpdate();
+        
+        if (rowsAffected > 0) {
+            System.out.println("Đã thêm phiếu nhập thành công với ID: " + purchaseOrder.getPurchaseOrderId());
+            return purchaseOrder;
+        } else {
+            throw new RuntimeException("Không thể thêm phiếu nhập hàng");
+        }
+    } catch (SQLException e) {
+        System.err.println("SQL Error: " + e.getMessage());
+        e.printStackTrace();
+        throw new RuntimeException("Error adding purchase order: " + e.getMessage(), e);
+    }
+}
     
     @Override
     public PurchaseOrder update(PurchaseOrder purchaseOrder) {
@@ -129,28 +142,50 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         }
     }
 
-    public String generatePurchaseOrderId() {
-        String prefix = "PO-";
-        String datePart = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-        
-        // Fix: Use correct table name "PurchaseOrders" instead of "purchase_orders"
-        String sql = "SELECT COUNT(*) AS count FROM PurchaseOrders WHERE CONVERT(DATE, OrderDate) = CONVERT(DATE, GETDATE())";
+ /**
+ * Tạo mã phiếu nhập hàng mới với định dạng chi tiết hơn để tránh trùng lặp
+ */
+public String generatePurchaseOrderId() {
+    // Sử dụng thời gian hiện tại với độ chính xác đến mili giây
+    LocalDateTime now = LocalDateTime.now();
+    String year = String.format("%02d", now.getYear() % 100);
+    String month = String.format("%02d", now.getMonthValue());
+    String day = String.format("%02d", now.getDayOfMonth());
+    String hour = String.format("%02d", now.getHour());
+    String minute = String.format("%02d", now.getMinute());
+    String second = String.format("%02d", now.getSecond());
+    int millis = now.getNano() / 1_000_000;
+    
+    // Tạo một phần ngẫu nhiên với giá trị từ 100-999
+    int randomPart = 100 + (int)(Math.random() * 900);
+    
+    // Kết hợp thành ID: PO-YYMMDD-HHMMSS-MMMRRR
+    String newId = String.format("PO-%s%s%s-%s%s%s-%03d%03d", 
+                                year, month, day, hour, minute, second, millis, randomPart);
+    
+    System.out.println("Generated new PurchaseOrderID: " + newId);
+    return newId;
+}
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            if (rs.next()) {
-                int count = rs.getInt("count") + 1;
-                String formattedCount = String.format("%04d", count);
-                return prefix + datePart + "-" + formattedCount;
+/**
+ * Kiểm tra xem ID phiếu nhập đã tồn tại trong database chưa
+ * @param purchaseOrderId ID phiếu nhập cần kiểm tra
+ * @return true nếu ID đã tồn tại, false nếu chưa
+ */
+private boolean isPurchaseOrderIdExists(String purchaseOrderId) {
+    String sql = "SELECT COUNT(*) FROM PurchaseOrders WHERE PurchaseOrderID = ?";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setString(1, purchaseOrderId);
+        try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        // Return default if error occurs
-        return prefix + datePart + "-0001";
+    } catch (SQLException e) {
+        System.err.println("Lỗi khi kiểm tra ID phiếu nhập: " + e.getMessage());
     }
+    return false; // Nếu có lỗi, giả định ID chưa tồn tại
+}
     
     // Dùng id: String
     public Optional<PurchaseOrder> findById(String id) {
@@ -311,22 +346,36 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         }
     }
     
-    // Cập nhật tổng tiền đơn nhập hàng
-    public void updateTotalAmount(String purchaseOrderId) {
-        String sql = "UPDATE PurchaseOrders SET TotalAmount = (" +
-                    "SELECT SUM(Quantity * UnitPrice) " +
-                    "FROM PurchaseOrderDetails " +
-                    "WHERE PurchaseOrderID = ?) " +
-                    "WHERE PurchaseOrderID = ?";
+    /**
+ * Cập nhật tổng tiền cho phiếu nhập
+ * @param purchaseOrderId Mã phiếu nhập
+ */
+public void updateTotalAmount(String purchaseOrderId) {
+    System.out.println("Updating total amount for purchase order: " + purchaseOrderId);
+    
+    // Truy vấn tính tổng tiền từ chi tiết phiếu nhập
+    String sql = "UPDATE PurchaseOrders " +
+                "SET TotalAmount = (SELECT SUM(Quantity * UnitCost) " +
+                "                  FROM PurchaseOrderDetails " +
+                "                  WHERE PurchaseOrderID = ?) " +
+                "WHERE PurchaseOrderID = ?";
+    
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setString(1, purchaseOrderId);
+        statement.setString(2, purchaseOrderId);
         
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, purchaseOrderId);
-            statement.setString(2, purchaseOrderId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error updating purchase order total", e);
+        int rowsAffected = statement.executeUpdate();
+        System.out.println("Rows affected: " + rowsAffected);
+        
+        if (rowsAffected == 0) {
+            System.err.println("Warning: No rows updated when updating total amount for purchase order: " + purchaseOrderId);
         }
+    } catch (SQLException e) {
+        System.err.println("SQL Error in updateTotalAmount: " + e.getMessage());
+        e.printStackTrace();
+        throw new RuntimeException("Error updating purchase order total: " + e.getMessage(), e);
     }
+}
     
     // Hoàn thành đơn nhập hàng (cập nhật tồn kho sản phẩm)
     public void completePurchaseOrder(String purchaseOrderId) {

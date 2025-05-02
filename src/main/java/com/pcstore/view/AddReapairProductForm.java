@@ -141,9 +141,7 @@ public class AddReapairProductForm extends JDialog {
         btnAddRepairDevice = new com.k33ptoo.components.KButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        setMaximumSize(new java.awt.Dimension(1153, 2147483647));
         setMinimumSize(new java.awt.Dimension(500, 32));
-        setPreferredSize(new java.awt.Dimension(800, 462));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel3.setMaximumSize(new java.awt.Dimension(700, 65534));
@@ -318,7 +316,6 @@ public class AddReapairProductForm extends JDialog {
         btnReturnInformationLookup.setkEndColor(new java.awt.Color(255, 51, 102));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 51, 102));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
         jPanel1.add(btnReturnInformationLookup);
@@ -328,8 +325,6 @@ public class AddReapairProductForm extends JDialog {
         btnAddRepairDevice.setkEndColor(new java.awt.Color(102, 153, 255));
         btnAddRepairDevice.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnAddRepairDevice.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAddRepairDevice.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnAddRepairDevice.setkStartColor(new java.awt.Color(102, 153, 255));
         btnAddRepairDevice.setMargin(new java.awt.Insets(2, 14, 0, 14));
         jPanel1.add(btnAddRepairDevice);
 

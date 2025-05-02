@@ -383,6 +383,20 @@ public List<Product> findAll() {
             throw new RuntimeException("Error finding products by manufacturer", e);
         }
     }
+
+    // Phương thức để tăng/giảm số lượng tồn kho
+    public boolean adjustStockQuantity(String productId, int adjustment) {
+        String sql = "UPDATE Products SET StockQuantity = StockQuantity + ? WHERE ProductID = ?";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, adjustment); // Giá trị dương để tăng, âm để giảm
+            statement.setString(2, productId);
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error adjusting stock quantity", e);
+        }
+    }
     
     // Phương thức chuyển ResultSet thành đối tượng Product
     private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {

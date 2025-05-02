@@ -56,12 +56,7 @@ public class PurchaseOrderForm extends JDialog {
         // Khởi tạo controller
         controller = new PurchaseOrderController(this, connection);
         
-        // Đăng ký sự kiện cho nút nhập hàng
-        btnStockIn.addActionListener(e -> {
-            if (controller != null) {
-                controller.savePurchaseOrder();
-            }
-        });
+       
     }
 
     /**
@@ -98,11 +93,13 @@ public class PurchaseOrderForm extends JDialog {
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lbPurchaseOrderID.setText(bundle.getString("lbPurchaseOrderId")); // NOI18N
 
+        txtPurchaseOrderID.setForeground(new java.awt.Color(51, 29, 204));
         txtPurchaseOrderID.setText(bundle.getString("txtPurchaseOrderID")); // NOI18N
         txtPurchaseOrderID.setEnabled(false);
 
         lbEmloyeesCreate.setText(bundle.getString("lbEmloyeesCreate")); // NOI18N
 
+        txtEmloyeesCreate.setForeground(new java.awt.Color(51, 29, 204));
         txtEmloyeesCreate.setText(bundle.getString("txtEmloyeesCreate")); // NOI18N
         txtEmloyeesCreate.setEnabled(false);
 
@@ -215,7 +212,8 @@ public class PurchaseOrderForm extends JDialog {
             SelectedProduct.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clPrice")); // NOI18N
         }
 
-        btnStockIn.setText(bundle.getString("btnStockIn")); // NOI18N
+        btnStockIn.setText(bundle.getString("btnCreateStockIn")); // NOI18N
+        btnStockIn.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         btnStockIn.setkBorderRadius(40);
         btnStockIn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
@@ -229,9 +227,8 @@ public class PurchaseOrderForm extends JDialog {
 
         lbSupplier.setText(bundle.getString("lbSupplier")); // NOI18N
 
-        cbbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbbSupplier.setForeground(new java.awt.Color(51, 29, 204));
 
-        // Phần layout được giữ nguyên...
         javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
         kGradientPanel1.setLayout(kGradientPanel1Layout);
         kGradientPanel1Layout.setHorizontalGroup(
@@ -562,7 +559,7 @@ public class PurchaseOrderForm extends JDialog {
     private javax.swing.JTable ProductTable;
     private javax.swing.JTable SelectedProduct;
     private com.k33ptoo.components.KButton btnStockIn;
-    private javax.swing.JComboBox cbbSupplier;
+    private javax.swing.JComboBox<Supplier> cbbSupplier;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;

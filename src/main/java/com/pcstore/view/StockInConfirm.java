@@ -119,7 +119,7 @@ public class StockInConfirm extends javax.swing.JPanel {
         try {
             // Cài đặt xuất PDF tại đây (sử dụng thư viện như iText)
             JOptionPane.showMessageDialog(this, 
-                "Đã xuất phiếu nhập kho thành công!", 
+                "Đã xuất phiếu nhập kho thà nh công!", 
                 "Thông báo", JOptionPane.INFORMATION_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
@@ -129,27 +129,6 @@ public class StockInConfirm extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Phương thức main để test form riêng lẻ
-     */
-    public static void main(String[] args) {
-        try {
-            // Thiết lập giao diện Look and Feel của hệ thống
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        }
-    
-        // Khởi chạy giao diện trên luồng sự kiện của Swing
-        java.awt.EventQueue.invokeLater(() -> {
-            JFrame frame = new JFrame("Xác nhận nhập kho");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new StockInConfirm());
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
-    }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

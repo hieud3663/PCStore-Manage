@@ -838,6 +838,7 @@ public void displaySelectedProduct() {
      */
     private void initializeFormData() {
         try {
+            TableStyleUtil.applyDefaultStyle(productForm.getTable());
             loadCategories();
             
             generateTemporaryProductId();

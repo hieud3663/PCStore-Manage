@@ -48,6 +48,13 @@ public class Supplier extends BaseTimeEntity {
     public String getName() {
         return name;
     }
+    public String getSupplierName() {
+        return getName();
+    }
+    @Override
+    public String toString() {
+    return getName();
+    }
 
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {

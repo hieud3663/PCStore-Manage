@@ -355,26 +355,15 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
      * @param purchaseOrderId Mã phiếu nhập
      */
     public void updateTotalAmount(String purchaseOrderId) {
-        System.out.println("Updating total amount for purchase order: " + purchaseOrderId);
-
-        // Truy vấn tính tổng tiền từ chi tiết phiếu nhập
-        String sql = "UPDATE PurchaseOrders " +
-                "SET TotalAmount = (SELECT SUM(Quantity * UnitCost) " +
-                "                  FROM PurchaseOrderDetails " +
-                "                  WHERE PurchaseOrderID = ?) " +
+        String sql = "UPDATE PurchaseOrders SET TotalAmount = " +
+                "(SELECT CAST(SUM(CAST(Quantity as decimal(18,2)) * CAST(UnitCost as decimal(18,2))) AS decimal(18,2)) " +
+                "FROM PurchaseOrderDetails WHERE PurchaseOrderID = ?) " +
                 "WHERE PurchaseOrderID = ?";
-
+        
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, purchaseOrderId);
             statement.setString(2, purchaseOrderId);
-
-            int rowsAffected = statement.executeUpdate();
-            System.out.println("Rows affected: " + rowsAffected);
-
-            if (rowsAffected == 0) {
-                System.err.println(
-                        "Warning: No rows updated when updating total amount for purchase order: " + purchaseOrderId);
-            }
+            statement.executeUpdate();
         } catch (SQLException e) {
             System.err.println("SQL Error in updateTotalAmount: " + e.getMessage());
             e.printStackTrace();

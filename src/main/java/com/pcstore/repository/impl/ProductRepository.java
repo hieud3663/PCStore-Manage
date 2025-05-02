@@ -96,7 +96,7 @@ public class ProductRepository implements Repository<Product, String> {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting product", e);
+            throw new RuntimeException("Error deleting product: " + e.getMessage(), e);
         }
     }
     

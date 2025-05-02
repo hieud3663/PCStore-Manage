@@ -127,12 +127,7 @@ public class ProductForm extends javax.swing.JPanel {
             }
         });
         
-        btnExportExcel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExportExcelActionPerformed(evt);
-            }
-        });
-        
+    
         // Thêm sự kiện cho tìm kiếm
         try {
             textFieldSearch1.getBtnSearch().addActionListener(new java.awt.event.ActionListener() {

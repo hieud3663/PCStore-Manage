@@ -749,7 +749,7 @@ private void resetForm() {
      * Đóng kết nối khi không cần thiết nữa
      */
     public void close() {
-        System.out.println("ProductController: Giải phóng tài nguyên");
+        
     }
     
     /**
@@ -760,7 +760,6 @@ private void resetForm() {
             DefaultTableModel model = (DefaultTableModel) productForm.getTable().getModel();
             model.setRowCount(0); // Xóa tất cả các dòng hiện tại
             
-            System.out.println("Bắt đầu cập nhật " + products.size() + " sản phẩm vào bảng");
             
             for (Product product : products) {
                 try {
@@ -778,9 +777,6 @@ private void resetForm() {
                         desc
                     });
                     
-                    // Debug thông tin
-                    System.out.println("Đã thêm sản phẩm: " + product.getProductId() + 
-                                   ", Thông số: " + (specs.isEmpty() ? "[trống]" : "[có dữ liệu]"));
                 } catch (Exception e) {
                     System.err.println("Lỗi khi thêm sản phẩm " + product.getProductId() + ": " + e.getMessage());
                 }

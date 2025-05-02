@@ -327,7 +327,6 @@ public void loadPurchaseOrderHistory() {
                           "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
                           "ORDER BY po.OrderDate DESC";
         
-        System.out.println("Executing SQL: " + directSql);
         
         List<PurchaseOrder> purchaseOrders = new ArrayList<>();
         

@@ -372,8 +372,6 @@ public void displaySelectedProduct() {
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
             
-            // Gỡ bỏ mọi tham chiếu đến supplier
-            System.out.println("Displaying product: " + product.getProductId());
             
             productForm.getIdField().setText(product.getProductId());
             productForm.getNameField().setText(product.getProductName());

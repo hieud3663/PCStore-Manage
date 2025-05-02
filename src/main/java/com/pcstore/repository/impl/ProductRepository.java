@@ -109,7 +109,6 @@ public class ProductRepository implements Repository<Product, String> {
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
                     "WHERE p.ProductID = ?";
         
-        System.out.println("Executing SQL: " + sql + " with ID: " + id); // Debug log
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);

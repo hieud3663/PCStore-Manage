@@ -361,3 +361,10 @@ ADD Notes NVARCHAR(MAX) DEFAULT '';
 ALTER TABLE Products
 ADD Manufacturer NVARCHAR(100);
 
+-- Thêm cột trạng thái PurchaseOrders
+ALTER TABLE PurchaseOrders
+ADD Status NVARCHAR(50) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Completed', 'Cancelled', 'Delivering'));
+
+--Thêm cột TotalAmount cho bảng PurchaseOrders
+ALTER TABLE PurchaseOrders
+ADD TotalAmount DECIMAL(10,2) CHECK (TotalAmount >= 0) NOT NULL DEFAULT 0; -- Tổng tiền hóa đơn

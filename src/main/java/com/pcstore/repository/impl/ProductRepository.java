@@ -391,6 +391,159 @@ public class ProductRepository implements Repository<Product, String> {
         }
     }
     
+    /**
+     * Lấy ID tiếp theo cho sản phẩm dựa vào danh mục (category)
+     * Dựa trên cùng logic với trigger trg_GenerateProductID trên SQL Server
+     * 
+     * @param categoryId Mã danh mục sản phẩm (LAP, PC, LK, MH, ...)
+     * @return ID sản phẩm mới theo định dạng (VD: LAP001, PC005, LK010, ...)
+     */
+    public String generateProductID(String categoryId) {
+        // Xử lý trường hợp categoryId null hoặc rỗng
+        if (categoryId == null || categoryId.trim().isEmpty()) {
+            return "UNKN001"; // Mã mặc định cho danh mục không xác định
+        }
+        
+        String sql = "SELECT ISNULL(MAX(CAST(SUBSTRING(ProductID, LEN(?) + 1, " +
+                    "LEN(ProductID) - LEN(?)) AS INT)), 0) + 1 AS NextNumber " +
+                    "FROM Products WHERE ProductID LIKE ? + '%'";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, categoryId);
+            statement.setString(2, categoryId);
+            statement.setString(3, categoryId);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    int nextNumber = rs.getInt("NextNumber");
+                    return categoryId + String.format("%03d", nextNumber);
+                }
+                // Nếu không có sản phẩm nào thuộc danh mục này, trả về ID đầu tiên
+                return categoryId + "001";
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi lấy ID sản phẩm tiếp theo: " + e.getMessage());
+            return categoryId + "001"; // Trả về giá trị mặc định nếu có lỗi
+        }
+    }
+
+    /**
+     * Thêm sản phẩm mới vào CSDL mà không cần chỉ định ID,
+     * ID sẽ được tạo tự động bởi trigger trg_GenerateProductID
+     * 
+     * @param product Sản phẩm cần thêm (không cần thiết lập productId)
+     * @return Sản phẩm đã được thêm vào CSDL với ID được tạo tự động
+     */
+    public Product addWithAutoId(Product product) {
+        // Xác định CategoryID để dự đoán ID sẽ được tạo
+        String categoryId = product.getCategory() != null ? product.getCategory().getCategoryId() : null;
+        String predictedId = null;
+        
+        if (categoryId != null) {
+            predictedId = generateProductID(categoryId);
+//            System.out.println("ID dự kiến cho sản phẩm: " + predictedId);
+        }
+        
+        String sql = "INSERT INTO Products (ProductName, CategoryID, SupplierID, Price, " +
+                     "StockQuantity, Specifications, Description, Manufacturer, CreatedAt, UpdatedAt) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     
+        try {
+            // Thiết lập các giá trị thời gian
+            LocalDateTime now = LocalDateTime.now();
+            product.setCreatedAt(now);
+            product.setUpdatedAt(now);
+            
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, product.getProductName());
+                statement.setString(2, categoryId);
+                statement.setString(3, product.getSupplier() != null ? 
+                        product.getSupplier().getSupplierId() : null);
+                statement.setBigDecimal(4, product.getPrice());
+                statement.setInt(5, product.getStockQuantity());
+                statement.setString(6, product.getSpecifications());
+                statement.setString(7, product.getDescription());
+                statement.setString(8, product.getManufacturer());
+                statement.setObject(9, now);
+                statement.setObject(10, now);
+                
+                statement.executeUpdate();
+                
+                // Vì trigger trg_GenerateProductID tự động tạo ID theo dự đoán của chúng ta,
+                // chúng ta có thể đặt ID dự kiến cho sản phẩm
+                if (predictedId != null) {
+                    product.setProductId(predictedId);
+                    
+                    // Kiểm tra xem ID được tạo có đúng như dự đoán không
+                    if (!exists(predictedId)) {
+                        // Nếu ID dự đoán không tồn tại, tìm ID thực tế đã được tạo
+                        Optional<Product> actualProduct = findNewestProductByCategory(categoryId);
+                        if (actualProduct.isPresent()) {
+                            product.setProductId(actualProduct.get().getProductId());
+                        }
+                    }
+                } else {
+                    // Nếu không có category, tìm sản phẩm mới nhất được thêm vào
+                    Optional<Product> newestProduct = findNewestProduct();
+                    if (newestProduct.isPresent()) {
+                        product.setProductId(newestProduct.get().getProductId());
+                    }
+                }
+                
+                return product;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi khi thêm sản phẩm với ID tự động: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Tìm sản phẩm mới nhất trong một danh mục
+     */
+    private Optional<Product> findNewestProductByCategory(String categoryId) {
+        String sql = "SELECT TOP 1 p.*, c.CategoryName FROM Products p " +
+                    "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
+                    "WHERE p.CategoryID = ? " +
+                    "ORDER BY p.CreatedAt DESC";
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, categoryId);
+            
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Product product = mapResultSetToProduct(resultSet);
+                    return Optional.of(product);
+                }
+                return Optional.empty();
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi tìm sản phẩm mới nhất theo danh mục: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Tìm sản phẩm mới nhất trong CSDL
+     */
+    private Optional<Product> findNewestProduct() {
+        String sql = "SELECT TOP 1 p.*, c.CategoryName FROM Products p " +
+                    "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
+                    "ORDER BY p.CreatedAt DESC";
+        
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            
+            if (resultSet.next()) {
+                Product product = mapResultSetToProduct(resultSet);
+                return Optional.of(product);
+            }
+            return Optional.empty();
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi tìm sản phẩm mới nhất: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+    
     // Phương thức chuyển ResultSet thành đối tượng Product - đã sửa
     private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
         Product product = new Product();

@@ -34,7 +34,9 @@ public class ProductForm extends javax.swing.JPanel {
     public ProductForm() {
         initComponents();
 
-        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        labelESC.setVisible(false);
+
+        tableListProduct.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         
         // 1. Khởi tạo combobox và các thành phần UI cơ bản
         categoryComboBox = (JComboBox<Category>) cbbClassfication;
@@ -96,12 +98,12 @@ public class ProductForm extends javax.swing.JPanel {
                 categoryComboBoxActionPerformed(evt);
             }
         });
-        for (ActionListener al : btnAdd4.getActionListeners()) {
-            btnAdd4.removeActionListener(al);
+        for (ActionListener al : btnAdd.getActionListeners()) {
+            btnAdd.removeActionListener(al);
         }
         
         // Thêm sự kiện cho các nút
-        btnAdd4.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 if (controller.isAddingProduct()) {
                     // Nếu đang ở chế độ thêm, thực hiện thêm sản phẩm
@@ -113,21 +115,21 @@ public class ProductForm extends javax.swing.JPanel {
             }
         });
         
-        kButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kButton1ActionPerformed(evt);
+                btnUpdateActionPerformed(evt);
             }
         });
         
-        kButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kButton2ActionPerformed(evt);
+                btnDeleteActionPerformed(evt);
             }
         });
         
-        kButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnExportExcel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kButton3ActionPerformed(evt);
+                btnExportExcelActionPerformed(evt);
             }
         });
         
@@ -160,7 +162,7 @@ public class ProductForm extends javax.swing.JPanel {
         }
         
         // Thêm sự kiện click vào bảng để hiển thị chi tiết sản phẩm
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        tableListProduct.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
             }
@@ -173,7 +175,7 @@ public class ProductForm extends javax.swing.JPanel {
                 if (controller != null && controller.isAddingProduct()) {
                     // Kiểm tra xem click có phải trên nút thêm không
                     java.awt.Point p = evt.getPoint();
-                    if (btnAdd4 != null && !btnAdd4.getBounds().contains(p)) {
+                    if (btnAdd != null && !btnAdd.getBounds().contains(p)) {
                         controller.cancelAddProduct();
                     }
                 }
@@ -225,22 +227,28 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
+        panelTitle = new javax.swing.JPanel();
+        lbTitle = new javax.swing.JLabel();
         panelHeader = new javax.swing.JPanel();
         kPanelSearch = new com.k33ptoo.components.KGradientPanel();
         textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
-        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
-        jPanel5 = new javax.swing.JPanel();
+        panelSortMain = new com.k33ptoo.components.KGradientPanel();
+        panelSort = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         cbbSortCustomer = new javax.swing.JComboBox<>();
         cbbSort = new javax.swing.JComboBox<>();
         btnResetSort = new javax.swing.JButton();
+        panelBtn = new javax.swing.JPanel();
+        btnAdd = new com.k33ptoo.components.KButton();
+        btnUpdate = new com.k33ptoo.components.KButton();
+        btnDelete = new com.k33ptoo.components.KButton();
+        btnExportExcel = new com.k33ptoo.components.KButton();
         panelBody = new javax.swing.JPanel();
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
+        panelListProduct = new com.k33ptoo.components.KGradientPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableListProduct = new javax.swing.JTable();
         panelDetails = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        pnDetail = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         txtProductID = new javax.swing.JTextField();
@@ -256,69 +264,76 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jPanel10 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         txtPrice = new javax.swing.JTextField();
-        panelDetail2 = new javax.swing.JPanel();
+        panelSepecification = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         txtTechnicalSpecifications = new javax.swing.JTextArea();
-        panelDetail = new javax.swing.JPanel();
+        panelDescription = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtDescribe = new javax.swing.JTextArea();
-        jPanel1 = new javax.swing.JPanel();
-        kButton3 = new com.k33ptoo.components.KButton();
-        kButton2 = new com.k33ptoo.components.KButton();
-        kButton1 = new com.k33ptoo.components.KButton();
-        btnAdd4 = new com.k33ptoo.components.KButton();
+        labelESC = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1153, 713));
         setPreferredSize(new java.awt.Dimension(1153, 713));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
+        panelTitle.setBackground(new java.awt.Color(255, 255, 255));
+        panelTitle.setPreferredSize(new java.awt.Dimension(100, 40));
+        panelTitle.setLayout(new java.awt.BorderLayout());
+
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
+        lbTitle.setForeground(new java.awt.Color(0, 76, 192));
+        lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel2.setText(bundle.getString("txtMenuProduct")); // NOI18N
-        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLabel2.setMaximumSize(new java.awt.Dimension(32828, 1600000));
-        jLabel2.setMinimumSize(new java.awt.Dimension(850, 34));
-        jLabel2.setName(""); // NOI18N
-        jLabel2.setPreferredSize(new java.awt.Dimension(900, 30));
-        add(jLabel2);
+        lbTitle.setText(bundle.getString("txtMenuProduct")); // NOI18N
+        lbTitle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        lbTitle.setMaximumSize(new java.awt.Dimension(32828, 1600000));
+        lbTitle.setMinimumSize(new java.awt.Dimension(850, 34));
+        lbTitle.setName(""); // NOI18N
+        lbTitle.setPreferredSize(new java.awt.Dimension(900, 30));
+        panelTitle.add(lbTitle, java.awt.BorderLayout.CENTER);
+
+        add(panelTitle);
 
         panelHeader.setBackground(new java.awt.Color(153, 255, 0));
         panelHeader.setMaximumSize(new java.awt.Dimension(328791, 1000));
         panelHeader.setMinimumSize(new java.awt.Dimension(771, 50));
         panelHeader.setOpaque(false);
-        panelHeader.setPreferredSize(new java.awt.Dimension(771, 80));
+        panelHeader.setPreferredSize(new java.awt.Dimension(771, 50));
         panelHeader.setLayout(new javax.swing.BoxLayout(panelHeader, javax.swing.BoxLayout.LINE_AXIS));
 
         kPanelSearch.setkFillBackground(false);
         kPanelSearch.setMaximumSize(new java.awt.Dimension(100, 200));
-        kPanelSearch.setMinimumSize(new java.awt.Dimension(100, 41));
+        kPanelSearch.setMinimumSize(new java.awt.Dimension(100, 30));
         kPanelSearch.setOpaque(false);
+        kPanelSearch.setPreferredSize(new java.awt.Dimension(660, 35));
+        kPanelSearch.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 0));
 
         textFieldSearch1.setPreferredSize(new java.awt.Dimension(650, 31));
         kPanelSearch.add(textFieldSearch1);
 
         panelHeader.add(kPanelSearch);
 
-        kGradientPanel2.setkFillBackground(false);
-        kGradientPanel2.setLayout(new java.awt.BorderLayout());
+        panelSortMain.setkFillBackground(false);
+        panelSortMain.setOpaque(false);
+        panelSortMain.setLayout(new java.awt.BorderLayout());
 
-        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel5.setPreferredSize(new java.awt.Dimension(500, 70));
+        panelSort.setBackground(new java.awt.Color(255, 255, 255));
+        panelSort.setPreferredSize(new java.awt.Dimension(500, 70));
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel12.setText(bundle.getString("lbSort")); // NOI18N
-        jPanel5.add(jLabel12);
+        panelSort.add(jLabel12);
 
         cbbSortCustomer.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<Không>", "Giá Bán", "Phân Loại" }));
         cbbSortCustomer.setPreferredSize(new java.awt.Dimension(150, 30));
-        jPanel5.add(cbbSortCustomer);
+        panelSort.add(cbbSortCustomer);
 
         cbbSort.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "<Không>", "Tăng dần", "Giảm giần" }));
         cbbSort.setPreferredSize(new java.awt.Dimension(100, 30));
-        jPanel5.add(cbbSort);
+        panelSort.add(cbbSort);
 
         btnResetSort.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
         btnResetSort.setPreferredSize(new java.awt.Dimension(50, 25));
@@ -327,13 +342,82 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
                 btnResetSortMouseClicked(evt);
             }
         });
-        jPanel5.add(btnResetSort);
+        panelSort.add(btnResetSort);
 
-        kGradientPanel2.add(jPanel5, java.awt.BorderLayout.PAGE_START);
+        panelSortMain.add(panelSort, java.awt.BorderLayout.PAGE_START);
 
-        panelHeader.add(kGradientPanel2);
+        panelHeader.add(panelSortMain);
 
         add(panelHeader);
+
+        panelBtn.setOpaque(false);
+        panelBtn.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/plus.png"))); // NOI18N
+        btnAdd.setText(bundle.getString("btnAddProduct")); // NOI18N
+        btnAdd.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnAdd.setIconTextGap(10);
+        btnAdd.setkAllowGradient(false);
+        btnAdd.setkBackGroundColor(new java.awt.Color(0, 179, 91));
+        btnAdd.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnAdd.setkHoverColor(new java.awt.Color(0, 195, 75));
+        btnAdd.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnAdd.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnAdd.setPreferredSize(new java.awt.Dimension(185, 40));
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
+        panelBtn.add(btnAdd);
+
+        btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
+        btnUpdate.setText(bundle.getString("btnUpdate")); // NOI18N
+        btnUpdate.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnUpdate.setkBackGroundColor(new java.awt.Color(102, 153, 255));
+        btnUpdate.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnUpdate.setkHoverEndColor(new java.awt.Color(102, 102, 255));
+        btnUpdate.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnUpdate.setkHoverStartColor(new java.awt.Color(153, 255, 154));
+        btnUpdate.setPreferredSize(new java.awt.Dimension(185, 40));
+        panelBtn.add(btnUpdate);
+
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
+        btnDelete.setText(bundle.getString("btnDeleteFromListProduct")); // NOI18N
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDelete.setIconTextGap(10);
+        btnDelete.setkAllowGradient(false);
+        btnDelete.setkBackGroundColor(new java.awt.Color(255, 51, 51));
+        btnDelete.setkEndColor(new java.awt.Color(255, 51, 51));
+        btnDelete.setkHoverColor(new java.awt.Color(255, 85, 13));
+        btnDelete.setkHoverEndColor(new java.awt.Color(255, 204, 204));
+        btnDelete.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnDelete.setkHoverStartColor(new java.awt.Color(255, 51, 51));
+        btnDelete.setkStartColor(new java.awt.Color(255, 204, 204));
+        btnDelete.setPreferredSize(new java.awt.Dimension(150, 40));
+        panelBtn.add(btnDelete);
+
+        btnExportExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/xls.png"))); // NOI18N
+        btnExportExcel.setText(bundle.getString("btnExport")); // NOI18N
+        btnExportExcel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnExportExcel.setIconTextGap(10);
+        btnExportExcel.setkAllowGradient(false);
+        btnExportExcel.setkBackGroundColor(new java.awt.Color(0, 204, 102));
+        btnExportExcel.setkEndColor(new java.awt.Color(0, 153, 153));
+        btnExportExcel.setkHoverColor(new java.awt.Color(0, 158, 110));
+        btnExportExcel.setkHoverEndColor(new java.awt.Color(0, 204, 204));
+        btnExportExcel.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnExportExcel.setkHoverStartColor(new java.awt.Color(0, 204, 204));
+        btnExportExcel.setkStartColor(new java.awt.Color(102, 255, 0));
+        btnExportExcel.setPreferredSize(new java.awt.Dimension(150, 40));
+        btnExportExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportExcelActionPerformed(evt);
+            }
+        });
+        panelBtn.add(btnExportExcel);
+
+        add(panelBtn);
 
         panelBody.setBackground(new java.awt.Color(255, 255, 255));
         panelBody.setBorder(javax.swing.BorderFactory.createEmptyBorder(21, 10, 21, 10));
@@ -341,15 +425,15 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         panelBody.setPreferredSize(new java.awt.Dimension(850, 471));
         panelBody.setLayout(new javax.swing.BoxLayout(panelBody, javax.swing.BoxLayout.LINE_AXIS));
 
-        kGradientPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 20), "Danh Sách Sản Phẩm", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
-        kGradientPanel1.setkBorderRadius(20);
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setMinimumSize(new java.awt.Dimension(650, 570));
-        kGradientPanel1.setOpaque(false);
-        kGradientPanel1.setPreferredSize(new java.awt.Dimension(650, 570));
-        kGradientPanel1.setLayout(new java.awt.BorderLayout());
+        panelListProduct.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 20), "Danh Sách Sản Phẩm", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14), new java.awt.Color(0, 76, 192))); // NOI18N
+        panelListProduct.setkBorderRadius(20);
+        panelListProduct.setkFillBackground(false);
+        panelListProduct.setMinimumSize(new java.awt.Dimension(650, 570));
+        panelListProduct.setOpaque(false);
+        panelListProduct.setPreferredSize(new java.awt.Dimension(650, 570));
+        panelListProduct.setLayout(new java.awt.BorderLayout());
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableListProduct.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -375,29 +459,37 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jTable1.setRowHeight(32);
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
+        tableListProduct.setPreferredSize(null);
+        tableListProduct.setRowHeight(32);
+        tableListProduct.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tableListProduct);
 
-        kGradientPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        panelListProduct.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        panelBody.add(kGradientPanel1);
+        panelBody.add(panelListProduct);
 
         panelDetails.setBackground(new java.awt.Color(255, 255, 255));
-        panelDetails.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("titleDetailInformation"))); // NOI18N
+        panelDetails.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("titleDetailInformation"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14), new java.awt.Color(0, 76, 192))); // NOI18N
         panelDetails.setPreferredSize(new java.awt.Dimension(450, 470));
         panelDetails.setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel2.setMinimumSize(new java.awt.Dimension(230, 400));
-        jPanel2.setPreferredSize(new java.awt.Dimension(400, 400));
-        jPanel2.setLayout(new java.awt.GridLayout(5, 2, 40, 40));
+        pnDetail.setBackground(new java.awt.Color(255, 255, 255));
+        pnDetail.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 5, 20, 5));
+        pnDetail.setMinimumSize(new java.awt.Dimension(230, 400));
+        pnDetail.setPreferredSize(new java.awt.Dimension(400, 400));
+        pnDetail.setLayout(new java.awt.GridLayout(4, 2, 20, 40));
 
         jPanel6.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel6.setLayout(new java.awt.GridLayout(2, 0));
@@ -407,9 +499,12 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel3.setText(bundle.getString("lbProductID")); // NOI18N
         jLabel3.setOpaque(true);
         jPanel6.add(jLabel3);
+
+        txtProductID.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtProductID.setForeground(new java.awt.Color(0, 76, 192));
         jPanel6.add(txtProductID);
 
-        jPanel2.add(jPanel6);
+        pnDetail.add(jPanel6);
 
         jPanel3.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel3.setLayout(new java.awt.GridLayout(2, 0));
@@ -419,9 +514,12 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel4.setText(bundle.getString("lbProductName")); // NOI18N
         jLabel4.setOpaque(true);
         jPanel3.add(jLabel4);
+
+        txtProductName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtProductName.setForeground(new java.awt.Color(0, 76, 192));
         jPanel3.add(txtProductName);
 
-        jPanel2.add(jPanel3);
+        pnDetail.add(jPanel3);
 
         jPanel7.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel7.setLayout(new java.awt.GridLayout(2, 0));
@@ -432,10 +530,11 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel5.setOpaque(true);
         jPanel7.add(jLabel5);
 
-        cbbClassfication.setModel(new javax.swing.DefaultComboBoxModel<Category>());
+        cbbClassfication.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        cbbClassfication.setForeground(new java.awt.Color(0, 76, 192));
         jPanel7.add(cbbClassfication);
 
-        jPanel2.add(jPanel7);
+        pnDetail.add(jPanel7);
 
         jPanel9.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel9.setLayout(new java.awt.GridLayout(2, 0));
@@ -445,9 +544,12 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel7.setText(bundle.getString("lbQuantity")); // NOI18N
         jLabel7.setOpaque(true);
         jPanel9.add(jLabel7);
+
+        txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtQuantity.setForeground(new java.awt.Color(0, 76, 192));
         jPanel9.add(txtQuantity);
 
-        jPanel2.add(jPanel9);
+        pnDetail.add(jPanel9);
 
         jPanel10.setPreferredSize(new java.awt.Dimension(250, 50));
         jPanel10.setLayout(new java.awt.GridLayout(2, 0));
@@ -457,135 +559,84 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         jLabel8.setText(bundle.getString("lbPrice")); // NOI18N
         jLabel8.setOpaque(true);
         jPanel10.add(jLabel8);
+
+        txtPrice.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtPrice.setForeground(new java.awt.Color(0, 76, 192));
         jPanel10.add(txtPrice);
 
-        jPanel2.add(jPanel10);
+        pnDetail.add(jPanel10);
 
-        panelDetail2.setAlignmentY(30.0F);
-        panelDetail2.setMinimumSize(new java.awt.Dimension(200, 80));
-        panelDetail2.setName(""); // NOI18N
-        panelDetail2.setPreferredSize(new java.awt.Dimension(300, 100));
-        panelDetail2.setLayout(new javax.swing.BoxLayout(panelDetail2, javax.swing.BoxLayout.Y_AXIS));
+        panelSepecification.setAlignmentY(30.0F);
+        panelSepecification.setMinimumSize(new java.awt.Dimension(200, 80));
+        panelSepecification.setName(""); // NOI18N
+        panelSepecification.setOpaque(false);
+        panelSepecification.setPreferredSize(new java.awt.Dimension(300, 100));
+        panelSepecification.setLayout(new javax.swing.BoxLayout(panelSepecification, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel14.setBackground(new java.awt.Color(255, 255, 255));
         jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel14.setText(bundle.getString("lbSpecfication")); // NOI18N
         jLabel14.setOpaque(true);
-        panelDetail2.add(jLabel14);
+        panelSepecification.add(jLabel14);
 
         jScrollPane4.setMinimumSize(new java.awt.Dimension(16, 50));
 
         txtTechnicalSpecifications.setColumns(20);
+        txtTechnicalSpecifications.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtTechnicalSpecifications.setForeground(new java.awt.Color(0, 76, 192));
         txtTechnicalSpecifications.setRows(5);
         txtTechnicalSpecifications.setAutoscrolls(false);
         jScrollPane4.setViewportView(txtTechnicalSpecifications);
 
-        panelDetail2.add(jScrollPane4);
+        panelSepecification.add(jScrollPane4);
 
+        pnDetail.add(panelSepecification);
+        panelSepecification.getAccessibleContext().setAccessibleDescription("");
 
-        jPanel2.add(panelDetail2);
-        panelDetail2.getAccessibleContext().setAccessibleDescription("");
-
-        panelDetail.setMinimumSize(new java.awt.Dimension(200, 80));
-        panelDetail.setPreferredSize(new java.awt.Dimension(300, 100));
-        panelDetail.setLayout(new javax.swing.BoxLayout(panelDetail, javax.swing.BoxLayout.Y_AXIS));
+        panelDescription.setMinimumSize(new java.awt.Dimension(200, 80));
+        panelDescription.setOpaque(false);
+        panelDescription.setPreferredSize(new java.awt.Dimension(300, 100));
+        panelDescription.setLayout(new javax.swing.BoxLayout(panelDescription, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel11.setBackground(new java.awt.Color(255, 255, 255));
         jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel11.setText(bundle.getString("lbDetail")); // NOI18N
         jLabel11.setOpaque(true);
-        panelDetail.add(jLabel11);
+        jLabel11.setPreferredSize(new java.awt.Dimension(80, 20));
+        panelDescription.add(jLabel11);
 
         jScrollPane2.setMinimumSize(new java.awt.Dimension(16, 50));
 
         txtDescribe.setColumns(20);
+        txtDescribe.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        txtDescribe.setForeground(new java.awt.Color(0, 76, 192));
         txtDescribe.setRows(5);
         jScrollPane2.setViewportView(txtDescribe);
 
-        panelDetail.add(jScrollPane2);
+        panelDescription.add(jScrollPane2);
 
-        jPanel2.add(panelDetail);
+        pnDetail.add(panelDescription);
 
-        panelDetails.add(jPanel2, java.awt.BorderLayout.CENTER);
+        labelESC.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        labelESC.setForeground(new java.awt.Color(255, 0, 51));
+        labelESC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/exclamation.png"))); // NOI18N
+        labelESC.setText(bundle.getString("labelNoteESC")); // NOI18N
+        pnDetail.add(labelESC);
+
+        panelDetails.add(pnDetail, java.awt.BorderLayout.CENTER);
 
         panelBody.add(panelDetails);
 
         add(panelBody);
-
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        kButton3.setText(bundle.getString("btnExport")); // NOI18N
-        kButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        kButton3.setkAllowGradient(false);
-        kButton3.setkBackGroundColor(new java.awt.Color(0, 204, 102));
-        kButton3.setkBorderRadius(30);
-        kButton3.setkEndColor(new java.awt.Color(0, 153, 153));
-        kButton3.setkHoverEndColor(new java.awt.Color(0, 204, 204));
-        kButton3.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton3.setkHoverStartColor(new java.awt.Color(0, 204, 204));
-        kButton3.setkStartColor(new java.awt.Color(102, 255, 0));
-        kButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                kButton3ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(kButton3);
-
-        kButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/trash.png"))); // NOI18N
-        kButton2.setText(bundle.getString("btnDeleteFromListProduct")); // NOI18N
-        kButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        kButton2.setkAllowGradient(false);
-        kButton2.setkBackGroundColor(new java.awt.Color(255, 51, 51));
-        kButton2.setkBorderRadius(30);
-        kButton2.setkEndColor(new java.awt.Color(255, 51, 51));
-        kButton2.setkHoverEndColor(new java.awt.Color(255, 204, 204));
-        kButton2.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton2.setkHoverStartColor(new java.awt.Color(255, 51, 51));
-        kButton2.setkStartColor(new java.awt.Color(255, 204, 204));
-        jPanel1.add(kButton2);
-
-        kButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png"))); // NOI18N
-        kButton1.setText(bundle.getString("btnUpdate")); // NOI18N
-        kButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        kButton1.setkBorderRadius(30);
-        kButton1.setkEndColor(new java.awt.Color(102, 153, 255));
-        kButton1.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        kButton1.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        kButton1.setkHoverStartColor(new java.awt.Color(153, 255, 154));
-        jPanel1.add(kButton1);
-
-        btnAdd4.setText(bundle.getString("btnAddProduct")); // NOI18N
-        btnAdd4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnAdd4.setkAllowGradient(false);
-        btnAdd4.setkBackGroundColor(new java.awt.Color(0, 102, 255));
-        btnAdd4.setkBorderRadius(30);
-        btnAdd4.setkEndColor(new java.awt.Color(102, 153, 255));
-        btnAdd4.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnAdd4.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnAdd4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAdd4ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnAdd4);
-
-        add(jPanel1);
     }// </editor-fold>//GEN-END:initComponents
                                 
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {
-        // Xử lý sự kiện khi nhấn Enter trong jTextField6
-        String inputText = txtPrice.getText();
-        System.out.println("Nội dung nhập: " + inputText);
-        // Thêm logic xử lý khác nếu cần
-    }
 
-
-    private void kButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnExportExcelActionPerformed(java.awt.event.ActionEvent evt) {
         controller.exportToExcel();
     }
     
-    private void kButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc muốn cập nhật sản phẩm này?",
                 "Xác nhận cập nhật",
@@ -597,29 +648,29 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         }
     }
 
-    private void kButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {
         controller.deleteProduct();
     }
 
     private void btnResetSortMouseClicked(java.awt.event.MouseEvent evt) {
         cbbSortCustomer.setSelectedIndex(0);
         cbbSort.setSelectedIndex(0);
-        controller.loadProducts(); // Tải lại danh sách không sắp xếp
+        controller.loadProducts(); 
     }
 
     /**
- * Cập nhật ID tạm thời khi thay đổi danh mục
- */
-private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
-    if (controller.isAddingProduct()) {
-        Category selectedCategory = (Category) categoryComboBox.getSelectedItem();
-        if (selectedCategory != null) {
-            txtProductID.setText(selectedCategory.getCategoryId() + "xxx"); // Hiển thị ID mẫu
-        } else {
-            txtProductID.setText("xxxxx"); // Mẫu mặc định
+     * Cập nhật ID tạm thời khi thay đổi danh mục
+     */
+    private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        if (controller.isAddingProduct()) {
+            Category selectedCategory = (Category) categoryComboBox.getSelectedItem();
+            if (selectedCategory != null) {
+                txtProductID.setText(controller.generateProductID(selectedCategory)); 
+            } else {
+                txtProductID.setText("xxxxx"); // Mẫu mặc định
+            }
         }
     }
-}
     private void textFieldSearch1ActionPerformed(java.awt.event.ActionEvent evt) {
         controller.searchProducts(textFieldSearch1.getText());
     }
@@ -640,7 +691,7 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
         }
     }
 
-    private void btnAdd4ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {
         if (controller.isAddingProduct()) {
             // Nếu đang ở chế độ thêm, thực hiện thêm sản phẩm
             controller.addProduct();
@@ -652,7 +703,7 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
 
     // Thêm các getter cho các thành phần giao diện
     public javax.swing.JTable getTable() {
-        return jTable1;
+        return tableListProduct;
     }
 
     public javax.swing.JTextField getIdField() {
@@ -692,18 +743,18 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     }
 
     public com.k33ptoo.components.KButton getBtnAdd() {
-        return btnAdd4;
+        return btnAdd;
     }
 
     public com.k33ptoo.components.KButton getBtnUpdate() {
-        return kButton1;
+        return btnUpdate;
     }
 
     public com.k33ptoo.components.KButton getBtnDelete() {
-        return kButton2;
+        return btnDelete;
     }
     public com.k33ptoo.components.KButton getBtnExport() {
-        return kButton3;
+        return btnExportExcel;
     }
 
     public javax.swing.JComboBox<String> getCbbSortCustomer() {
@@ -722,13 +773,17 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
         return panelDetails;
     }
 
+    public javax.swing.JLabel getLabelESC() {
+        return labelESC;
+    }
+
     /**
      * Cập nhật dữ liệu cho bảng sản phẩm
      * @param data Dữ liệu hiển thị
      * @param columns Tên các cột
      */
     public void updateTable(Object[][] data, String[] columns) {
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableListProduct.setModel(new javax.swing.table.DefaultTableModel(
             data, columns) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -760,44 +815,45 @@ private void categoryComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAdd4;
+    private com.k33ptoo.components.KButton btnAdd;
+    private com.k33ptoo.components.KButton btnDelete;
+    private com.k33ptoo.components.KButton btnExportExcel;
     private javax.swing.JButton btnResetSort;
-    private JComboBox<Category> cbbClassfication;
+    private com.k33ptoo.components.KButton btnUpdate;
+    private javax.swing.JComboBox<Category> cbbClassfication;
     private javax.swing.JComboBox<String> cbbSort;
     private javax.swing.JComboBox<String> cbbSortCustomer;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable1;
-
-    private com.k33ptoo.components.KButton kButton1;
-    private com.k33ptoo.components.KButton kButton2;
-    private com.k33ptoo.components.KButton kButton3;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
     private com.k33ptoo.components.KGradientPanel kPanelSearch;
+    private javax.swing.JLabel labelESC;
+    private javax.swing.JLabel lbTitle;
     private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel panelDetail;
-    private javax.swing.JPanel panelDetail2;
+    private javax.swing.JPanel panelBtn;
+    private javax.swing.JPanel panelDescription;
     private javax.swing.JPanel panelDetails;
     private javax.swing.JPanel panelHeader;
+    private com.k33ptoo.components.KGradientPanel panelListProduct;
+    private javax.swing.JPanel panelSepecification;
+    private javax.swing.JPanel panelSort;
+    private com.k33ptoo.components.KGradientPanel panelSortMain;
+    private javax.swing.JPanel panelTitle;
+    private javax.swing.JPanel pnDetail;
+    private javax.swing.JTable tableListProduct;
     private com.pcstore.utils.TextFieldSearch textFieldSearch1;
     private javax.swing.JTextArea txtDescribe;
     private javax.swing.JTextField txtPrice;

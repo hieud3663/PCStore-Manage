@@ -94,6 +94,22 @@ public class Repair extends BaseTimeEntity {
         //TODO Auto-generated constructor stub
     }
 
+    public Repair(Integer repairServiceId2, Customer customer2, String deviceName2, String problem2, String diagnosis2,
+            BigDecimal fee, RepairEnum repairEnum, String notes2, LocalDateTime createdAt, LocalDateTime now) {
+        this.repairServiceId = repairServiceId2;
+        this.customer = customer2;
+        this.deviceName = deviceName2;
+        this.problem = problem2;
+        this.diagnosis = diagnosis2;
+        this.serviceFee = fee;
+        this.status = repairEnum;
+        this.notes = notes2;
+        this.setCreatedAt(createdAt);
+        this.setUpdatedAt(now);
+        this.receiveDate = createdAt;
+        this.completionDate = null;
+    }
+
     @Override
     public Object getId() {
         return repairServiceId;

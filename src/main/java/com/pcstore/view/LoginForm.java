@@ -62,7 +62,7 @@ public class LoginForm extends JFrame {
         
         txtUsername.requestFocus();
 
-        //checkLogin(); //auto login
+        // checkLogin(); //auto login
 
     }
 

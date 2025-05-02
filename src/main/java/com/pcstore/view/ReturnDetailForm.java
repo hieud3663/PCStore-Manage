@@ -119,6 +119,8 @@ public class ReturnDetailForm extends javax.swing.JPanel {
         lbStatus = new javax.swing.JLabel();
         txtStatus = new javax.swing.JTextField();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+
         panelInfoDetail.setBackground(new java.awt.Color(255, 255, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         panelInfoDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 24))); // NOI18N
@@ -149,6 +151,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         txtProductName.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtProductName.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        txtProductName.setOpaque(true);
         panelProductName.add(txtProductName, java.awt.BorderLayout.PAGE_END);
 
         lbProductName.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
@@ -166,6 +169,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         txtProductID.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtProductID.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        txtProductID.setOpaque(true);
         panelProductID.add(txtProductID, java.awt.BorderLayout.PAGE_END);
 
         panelInfoDetail.add(panelProductID);
@@ -180,6 +184,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         txtQuantity.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtQuantity.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        txtQuantity.setOpaque(true);
         panelQuantity.add(txtQuantity, java.awt.BorderLayout.CENTER);
 
         panelInfoDetail.add(panelQuantity);
@@ -193,6 +198,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         txtReasonReturn.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtReasonReturn.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        txtReasonReturn.setOpaque(true);
         panelReasonReturn.add(txtReasonReturn, java.awt.BorderLayout.CENTER);
 
         panelInfoDetail.add(panelReasonReturn);
@@ -208,6 +214,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
         txtReturnDate.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         txtReturnDate.setMinimumSize(new java.awt.Dimension(135, 23));
         txtReturnDate.setName(""); // NOI18N
+        txtReturnDate.setOpaque(true);
         txtReturnDate.setPreferredSize(new java.awt.Dimension(135, 23));
         panelReturnDate.add(txtReturnDate, java.awt.BorderLayout.CENTER);
 
@@ -222,6 +229,7 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         txtStatus.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtStatus.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
+        txtStatus.setOpaque(true);
         panelStatus.add(txtStatus, java.awt.BorderLayout.PAGE_END);
 
         panelInfoDetail.add(panelStatus);

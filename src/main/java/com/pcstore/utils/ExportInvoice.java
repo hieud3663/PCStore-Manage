@@ -207,7 +207,7 @@ public class ExportInvoice {
             }
 
             // Tạo tên file với timestamp để tránh trùng lặp
-            String fileName = "src\\output\\" + "INVOICE_" + invoice.getInvoiceId() +
+            String fileName = "output\\" + "INVOICE_" + invoice.getInvoiceId() +
                     "_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsx";
 
             // Ghi file mới

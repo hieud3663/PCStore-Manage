@@ -7,6 +7,8 @@ package com.pcstore.view;
 import com.pcstore.controller.ReturnController;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.TableStyleUtil;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -27,10 +29,12 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final Map<String, String> statusTranslation;
 
+
     /**
      * Creates new form ReturnService
      */
     public ReturnServiceForm() {
+        initComponents();
         // Khởi tạo bản dịch trạng thái từ tiếng Anh sang tiếng Việt
         statusTranslation = new HashMap<>();
         statusTranslation.put("Pending", "Đang chờ xử lý");
@@ -38,10 +42,12 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         statusTranslation.put("Rejected", "Đã từ chối");
         statusTranslation.put("Completed", "Đã hoàn thành");
         
+        addListeners();
         initComponentsCustom();
         initController();
         setupTable();
         loadAllReturns();
+        
     }
 
     private void initController() {
@@ -71,6 +77,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         };
         
         tableModel.setColumnIdentifiers(columnNames);
+        TableStyleUtil.applyDefaultStyle(tbReturn);
     }
 
     /**
@@ -97,7 +104,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
      * Thêm đơn trả hàng mới vào bảng
      * @param returnObj Đơn trả hàng mới
      */
-    public void addReturnToTable(Return returnObj) {
+    public  void addReturnToTable(Return returnObj) {
         if (returnObj == null) return;
         
         String status = returnObj.getStatus();
@@ -360,6 +367,115 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     }
 
     /**
+     * Cập nhật trạng thái đơn trả hàng
+     */
+    private void updateReturnStatus() {
+        // Lấy dòng đang được chọn
+        int selectedRow = tbReturn.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, 
+                "Vui lòng chọn một đơn trả hàng để cập nhật trạng thái",
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // Chuyển từ dòng hiển thị sang dòng thực trong model
+        int modelRow = tbReturn.convertRowIndexToModel(selectedRow);
+        
+        // Lấy thông tin từ dòng được chọn
+        Integer returnId = (Integer) tableModel.getValueAt(modelRow, 0);
+        String productName = (String) tableModel.getValueAt(modelRow, 2);
+        String currentStatus = (String) tableModel.getValueAt(modelRow, 6);
+        
+        try {
+            // Lấy thông tin đơn trả hiện tại
+            Optional<Return> returnOptional = returnController.getReturnById(returnId);
+            if (returnOptional.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "Không tìm thấy thông tin đơn trả hàng với ID: " + returnId, 
+                    "Thông báo", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            Return returnObj = returnOptional.get();
+            
+            // Tạo danh sách các trạng thái có thể chuyển đổi
+            String[] availableStatuses = {"Đang chờ xử lý", "Đã phê duyệt", "Đã từ chối", "Đã hoàn thành"};
+            
+            // Hiển thị dialog để chọn trạng thái mới
+            String newStatus = (String) JOptionPane.showInputDialog(
+                this,
+                "Chọn trạng thái mới cho đơn trả hàng #" + returnId + " - " + productName,
+                "Cập nhật trạng thái",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                availableStatuses,
+                currentStatus
+            );
+            
+            // Nếu người dùng không chọn hoặc hủy
+            if (newStatus == null || newStatus.equals(currentStatus)) {
+                return;
+            }
+            
+            // Chuyển đổi từ tiếng Việt sang tiếng Anh để lưu vào DB
+            String englishStatus = null;
+            for (Map.Entry<String, String> entry : statusTranslation.entrySet()) {
+                if (entry.getValue().equals(newStatus)) {
+                    englishStatus = entry.getKey();
+                    break;
+                }
+            }
+            
+            if (englishStatus == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Lỗi chuyển đổi trạng thái", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            // Xử lý logic khi chuyển từ Approved (Đã phê duyệt) sang Completed (Đã hoàn thành)
+            if ("Approved".equals(returnObj.getStatus()) && "Completed".equals(englishStatus)) {
+                // Hiển thị xác nhận điều chỉnh kho
+                int option = JOptionPane.showConfirmDialog(this, 
+                    "Khi chuyển sang trạng thái 'Đã hoàn thành', hệ thống sẽ điều chỉnh kho.\n"
+                    + "- Hoàn trả số lượng " + returnObj.getQuantity() + " sản phẩm vào kho.\n"
+                    + "Bạn có chắc chắn muốn tiếp tục?",
+                    "Xác nhận điều chỉnh kho", 
+                    JOptionPane.YES_NO_OPTION);
+                
+                if (option != JOptionPane.YES_OPTION) {
+                    return;
+                }
+            }
+            
+            // Gọi controller để cập nhật trạng thái
+            boolean result = returnController.updateReturnStatus(returnId, englishStatus);
+            
+            if (result) {
+                // Cập nhật lại bảng
+                tableModel.setValueAt(newStatus, modelRow, 6);
+                
+                JOptionPane.showMessageDialog(this, 
+                    "Cập nhật trạng thái thành công!", 
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    
+                // Tải lại dữ liệu để đảm bảo hiển thị đúng
+                loadAllReturns();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Không thể cập nhật trạng thái. Vui lòng thử lại sau!", 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi cập nhật trạng thái: " + e.getMessage(), 
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -368,48 +484,56 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jEditorPane1 = new javax.swing.JEditorPane();
         pnReturnMain = new javax.swing.JPanel();
         pnReturnFunctions = new javax.swing.JPanel();
         btnReturnProduct = new com.k33ptoo.components.KButton();
         btnRemoveReturn = new com.k33ptoo.components.KButton();
         btnDetailReturnCard = new com.k33ptoo.components.KButton();
+        btnUpdateStatus = new com.k33ptoo.components.KButton();
         pnSearch = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
+        jPanel1 = new javax.swing.JPanel();
         ScrollPaneTable = new javax.swing.JScrollPane();
         tbReturn = new javax.swing.JTable();
 
-        jScrollPane2.setViewportView(jEditorPane1);
-
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("ReTurnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1053, 713));
         setPreferredSize(new java.awt.Dimension(1153, 713));
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setLayout(new java.awt.BorderLayout());
 
+        pnReturnMain.setBackground(new java.awt.Color(255, 255, 255));
         pnReturnMain.setLayout(new javax.swing.BoxLayout(pnReturnMain, javax.swing.BoxLayout.Y_AXIS));
 
-        pnReturnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
+        pnReturnFunctions.setBackground(new java.awt.Color(255, 255, 255));
+        pnReturnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 5));
 
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnReturnProduct.setText(bundle.getString("btnReturnProduct")); // NOI18N
+        btnReturnProduct.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnReturnProduct.setkAllowGradient(false);
+        btnReturnProduct.setkBackGroundColor(new java.awt.Color(0, 190, 94));
         btnReturnProduct.setkBorderRadius(30);
         btnReturnProduct.setkEndColor(new java.awt.Color(0, 255, 51));
+        btnReturnProduct.setkFocusColor(new java.awt.Color(255, 255, 255));
+        btnReturnProduct.setkHoverColor(new java.awt.Color(0, 190, 94));
         btnReturnProduct.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnReturnProduct.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnReturnProduct.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnReturnProduct.setkHoverForeGround(new java.awt.Color(51, 204, 255));
         btnReturnProduct.setkStartColor(new java.awt.Color(0, 204, 255));
+        btnReturnProduct.setPreferredSize(new java.awt.Dimension(150, 35));
         pnReturnFunctions.add(btnReturnProduct);
 
         btnRemoveReturn.setText(bundle.getString("btnRemoveRepair")); // NOI18N
-        btnRemoveReturn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnRemoveReturn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnRemoveReturn.setkAllowGradient(false);
+        btnRemoveReturn.setkBackGroundColor(new java.awt.Color(255, 0, 51));
         btnRemoveReturn.setkBorderRadius(30);
         btnRemoveReturn.setkEndColor(new java.awt.Color(255, 102, 51));
+        btnRemoveReturn.setkHoverColor(new java.awt.Color(255, 39, 51));
         btnRemoveReturn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnRemoveReturn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnRemoveReturn.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnRemoveReturn.setkHoverForeGround(new java.awt.Color(51, 204, 255));
         btnRemoveReturn.setkStartColor(new java.awt.Color(255, 0, 51));
+        btnRemoveReturn.setPreferredSize(new java.awt.Dimension(150, 35));
         btnRemoveReturn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnRemoveReturnMouseClicked(evt);
@@ -423,14 +547,28 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         pnReturnFunctions.add(btnRemoveReturn);
 
         btnDetailReturnCard.setText(bundle.getString("btnDetailReturnCard")); // NOI18N
+        btnDetailReturnCard.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDetailReturnCard.setkAllowGradient(false);
+        btnDetailReturnCard.setkBackGroundColor(new java.awt.Color(102, 153, 255));
         btnDetailReturnCard.setkEndColor(new java.awt.Color(102, 153, 255));
+        btnDetailReturnCard.setkHoverColor(new java.awt.Color(102, 185, 241));
         btnDetailReturnCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnDetailReturnCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnDetailReturnCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnDetailReturnCard.setkIndicatorThickness(255);
-        btnDetailReturnCard.setkStartColor(new java.awt.Color(102, 153, 255));
+        btnDetailReturnCard.setPreferredSize(new java.awt.Dimension(150, 35));
         pnReturnFunctions.add(btnDetailReturnCard);
 
+        btnUpdateStatus.setText(bundle.getString("btnUpdateStatus")); // NOI18N
+        btnUpdateStatus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnUpdateStatus.setkAllowGradient(false);
+        btnUpdateStatus.setkBackGroundColor(new java.awt.Color(255, 102, 0));
+        btnUpdateStatus.setkHoverColor(new java.awt.Color(255, 153, 0));
+        btnUpdateStatus.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnUpdateStatus.setkShowFocusBorder(true);
+        btnUpdateStatus.setPreferredSize(new java.awt.Dimension(150, 35));
+        pnReturnFunctions.add(btnUpdateStatus);
+
+        pnSearch.setBackground(new java.awt.Color(255, 255, 255));
         pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
 
         txtSearch.setToolTipText("");
@@ -446,8 +584,6 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         btnReturnInformationLookup.setkEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnReturnInformationLookup.setkStartColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
 
         javax.swing.GroupLayout pnSearchLayout = new javax.swing.GroupLayout(pnSearch);
@@ -474,6 +610,8 @@ public class ReturnServiceForm extends javax.swing.JPanel {
 
         pnReturnMain.add(pnReturnFunctions);
 
+        jPanel1.setLayout(new java.awt.BorderLayout());
+
         ScrollPaneTable.setAutoscrolls(true);
         ScrollPaneTable.setMaximumSize(new java.awt.Dimension(32767, 1153));
 
@@ -487,12 +625,22 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             new String [] {
                 "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Lý Do", "Ngày Đổi/Trả", "Phân Loại", "Trạng Thái"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         ScrollPaneTable.setViewportView(tbReturn);
 
-        pnReturnMain.add(ScrollPaneTable);
+        jPanel1.add(ScrollPaneTable, java.awt.BorderLayout.CENTER);
 
-        add(pnReturnMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 1110, 530));
+        pnReturnMain.add(jPanel1);
+
+        add(pnReturnMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
@@ -524,10 +672,13 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         btnReturnProduct.addActionListener(this::btnReturnProductActionPerformed);
         btnDetailReturnCard.addActionListener(this::btnDetailReturnCardActionPerformed);
         btnRemoveReturn.addActionListener(evt -> deleteSelectedReturn());
+        // Thêm sự kiện cho nút cập nhật trạng thái
+        btnUpdateStatus.addActionListener(evt -> updateReturnStatus());
     }
 
     private void initComponentsCustom() {
         initComponents();
+                       
         addListeners();
     }
 
@@ -537,8 +688,8 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnRemoveReturn;
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private com.k33ptoo.components.KButton btnReturnProduct;
-    private javax.swing.JEditorPane jEditorPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private com.k33ptoo.components.KButton btnUpdateStatus;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel pnReturnFunctions;
     private javax.swing.JPanel pnReturnMain;
     private javax.swing.JPanel pnSearch;

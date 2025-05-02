@@ -40,8 +40,8 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         ScrollTable = new javax.swing.JScrollPane();
         TableWarranty = new javax.swing.JTable();
         btnPrintCard = new com.k33ptoo.components.KButton();
-        jPanel1 = new javax.swing.JPanel();
-        lb = new javax.swing.JLabel();
+        pnHeader = new javax.swing.JPanel();
+        lbTitile = new javax.swing.JLabel();
         pnDate = new javax.swing.JPanel();
         lbDate = new javax.swing.JLabel();
         Date = new javax.swing.JLabel();
@@ -56,6 +56,9 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         lbSDT = new javax.swing.JLabel();
         SDT = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
         kGradientPanel1.setkEndColor(new java.awt.Color(255, 255, 255));
         kGradientPanel1.setkFillBackground(false);
         kGradientPanel1.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -106,8 +109,6 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         btnPrintCard.setkEndColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnPrintCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnPrintCard.setkStartColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnPrintCardMouseClicked(evt);
@@ -115,13 +116,17 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         });
         kGradientPanel1.add(btnPrintCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 500, -1, -1));
 
-        lb.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        lb.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lb.setText(bundle.getString("lbWarrantyCard")); // NOI18N
-        lb.setToolTipText("");
-        jPanel1.add(lb);
+        pnHeader.setBackground(new java.awt.Color(255, 255, 255));
 
-        kGradientPanel1.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1050, -1));
+        lbTitile.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        lbTitile.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbTitile.setText(bundle.getString("lbWarrantyCard")); // NOI18N
+        lbTitile.setToolTipText("");
+        pnHeader.add(lbTitile);
+
+        kGradientPanel1.add(pnHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1050, -1));
+
+        pnDate.setBackground(new java.awt.Color(255, 255, 255));
 
         lbDate.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         lbDate.setText(bundle.getString("lbDateOfPurchase")); // NOI18N
@@ -149,6 +154,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
 
         kGradientPanel1.add(pnDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 200, -1));
 
+        pnSign.setBackground(new java.awt.Color(255, 255, 255));
         pnSign.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lbSign.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -159,6 +165,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
 
         kGradientPanel1.add(pnSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 310, 240));
 
+        pnInfo.setBackground(new java.awt.Color(255, 255, 255));
         pnInfo.setLayout(new java.awt.GridLayout(3, 2, 30, 10));
 
         lbName.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -166,6 +173,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         pnInfo.add(lbName);
 
         NameCustomer.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        NameCustomer.setForeground(new java.awt.Color(102, 100, 239));
         NameCustomer.setText("                                                                                                                             ");
         pnInfo.add(NameCustomer);
 
@@ -174,6 +182,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         pnInfo.add(lbWarrantyCode);
 
         warrantycode.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        warrantycode.setForeground(new java.awt.Color(102, 100, 239));
         warrantycode.setText("                                                                                                                             ");
         pnInfo.add(warrantycode);
 
@@ -182,6 +191,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         pnInfo.add(lbSDT);
 
         SDT.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        SDT.setForeground(new java.awt.Color(102, 100, 239));
         SDT.setText("                                                                                                                             ");
         pnInfo.add(SDT);
 
@@ -348,13 +358,21 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         javax.swing.JOptionPane.showMessageDialog(
             parentFrame, 
-            "Đang in thẻ bảo hành...",
+            "Chức năng đang được triển khai...",
             "Thông báo", 
             javax.swing.JOptionPane.INFORMATION_MESSAGE
         );
         
         // Here you would add actual printing functionality
     }
+
+    
+
+    public javax.swing.JTable getTableWarranty() {
+        return TableWarranty;
+    }
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Date;
@@ -363,15 +381,15 @@ public class WarrantyCardForm extends javax.swing.JPanel {
     private javax.swing.JScrollPane ScrollTable;
     private javax.swing.JTable TableWarranty;
     private com.k33ptoo.components.KButton btnPrintCard;
-    private javax.swing.JPanel jPanel1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
-    private javax.swing.JLabel lb;
     private javax.swing.JLabel lbDate;
     private javax.swing.JLabel lbName;
     private javax.swing.JLabel lbSDT;
     private javax.swing.JLabel lbSign;
+    private javax.swing.JLabel lbTitile;
     private javax.swing.JLabel lbWarrantyCode;
     private javax.swing.JPanel pnDate;
+    private javax.swing.JPanel pnHeader;
     private javax.swing.JPanel pnInfo;
     private javax.swing.JPanel pnSign;
     private javax.swing.JTextField txtSign;

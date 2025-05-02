@@ -387,58 +387,60 @@ public List<Product> findAll() {
     // Phương thức chuyển ResultSet thành đối tượng Product
     private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
         Product product = new Product();
-        product.setProductId(resultSet.getString("ProductID"));
-        product.setProductName(resultSet.getString("ProductName"));
-        product.setPrice(resultSet.getBigDecimal("Price"));
-        product.setStockQuantity(resultSet.getInt("StockQuantity"));
-        product.setSpecifications(resultSet.getString("Specifications"));
-        product.setDescription(resultSet.getString("Description"));
-        product.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
-        product.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
-        
-        // Đọc trường Manufacturer
-        product.setManufacturer(resultSet.getString("Manufacturer"));
-
-        String categoryId = resultSet.getString("CategoryID");
-        String supplierId = resultSet.getString("SupplierID");
-
-        if (!categoryId.isEmpty()) {
-
-            String sqlCategory = "SELECT * FROM Categories WHERE CategoryID = ?";
-            try (PreparedStatement statement = connection.prepareStatement(sqlCategory)) {
-                statement.setString(1, categoryId);
-                ResultSet rsCategory = statement.executeQuery();
-                if (rsCategory.next()) {
-                    product.setCategory(new Category(categoryId, rsCategory.getString("CategoryName"))); // Chỉ cần ID và tên
-                }
-            } catch (SQLException e) {
-                product.setSpecifications("");
-                System.err.println("Error reading Specifications: " + e.getMessage());
-            }
+        try{
+            product.setProductId(resultSet.getString("ProductID"));
+            product.setProductName(resultSet.getString("ProductName"));
+            product.setPrice(resultSet.getBigDecimal("Price"));
+            product.setStockQuantity(resultSet.getInt("StockQuantity"));
+            product.setSpecifications(resultSet.getString("Specifications"));
+            product.setDescription(resultSet.getString("Description"));
+            product.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
+            product.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
             
-            try {
-                String desc = resultSet.getString("Description");
-                product.setDescription(desc);
-            } catch (SQLException e) {
-                product.setDescription("");
-            }
-            
-            // Xử lý Category
+            // Đọc trường Manufacturer
+            product.setManufacturer(resultSet.getString("Manufacturer"));
+
             String categoryId = resultSet.getString("CategoryID");
-            if (categoryId != null) {
-                Category category = new Category();
-                category.setCategoryId(categoryId);
+            String supplierId = resultSet.getString("SupplierID");
+
+            if (!categoryId.isEmpty()) {
+
+                String sqlCategory = "SELECT * FROM Categories WHERE CategoryID = ?";
+                try (PreparedStatement statement = connection.prepareStatement(sqlCategory)) {
+                    statement.setString(1, categoryId);
+                    ResultSet rsCategory = statement.executeQuery();
+                    if (rsCategory.next()) {
+                        product.setCategory(new Category(categoryId, rsCategory.getString("CategoryName"))); // Chỉ cần ID và tên
+                    }
+                } catch (SQLException e) {
+                    product.setSpecifications("");
+                    System.err.println("Error reading Specifications: " + e.getMessage());
+                }
                 
                 try {
-                    category.setCategoryName(resultSet.getString("CategoryName"));
+                    String desc = resultSet.getString("Description");
+                    product.setDescription(desc);
                 } catch (SQLException e) {
-                    category.setCategoryName("Unknown");
+                    product.setDescription("");
                 }
                 
-                product.setCategory(category);
+                // Xử lý Category
+                categoryId = resultSet.getString("CategoryID");
+                if (categoryId != null) {
+                    Category category = new Category();
+                    category.setCategoryId(categoryId);
+                    
+                    try {
+                        category.setCategoryName(resultSet.getString("CategoryName"));
+                    } catch (SQLException e) {
+                        category.setCategoryName("Unknown");
+                    }
+                    
+                    product.setCategory(category);
+                }
+                
+                // QUAN TRỌNG: KHÔNG đọc Supplier
             }
-            
-            // QUAN TRỌNG: KHÔNG đọc Supplier
         } catch (SQLException e) {
             throw new SQLException("Error mapping product from ResultSet", e);
         }

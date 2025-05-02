@@ -201,3 +201,7 @@ WHERE ProductID = 'SP008';
 UPDATE Products
 SET Manufacturer = 'TP-Link'
 WHERE ProductID = 'SP009' OR ProductID = 'SP010';
+
+
+INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, point, CreatedAt) VALUES
+('KH16', N'Trần Văn Khách', '0812349678', 'khach1@gmail.com',	N'10 Võ Văn Tần, Quận 3, TP.HCM', 0, '2023-01-01')

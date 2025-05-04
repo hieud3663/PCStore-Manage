@@ -569,7 +569,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         pnReturnFunctions.add(btnUpdateStatus);
 
         pnSearch.setBackground(new java.awt.Color(255, 255, 255));
-        pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
+        pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("pnReturnSearch"))); // NOI18N
 
         txtSearch.setToolTipText("");
         txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
@@ -635,6 +635,15 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             }
         });
         ScrollPaneTable.setViewportView(tbReturn);
+        if (tbReturn.getColumnModel().getColumnCount() > 0) {
+            tbReturn.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtReturnProductID")); // NOI18N
+            tbReturn.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtReturnProductName")); // NOI18N
+            tbReturn.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtReturnQuantity")); // NOI18N
+            tbReturn.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtReturnReason")); // NOI18N
+            tbReturn.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtReturnDateReturn")); // NOI18N
+            tbReturn.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtReturnCategory")); // NOI18N
+            tbReturn.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtReturnStatus")); // NOI18N
+        }
 
         jPanel1.add(ScrollPaneTable, java.awt.BorderLayout.CENTER);
 

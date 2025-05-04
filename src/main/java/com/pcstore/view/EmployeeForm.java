@@ -492,7 +492,7 @@ public class EmployeeForm extends javax.swing.JPanel {
 
             },
             new String [] {
-                "STT", "Mã nhân viên", "Họ và tên", "Ngày sinh", "Giới tính", "Chức vụ", "SĐT", "Email"
+                "STT", "Mã nhân viên", "Họ và tên", "Ngày sinh", "Giới tính", "Chức vụ", "Số điện thoại", "Email"
             }
         ) {
             Class[] types = new Class [] {
@@ -515,6 +515,13 @@ public class EmployeeForm extends javax.swing.JPanel {
         if (tableListEmployee.getColumnModel().getColumnCount() > 0) {
             tableListEmployee.getColumnModel().getColumn(0).setPreferredWidth(50);
             tableListEmployee.getColumnModel().getColumn(0).setMaxWidth(50);
+            tableListEmployee.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtNo")); // NOI18N
+            tableListEmployee.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtEmployeeID")); // NOI18N
+            tableListEmployee.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtEmployeeName")); // NOI18N
+            tableListEmployee.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtEmployeeDob")); // NOI18N
+            tableListEmployee.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtEmployeeGender")); // NOI18N
+            tableListEmployee.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtEmployeePosition")); // NOI18N
+            tableListEmployee.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtPhonenumber")); // NOI18N
         }
 
         panelListEmployee.add(jScrollPaneListEmployee, java.awt.BorderLayout.CENTER);

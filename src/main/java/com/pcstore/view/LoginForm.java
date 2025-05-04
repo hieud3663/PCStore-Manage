@@ -106,16 +106,16 @@ public class LoginForm extends JFrame {
         PanelContentLogin.setOpaque(false);
         PanelContentLogin.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
 
-        title1.setFont(new Font("Segoe UI", 1, 23)); // NOI18N
-        title1.setForeground(new Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        title1.setText(bundle.getString("titleName")); // NOI18N
-        PanelContentLogin.add(title1);
-
         title2.setFont(new Font("Segoe UI", 1, 20)); // NOI18N
         title2.setForeground(new Color(255, 255, 255));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         title2.setText(bundle.getString("titleWelcome")); // NOI18N
         PanelContentLogin.add(title2);
+
+        title1.setFont(new Font("Segoe UI", 1, 23)); // NOI18N
+        title1.setForeground(new Color(255, 255, 255));
+        title1.setText(bundle.getString("titleName")); // NOI18N
+        PanelContentLogin.add(title1);
 
         lbPicture.setHorizontalAlignment(SwingConstants.CENTER);
         lbPicture.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grap.png"))); // NOI18N

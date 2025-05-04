@@ -7,12 +7,20 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JOptionPane;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-import org.apache.poi.ss.usermodel.Table;
+
 
 import com.pcstore.model.Employee;
 import com.pcstore.model.Product;
@@ -46,6 +54,8 @@ public class PurchaseOrderController {
     private PurchaseOrder currentPurchaseOrder;
     private Employee currentEmployee;
     
+    private TableRowSorter<TableModel> productTableSorter;
+    
     /**
      * Khởi tạo controller với form nhập hàng và kết nối được chia sẻ
      * @param purchaseOrderForm Form nhập hàng
@@ -70,8 +80,6 @@ public class PurchaseOrderController {
             
             // Tải dữ liệu ban đầu
             loadInitialData();
-
-            TableStyleUtil.applyDefaultStyle(purchaseOrderForm.getTableProducts());
             
             System.out.println("StockInController: Khởi tạo hoàn tất");
         } catch (Exception e) {
@@ -163,14 +171,41 @@ public class PurchaseOrderController {
      */
     private void registerEvents() {
         try {
-            // Đăng ký sự kiện search
-            purchaseOrderForm.getTextFieldSearch().addKeyListener(new java.awt.event.KeyAdapter() {
+            // Đăng ký sự kiện search (giữ nguyên)
+            purchaseOrderForm.getTextFieldSearch().getTxtSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
                 @Override
                 public void keyReleased(java.awt.event.KeyEvent evt) {
                     searchProducts();
                 }
             });
             
+            // Thêm sự kiện cho nút tìm kiếm (giữ nguyên)
+            purchaseOrderForm.getTextFieldSearch().getBtnSearch().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    searchProducts();
+                }
+            });
+            
+            // Đăng ký sự kiện phím F5 toàn cục để refresh form
+            KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+                @Override
+                public boolean dispatchKeyEvent(KeyEvent e) {
+                    // Chỉ xử lý khi form đang hiển thị
+                    if (!purchaseOrderForm.isVisible()) {
+                        return false;
+                    }
+                    
+                    // Kiểm tra phím F5 và chỉ xử lý khi phím được nhấn (KEY_PRESSED)
+                    if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_F5) {
+                        refreshForm();
+                        return true; // Đánh dấu sự kiện đã được xử lý
+                    }
+                    return false; // Cho phép các bộ xử lý khác xử lý sự kiện
+                }
+            });
+            
+            // Các sự kiện khác giữ nguyên
             // Đăng ký sự kiện cho nút Nhập hàng
             purchaseOrderForm.getBtnStockIn().addActionListener(e -> savePurchaseOrder());
             
@@ -202,6 +237,58 @@ public class PurchaseOrderController {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Refresh toàn bộ form khi nhấn F5
+     */
+    public void refreshForm() {
+        try {
+            System.out.println("Đang refresh form Purchase Order...");
+            
+            // 1. Làm mới danh sách sản phẩm
+            loadProducts();
+            
+            // 2. Làm mới danh sách nhà cung cấp
+            loadSuppliers();
+            
+            // 3. Xóa dữ liệu giỏ hàng hiện tại
+            selectedProducts.clear();
+            updateSelectedProductsTable();
+            
+            // 4. Cập nhật tổng tiền về 0
+            purchaseOrderForm.getTxtTotalPrice().setText("0");
+            
+            // 5. Khởi tạo lại phiếu nhập mới
+            try {
+                String newId = purchaseOrderRepository.generatePurchaseOrderId();
+                currentPurchaseOrder = new PurchaseOrder();
+                currentPurchaseOrder.setPurchaseOrderId(newId);
+                currentPurchaseOrder.setOrderDate(LocalDateTime.now());
+                currentPurchaseOrder.setStatus("Pending");
+                
+                // Hiển thị mã phiếu mới
+                purchaseOrderForm.getTextField2().setText(newId);
+            } catch (Exception e) {
+                System.err.println("Lỗi khi tạo phiếu nhập mới: " + e.getMessage());
+            }
+            
+            // 6. Cập nhật thông tin nhân viên (đề phòng thay đổi)
+            getCurrentEmployee();
+            
+            // 7. Hiển thị thông báo thành công (tùy chọn)
+            JOptionPane.showMessageDialog(purchaseOrderForm, 
+                    "Đã refresh form thành công",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            
+            System.out.println("Đã refresh form Purchase Order thành công");
+        } catch (Exception e) {
+            System.err.println("Lỗi khi refresh form: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(purchaseOrderForm, 
+                    "Lỗi khi refresh form: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     
     /**
      * Tải dữ liệu ban đầu
@@ -222,6 +309,49 @@ public class PurchaseOrderController {
             
             // Thiết lập thông tin nhân viên
             getCurrentEmployee();
+            
+            // Khởi tạo sorter cho bảng sản phẩm
+            productTableSorter = TableStyleUtil.applyDefaultStyle(purchaseOrderForm.getTableProducts());
+            
+            // Thiết lập các comparator cho các cột có kiểu dữ liệu đặc biệt
+            // So sánh theo giá (BigDecimal)
+            productTableSorter.setComparator(2, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    try {
+                        // Chuẩn hóa giá trị đơn giá từ chuỗi sang số
+                        String price1Str = o1.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim();
+                        String price2Str = o2.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim();
+                        
+                        // Thay thế dấu phẩy bằng dấu chấm để đảm bảo định dạng số hợp lệ
+                        price1Str = price1Str.replace(",", "");
+                        price2Str = price2Str.replace(",", "");
+                        
+                        // Chuyển đổi sang BigDecimal và so sánh
+                        BigDecimal price1 = new BigDecimal(price1Str);
+                        BigDecimal price2 = new BigDecimal(price2Str);
+                        return price1.compareTo(price2);
+                    } catch (Exception e) {
+                        System.err.println("Lỗi khi so sánh giá [" + o1 + "] và [" + o2 + "]: " + e.getMessage());
+                        // Trường hợp không thể chuyển đổi thành số, so sánh chuỗi
+                        return o1.toString().compareTo(o2.toString());
+                    }
+                }
+            });
+            
+            // So sánh theo số lượng (Integer)
+            productTableSorter.setComparator(3, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    try {
+                        int qty1 = Integer.parseInt(o1.toString());
+                        int qty2 = Integer.parseInt(o2.toString());
+                        return Integer.compare(qty1, qty2);
+                    } catch (Exception e) {
+                        return o1.toString().compareTo(o2.toString());
+                    }
+                }
+            });
             
             System.out.println("StockInController: Đã tải dữ liệu ban đầu thành công");
         } catch (Exception e) {
@@ -248,14 +378,14 @@ public class PurchaseOrderController {
             // Đảm bảo kết nối
             ensureConnection();
 
-            System.out.println("PurchaseOrderController: Đang tải sản phẩm...");
+            // System.out.println("PurchaseOrderController: Đang tải sản phẩm...");
             List<Product> products = productRepository.findAll();
 
             if (products == null || products.isEmpty()) {
-                System.out.println("PurchaseOrderController: Không có sản phẩm nào để hiển thị");
+                // System.out.println("PurchaseOrderController: Không có sản phẩm nào để hiển thị");
                 products = new ArrayList<>();
             } else {
-                System.out.println("PurchaseOrderController: Đã tìm thấy " + products.size() + " sản phẩm");
+                // System.out.println("PurchaseOrderController: Đã tìm thấy " + products.size() + " sản phẩm");
             }
 
             // Lấy model của bảng
@@ -278,6 +408,11 @@ public class PurchaseOrderController {
                     System.err.println("Lỗi khi thêm sản phẩm vào bảng: " + e.getMessage());
                     e.printStackTrace();
                 }
+            }
+
+            // Làm mới sorter nếu đã khởi tạo
+            if (productTableSorter != null) {
+                TableStyleUtil.refreshSorter(purchaseOrderForm.getTableProducts());
             }
 
             System.out.println("PurchaseOrderController: Đã cập nhật bảng sản phẩm thành công với " + products.size() + " sản phẩm");
@@ -440,13 +575,10 @@ public class PurchaseOrderController {
     }
     
     /**
-     * Tìm kiếm sản phẩm
+     * Tìm kiếm sản phẩm sử dụng TableStyleUtil
      */
     public void searchProducts() {
         try {
-            // Đảm bảo kết nối
-            ensureConnection();
-            
             // Kiểm tra null và lấy từ khóa tìm kiếm
             if (purchaseOrderForm.getTextFieldSearch() == null) return;
             
@@ -458,39 +590,16 @@ public class PurchaseOrderController {
                 return;
             }
             
-            System.out.println("PurchaseOrderController: Đang tìm kiếm sản phẩm với từ khóa: " + keyword);
-            
-            // Tìm kiếm sản phẩm theo từ khóa
-            List<Product> products;
-            if (keyword.isEmpty()) {
-                products = productRepository.findAll();
-            } else {
-                // Sử dụng phương thức tìm kiếm phù hợp với repository của bạn
-                products = productRepository.findByNameOrIdContaining(keyword); 
-                // Nếu không có phương thức này, thay bằng findByName() hoặc tương tự
+            // Lấy sorter từ bảng sản phẩm
+            TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) purchaseOrderForm.getTableProducts().getRowSorter();
+            if (sorter == null) {
+                sorter = TableStyleUtil.setupSorting(purchaseOrderForm.getTableProducts());
             }
             
-            // Lấy model của bảng
-            DefaultTableModel model = (DefaultTableModel) purchaseOrderForm.getTableProducts().getModel();
+            // Áp dụng filter trên các cột mã sản phẩm, tên sản phẩm và giá
+            TableStyleUtil.applyFilter(sorter, keyword, 0, 1, 2);
             
-            // Xóa dữ liệu cũ
-            model.setRowCount(0);
-            
-            // Thêm dữ liệu mới - ĐẢM BẢO CHỈ CÓ 4 CỘT để khớp với mô hình bảng
-            for (Product product : products) {
-                try {
-                    model.addRow(new Object[] {
-                        product.getProductId(),      // Mã máy
-                        product.getProductName(),    // Tên máy
-                        product.getPrice(),          // Đơn giá
-                        product.getStockQuantity()   // SL tồn kho
-                    });
-                } catch (Exception e) {
-                    System.err.println("Lỗi khi thêm sản phẩm vào kết quả tìm kiếm: " + e.getMessage());
-                }
-            }
-            
-            System.out.println("PurchaseOrderController: Tìm thấy " + products.size() + " sản phẩm");
+            System.out.println("PurchaseOrderController: Đã tìm kiếm sản phẩm với từ khóa: " + keyword);
         } catch (Exception e) {
             System.err.println("Lỗi khi tìm kiếm sản phẩm: " + e.getMessage());
             e.printStackTrace();
@@ -915,5 +1024,20 @@ public class PurchaseOrderController {
         if (employee != null) {
             purchaseOrderForm.getTextField4().setText(employee.getFullName());
         }
+    }
+    
+    /**
+     * Sắp xếp bảng sản phẩm theo cột và hướng chỉ định
+     * @param column Cột cần sắp xếp
+     * @param ascending True nếu sắp xếp tăng dần, False nếu giảm dần
+     */
+    public void sortProductsTable(int column, boolean ascending) {
+        if (productTableSorter == null) return;
+        
+        List<SortKey> sortKeys = new ArrayList<>();
+        SortOrder sortOrder = ascending ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+        sortKeys.add(new SortKey(column, sortOrder));
+        
+        productTableSorter.setSortKeys(sortKeys);
     }
 }

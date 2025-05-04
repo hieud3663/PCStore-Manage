@@ -129,8 +129,6 @@ public class WareHouseForm extends javax.swing.JPanel {
         panelTable.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(51, 29, 204))); // NOI18N
         panelTable.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setPreferredSize(null);
-
         WareHouseTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -162,7 +160,6 @@ public class WareHouseForm extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        WareHouseTable.setPreferredSize(null);
         WareHouseTable.setRowHeight(32);
         jScrollPane1.setViewportView(WareHouseTable);
         if (WareHouseTable.getColumnModel().getColumnCount() > 0) {

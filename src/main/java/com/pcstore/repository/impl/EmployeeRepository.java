@@ -1,24 +1,23 @@
 package com.pcstore.repository.impl;
 
 import com.pcstore.repository.Repository;
+import com.pcstore.utils.LocaleManager;
 import com.pcstore.model.Employee;
 import com.pcstore.model.enums.EmployeePositionEnum;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Scanner;
+import java.util.Properties;
 
 /**
  * Repository implementation cho Employee entity
  */
 public class EmployeeRepository implements Repository<Employee, String> {
     private Connection connection;
+
+    Properties prop = LocaleManager.getInstance().getProperties();
     
     public EmployeeRepository(Connection connection) {
         this.connection = connection;
@@ -35,8 +34,8 @@ public class EmployeeRepository implements Repository<Employee, String> {
     
     @Override
     public Employee add(Employee employee) {
-        String sql = "INSERT INTO Employees (EmployeeID, FullName, PhoneNumber, Email, Position) " +
-                     "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Employees (EmployeeID, FullName, PhoneNumber, Email, Position, Gender, DateOfBirth, Avatar) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, employee.getEmployeeId());
@@ -44,6 +43,15 @@ public class EmployeeRepository implements Repository<Employee, String> {
             statement.setString(3, employee.getPhoneNumber());
             statement.setString(4, employee.getEmail());
             statement.setString(5, employee.getPosition().getDisplayName());
+            statement.setString(6, employee.getGender());
+            statement.setString(7, employee.getAvatar());
+            
+            // Xử lý ngày sinh, chuyển LocalDate thành Date
+            if (employee.getDateOfBirth() != null) {
+                statement.setDate(8, employee.getDateOfBirth());
+            } else {
+                statement.setNull(8, Types.DATE);
+            }
             
             statement.executeUpdate();
             
@@ -53,28 +61,38 @@ public class EmployeeRepository implements Repository<Employee, String> {
             
             return employee;
         } catch (SQLException e) {
-            throw new RuntimeException("Error adding employee", e);
+            throw new RuntimeException("Error adding employee: " + e);
         }
     }
     
     @Override
     public Employee update(Employee employee) {
-        String sql = "UPDATE Employees SET FullName = ?, PhoneNumber = ?, Email = ?, Position = ? " +
-                     "WHERE EmployeeID = ?";
+        String sql = "UPDATE Employees SET FullName = ?, PhoneNumber = ?, Email = ?, Position = ?, " +
+                     "Gender = ?, DateOfBirth = ?, Avatar = ?, UpdatedAt = ? WHERE EmployeeID = ?";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, employee.getFullName());
             statement.setString(2, employee.getPhoneNumber());
             statement.setString(3, employee.getEmail());
             statement.setString(4, employee.getPosition().getDisplayName());
-            statement.setString(5, employee.getEmployeeId());
+            statement.setString(5, employee.getGender());
+            
+            // Xử lý ngày sinh
+            if (employee.getDateOfBirth() != null) {
+                statement.setDate(6, employee.getDateOfBirth());
+            } else {
+                statement.setNull(6, Types.DATE);
+            }
+            statement.setString(7, employee.getAvatar());
+            statement.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
+            statement.setString(9, employee.getEmployeeId());
             
             statement.executeUpdate();
             
             employee.setUpdatedAt(LocalDateTime.now());
             return employee;
         } catch (SQLException e) {
-            throw new RuntimeException("Error updating employee", e);
+            throw new RuntimeException("Error updating employee: " + e);
         }
     }
     
@@ -87,7 +105,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             int rowsAffected = statement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException("Error deleting employee", e);
+            throw new RuntimeException("Error deleting employeed: "+ e);
         }
     }
     
@@ -104,7 +122,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding employee by ID", e);
+            throw new RuntimeException("Error finding employee by IDd: "+ e);
         }
     }
     
@@ -121,7 +139,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return employees;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding all employees", e);
+            throw new RuntimeException("Error finding all employeesd: "+ e);
         }
     }
     
@@ -138,7 +156,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return false;
         } catch (SQLException e) {
-            throw new RuntimeException("Error checking if employee exists", e);
+            throw new RuntimeException("Error checking if employee existsd: "+ e);
         }
     }
     
@@ -156,7 +174,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return employees;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding employees by position", e);
+            throw new RuntimeException("Error finding employees by positiond: "+ e);
         }
     }
     
@@ -173,7 +191,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding employee by email", e);
+            throw new RuntimeException("Error finding employee by emaild: "+ e);
         }
     }
     
@@ -190,7 +208,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return Optional.empty();
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding employee by phone number", e);
+            throw new RuntimeException("Error finding employee by phone numberd: "+ e);
         }
     }
     
@@ -207,9 +225,10 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             
             // Tạo ID mới dạng NV01, NV02, ...
-            return String.format("NV%02d", maxId + 1);
+            int newId = maxId + 1;
+            return "NV" + String.format("%02d", newId);
         } catch (SQLException e) {
-            throw new RuntimeException("Error generating employee ID", e);
+            throw new RuntimeException("Error generating employee IDd: "+ e);
         }
     }
 
@@ -232,7 +251,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return employees;
         } catch (SQLException e) {
-            throw new RuntimeException("Error finding employees by position", e);
+            throw new RuntimeException("Error finding employees by positiond: "+ e);
         }
     }
 
@@ -257,7 +276,7 @@ public class EmployeeRepository implements Repository<Employee, String> {
             }
             return employees;
         } catch (SQLException e) {
-            throw new RuntimeException("Error searching employees", e);
+            throw new RuntimeException("Error searching employeesd: "+ e);
         }
     }
     
@@ -269,7 +288,28 @@ public class EmployeeRepository implements Repository<Employee, String> {
         employee.setPhoneNumber(resultSet.getString("PhoneNumber"));
         employee.setEmail(resultSet.getString("Email"));
 
-       
+        String gender = resultSet.getString("Gender");
+
+        employee.setGender(gender);
+        
+        // Đọc ngày sinh từ ResultSet
+        Date birthDate = resultSet.getDate("DateOfBirth");
+        if (birthDate != null) {
+            employee.setDateOfBirth(birthDate);
+        }
+        
+        employee.setAvatar(resultSet.getString("Avatar"));
+
+        Timestamp createdTimestamp = resultSet.getTimestamp("CreatedAt");
+        if (createdTimestamp != null) {
+            employee.setCreatedAt(createdTimestamp.toLocalDateTime());
+        }
+        
+        Timestamp updatedTimestamp = resultSet.getTimestamp("UpdatedAt");
+        if (updatedTimestamp != null) {
+            employee.setUpdatedAt(updatedTimestamp.toLocalDateTime());
+        }
+        
         // Chuyển đổi string position thành enum
         String positionStr = resultSet.getString("Position");
         for (EmployeePositionEnum position : EmployeePositionEnum.values()) {
@@ -278,8 +318,6 @@ public class EmployeeRepository implements Repository<Employee, String> {
                 break;
             }
         }
-        
-        // Các thuộc tính quan hệ sẽ được load khi cần thông qua các Repository tương ứng
         
         return employee;
     }

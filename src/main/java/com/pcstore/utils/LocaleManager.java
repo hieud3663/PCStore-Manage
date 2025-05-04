@@ -2,9 +2,10 @@ package com.pcstore.utils;
 
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 import java.util.Properties;
-
+import java.util.ResourceBundle;
 /**
  * Lớp quản lý thiết lập Locale toàn cục trong ứng dụng
  */
@@ -73,6 +74,21 @@ public class LocaleManager {
             e.printStackTrace();
         }
         return properties;
+    }
+
+    //Trả về resource bundle tương ứng với ngôn ngữ hiện tại
+    public ResourceBundle getResourceBundle() {
+        ResourceBundle resourceBundle = null;
+        try {
+            if (currentLocale.getLanguage().equals("vi")) {
+                resourceBundle = ResourceBundle.getBundle(fileNameVI);
+            } else {
+                resourceBundle = ResourceBundle.getBundle(fileNameEN);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resourceBundle;
     }
     
 
@@ -163,6 +179,11 @@ public class LocaleManager {
     }
 
     public DateTimeFormatter getDateFormatter() {
-        return DateTimeFormatter.ofPattern("dd/MM/yyyy", currentLocale);
+        // Creates a formatter that first tries dd/MM/yyyy, then dd-MM-yyyy
+        return new DateTimeFormatterBuilder()
+            .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            .toFormatter(currentLocale);
     }
+
+
 }

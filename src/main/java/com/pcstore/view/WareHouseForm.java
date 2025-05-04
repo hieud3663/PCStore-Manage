@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
@@ -19,17 +20,25 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import com.pcstore.controller.WareHouseController;
+import com.pcstore.utils.DatabaseConnection;
+
 /**
  *
  * @author nloc2
  */
 public class WareHouseForm extends javax.swing.JPanel {
 
+    private WareHouseController controller;
+
     /**
      * Creates new form PurchaseOder
      */
     public WareHouseForm() {
         initComponents();
+        
+        // Khởi tạo controller
+        controller = new WareHouseController(this);
     }
 
     /**
@@ -41,105 +50,38 @@ public class WareHouseForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
         kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
-        kGradientPanel4 = new com.k33ptoo.components.KGradientPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        panelAction = new javax.swing.JPanel();
         btnCreatePurchaseOrder = new com.k33ptoo.components.KButton();
         btnHistoryStockIn = new com.k33ptoo.components.KButton();
+        kGradientPanel4 = new com.k33ptoo.components.KGradientPanel();
+        panelTable = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        WareHouseTable = new javax.swing.JTable();
 
-        javax.swing.GroupLayout kGradientPanel3Layout = new javax.swing.GroupLayout(kGradientPanel3);
-        kGradientPanel3.setLayout(kGradientPanel3Layout);
-        kGradientPanel3Layout.setHorizontalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        kGradientPanel3Layout.setVerticalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        kGradientPanel2.setLayout(new java.awt.GridLayout(1, 0));
+        kGradientPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        kGradientPanel2.setkFillBackground(false);
+        kGradientPanel2.setOpaque(false);
+        kGradientPanel2.setPreferredSize(new java.awt.Dimension(167, 35));
+        kGradientPanel2.setLayout(new java.awt.BorderLayout());
 
-        kGradientPanel4.setkFillBackground(false);
-
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 29, 204));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        jLabel1.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
+        kGradientPanel2.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "Chức Năng ", "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
-            };
+        add(kGradientPanel2);
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jTable1.setRowHeight(32);
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clButton")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clSupplier")); // NOI18N
-            jTable1.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
-        }
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1178, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 538, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 14, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout kGradientPanel4Layout = new javax.swing.GroupLayout(kGradientPanel4);
-        kGradientPanel4.setLayout(kGradientPanel4Layout);
-        kGradientPanel4Layout.setHorizontalGroup(
-            kGradientPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        kGradientPanel4Layout.setVerticalGroup(
-            kGradientPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jPanel2.setMinimumSize(new java.awt.Dimension(459, 77));
-        jPanel2.setOpaque(false);
-        jPanel2.setPreferredSize(new java.awt.Dimension(459, 77));
+        panelAction.setMinimumSize(new java.awt.Dimension(459, 77));
+        panelAction.setOpaque(false);
+        panelAction.setPreferredSize(new java.awt.Dimension(459, 77));
+        panelAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         btnCreatePurchaseOrder.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2));
         btnCreatePurchaseOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/plus.png"))); // NOI18N
@@ -151,7 +93,6 @@ public class WareHouseForm extends javax.swing.JPanel {
         btnCreatePurchaseOrder.setkEndColor(new java.awt.Color(0, 204, 51));
         btnCreatePurchaseOrder.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnCreatePurchaseOrder.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnCreatePurchaseOrder.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnCreatePurchaseOrder.setkStartColor(new java.awt.Color(0, 204, 51));
         btnCreatePurchaseOrder.setOpaque(true);
         btnCreatePurchaseOrder.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -159,7 +100,7 @@ public class WareHouseForm extends javax.swing.JPanel {
                 btnCreatePurchaseOrderMouseClicked(evt);
             }
         });
-        jPanel2.add(btnCreatePurchaseOrder);
+        panelAction.add(btnCreatePurchaseOrder);
 
         btnHistoryStockIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/history.png"))); // NOI18N
         btnHistoryStockIn.setText(bundle.getString("btnHistoryofStockIn")); // NOI18N
@@ -170,46 +111,99 @@ public class WareHouseForm extends javax.swing.JPanel {
         btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(255, 102, 102));
         btnHistoryStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(255, 102, 102));
-        btnHistoryStockIn.setkStartColor(new java.awt.Color(102, 153, 255));
         btnHistoryStockIn.setOpaque(true);
         btnHistoryStockIn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnHistoryStockInMouseClicked(evt);
             }
         });
-        jPanel2.add(btnHistoryStockIn);
+        panelAction.add(btnHistoryStockIn);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(kGradientPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(kGradientPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(kGradientPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        add(panelAction);
+
+        kGradientPanel4.setkFillBackground(false);
+        kGradientPanel4.setPreferredSize(new java.awt.Dimension(1188, 592));
+        kGradientPanel4.setLayout(new java.awt.BorderLayout());
+
+        panelTable.setBackground(new java.awt.Color(255, 255, 255));
+        panelTable.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(51, 29, 204))); // NOI18N
+        panelTable.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setPreferredSize(null);
+
+        WareHouseTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "STT", "Mã Máy", "Tên Máy", "Số Lượng"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        WareHouseTable.setPreferredSize(null);
+        WareHouseTable.setRowHeight(32);
+        jScrollPane1.setViewportView(WareHouseTable);
+        if (WareHouseTable.getColumnModel().getColumnCount() > 0) {
+            WareHouseTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            WareHouseTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            WareHouseTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+        }
+
+        panelTable.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        kGradientPanel4.add(panelTable, java.awt.BorderLayout.CENTER);
+
+        add(kGradientPanel4);
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private void btnCreatePurchaseOrderMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCreatePurchaseOrderMouseClicked
+    private void btnCreatePurchaseOrderMouseClicked(java.awt.event.MouseEvent evt) {
+    try {
+        // Lấy instance của DashboardForm
         DashboardForm dashboardForm = DashboardForm.getInstance();
-        PurchaseOrderForm purchaseOrderForm = new PurchaseOrderForm(dashboardForm, true);
-        purchaseOrderForm.setLocationRelativeTo(purchaseOrderForm);
-        purchaseOrderForm.setVisible(true);
+        if (dashboardForm == null) {
+            JOptionPane.showMessageDialog(this, "DashboardForm chưa được khởi tạo!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-    }//GEN-LAST:event_btnCreatePurchaseOrderMouseClicked
+        // Lấy kết nối cơ sở dữ liệu
+        Connection connection = DatabaseConnection.getInstance().getConnection();
+        if (connection == null || connection.isClosed()) {
+            JOptionPane.showMessageDialog(this, "Không thể kết nối cơ sở dữ liệu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Khởi tạo PurchaseOrderForm
+        PurchaseOrderForm purchaseOrderForm = new PurchaseOrderForm(dashboardForm, true, connection);
+        purchaseOrderForm.setLocationRelativeTo(this);
+        purchaseOrderForm.setVisible(true);
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi mở form: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+    }                                                   
 
     private void btnHistoryStockInMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHistoryStockInMouseClicked
         DashboardForm dashboardForm = DashboardForm.getInstance();
@@ -217,23 +211,26 @@ public class WareHouseForm extends javax.swing.JPanel {
         historyStockInForm.setLocationRelativeTo(historyStockInForm);
         historyStockInForm.setVisible(true);
     }//GEN-LAST:event_btnHistoryStockInMouseClicked
-   
+
     
     public class ButtonRenderer extends JPanel implements TableCellRenderer {
-
         private final JButton btnEdit = new JButton();
         private final JButton btnDelete = new JButton();
+        
+        // Icon cho các trạng thái của nút sửa
+        private final ImageIcon editIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"));
+        private final ImageIcon confirmIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/check.png"));
     
         public ButtonRenderer() {
             setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
     
-            // Thêm icon cho nút "Sửa"
-            btnEdit.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"))); // Đường dẫn đến icon "Sửa"
-            btnEdit.setToolTipText("Sửa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Sửa"
+            btnEdit.setIcon(editIcon);
+            btnEdit.setToolTipText("Sửa");
     
-            // Thêm icon cho nút "Xóa"
-            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png"))); // Đường dẫn đến icon "Xóa"
-            btnDelete.setToolTipText("Xóa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Xóa"
+            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png")));
+            btnDelete.setToolTipText("Xóa");
     
             add(btnEdit);
             add(btnDelete);
@@ -241,51 +238,121 @@ public class WareHouseForm extends javax.swing.JPanel {
     
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            // Kiểm tra xem hàng này có đang được chỉnh sửa không
+            boolean isEditing = false;
+            if (table.getModel() instanceof EditableTableModel) {
+                isEditing = ((EditableTableModel) table.getModel()).isRowEditable(row);
+            }
+            
+            // Thay đổi icon của nút sửa tùy thuộc vào trạng thái
+            btnEdit.setIcon(isEditing ? confirmIcon : editIcon);
+            btnEdit.setToolTipText(isEditing ? "Hoàn tất" : "Sửa");
+            
             return this;
+        }
+    }
+    public class EditableTableModel extends DefaultTableModel {
+        private int editableRow = -1; // -1 nghĩa là không có hàng nào được mở khóa để sửa
+        
+        public EditableTableModel(Object[][] data, Object[] columnNames) {
+            super(data, columnNames);
+        }
+        
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            // Cột 0 (chứa các nút) luôn có thể chỉnh sửa để các nút hoạt động
+            if (column == 0) return true;
+            
+            // Các cột khác chỉ có thể chỉnh sửa nếu hàng đó được mở khóa
+            return row == editableRow;
+        }
+        
+        /**
+         * Đặt hàng có thể chỉnh sửa
+         * @param row Chỉ số hàng, hoặc -1 để khóa tất cả
+         */
+        public void setEditableRow(int row) {
+            int oldEditableRow = editableRow;
+            editableRow = row;
+            
+            // Thông báo về sự thay đổi cho các cột bị ảnh hưởng
+            if (oldEditableRow != -1) {
+                fireTableRowsUpdated(oldEditableRow, oldEditableRow);
+            }
+            if (editableRow != -1) {
+                fireTableRowsUpdated(editableRow, editableRow);
+            }
+        }
+        
+        /**
+         * Kiểm tra xem hàng có được mở khóa để sửa hay không
+         */
+        public boolean isRowEditable(int row) {
+            return row == editableRow;
+        }
+        
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            if (columnIndex == 1 || columnIndex == 5) {
+                return Integer.class;
+            }
+            return String.class;
         }
     }
 
     // Lớp ButtonEditor để xử lý sự kiện khi bấm các nút
     // Lớp ButtonEditor để xử lý sự kiện khi bấm các nút
     public class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
-
         private final JPanel panel = new JPanel();
         private final JButton btnEdit = new JButton();
         private final JButton btnDelete = new JButton();
-        private final JTable table; // Tham chiếu đến bảng để thao tác
+        private final JTable table;
+        
+        // Icon cho các trạng thái của nút sửa
+        private final ImageIcon editIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"));
+        private final ImageIcon confirmIcon = new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/check.png"));
     
         public ButtonEditor(JTable table) {
-            this.table = table; // Lưu tham chiếu đến bảng
+            this.table = table;
             panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
     
-            // Thêm icon cho nút "Sửa"
-            btnEdit.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/edit.png"))); // Đường dẫn đến icon "Sửa"
-            btnEdit.setToolTipText("Sửa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Sửa"
+            btnEdit.setIcon(editIcon);
+            btnEdit.setToolTipText("Sửa");
     
-            // Thêm icon cho nút "Xóa"
-            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png"))); // Đường dẫn đến icon "Xóa"
-            btnDelete.setToolTipText("Xóa"); // Thêm gợi ý khi di chuột
+            // Thiết lập nút "Xóa"
+            btnDelete.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/delete.png")));
+            btnDelete.setToolTipText("Xóa");
     
-            // Thêm các nút vào panel
             panel.add(btnEdit);
             panel.add(btnDelete);
     
-            // Xử lý sự kiện cho nút "Sửa"
+            // Xử lý sự kiện cho nút "Sửa/Hoàn tất"
             btnEdit.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
-                        // Hiển thị form EditQuantityForm
-                        javax.swing.JFrame frame = new javax.swing.JFrame("Edit Quantity");
-                        frame.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-                        frame.setContentPane(new EditQuantityForm());
-                        frame.pack();
-                        frame.setLocationRelativeTo(null);
-                        frame.setVisible(true);
-                    } else {
-                        JOptionPane.showMessageDialog(table, "Không có dòng nào được chọn để sửa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        // Lấy model tùy chỉnh
+                        EditableTableModel model = (EditableTableModel) table.getModel();
+                        
+                        // Kiểm tra trạng thái hiện tại của hàng
+                        boolean isCurrentlyEditing = model.isRowEditable(selectedRow);
+                        
+                        if (isCurrentlyEditing) {
+                            // Đang chỉnh sửa -> hoàn tất và lưu thay đổi
+                            saveChanges(selectedRow);
+                            model.setEditableRow(-1); // Khóa tất cả các hàng
+                        } else {
+                            // Chưa chỉnh sửa -> chuyển sang chế độ chỉnh sửa
+                            model.setEditableRow(selectedRow);
+                        }
+                        
+                        // Cập nhật giao diện
+                        table.repaint();
                     }
+                    // Báo cho AbstractCellEditor biết rằng chỉnh sửa đã kết thúc
+                    stopCellEditing();
                 }
             });
     
@@ -295,18 +362,84 @@ public class WareHouseForm extends javax.swing.JPanel {
                 public void actionPerformed(ActionEvent e) {
                     int selectedRow = table.getSelectedRow();
                     if (selectedRow != -1) {
-                        // Xóa dòng được chọn
-                        ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
-                        JOptionPane.showMessageDialog(table, "Đã xóa sản phẩm tại dòng: " + selectedRow);
-                    } else {
-                        JOptionPane.showMessageDialog(table, "Không có dòng nào được chọn để xóa!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        // Xác nhận trước khi xóa
+                        int confirm = JOptionPane.showConfirmDialog(table,
+                                "Bạn có chắc chắn muốn xóa sản phẩm này?",
+                                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                        
+                        if (confirm == JOptionPane.YES_OPTION) {
+                            // Lấy id sản phẩm để xóa
+                            String productId = table.getValueAt(selectedRow, 2).toString();
+                            
+                            // Xử lý xóa sản phẩm thông qua controller
+                            try {
+                                // Gọi phương thức xóa từ controller (thêm vào WareHouseController)
+                                WareHouseController controller = (WareHouseController) table.getClientProperty("controller");
+                                if (controller != null) {
+                                    controller.deleteProduct(productId);
+                                }
+                            } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(table, 
+                                    "Lỗi khi xóa sản phẩm: " + ex.getMessage(),
+                                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
+                    stopCellEditing();
                 }
             });
         }
     
+        /**
+         * Lưu các thay đổi từ dòng đang chỉnh sửa
+         */
+        private void saveChanges(int row) {
+            try {
+                // Lấy thông tin sản phẩm từ bảng
+                String productId = table.getValueAt(row, 2).toString();
+                String productName = table.getValueAt(row, 3).toString();
+                String supplier = table.getValueAt(row, 4).toString();
+                int quantity = (int) table.getValueAt(row, 5);
+                
+                // Kiểm tra dữ liệu đầu vào
+                if (productName.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(table, "Tên sản phẩm không được để trống!", 
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                if (quantity < 0) {
+                    JOptionPane.showMessageDialog(table, "Số lượng không được âm!", 
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                // Gọi phương thức cập nhật từ controller (thêm vào WareHouseController)
+                WareHouseController controller = (WareHouseController) table.getClientProperty("controller");
+                if (controller != null) {
+                    controller.updateProductQuantity(productId, quantity);
+                    JOptionPane.showMessageDialog(table, "Đã cập nhật thông tin sản phẩm thành công!", 
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(table, "Lỗi khi cập nhật sản phẩm: " + e.getMessage(), 
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+    
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            // Kiểm tra xem hàng này có đang được chỉnh sửa không
+            boolean isEditing = false;
+            if (table.getModel() instanceof EditableTableModel) {
+                isEditing = ((EditableTableModel) table.getModel()).isRowEditable(row);
+            }
+            
+            // Thay đổi icon của nút sửa tùy thuộc vào trạng thái
+            btnEdit.setIcon(isEditing ? confirmIcon : editIcon);
+            btnEdit.setToolTipText(isEditing ? "Hoàn tất" : "Sửa");
+            
             return panel;
         }
     
@@ -315,16 +448,46 @@ public class WareHouseForm extends javax.swing.JPanel {
             return null;
         }
     }
+
+    /**
+     * Getter cho bảng sản phẩm
+     */
+    public JTable getTable() {
+        return WareHouseTable;
+    }
+
+    /**
+     * Getter cho nút tạo đơn đặt hàng
+     */
+    public JButton getBtnCreatePurchaseOrder() {
+        return btnCreatePurchaseOrder;
+    }
+
+    /**
+     * Getter cho nút xem lịch sử nhập kho
+     */
+    public JButton getBtnHistoryStockIn() {
+        return btnHistoryStockIn;
+    }
+
+    /**
+     * Getter cho ô tìm kiếm (cần thêm ô tìm kiếm vào form)
+     */
+    public javax.swing.JTextField getTextFieldSearch() {
+        // Nếu chưa có ô tìm kiếm, hãy thêm vào form và thay đổi tên phù hợp
+        return null; // Tạm thời trả về null
+    }
+   
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable WareHouseTable;
     public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
     public com.k33ptoo.components.KButton btnHistoryStockIn;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private com.k33ptoo.components.KGradientPanel kGradientPanel2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
     private com.k33ptoo.components.KGradientPanel kGradientPanel4;
+    private javax.swing.JPanel panelAction;
+    private javax.swing.JPanel panelTable;
     // End of variables declaration//GEN-END:variables
 }

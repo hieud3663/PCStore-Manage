@@ -98,12 +98,10 @@ public class User extends BaseTimeEntity {
     }
 
 
-    // Phương thức kiểm tra tài khoản có thể đăng nhập không
     public boolean canLogin() {
         return isActive;
     }
 
-    // Phương thức cập nhật thời gian đăng nhập cuối
     public void updateLastLogin() {
         this.lastLogin = LocalDateTime.now();
         this.setUpdatedAt(this.lastLogin);

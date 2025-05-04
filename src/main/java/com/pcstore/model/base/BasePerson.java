@@ -1,5 +1,8 @@
 package com.pcstore.model.base;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.regex.Pattern;
 
 import com.pcstore.utils.ErrorMessage;
@@ -12,6 +15,8 @@ public abstract class BasePerson extends BaseTimeEntity {
     protected String phoneNumber;
     protected String email;
     protected String address;
+    protected String gender; // Male hoặc Female
+    protected Date dateOfBirth; // Ngày sinh
 
     public String getFullName() {
         return fullName;
@@ -62,6 +67,8 @@ public abstract class BasePerson extends BaseTimeEntity {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    
     
    public boolean isValidEmail(String email) {
         if (email == null || email.trim().isEmpty()) {
@@ -79,6 +86,29 @@ public abstract class BasePerson extends BaseTimeEntity {
         String phoneRegex = "^\\d{10,11}$";
         Pattern pattern = Pattern.compile(phoneRegex);
         return pattern.matcher(phoneNumber).matches();
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        if (dateOfBirth != null) {
+            LocalDate today = LocalDate.now();
+            LocalDate birthDate = dateOfBirth.toLocalDate();
+            if (Period.between(birthDate, today).getYears() < 18) {
+                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_18));
+            }
+        }
+        this.dateOfBirth = dateOfBirth;
     }
     
     // Method kiểm tra tính hợp lệ của số điện thoại

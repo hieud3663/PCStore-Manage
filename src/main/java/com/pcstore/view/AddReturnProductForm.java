@@ -6,6 +6,7 @@ import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.TableStyleUtil;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -32,9 +33,11 @@ public class AddReturnProductForm extends javax.swing.JPanel {
      */
     public AddReturnProductForm() {
         initComponents();
-        setupTable();
         initControllers();
-        addListeners(); // Thêm dòng này để đảm bảo listeners được đăng ký
+        addListeners(); 
+        setupTable();
+        TableStyleUtil.applyDefaultStyle(table);
+        loadAllInvoices();
     }
 
     /**
@@ -43,6 +46,12 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     public AddReturnProductForm(ReturnServiceForm parent) {
         this();
         this.parentForm = parent;
+        initComponents();
+        initControllers();
+        addListeners(); 
+        setupTable();
+        TableStyleUtil.applyDefaultStyle(table);
+        loadAllInvoices();
     }
 
     private void initControllers() {
@@ -70,7 +79,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     
     private void setupTable() {
         // Thiết lập mô hình bảng
-        invoiceTableModel = (DefaultTableModel) jTable2.getModel();
+        invoiceTableModel = (DefaultTableModel) table.getModel();
         invoiceTableModel.setRowCount(0);
         
         // Thiết lập các tiêu đề cột
@@ -82,22 +91,23 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         invoiceTableModel.setColumnIdentifiers(columnNames);
         
         // Ẩn cột ID chi tiết
-        jTable2.getColumnModel().getColumn(0).setMinWidth(0);
-        jTable2.getColumnModel().getColumn(0).setMaxWidth(0);
-        jTable2.getColumnModel().getColumn(0).setWidth(0);
+        table.getColumnModel().getColumn(0).setMinWidth(0);
+        table.getColumnModel().getColumn(0).setMaxWidth(0);
+        table.getColumnModel().getColumn(0).setWidth(0);
         
         // Thêm sắp xếp và tìm kiếm
-        jTable2.setAutoCreateRowSorter(true);
+        table.setAutoCreateRowSorter(true);
         
         // Thiết lập độ rộng các cột
-        jTable2.getColumnModel().getColumn(1).setPreferredWidth(80); // Mã SP
-        jTable2.getColumnModel().getColumn(2).setPreferredWidth(200); // Tên SP
-        jTable2.getColumnModel().getColumn(3).setPreferredWidth(100); // Đơn giá
-        jTable2.getColumnModel().getColumn(4).setPreferredWidth(80); // SL còn lại
-        jTable2.getColumnModel().getColumn(5).setPreferredWidth(150); // Ngày mua
-        jTable2.getColumnModel().getColumn(6).setPreferredWidth(150); // Tên KH
-        jTable2.getColumnModel().getColumn(7).setPreferredWidth(100); // SĐT
-        jTable2.getColumnModel().getColumn(8).setPreferredWidth(100); // Trạng thái
+        table.getColumnModel().getColumn(1).setPreferredWidth(80); // Mã SP
+        table.getColumnModel().getColumn(2).setPreferredWidth(200); // Tên SP
+        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Đơn giá
+        table.getColumnModel().getColumn(4).setPreferredWidth(80); // SL còn lại
+        table.getColumnModel().getColumn(5).setPreferredWidth(150); // Ngày mua
+        table.getColumnModel().getColumn(6).setPreferredWidth(150); // Tên KH
+        table.getColumnModel().getColumn(7).setPreferredWidth(100); // SĐT
+        table.getColumnModel().getColumn(8).setPreferredWidth(100); // Trạng thái
+        
     }
 
     /**
@@ -115,14 +125,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             // Tìm hóa đơn theo SĐT khách hàng
             List<Invoice> invoices = invoiceController.getInvoicesByCustomerPhone(phoneNumber);
             
-            if (invoices.isEmpty()) {
-                JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy hóa đơn nào cho khách hàng với số điện thoại: " + phoneNumber, 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                // Không xóa dữ liệu trong bảng
-                return;
-            }
-            
+                      
             // Hiển thị thông tin các sản phẩm trong hóa đơn
             displayInvoiceDetails(invoices);
             
@@ -266,14 +269,14 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             System.out.println("Bắt đầu tạo đơn đổi trả...");
             
             // Lấy dòng được chọn
-            int selectedRow = jTable2.getSelectedRow();
+            int selectedRow = table.getSelectedRow();
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để trả hàng", "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             
             // Chuyển từ dòng hiển thị sang dòng thực trong model (quan trọng khi có sắp xếp)
-            selectedRow = jTable2.convertRowIndexToModel(selectedRow);
+            selectedRow = table.convertRowIndexToModel(selectedRow);
             
             // Lấy thông tin từ dòng được chọn
             int invoiceDetailId = Integer.parseInt(invoiceTableModel.getValueAt(selectedRow, 0).toString());
@@ -360,6 +363,12 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             System.out.println("Nút đổi trả được nhấn");
             createReturn();
         });
+
+        txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                searchByPhoneNumber();
+            }
+        });
         
         // Đảm bảo nút trả hàng hoạt động
         btnWarranty.setEnabled(true);
@@ -376,13 +385,14 @@ public class AddReturnProductForm extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
         pnSearch = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
         pnMain = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        table = new javax.swing.JTable();
+        panelFooter = new javax.swing.JPanel();
         btnWarranty = new com.k33ptoo.components.KButton();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -398,102 +408,94 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(jTable1);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        kGradientPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("ReTurnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
-        kGradientPanel3.setkFillBackground(false);
-        kGradientPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setLayout(new java.awt.BorderLayout());
 
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        panelMain.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("ReTurnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        panelMain.setkFillBackground(false);
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
+
+        pnSearch.setBackground(new java.awt.Color(255, 255, 255));
         pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm SĐT Khách Hàng\n"));
-        pnSearch.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtSearch.setToolTipText("");
         txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
+        txtSearch.setPreferredSize(new java.awt.Dimension(300, 30));
         txtSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtSearchActionPerformed(evt);
             }
         });
-        pnSearch.add(txtSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 19, 292, 32));
+        pnSearch.add(txtSearch);
 
         btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
+        btnReturnInformationLookup.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 255, 255));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
         btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 153, 153));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
-        pnSearch.add(btnReturnInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 20, 108, 32));
+        btnReturnInformationLookup.setPreferredSize(new java.awt.Dimension(140, 35));
+        pnSearch.add(btnReturnInformationLookup);
 
-        kGradientPanel3.add(pnSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 41, 440, 60));
+        panelMain.add(pnSearch);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        pnMain.setBackground(new java.awt.Color(255, 255, 255));
+        pnMain.setLayout(new java.awt.BorderLayout());
+
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Hãng Sản Xuất", "Ngày Mua", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái"
+                "Mã hóa đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn giá", "SL còn lại", "Ngày Mua", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái"
             }
-        ));
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("cl1ProductCode")); // NOI18N
-            jTable2.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
-            jTable2.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clManufacturer")); // NOI18N
-            jTable2.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
-            jTable2.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
-            jTable2.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clStatus")); // NOI18N
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("cl1ProductCode")); // NOI18N
+            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clManufacturer")); // NOI18N
+            table.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
+            table.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
+            table.getColumnModel().getColumn(8).setHeaderValue(bundle.getString("clStatus")); // NOI18N
         }
 
+        pnMain.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        panelFooter.setBackground(new java.awt.Color(255, 255, 255));
+        panelFooter.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
         btnWarranty.setText(bundle.getString("btnReturn")); // NOI18N
+        btnWarranty.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnWarranty.setkBackGroundColor(new java.awt.Color(102, 153, 255));
         btnWarranty.setkEndColor(new java.awt.Color(51, 255, 51));
         btnWarranty.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarranty.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarranty.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnWarranty.setkShowFocusBorder(true);
         btnWarranty.setkStartColor(new java.awt.Color(51, 204, 255));
         btnWarranty.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        panelFooter.add(btnWarranty);
 
-        javax.swing.GroupLayout pnMainLayout = new javax.swing.GroupLayout(pnMain);
-        pnMain.setLayout(pnMainLayout);
-        pnMainLayout.setHorizontalGroup(
-            pnMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnMainLayout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(pnMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnWarranty, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 886, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(46, Short.MAX_VALUE))
-        );
-        pnMainLayout.setVerticalGroup(
-            pnMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnMainLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnWarranty, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(56, Short.MAX_VALUE))
-        );
+        pnMain.add(panelFooter, java.awt.BorderLayout.PAGE_END);
 
-        kGradientPanel3.add(pnMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(11, 119, -1, -1));
+        panelMain.add(pnMain);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(kGradientPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
@@ -506,10 +508,11 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
+    private javax.swing.JPanel panelFooter;
+    private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel pnMain;
     private javax.swing.JPanel pnSearch;
+    private javax.swing.JTable table;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

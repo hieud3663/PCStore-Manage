@@ -422,7 +422,7 @@ public class RepairController {
      */
     public List<Employee> getAllEmployees() {
         try {
-            return employeeService.getAllEmployees();
+            return employeeService.findAllEmployees();
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi lấy danh sách nhân viên: " + e.getMessage(), e);
         }

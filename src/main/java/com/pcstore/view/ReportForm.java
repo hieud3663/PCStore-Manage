@@ -15,7 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.k33ptoo.components.KGradientPanel;
-import com.pcstore.controller.RevenueController;
+import com.pcstore.controller.RevenueEmployeeController;
+import com.pcstore.controller.RevenueProductController;
 import com.pcstore.utils.DatabaseConnection;
 
 /**
@@ -25,10 +26,10 @@ import com.pcstore.utils.DatabaseConnection;
 public class ReportForm extends javax.swing.JPanel {
     private KGradientPanel activePanel = null;
     private JLabel activeLabel = null;
-    private RevenueDailyForm revenueDailyForm;
-    private RevenueMonthlyForm revenueMonthlyForm;
-    private RevenueController revenueController;
-    
+    private RevenueProductForm revenueProductForm;
+    private RevenueEmployeeForm revenueEmployeeForm;
+    private RevenueProductController revenueProductController;
+    private RevenueEmployeeController revenueEmployeeController;
     /**
      * Creates new form RevenueForm - Tự khởi tạo controller
      */
@@ -36,26 +37,23 @@ public class ReportForm extends javax.swing.JPanel {
         initComponents();
         
         // Khởi tạo các form con
-        revenueDailyForm = new RevenueDailyForm();
-        revenueMonthlyForm = new RevenueMonthlyForm();
+        revenueProductForm = new RevenueProductForm();
+        revenueEmployeeForm = new RevenueEmployeeForm();
         
         // Tự động khởi tạo controller và thiết lập các thành phần
         try {
             // Lấy connection từ DatabaseConnection singleton
             Connection connection = DatabaseConnection.getInstance().getConnection();
             if (connection != null) {
-                // Khởi tạo controller
-                revenueController = new RevenueController(connection);
+                revenueProductController = RevenueProductController.getInstance(revenueProductForm);
+                revenueEmployeeController = RevenueEmployeeController.getInstance(revenueEmployeeForm);
                 
-                // Thiết lập controller cho các form con
-                revenueDailyForm.setController(revenueController);
-                revenueMonthlyForm.setController(revenueController);
+                revenueProductForm.setController(revenueProductController);
+                revenueEmployeeForm.setController(revenueEmployeeController);
                 
-                // Khởi tạo hiệu ứng hover
                 initializeHoverEffects();
                 
-                // Chọn mặc định là form doanh thu theo ngày
-                selectMenu(panelDaily, lbDaily, revenueDailyForm);
+                selectMenu(panelDaily, lbDaily, revenueProductForm);
                 
                 System.out.println("ReportForm: Khởi tạo controller thành công");
             } else {
@@ -91,15 +89,17 @@ public class ReportForm extends javax.swing.JPanel {
         lbMonthly = new javax.swing.JLabel();
         panelContent = new javax.swing.JPanel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1153, 713));
         setLayout(new java.awt.BorderLayout());
 
-        panelNav.setBackground(new java.awt.Color(102, 153, 255));
+        panelNav.setBackground(new java.awt.Color(255, 255, 255));
+        panelNav.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(204, 204, 204)));
         panelNav.setOpaque(false);
         panelNav.setPreferredSize(new java.awt.Dimension(530, 40));
-        panelNav.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
+        panelNav.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        panelDaily.setkBorderRadius(25);
+        panelDaily.setkBorderRadius(20);
         panelDaily.setkFillBackground(false);
         panelDaily.setOpaque(false);
         panelDaily.setPreferredSize(new java.awt.Dimension(200, 35));
@@ -107,9 +107,10 @@ public class ReportForm extends javax.swing.JPanel {
 
         lbDaily.setBackground(new java.awt.Color(255, 255, 255));
         lbDaily.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbDaily.setForeground(new java.awt.Color(30, 113, 195));
         lbDaily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        lbDaily.setText(bundle.getString("RevenueDaily")); // NOI18N
+        lbDaily.setText(bundle.getString("RevenueProduct")); // NOI18N
         lbDaily.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbDaily.setMaximumSize(new java.awt.Dimension(200, 20));
         lbDaily.setMinimumSize(new java.awt.Dimension(200, 20));
@@ -118,7 +119,7 @@ public class ReportForm extends javax.swing.JPanel {
 
         panelNav.add(panelDaily);
 
-        panelMonthly.setkBorderRadius(25);
+        panelMonthly.setkBorderRadius(20);
         panelMonthly.setkFillBackground(false);
         panelMonthly.setOpaque(false);
         panelMonthly.setPreferredSize(new java.awt.Dimension(200, 35));
@@ -126,14 +127,17 @@ public class ReportForm extends javax.swing.JPanel {
 
         lbMonthly.setBackground(new java.awt.Color(255, 255, 255));
         lbMonthly.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lbMonthly.setForeground(new java.awt.Color(30, 113, 195));
         lbMonthly.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMonthly.setText(bundle.getString("RevenueMonthly")); // NOI18N
+        lbMonthly.setText(bundle.getString("RevenueEmployee")); // NOI18N
         lbMonthly.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelMonthly.add(lbMonthly, java.awt.BorderLayout.CENTER);
 
         panelNav.add(panelMonthly);
 
         add(panelNav, java.awt.BorderLayout.NORTH);
+
+        panelContent.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout panelContentLayout = new javax.swing.GroupLayout(panelContent);
         panelContent.setLayout(panelContentLayout);
@@ -194,9 +198,9 @@ public class ReportForm extends javax.swing.JPanel {
 
     private void handleMenuClick(KGradientPanel panel, JLabel label) {
         if (panel == panelDaily) {
-            selectMenu(panel, label, revenueDailyForm);
+            selectMenu(panel, label, revenueProductForm);
         } else if (panel == panelMonthly) {
-            selectMenu(panel, label, revenueMonthlyForm);
+            selectMenu(panel, label, revenueEmployeeForm);
         }
     }
 

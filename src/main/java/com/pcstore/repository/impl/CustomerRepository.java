@@ -61,7 +61,7 @@ public class CustomerRepository implements Repository<Customer, String> {
             statement.setObject(7, customer.getCreatedAt());
             statement.setObject(8, customer.getUpdatedAt());
 
-            customer.setCustomerId(generateCustomerId());
+            // customer.setCustomerId(generateCustomerId());
 
             statement.executeUpdate();
             
@@ -69,7 +69,7 @@ public class CustomerRepository implements Repository<Customer, String> {
             return customer;
         } catch (SQLException e) {
             customer.setCustomerId(null); // Đặt lại mã khách hàng nếu có lỗi
-            throw new RuntimeException("Error adding customer", e);
+            throw new RuntimeException("Error adding customer: " + e.getMessage(), e);
         }
     }
     
@@ -242,6 +242,7 @@ public class CustomerRepository implements Repository<Customer, String> {
         customer.setPoints(resultSet.getInt("Point"));
         customer.setAddress(resultSet.getString("Address"));
         customer.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
+        customer.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
         
         // Không cần phải load invoices và repairServices ở đây
         // Chúng sẽ được load khi cần thông qua InvoiceRepository và RepairServiceRepository

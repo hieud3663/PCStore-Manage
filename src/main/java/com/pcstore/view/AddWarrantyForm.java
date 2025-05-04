@@ -6,6 +6,8 @@ package com.pcstore.view;
 
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.model.*;
+import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.TableStyleUtil;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -58,6 +60,8 @@ public class AddWarrantyForm extends javax.swing.JPanel {
      * Thiết lập các thuộc tính cho bảng
      */
     private void setupTable() {
+        TableStyleUtil.applyDefaultStyle(table);
+
         // Đặt tên cột
         String[] columnNames = {
             "Mã Chi Tiết Hóa Đơn", 
@@ -85,23 +89,23 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         };
         
         // Thiết lập model cho bảng
-        jTable1.setModel(model);
+        table.setModel(model);
         
         // Tùy chỉnh giao diện
-        jTable1.setRowHeight(25);
-        jTable1.setAutoCreateRowSorter(true);
-        jTable1.getTableHeader().setReorderingAllowed(false);
+        table.setRowHeight(25);
+        table.setAutoCreateRowSorter(true);
+        table.getTableHeader().setReorderingAllowed(false);
         
         // Căn giữa nội dung các cột
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         
-        for (int i = 0; i < jTable1.getColumnCount(); i++) {
-            jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
         
         // Cập nhật renderer với trạng thái mới
-        jTable1.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
@@ -139,16 +143,16 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         });
         
         // Thêm tooltip
-        jTable1.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        table.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent evt) {
-                int row = jTable1.rowAtPoint(evt.getPoint());
-                int col = jTable1.columnAtPoint(evt.getPoint());
+                int row = table.rowAtPoint(evt.getPoint());
+                int col = table.columnAtPoint(evt.getPoint());
                 
                 if (row >= 0 && col >= 0) {
-                    String status = jTable1.getValueAt(row, 7).toString();
-                    String productName = jTable1.getValueAt(row, 2).toString();
-                    String warrantyDate = jTable1.getValueAt(row, 4).toString();
+                    String status = table.getValueAt(row, 7).toString();
+                    String productName = table.getValueAt(row, 2).toString();
+                    String warrantyDate = table.getValueAt(row, 4).toString();
                     
                     StringBuilder tooltip = new StringBuilder();
                     tooltip.append("<html><b>").append(productName).append("</b><br>");
@@ -167,13 +171,14 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                     }
                     
                     tooltip.append("</html>");
-                    jTable1.setToolTipText(tooltip.toString());
+                    table.setToolTipText(tooltip.toString());
                     return;
                 }
                 
-                jTable1.setToolTipText(null);
+                table.setToolTipText(null);
             }
         });
+        
     }
 
     /**
@@ -185,20 +190,26 @@ public class AddWarrantyForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
-        jPanel2 = new javax.swing.JPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
+        panelHeader = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
-        jPanel1 = new javax.swing.JPanel();
+        panelBody = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        table = new javax.swing.JTable();
+        panelFooter = new javax.swing.JPanel();
         btnWarranty = new com.k33ptoo.components.KButton();
 
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setLayout(new javax.swing.BoxLayout(kGradientPanel1, javax.swing.BoxLayout.Y_AXIS));
+        setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
+        panelMain.setkFillBackground(false);
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
+
+        panelHeader.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
+        panelHeader.setOpaque(false);
+        panelHeader.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
 
         txtSearch.setToolTipText("");
         txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
@@ -208,7 +219,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 txtSearchActionPerformed(evt);
             }
         });
-        jPanel2.add(txtSearch);
+        panelHeader.add(txtSearch);
 
         btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
@@ -217,17 +228,19 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 153, 255));
         btnReturnInformationLookup.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnReturnInformationLookup.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnReturnInformationLookup.setkShowFocusBorder(true);
         btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 153, 153));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
         btnReturnInformationLookup.setPreferredSize(new java.awt.Dimension(120, 35));
-        jPanel2.add(btnReturnInformationLookup);
+        panelHeader.add(btnReturnInformationLookup);
 
-        kGradientPanel1.add(jPanel2);
+        panelMain.add(panelHeader);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnListOfPurchasedProducts"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelBody.setBackground(new java.awt.Color(255, 255, 255));
+        panelBody.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnListOfPurchasedProducts"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 14))); // NOI18N
+        panelBody.setLayout(new java.awt.BorderLayout());
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -238,62 +251,39 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 "Mã Chi Tiết Hóa Đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Ngày Mua", "Hạn Bảo Hành", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái Bảo Hành"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("InvoiceDetailCode")); // NOI18N
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductCode")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clWarrantyPeriod")); // NOI18N
-            jTable1.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
-            jTable1.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clSDT")); // NOI18N
-            jTable1.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("clWarrantyStatus")); // NOI18N
+        jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("InvoiceDetailCode")); // NOI18N
+            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductCode")); // NOI18N
+            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
+            table.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clWarrantyPeriod")); // NOI18N
+            table.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
+            table.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clSDT")); // NOI18N
+            table.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("clWarrantyStatus")); // NOI18N
         }
 
+        panelBody.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        panelFooter.setBackground(new java.awt.Color(255, 255, 255));
+        panelFooter.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+
         btnWarranty.setText(bundle.getString("btnWarranty")); // NOI18N
+        btnWarranty.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnWarranty.setkBackGroundColor(new java.awt.Color(102, 153, 255));
-        btnWarranty.setkEndColor(new java.awt.Color(102, 255, 51));
+        btnWarranty.setkEndColor(new java.awt.Color(51, 204, 255));
         btnWarranty.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnWarranty.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnWarranty.setkHoverStartColor(new java.awt.Color(153, 255, 153));
+        btnWarranty.setkShowFocusBorder(true);
         btnWarranty.setkStartColor(new java.awt.Color(51, 204, 255));
         btnWarranty.setMargin(new java.awt.Insets(2, 14, 0, 14));
+        panelFooter.add(btnWarranty);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 947, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnWarranty, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 399, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnWarranty, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        panelBody.add(panelFooter, java.awt.BorderLayout.PAGE_END);
 
-        kGradientPanel1.add(jPanel1);
+        panelMain.add(panelBody);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-        );
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
@@ -312,7 +302,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         txtSearch.addActionListener(evt -> searchProductsByPhone());
         
         // Thiết lập listener cho double click trên bảng
-        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     createWarranty();
@@ -324,11 +314,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
     private void searchProductsByPhone() {
         String phoneNumber = txtSearch.getText().trim();
         
-        if (phoneNumber.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập số điện thoại", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
+                
         try {
             // Tìm kiếm tất cả sản phẩm đã mua theo số điện thoại
             List<InvoiceDetail> invoiceDetails = controller.findPurchasedProductsByPhone(phoneNumber);
@@ -346,7 +332,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             updateProductTable(invoiceDetails);
             
             // Cho phép đăng ký bảo hành nếu có dữ liệu
-            btnWarranty.setEnabled(true);
+            ButtonUtils.setKButtonEnabled(btnWarranty, true);
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm sản phẩm: " + e.getMessage(), 
@@ -356,7 +342,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
     }
 
     private void updateProductTable(List<InvoiceDetail> invoiceDetails) {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         
         currentInvoiceDetails = new ArrayList<>(invoiceDetails);
@@ -493,7 +479,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
     }
 
     private void createWarranty() {
-        int selectedRow = jTable1.getSelectedRow();
+        int selectedRow = table.getSelectedRow();
 
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(
@@ -507,11 +493,11 @@ public class AddWarrantyForm extends javax.swing.JPanel {
 
         try {
             // Kiểm tra trạng thái bảo hành từ cột trạng thái
-            String warrantyStatus = (String) jTable1.getValueAt(selectedRow, 7);
+            String warrantyStatus = (String) table.getValueAt(selectedRow, 7);
             
             if ("Hết hạn".equals(warrantyStatus)) {
                 // Lấy ngày hết hạn từ cột thứ 4
-                String expiryDate = (String) jTable1.getValueAt(selectedRow, 4);
+                String expiryDate = (String) table.getValueAt(selectedRow, 4);
                 
                 JOptionPane.showMessageDialog(
                     this,
@@ -525,7 +511,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             
             if ("Đã bảo hành".equals(warrantyStatus)) {
                 // Thêm code để lấy thông tin về phiếu bảo hành hiện có
-                Integer selectedDetailId = (Integer) jTable1.getValueAt(selectedRow, 0);
+                Integer selectedDetailId = (Integer) table.getValueAt(selectedRow, 0);
                 Optional<Warranty> warranty = controller.getWarrantyService()
                     .findWarrantyByInvoiceDetailId(selectedDetailId);
                 
@@ -545,7 +531,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             }
             
             // Lấy mã chi tiết hóa đơn từ cột đầu tiên của dòng được chọn
-            Integer selectedDetailId = (Integer) jTable1.getValueAt(selectedRow, 0);
+            Integer selectedDetailId = (Integer) table.getValueAt(selectedRow, 0);
             
             System.out.println("Đã chọn chi tiết hóa đơn ID: " + selectedDetailId);
             
@@ -591,7 +577,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             );
 
             // Cập nhật trạng thái sản phẩm đã được đăng ký bảo hành
-            jTable1.setValueAt("Đã bảo hành", selectedRow, 7);
+            table.setValueAt("Đã bảo hành", selectedRow, 7);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                 this, 
@@ -619,7 +605,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         filterPanel.add(statusFilter);
         
         // Thêm vào layout
-        jPanel1.add(filterPanel, BorderLayout.NORTH);
+        panelBody.add(filterPanel, BorderLayout.NORTH);
     }
 
     private void filterTableByStatus(String status) {
@@ -627,27 +613,28 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             return;
         }
         
-        if ("Tất cả".equals(status)) {
-            updateProductTable(currentInvoiceDetails);
-            return;
-        }
-        
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        jTable1.setRowSorter(sorter);
+        table.setRowSorter(sorter);
         
-        // Lọc theo cột trạng thái (cột 7)
-        sorter.setRowFilter(RowFilter.regexFilter("^" + status + "$", 7));
+        if ("Tất cả".equals(status)) {
+            // Xóa bộ lọc (không áp dụng bộ lọc nào)
+            sorter.setRowFilter(null);
+        } else {
+            // Lọc theo cột trạng thái (cột 7)
+            sorter.setRowFilter(RowFilter.regexFilter("^" + status + "$", 7));
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private com.k33ptoo.components.KButton btnWarranty;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
+    private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelFooter;
+    private javax.swing.JPanel panelHeader;
+    private com.k33ptoo.components.KGradientPanel panelMain;
+    private javax.swing.JTable table;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

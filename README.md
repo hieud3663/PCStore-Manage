@@ -1,5 +1,8 @@
 # MÔ HÌNH CHỨC NĂNG HỆ THỐNG QUẢN LÝ CỬA HÀNG MÁY TÍNH & LINH KIỆN
 
+## 0. GIỚI THIỆU
+   Hệ thống quản lý cửa hàng máy tính và linh kiện giúp quản lý toàn bộ quy trình từ nhập hàng, bán hàng, dịch vụ sau bán hàng đến báo cáo thống kê. Hệ thống này bao gồm các chức năng chính như quản lý sản phẩm, quản lý bán hàng, quản lý dịch vụ sau bán hàng, quản lý nhân viên và phân quyền, thống kê và báo cáo.
+
 ## 1. QUẢN LÝ SẢN PHẨM VÀ KHO HÀNG (Lộc)
    ### 1.1. Quản lý danh mục sản phẩm
       - Thêm mới danh mục sản phẩm
@@ -24,12 +27,6 @@
       - In phiếu nhập kho
       - Xem lịch sử nhập hàng
 
-   ### 1.4. Quản lý nhà cung cấp
-      - Thêm mới nhà cung cấp
-      - Xem danh sách/Tìm kiếm nhà cung cấp
-      - Cập nhật thông tin nhà cung cấp
-      - Xem lịch sử giao dịch
-      - Đánh giá nhà cung cấp
 
 ## 2. QUẢN LÝ BÁN HÀNG (Hiếu)
    ### 2.1. Quản lý hóa đơn bán hàng
@@ -51,15 +48,7 @@
       - Quản lý thông tin liên hệ
       - Tích điểm thành viên/Ưu đãi
 
-   ### 2.3. Quản lý khuyến mãi
-      - Tạo chương trình khuyến mãi
-      - Thiết lập thời gian áp dụng
-      - Thiết lập điều kiện áp dụng
-      - Xem danh sách/Tìm kiếm khuyến mãi
-      - Kích hoạt/Vô hiệu hóa khuyến mãi
-      - Áp dụng khuyến mãi vào hóa đơn
-
-   ### 2.4. Quản lý thanh toán
+   ### 2.3. Quản lý thanh toán
       - Hỗ trợ nhiều phương thức thanh toán
       - Theo dõi trạng thái thanh toán
       - Xem lịch sử thanh toán
@@ -120,46 +109,13 @@
    ### 5.1. Báo cáo bán hàng
       - Thống kê doanh thu
       - Thống kê doanh số theo nhân viên
-      - Thống kê doanh số theo danh mục
+      - Thống kê doanh số theo sản phẩm
       - Thống kê sản phẩm bán chạy
-      - Phân tích xu hướng bán hàng
       - Xuất báo cáo PDF/Excel
 
-   ### 5.2. Báo cáo kho hàng
-      - Thống kê tồn kho hiện tại
-      - Báo cáo sản phẩm sắp hết hàng
-      - Báo cáo sản phẩm tồn kho lâu
-      - Thống kê giá trị hàng tồn kho
-      - Dự báo nhu cầu nhập hàng
-      - Xuất báo cáo PDF/Excel
 
-   ### 5.3. Báo cáo tài chính
-      - Báo cáo lợi nhuận
-      - Báo cáo chi phí nhập hàng
-      - Báo cáo công nợ với nhà cung cấp
-      - Biểu đồ so sánh doanh thu/chi phí
-      - Xuất báo cáo PDF/Excel
 
-   ### 5.4. Báo cáo khách hàng
-      - Thống kê khách hàng mới
-      - Thống kê khách hàng thân thiết
-      - Phân tích hành vi mua hàng
-      - Báo cáo tần suất mua hàng
-      - Xuất báo cáo PDF/Excel
 
-## 6. QUẢN LÝ HỆ THỐNG (option)
-   ### 6.1. Cấu hình hệ thống
-      - Cấu hình thông tin cửa hàng
-      - Thiết lập các tham số hệ thống
-      - Quản lý mẫu in
-      - Cài đặt kết nối thanh toán
-      - Thiết lập thông báo tự động
-
-   ### 6.2. Sao lưu và phục hồi dữ liệu
-      - Sao lưu dữ liệu tự động/thủ công
-      - Phục hồi dữ liệu
-      - Lịch sử sao lưu
-      - Xuất/Nhập dữ liệu
 
    ### 6.3. Nhật ký hệ thống
       - Ghi lại hoạt động người dùng

@@ -88,7 +88,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
                 {null, null, null}
             },
             new String [] {
-                "STT", "Tên Sản Phẩm", "Thời Gian Bảo Hành"
+                "STT", "Tên sản Phẩm ", "Thời Gian Bảo Hành"
             }
         ) {
             Class[] types = new Class [] {
@@ -100,10 +100,15 @@ public class WarrantyCardForm extends javax.swing.JPanel {
             }
         });
         ScrollTable.setViewportView(TableWarranty);
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        if (TableWarranty.getColumnModel().getColumnCount() > 0) {
+            TableWarranty.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtWarrantyCardNumericalOrder")); // NOI18N
+            TableWarranty.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtWarrantyNameProduct")); // NOI18N
+            TableWarranty.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtWarrantyWarrantyPeriod")); // NOI18N
+        }
 
         kGradientPanel1.add(ScrollTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 230, 622, 257));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         btnPrintCard.setText(bundle.getString("btnDetailCard")); // NOI18N
         btnPrintCard.setkBorderRadius(30);
         btnPrintCard.setkEndColor(new java.awt.Color(102, 153, 255));
@@ -158,7 +163,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         pnSign.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lbSign.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        lbSign.setText(bundle.getString("lbConfirmationSignature")); // NOI18N
+        lbSign.setText(bundle.getString("lbConfirmationSignatureCustomer")); // NOI18N
         lbSign.setPreferredSize(new java.awt.Dimension(87, 35));
         pnSign.add(lbSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 110, -1));
         pnSign.add(txtSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 275, 200));

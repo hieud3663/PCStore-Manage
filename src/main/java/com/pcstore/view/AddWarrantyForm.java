@@ -248,19 +248,19 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Chi Tiết Hóa Đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Ngày Mua", "Hạn Bảo Hành", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái Bảo Hành"
+                "Mã Chi Tiết Hóa Đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Ngày Mua", "Hạn Bảo Hành", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái"
             }
         ));
         jScrollPane1.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
-            table.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("InvoiceDetailCode")); // NOI18N
-            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductCode")); // NOI18N
-            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
-            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
-            table.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clWarrantyPeriod")); // NOI18N
-            table.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
-            table.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clSDT")); // NOI18N
-            table.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("clWarrantyStatus")); // NOI18N
+            table.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtAddWarrantyInvoiceDetailID")); // NOI18N
+            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtAddWarrantyProductID")); // NOI18N
+            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtAddWarrantyNameProduct")); // NOI18N
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtAddWarrantyDateOfPurchase")); // NOI18N
+            table.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtAddWarrantyWarrantyPeriod")); // NOI18N
+            table.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtAddWarrantyNameCustomer")); // NOI18N
+            table.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtAddWarrantyPhoneNumber")); // NOI18N
+            table.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtAddWarrantyStatus")); // NOI18N
         }
 
         panelBody.add(jScrollPane1, java.awt.BorderLayout.CENTER);

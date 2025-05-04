@@ -9,8 +9,8 @@ public class EmailUtils {
 
     public static boolean sendEmail(String emailTo, String subject, String body) {
         String username = "pcstorehal@gmail.com";
-        String password = "zvojspqnjpgfwqpm";
-        
+        String password = "qwdnlabwidjcspts";
+       
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
         prop.put("mail.smtp.port", "587");

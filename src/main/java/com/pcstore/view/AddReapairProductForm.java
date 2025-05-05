@@ -107,7 +107,7 @@ public class AddReapairProductForm extends JDialog {
 
         panelMain = new javax.swing.JPanel();
         panelTop = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lbTitle = new javax.swing.JLabel();
         panelBody = new com.k33ptoo.components.KGradientPanel();
         panelRepairID = new javax.swing.JPanel();
         lbNameCustomer = new javax.swing.JLabel();
@@ -152,15 +152,15 @@ public class AddReapairProductForm extends JDialog {
         panelTop.setPreferredSize(new java.awt.Dimension(1153, 50));
         panelTop.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 20));
 
-        jLabel1.setBackground(new java.awt.Color(0, 153, 255));
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 153, 255));
+        lbTitle.setBackground(new java.awt.Color(0, 153, 255));
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbTitle.setForeground(new java.awt.Color(0, 153, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel1.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
-        jLabel1.setMaximumSize(new java.awt.Dimension(346, 100));
-        jLabel1.setMinimumSize(new java.awt.Dimension(346, 100));
-        jLabel1.setPreferredSize(new java.awt.Dimension(346, 50));
-        panelTop.add(jLabel1);
+        lbTitle.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
+        lbTitle.setMaximumSize(new java.awt.Dimension(346, 100));
+        lbTitle.setMinimumSize(new java.awt.Dimension(346, 100));
+        lbTitle.setPreferredSize(new java.awt.Dimension(346, 50));
+        panelTop.add(lbTitle);
 
         panelMain.add(panelTop);
 
@@ -622,7 +622,6 @@ public class AddReapairProductForm extends JDialog {
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private javax.swing.JComboBox<String> cbEmployee;
     private javax.swing.JComboBox<String> cbStatus;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lbCost;
     private javax.swing.JLabel lbDiagnose;
     private javax.swing.JLabel lbEmployee;
@@ -632,6 +631,7 @@ public class AddReapairProductForm extends JDialog {
     private javax.swing.JLabel lbProblem;
     private javax.swing.JLabel lbSDT;
     private javax.swing.JLabel lbStasus;
+    private javax.swing.JLabel lbTitle;
     private com.k33ptoo.components.KGradientPanel panelBody;
     private javax.swing.JPanel panelBottom;
     private javax.swing.JPanel panelMain;

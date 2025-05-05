@@ -26,10 +26,10 @@ public class ReturnCardForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
+        panelTitle = new javax.swing.JPanel();
+        lbTitle = new javax.swing.JLabel();
+        panelTop = new javax.swing.JPanel();
         panelNameCustomer = new javax.swing.JPanel();
         lbDisplayNameCustomer = new javax.swing.JLabel();
         txtNameCustomer = new javax.swing.JTextField();
@@ -37,8 +37,8 @@ public class ReturnCardForm extends javax.swing.JPanel {
         lbPhonenumber1 = new javax.swing.JLabel();
         txtNameCustomer1 = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
+        table = new javax.swing.JTable();
+        panelBottom = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -51,17 +51,17 @@ public class ReturnCardForm extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setLayout(new javax.swing.BoxLayout(kGradientPanel1, javax.swing.BoxLayout.Y_AXIS));
+        panelMain.setkFillBackground(false);
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel1.setText(bundle.getString("lbReturnProductCard")); // NOI18N
-        jPanel6.add(jLabel1);
+        lbTitle.setText(bundle.getString("lbReturnProductCard")); // NOI18N
+        panelTitle.add(lbTitle);
 
-        kGradientPanel1.add(jPanel6);
+        panelMain.add(panelTitle);
 
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.Y_AXIS));
+        panelTop.setLayout(new javax.swing.BoxLayout(panelTop, javax.swing.BoxLayout.Y_AXIS));
 
         panelNameCustomer.setOpaque(false);
         panelNameCustomer.setPreferredSize(new java.awt.Dimension(108, 30));
@@ -78,7 +78,7 @@ public class ReturnCardForm extends javax.swing.JPanel {
         txtNameCustomer.setPreferredSize(new java.awt.Dimension(500, 23));
         panelNameCustomer.add(txtNameCustomer);
 
-        jPanel4.add(panelNameCustomer);
+        panelTop.add(panelNameCustomer);
 
         panelPhonenumberCustomer.setOpaque(false);
         panelPhonenumberCustomer.setPreferredSize(new java.awt.Dimension(64, 30));
@@ -94,11 +94,11 @@ public class ReturnCardForm extends javax.swing.JPanel {
         txtNameCustomer1.setPreferredSize(new java.awt.Dimension(500, 23));
         panelPhonenumberCustomer.add(txtNameCustomer1);
 
-        jPanel4.add(panelPhonenumberCustomer);
+        panelTop.add(panelPhonenumberCustomer);
 
-        kGradientPanel1.add(jPanel4);
+        panelMain.add(panelTop);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -109,17 +109,17 @@ public class ReturnCardForm extends javax.swing.JPanel {
                 "Mã Sản Phẩm", "Tên Sản Phẩm", "Hãng Sản Xuất", "Số Lượng", "Ngày Mua", "Trạng Thái"
             }
         ));
-        jTable2.setMaximumSize(new java.awt.Dimension(2147483647, 50));
-        jTable2.setMinimumSize(new java.awt.Dimension(90, 50));
-        jTable2.setPreferredSize(new java.awt.Dimension(450, 50));
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+        table.setMaximumSize(new java.awt.Dimension(2147483647, 50));
+        table.setMinimumSize(new java.awt.Dimension(90, 50));
+        table.setPreferredSize(new java.awt.Dimension(450, 50));
+        jScrollPane2.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
         }
 
-        kGradientPanel1.add(jScrollPane2);
+        panelMain.add(jScrollPane2);
 
-        jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 120, 20));
+        panelBottom.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 120, 20));
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
@@ -131,7 +131,7 @@ public class ReturnCardForm extends javax.swing.JPanel {
         jLabel7.setText(bundle.getString("sign,name")); // NOI18N
         jPanel1.add(jLabel7);
 
-        jPanel5.add(jPanel1);
+        panelBottom.add(jPanel1);
 
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
 
@@ -143,7 +143,7 @@ public class ReturnCardForm extends javax.swing.JPanel {
         jLabel11.setText(bundle.getString("sign,name")); // NOI18N
         jPanel3.add(jLabel11);
 
-        jPanel5.add(jPanel3);
+        panelBottom.add(jPanel3);
 
         jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
@@ -155,16 +155,15 @@ public class ReturnCardForm extends javax.swing.JPanel {
         jLabel9.setText(bundle.getString("sign,name")); // NOI18N
         jPanel2.add(jLabel9);
 
-        jPanel5.add(jPanel2);
+        panelBottom.add(jPanel2);
 
-        kGradientPanel1.add(jPanel5);
+        panelMain.add(panelBottom);
 
-        add(kGradientPanel1, java.awt.BorderLayout.CENTER);
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel6;
@@ -174,16 +173,17 @@ public class ReturnCardForm extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel lbDisplayNameCustomer;
     private javax.swing.JLabel lbPhonenumber1;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JPanel panelBottom;
+    private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel panelNameCustomer;
     private javax.swing.JPanel panelPhonenumberCustomer;
+    private javax.swing.JPanel panelTitle;
+    private javax.swing.JPanel panelTop;
+    private javax.swing.JTable table;
     private javax.swing.JTextField txtNameCustomer;
     private javax.swing.JTextField txtNameCustomer1;
     // End of variables declaration//GEN-END:variables

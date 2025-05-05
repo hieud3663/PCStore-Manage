@@ -121,8 +121,6 @@ public class StockInHistoryForm extends JDialog {
         panelCenter.setLayout(new BorderLayout(0, 10));
         panelCenter.setOpaque(false);
         
-        // === BẢNG PHIẾU NHẬP ===
-        // Thiết lập bảng phiếu nhập
         tablePurchaseOrders.setModel(new DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null}
@@ -142,21 +140,15 @@ public class StockInHistoryForm extends JDialog {
         tablePurchaseOrders.setRowHeight(25);
         tablePurchaseOrders.getTableHeader().setReorderingAllowed(false);
         jScrollPaneOrders.setViewportView(tablePurchaseOrders);
-        jScrollPaneOrders.setPreferredSize(new Dimension(900, 220));
-        
+        jScrollPaneOrders.setPreferredSize(new Dimension(900, 220));    
         panelCenter.add(jScrollPaneOrders, BorderLayout.NORTH);
-        
-        // === PANEL CHI TIẾT PHIẾU NHẬP - SOUTH ===
         JPanel panelDetails = new JPanel();
         panelDetails.setLayout(new BorderLayout(0, 5));
         panelDetails.setOpaque(false);
-        
-        // Thiết lập nhãn chi tiết
         lblOrderDetail.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblOrderDetail.setForeground(new Color(0, 102, 204));
         panelDetails.add(lblOrderDetail, BorderLayout.NORTH);
-        
-        // Thiết lập bảng chi tiết phiếu nhập
+
         tablePurchaseOrderDetails.setModel(new DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null}
@@ -181,12 +173,10 @@ public class StockInHistoryForm extends JDialog {
         panelDetails.add(jScrollPaneDetails, BorderLayout.CENTER);
         
         panelCenter.add(panelDetails, BorderLayout.CENTER);
-        
-        // === PANEL BUTTON DƯỚI - SOUTH ===
+
         JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelBottom.setOpaque(false);
-        
-        // Thiết lập nút đóng
+
         btnClose.setText("Đóng");
         btnClose.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnClose.setkBorderRadius(30);
@@ -203,12 +193,12 @@ public class StockInHistoryForm extends JDialog {
         
         panelBottom.add(btnClose);
         
-        // Thêm các panel vào panelMain
+
         panelMain.add(panelTop, BorderLayout.NORTH);
         panelMain.add(panelCenter, BorderLayout.CENTER);
         panelMain.add(panelBottom, BorderLayout.SOUTH);
         
-        // Thêm panelMain vào ContentPane
+
         getContentPane().add(panelMain, BorderLayout.CENTER);
 
         pack();
@@ -219,18 +209,16 @@ public class StockInHistoryForm extends JDialog {
     }
     
     private void btnRefreshMouseClicked(MouseEvent evt) {
-        // Gọi phương thức làm mới dữ liệu từ controller
+
         if (controller != null) {
             System.out.println("Refreshing purchase order history...");
             controller.loadPurchaseOrderHistory();
-            
-            // Vô hiệu hóa nút cập nhật trạng thái khi làm mới
             enableUpdateStatusButton(false);
         }
     }
     
     private void btnUpdateStatusMouseClicked(MouseEvent evt) {
-        // Kiểm tra xem nút có được kích hoạt không
+
         if (!btnUpdateStatus.isEnabled()) {
             return;
         }
@@ -240,7 +228,6 @@ public class StockInHistoryForm extends JDialog {
             String purchaseOrderId = tablePurchaseOrders.getValueAt(selectedRow, 1).toString(); // Cột Mã Phiếu
             String currentStatus = tablePurchaseOrders.getValueAt(selectedRow, 4).toString();   // Cột Trạng Thái
             
-            // Gọi phương thức hiển thị dialog từ controller
             if (controller != null) {
                 controller.showUpdateStatusDialog(purchaseOrderId, currentStatus);
             }
@@ -252,45 +239,32 @@ public class StockInHistoryForm extends JDialog {
         }
     }
 
-    /**
-     * Getter cho bảng phiếu nhập
-     */
+ 
     public JTable getTablePurchaseOrders() {
         return tablePurchaseOrders;
     }
 
-    /**
-     * Getter cho bảng chi tiết phiếu nhập
-     */
+
     public JTable getTablePurchaseOrderDetails() {
         return tablePurchaseOrderDetails;
     }
 
-    /**
-     * Getter cho nút đóng
-     */
+
     public KButton getBtnClose() {
         return btnClose;
     }
     
-    /**
-     * Getter cho nút làm mới
-     */
+
     public KButton getBtnRefresh() {
         return btnRefresh;
     }
     
-    /**
-     * Getter cho nút cập nhật trạng thái
-     */
+
     public KButton getBtnUpdateStatus() {
         return btnUpdateStatus;
     }
     
-    /**
-     * Kích hoạt hoặc vô hiệu hóa nút cập nhật trạng thái
-     * @param enable true để kích hoạt, false để vô hiệu hóa
-     */
+ 
     public void enableUpdateStatusButton(boolean enable) {
         btnUpdateStatus.setEnabled(enable);
     }

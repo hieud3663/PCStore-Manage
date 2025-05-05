@@ -34,6 +34,20 @@ import com.pcstore.repository.impl.WarrantyRepository;
 public class WarrantyServiceForm extends javax.swing.JPanel {
 
     private WarrantyController controller;
+
+      // Variables declaration - do not modify//GEN-BEGIN:variables
+      private com.k33ptoo.components.KButton btnDetailWarrantyCard;
+      private com.k33ptoo.components.KButton btnRemoveRepair;
+      private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
+      private com.k33ptoo.components.KButton btnWarrantyRegistration;
+      private javax.swing.JScrollPane jScrollPaneTable;
+      private javax.swing.JPanel panelBody;
+      private javax.swing.JPanel panelSearch;
+      private javax.swing.JPanel pnFunctions;
+      private javax.swing.JPanel pnWarrantyMain;
+      private javax.swing.JTable tableListWarranty;
+      private javax.swing.JTextField txtSearch;
+      // End of variables declaration//GEN-END:variables
     
     /**
      * Creates new form Service
@@ -464,17 +478,5 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     }
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnDetailWarrantyCard;
-    private com.k33ptoo.components.KButton btnRemoveRepair;
-    private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
-    private com.k33ptoo.components.KButton btnWarrantyRegistration;
-    private javax.swing.JScrollPane jScrollPaneTable;
-    private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel panelSearch;
-    private javax.swing.JPanel pnFunctions;
-    private javax.swing.JPanel pnWarrantyMain;
-    private javax.swing.JTable tableListWarranty;
-    private javax.swing.JTextField txtSearch;
-    // End of variables declaration//GEN-END:variables
+  
 }

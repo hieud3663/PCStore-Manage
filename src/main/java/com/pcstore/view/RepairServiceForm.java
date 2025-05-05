@@ -268,7 +268,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         });
         pnRepairFunctions.add(btnUpdateStatus);
 
-        textFieldSearch.setPreferredSize(new java.awt.Dimension(400, 31));
+        textFieldSearch.setPreferredSize(new java.awt.Dimension(450, 31));
         pnRepairFunctions.add(textFieldSearch);
 
         pnMainRepair.add(pnRepairFunctions);
@@ -327,6 +327,16 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
         });
         jScrollPaneTable.setViewportView(tableRepair);
+        if (tableRepair.getColumnModel().getColumnCount() > 0) {
+            tableRepair.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtRepairID")); // NOI18N
+            tableRepair.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtRepairNameCustomer")); // NOI18N
+            tableRepair.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtRepairPhoneNumber")); // NOI18N
+            tableRepair.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtRepairNameDevice")); // NOI18N
+            tableRepair.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtRepairProblermRepair")); // NOI18N
+            tableRepair.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtRepairCost")); // NOI18N
+            tableRepair.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtRepairStatus")); // NOI18N
+            tableRepair.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtRepairNote")); // NOI18N
+        }
 
         panelBody.add(jScrollPaneTable, java.awt.BorderLayout.CENTER);
 

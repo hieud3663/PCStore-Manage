@@ -16,6 +16,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,2,27,0,0,3,-70"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -140,63 +141,63 @@
                         <Column editable="true" title="H&#x1ea1;n B&#x1ea3;o H&#xe0;nh" type="java.lang.Object"/>
                         <Column editable="true" title="T&#xea;n Kh&#xe1;ch H&#xe0;ng" type="java.lang.Object"/>
                         <Column editable="true" title="S&#x1ed1; &#x110;i&#x1ec7;n Tho&#x1ea1;i" type="java.lang.Object"/>
-                        <Column editable="true" title="Tr&#x1ea1;ng Th&#xe1;i B&#x1ea3;o H&#xe0;nh" type="java.lang.Object"/>
+                        <Column editable="true" title="Tr&#x1ea1;ng Th&#xe1;i" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                       <TableColumnModel selectionModel="0">
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="InvoiceDetailCode" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyInvoiceDetailID" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clProductCode" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyProductID" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clNameProduct" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyNameProduct" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clDateOfPurchase" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyDateOfPurchase" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clWarrantyPeriod" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyWarrantyPeriod" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clNameCustomer" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyNameCustomer" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clSDT" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyPhoneNumber" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>
                         </Column>
                         <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
                           <Title editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="clWarrantyStatus" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
+                            <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtAddWarrantyStatus" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
                           </Title>
                           <Editor/>
                           <Renderer/>

@@ -222,7 +222,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Bảo Hành ", "Ngày Yêu Cầu", "Mã Khách Hàng", "Tên Khách Hàng", "Số Điện Thoại", "Tên sản Phẩm ", "Mã Sản Phẩm", "Tình Trạng"
+                "Mã Bảo Hành ", "Ngày Yêu Cầu", "Mã Khách Hàng", "Tên Khách Hàng", "Số Điện Thoại", "Tên sản Phẩm ", "Mã Sản Phẩm", "Trạng Thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -234,6 +234,16 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             }
         });
         jScrollPaneTable.setViewportView(tableListWarranty);
+        if (tableListWarranty.getColumnModel().getColumnCount() > 0) {
+            tableListWarranty.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtWarrantyWarrantyID")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtWarrantyDateRequested")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtWarrantyCustomerID")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtWarrantyNameCustomer")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtWarrantyPhoneNumber")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtWarrantyNameProduct")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtWarrantyPtoductID")); // NOI18N
+            tableListWarranty.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtWarrantyStatus")); // NOI18N
+        }
 
         panelBody.add(jScrollPaneTable, java.awt.BorderLayout.CENTER);
 

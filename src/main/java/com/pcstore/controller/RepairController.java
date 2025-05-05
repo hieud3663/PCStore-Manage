@@ -465,4 +465,36 @@ public class RepairController {
             throw new RuntimeException("Lỗi khi tạo khách hàng mới: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Force update repair service status (bypass validation)
+     * 
+     * @param repairId Repair service ID
+     * @param status New status
+     * @return Updated repair service
+     */
+    public Repair forceUpdateRepairStatus(Integer repairId, RepairEnum status) {
+        try {
+            // Temporarily enable force update
+            System.setProperty("repair.status.force", "true");
+            
+            Optional<Repair> repairOpt = repairService.findRepairServiceWithFullInfo(repairId);
+            if (!repairOpt.isPresent()) {
+                throw new IllegalArgumentException("Dịch vụ sửa chữa không tồn tại");
+            }
+            
+            Repair repair = repairOpt.get();
+            repair.setStatus(status);
+            
+            Repair result = repairService.updateRepairService(repair);
+            
+            // Disable force update
+            System.setProperty("repair.status.force", "false");
+            
+            return result;
+        } catch (Exception e) {
+            System.setProperty("repair.status.force", "false");
+            throw new RuntimeException("Lỗi khi cập nhật trạng thái dịch vụ sửa chữa: " + e.getMessage(), e);
+        }
+    }
 }

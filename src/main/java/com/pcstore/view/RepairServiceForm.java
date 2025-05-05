@@ -21,6 +21,7 @@ import com.pcstore.view.AddReapairProductForm;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  *
@@ -671,12 +672,15 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
             
             com.pcstore.model.Repair repair = repairOpt.get();
+            RepairEnum currentStatusEnum = repair.getStatus();
             
-            // Tạo danh sách các trạng thái có thể chuyển đổi bằng tiếng Việt
-            String[] availableStatusesVi = {
-                "Đã tiếp nhận", "Đang chẩn đoán", "Chờ linh kiện", 
-                "Đang sửa chữa", "Đã hoàn thành", "Đã giao khách", "Đã hủy"
-            };
+            // Tạo danh sách các trạng thái có thể chuyển đổi dựa trên trạng thái hiện tại
+            List<String> availableStatusesEn = getValidNextStatuses(currentStatusEnum);
+            String[] availableStatusesVi = new String[availableStatusesEn.size()];
+            
+            for (int i = 0; i < availableStatusesEn.size(); i++) {
+                availableStatusesVi[i] = statusTranslation.getOrDefault(availableStatusesEn.get(i), availableStatusesEn.get(i));
+            }
             
             // Hiển thị dialog để chọn trạng thái mới
             String newStatusVi = (String) javax.swing.JOptionPane.showInputDialog(
@@ -686,7 +690,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null,
                 availableStatusesVi,
-                getCurrentStatusVi(currentStatus)
+                getCurrentStatusVi(currentStatusEnum.getStatus())
             );
             
             // Nếu người dùng không chọn hoặc hủy
@@ -902,5 +906,52 @@ public class RepairServiceForm extends javax.swing.JPanel {
         return statusTranslation.getOrDefault(statusEn, "Không xác định");
     }
     
-    
+    /**
+     * Lấy danh sách các trạng thái hợp lệ có thể chuyển từ trạng thái hiện tại
+     */
+    private List<String> getValidNextStatuses(RepairEnum currentStatus) {
+        List<String> validStatuses = new ArrayList<>();
+        
+        switch (currentStatus) {
+            case RECEIVED:
+                validStatuses.add("Diagnosing");
+                validStatuses.add("Cancelled");
+                break;
+            case DIAGNOSING:
+                validStatuses.add("Waiting for Parts");
+                validStatuses.add("Repairing");
+                validStatuses.add("Completed");
+                validStatuses.add("Cancelled");
+                break;
+            case WAITING_FOR_PARTS:
+                validStatuses.add("Repairing");
+                validStatuses.add("Cancelled");
+                break;
+            case REPAIRING:
+                validStatuses.add("Completed");
+                validStatuses.add("Cancelled");
+                break;
+            case COMPLETED:
+                validStatuses.add("Delivered");
+                validStatuses.add("Cancelled");
+                break;
+            case DELIVERED:
+                // Trạng thái cuối, không thể chuyển đổi
+                break;
+            case CANCELLED:
+                // Trạng thái cuối, không thể chuyển đổi
+                break;
+            default:
+                // Thêm tất cả các trạng thái có thể
+                validStatuses.add("Received");
+                validStatuses.add("Diagnosing");
+                validStatuses.add("Waiting for Parts");
+                validStatuses.add("Repairing"); 
+                validStatuses.add("Completed");
+                validStatuses.add("Delivered");
+                validStatuses.add("Cancelled");
+        }
+        
+        return validStatuses;
+    }
 }

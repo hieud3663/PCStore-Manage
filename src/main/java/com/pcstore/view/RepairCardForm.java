@@ -10,6 +10,24 @@ package com.pcstore.view;
  */
 public class RepairCardForm extends javax.swing.JPanel {
 
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel AdressCustomer;
+    private javax.swing.JLabel NameCustomer;
+    private com.k33ptoo.components.KButton btnPrintCard;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbAddress;
+    private javax.swing.JLabel lbCustomerName;
+    private javax.swing.JLabel lbPhone;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JLabel lbTotalAmonut;
+    private javax.swing.JTable table;
+    private javax.swing.JLabel txtSDT;
+    private javax.swing.JLabel txtTotal;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form RepairCard
      */
@@ -129,20 +147,5 @@ public class RepairCardForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnPrintCardMouseClicked
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel AdressCustomer;
-    private javax.swing.JLabel NameCustomer;
-    private com.k33ptoo.components.KButton btnPrintCard;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lbAddress;
-    private javax.swing.JLabel lbCustomerName;
-    private javax.swing.JLabel lbPhone;
-    private javax.swing.JLabel lbTitle;
-    private javax.swing.JLabel lbTotalAmonut;
-    private javax.swing.JTable table;
-    private javax.swing.JLabel txtSDT;
-    private javax.swing.JLabel txtTotal;
-    // End of variables declaration//GEN-END:variables
+    
 }

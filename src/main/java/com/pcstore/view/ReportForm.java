@@ -30,6 +30,15 @@ public class ReportForm extends javax.swing.JPanel {
     private RevenueEmployeeForm revenueEmployeeForm;
     private RevenueProductController revenueProductController;
     private RevenueEmployeeController revenueEmployeeController;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbDaily;
+    private javax.swing.JLabel lbMonthly;
+    private javax.swing.JPanel panelContent;
+    private com.k33ptoo.components.KGradientPanel panelDaily;
+    private com.k33ptoo.components.KGradientPanel panelMonthly;
+    private javax.swing.JPanel panelNav;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form RevenueForm - Tự khởi tạo controller
      */
@@ -230,12 +239,5 @@ public class ReportForm extends javax.swing.JPanel {
     }
     // End Hover========================================================
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbDaily;
-    private javax.swing.JLabel lbMonthly;
-    private javax.swing.JPanel panelContent;
-    private com.k33ptoo.components.KGradientPanel panelDaily;
-    private com.k33ptoo.components.KGradientPanel panelMonthly;
-    private javax.swing.JPanel panelNav;
-    // End of variables declaration//GEN-END:variables
+    
 }

@@ -145,7 +145,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         }
     }
     
-    /
+    
      // Hiển thị chi tiết các hóa đơn
      
     private void displayInvoiceDetails(List<Invoice> invoices) {

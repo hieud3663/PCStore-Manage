@@ -29,6 +29,20 @@ import com.pcstore.controller.StockInHistoryController;
  */
 public class StockInHistoryForm extends JDialog {
     private StockInHistoryController controller;
+
+    // Variables declaration - do not modify
+    private JTable tablePurchaseOrders;
+    private JTable tablePurchaseOrderDetails;
+    private KButton btnClose;
+    private KButton btnRefresh; 
+    private KButton btnUpdateStatus; // Nút cập nhật trạng thái
+    
+    private JScrollPane jScrollPaneOrders;
+    private JScrollPane jScrollPaneDetails;
+    private KGradientPanel panelMain;
+    private JLabel lblTitle;
+    private JLabel lblOrderDetail;
+    // End of variables declaration
     
     /**
      * Creates new form StockInHistory
@@ -302,17 +316,5 @@ public class StockInHistoryForm extends JDialog {
         btnUpdateStatus.setEnabled(enable);
     }
 
-    // Variables declaration - do not modify
-    private JTable tablePurchaseOrders;
-    private JTable tablePurchaseOrderDetails;
-    private KButton btnClose;
-    private KButton btnRefresh; 
-    private KButton btnUpdateStatus; // Nút cập nhật trạng thái
     
-    private JScrollPane jScrollPaneOrders;
-    private JScrollPane jScrollPaneDetails;
-    private KGradientPanel panelMain;
-    private JLabel lblTitle;
-    private JLabel lblOrderDetail;
-    // End of variables declaration
 }

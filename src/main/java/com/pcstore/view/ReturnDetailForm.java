@@ -14,7 +14,31 @@ import java.util.Map;
  * @author DUC ANH
  */
 public class ReturnDetailForm extends javax.swing.JPanel {
-
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbID;
+    private javax.swing.JLabel lbProductID;
+    private javax.swing.JLabel lbProductName;
+    private javax.swing.JLabel lbQuantity;
+    private javax.swing.JLabel lbReasonReturn;
+    private javax.swing.JLabel lbReturnDate;
+    private javax.swing.JLabel lbStatus;
+    private javax.swing.JPanel paneIDCustomer;
+    private com.k33ptoo.components.KGradientPanel panelInfoDetail;
+    private javax.swing.JPanel panelProductID;
+    private javax.swing.JPanel panelProductName;
+    private javax.swing.JPanel panelQuantity;
+    private javax.swing.JPanel panelReasonReturn;
+    private javax.swing.JPanel panelReturnDate;
+    private javax.swing.JPanel panelStatus;
+    private javax.swing.JTextField txtID;
+    private javax.swing.JTextField txtProductID;
+    private javax.swing.JTextField txtProductName;
+    private javax.swing.JTextField txtQuantity;
+    private javax.swing.JTextField txtReasonReturn;
+    private javax.swing.JTextField txtReturnDate;
+    private javax.swing.JTextField txtStatus;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form DetailReturnForm
      */
@@ -239,28 +263,5 @@ public class ReturnDetailForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbID;
-    private javax.swing.JLabel lbProductID;
-    private javax.swing.JLabel lbProductName;
-    private javax.swing.JLabel lbQuantity;
-    private javax.swing.JLabel lbReasonReturn;
-    private javax.swing.JLabel lbReturnDate;
-    private javax.swing.JLabel lbStatus;
-    private javax.swing.JPanel paneIDCustomer;
-    private com.k33ptoo.components.KGradientPanel panelInfoDetail;
-    private javax.swing.JPanel panelProductID;
-    private javax.swing.JPanel panelProductName;
-    private javax.swing.JPanel panelQuantity;
-    private javax.swing.JPanel panelReasonReturn;
-    private javax.swing.JPanel panelReturnDate;
-    private javax.swing.JPanel panelStatus;
-    private javax.swing.JTextField txtID;
-    private javax.swing.JTextField txtProductID;
-    private javax.swing.JTextField txtProductName;
-    private javax.swing.JTextField txtQuantity;
-    private javax.swing.JTextField txtReasonReturn;
-    private javax.swing.JTextField txtReturnDate;
-    private javax.swing.JTextField txtStatus;
-    // End of variables declaration//GEN-END:variables
+    
 }

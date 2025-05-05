@@ -50,6 +50,46 @@ public class SellForm extends JPanel {
 
     private TableRowSorter<TableModel> tableListProductSorter;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnApplyVoucher;
+    private javax.swing.JButton btnDeleteItemCart;
+    private com.k33ptoo.components.KButton btnPay;
+    private com.k33ptoo.components.KButton btnReset;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel labelCustomerName;
+    private javax.swing.JLabel labelCustomerPhone;
+    private javax.swing.JLabel labelCustomerPoint;
+    private javax.swing.JLabel labelCustomerTotalAmonut;
+    private javax.swing.JLabel labelDiscount;
+    private javax.swing.JLabel labelTitle;
+    private javax.swing.JLabel lbNote;
+    private javax.swing.JPanel paneBody;
+    private javax.swing.JPanel panelButtonAction;
+    private com.k33ptoo.components.KGradientPanel panelCart;
+    private javax.swing.JPanel panelCustomerDiscount;
+    private com.k33ptoo.components.KGradientPanel panelCustomerInfo;
+    private javax.swing.JPanel panelCustomerName;
+    private javax.swing.JPanel panelCustomerPhone;
+    private javax.swing.JPanel panelCustomerPoint;
+    private javax.swing.JPanel panelCustomerTotalAmount;
+    private javax.swing.JPanel panelDelete;
+    private javax.swing.JPanel panelListProduct;
+    private com.k33ptoo.components.KGradientPanel panelMain;
+    private javax.swing.JPanel panelNav;
+    private javax.swing.JPanel panelNote;
+    private javax.swing.JPanel panelRight;
+    private com.k33ptoo.components.KGradientPanel panelTitle;
+    private javax.swing.JTable tableCart;
+    private javax.swing.JTable tableListProduct;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch;
+    private javax.swing.JTextField txtDiscountAmount;
+    private javax.swing.JTextField txtNameKH;
+    private javax.swing.JTextField txtPhoneNumberKH;
+    private javax.swing.JTextField txtPointKH;
+    private javax.swing.JTextField txtTotalAmount;
+    // End of variables declaration//GEN-END:variables
+
     // private TextFieldSearch textFieldSearch = new TextFieldSearch();
     
     /**
@@ -883,49 +923,5 @@ public class SellForm extends JPanel {
     public TableRowSorter<TableModel> getTableListProductSorter() {
         return tableListProductSorter;
     }
-
-
-
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnApplyVoucher;
-    private javax.swing.JButton btnDeleteItemCart;
-    private com.k33ptoo.components.KButton btnPay;
-    private com.k33ptoo.components.KButton btnReset;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JLabel labelCustomerName;
-    private javax.swing.JLabel labelCustomerPhone;
-    private javax.swing.JLabel labelCustomerPoint;
-    private javax.swing.JLabel labelCustomerTotalAmonut;
-    private javax.swing.JLabel labelDiscount;
-    private javax.swing.JLabel labelTitle;
-    private javax.swing.JLabel lbNote;
-    private javax.swing.JPanel paneBody;
-    private javax.swing.JPanel panelButtonAction;
-    private com.k33ptoo.components.KGradientPanel panelCart;
-    private javax.swing.JPanel panelCustomerDiscount;
-    private com.k33ptoo.components.KGradientPanel panelCustomerInfo;
-    private javax.swing.JPanel panelCustomerName;
-    private javax.swing.JPanel panelCustomerPhone;
-    private javax.swing.JPanel panelCustomerPoint;
-    private javax.swing.JPanel panelCustomerTotalAmount;
-    private javax.swing.JPanel panelDelete;
-    private javax.swing.JPanel panelListProduct;
-    private com.k33ptoo.components.KGradientPanel panelMain;
-    private javax.swing.JPanel panelNav;
-    private javax.swing.JPanel panelNote;
-    private javax.swing.JPanel panelRight;
-    private com.k33ptoo.components.KGradientPanel panelTitle;
-    private javax.swing.JTable tableCart;
-    private javax.swing.JTable tableListProduct;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch;
-    private javax.swing.JTextField txtDiscountAmount;
-    private javax.swing.JTextField txtNameKH;
-    private javax.swing.JTextField txtPhoneNumberKH;
-    private javax.swing.JTextField txtPointKH;
-    private javax.swing.JTextField txtTotalAmount;
-    // End of variables declaration//GEN-END:variables
 
 }

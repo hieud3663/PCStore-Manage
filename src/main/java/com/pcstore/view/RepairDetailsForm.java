@@ -10,6 +10,37 @@ package com.pcstore.view;
  */
 public class RepairDetailsForm extends javax.swing.JPanel {
 
+
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+     private javax.swing.JLabel lbCost;
+     private javax.swing.JLabel lbDeviceName;
+     private javax.swing.JLabel lbDisplayNameCustomer;
+     private javax.swing.JLabel lbEmailCustomer;
+     private javax.swing.JLabel lbIDCustomer;
+     private javax.swing.JLabel lbNote;
+     private javax.swing.JLabel lbPhonenumber1;
+     private javax.swing.JLabel lbPosition1;
+     private javax.swing.JLabel lbStatus;
+     private javax.swing.JPanel paneIDCustomer;
+     private javax.swing.JPanel panelCost;
+     private javax.swing.JPanel panelDeviceName;
+     private javax.swing.JPanel panelEmailCustome;
+     private com.k33ptoo.components.KGradientPanel panelMain;
+     private javax.swing.JPanel panelNameCustomer;
+     private javax.swing.JPanel panelNote;
+     private javax.swing.JPanel panelPhonenumberCustomer;
+     private javax.swing.JPanel panelRepairProblem;
+     private javax.swing.JPanel panelStatus;
+     private javax.swing.JTextField txtCost;
+     private javax.swing.JTextField txtDeviceName;
+     private javax.swing.JTextField txtEmailCustomer;
+     private javax.swing.JTextField txtIDCustomer;
+     private javax.swing.JTextField txtNameCustomer;
+     private javax.swing.JTextField txtNote;
+     private javax.swing.JTextField txtPhonenumberEmployee1;
+     private javax.swing.JTextField txtRepairProblem;
+     private javax.swing.JTextField txtStatus;
+     // End of variables declaration//GEN-END:variables
     /**
      * Creates new form RepairDetailsForm
      */
@@ -280,34 +311,5 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         // Thêm nút vào form
         this.add(buttonPanel, java.awt.BorderLayout.SOUTH);
     }
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbCost;
-    private javax.swing.JLabel lbDeviceName;
-    private javax.swing.JLabel lbDisplayNameCustomer;
-    private javax.swing.JLabel lbEmailCustomer;
-    private javax.swing.JLabel lbIDCustomer;
-    private javax.swing.JLabel lbNote;
-    private javax.swing.JLabel lbPhonenumber1;
-    private javax.swing.JLabel lbPosition1;
-    private javax.swing.JLabel lbStatus;
-    private javax.swing.JPanel paneIDCustomer;
-    private javax.swing.JPanel panelCost;
-    private javax.swing.JPanel panelDeviceName;
-    private javax.swing.JPanel panelEmailCustome;
-    private com.k33ptoo.components.KGradientPanel panelMain;
-    private javax.swing.JPanel panelNameCustomer;
-    private javax.swing.JPanel panelNote;
-    private javax.swing.JPanel panelPhonenumberCustomer;
-    private javax.swing.JPanel panelRepairProblem;
-    private javax.swing.JPanel panelStatus;
-    private javax.swing.JTextField txtCost;
-    private javax.swing.JTextField txtDeviceName;
-    private javax.swing.JTextField txtEmailCustomer;
-    private javax.swing.JTextField txtIDCustomer;
-    private javax.swing.JTextField txtNameCustomer;
-    private javax.swing.JTextField txtNote;
-    private javax.swing.JTextField txtPhonenumberEmployee1;
-    private javax.swing.JTextField txtRepairProblem;
-    private javax.swing.JTextField txtStatus;
-    // End of variables declaration//GEN-END:variables
+   
 }

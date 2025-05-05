@@ -31,7 +31,18 @@ public class RepairServiceForm extends javax.swing.JPanel {
     private RepairController repairController;
 
     private final Map<String, String> statusTranslation;
-   
+   // Variables declaration - do not modify//GEN-BEGIN:variables
+   private com.k33ptoo.components.KButton btnAddRepair;
+   private com.k33ptoo.components.KButton btnDetail;
+   private com.k33ptoo.components.KButton btnRemoveRepair;
+   private com.k33ptoo.components.KButton btnUpdateStatus;
+   private javax.swing.JScrollPane jScrollPaneTable;
+   private javax.swing.JPanel panelBody;
+   private com.k33ptoo.components.KGradientPanel pnMainRepair;
+   private javax.swing.JPanel pnRepairFunctions;
+   private javax.swing.JTable tableRepair;
+   private com.pcstore.utils.TextFieldSearch textFieldSearch;
+   // End of variables declaration//GEN-END:variables
 
     /**
      * Creates new form RepairService
@@ -891,16 +902,5 @@ public class RepairServiceForm extends javax.swing.JPanel {
         return statusTranslation.getOrDefault(statusEn, "Không xác định");
     }
     
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAddRepair;
-    private com.k33ptoo.components.KButton btnDetail;
-    private com.k33ptoo.components.KButton btnRemoveRepair;
-    private com.k33ptoo.components.KButton btnUpdateStatus;
-    private javax.swing.JScrollPane jScrollPaneTable;
-    private javax.swing.JPanel panelBody;
-    private com.k33ptoo.components.KGradientPanel pnMainRepair;
-    private javax.swing.JPanel pnRepairFunctions;
-    private javax.swing.JTable tableRepair;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch;
-    // End of variables declaration//GEN-END:variables
+    
 }

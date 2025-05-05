@@ -30,6 +30,17 @@ import com.pcstore.utils.DatabaseConnection;
 public class WareHouseForm extends javax.swing.JPanel {
 
     private WareHouseController controller;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable WareHouseTable;
+    public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
+    public com.k33ptoo.components.KButton btnHistoryStockIn;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel panelAction;
+    private com.k33ptoo.components.KGradientPanel panelBody;
+    private javax.swing.JPanel panelTable;
+    private com.k33ptoo.components.KGradientPanel panelTitle;
+    // End of variables declaration//GEN-END:variables
 
     /**
      * Creates new form PurchaseOder
@@ -476,15 +487,5 @@ public class WareHouseForm extends javax.swing.JPanel {
     }
    
     
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable WareHouseTable;
-    public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
-    public com.k33ptoo.components.KButton btnHistoryStockIn;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelAction;
-    private com.k33ptoo.components.KGradientPanel panelBody;
-    private javax.swing.JPanel panelTable;
-    private com.k33ptoo.components.KGradientPanel panelTitle;
-    // End of variables declaration//GEN-END:variables
+    
 }

@@ -29,6 +29,21 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final Map<String, String> statusTranslation;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane ScrollPaneTable;
+    private com.k33ptoo.components.KButton btnDetailReturnCard;
+    private com.k33ptoo.components.KButton btnRemoveReturn;
+    private com.k33ptoo.components.KButton btnReturnInformationLookup;
+    private com.k33ptoo.components.KButton btnReturnProduct;
+    private com.k33ptoo.components.KButton btnUpdateStatus;
+    private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel pnReturnFunctions;
+    private javax.swing.JPanel pnReturnMain;
+    private javax.swing.JPanel pnSearch;
+    private javax.swing.JTable tbReturn;
+    private javax.swing.JTextField txtSearch;
+    // End of variables declaration//GEN-END:variables
+
 
     /**
      * Creates new form ReturnService
@@ -691,18 +706,5 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         addListeners();
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane ScrollPaneTable;
-    private com.k33ptoo.components.KButton btnDetailReturnCard;
-    private com.k33ptoo.components.KButton btnRemoveReturn;
-    private com.k33ptoo.components.KButton btnReturnInformationLookup;
-    private com.k33ptoo.components.KButton btnReturnProduct;
-    private com.k33ptoo.components.KButton btnUpdateStatus;
-    private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel pnReturnFunctions;
-    private javax.swing.JPanel pnReturnMain;
-    private javax.swing.JPanel pnSearch;
-    private javax.swing.JTable tbReturn;
-    private javax.swing.JTextField txtSearch;
-    // End of variables declaration//GEN-END:variables
+    
 }

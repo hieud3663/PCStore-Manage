@@ -35,6 +35,17 @@ public class ServiceForm extends JPanel {
     private ReturnServiceForm returnServiceForm;;
     private RepairServiceForm repairServiceForm;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbRepair;
+    private javax.swing.JLabel lbReturn;
+    private javax.swing.JLabel lbWarranty;
+    private javax.swing.JPanel panelContent;
+    private javax.swing.JPanel panelNav;
+    private com.k33ptoo.components.KGradientPanel panelRepair;
+    private com.k33ptoo.components.KGradientPanel panelReturn;
+    private com.k33ptoo.components.KGradientPanel panelWarranty;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form Service
      */
@@ -292,14 +303,5 @@ public class ServiceForm extends JPanel {
     // End Hover=====================================================
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbRepair;
-    private javax.swing.JLabel lbReturn;
-    private javax.swing.JLabel lbWarranty;
-    private javax.swing.JPanel panelContent;
-    private javax.swing.JPanel panelNav;
-    private com.k33ptoo.components.KGradientPanel panelRepair;
-    private com.k33ptoo.components.KGradientPanel panelReturn;
-    private com.k33ptoo.components.KGradientPanel panelWarranty;
-    // End of variables declaration//GEN-END:variables
+    
 }

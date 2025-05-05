@@ -10,6 +10,31 @@ package com.pcstore.view;
  */
 public class ReturnCardForm extends javax.swing.JPanel {
 
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbDisplayNameCustomer;
+    private javax.swing.JLabel lbPhonenumber1;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JPanel panelBottom;
+    private com.k33ptoo.components.KGradientPanel panelMain;
+    private javax.swing.JPanel panelNameCustomer;
+    private javax.swing.JPanel panelPhonenumberCustomer;
+    private javax.swing.JPanel panelTitle;
+    private javax.swing.JPanel panelTop;
+    private javax.swing.JTable table;
+    private javax.swing.JTextField txtNameCustomer;
+    private javax.swing.JTextField txtNameCustomer1;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form ReturnCard
      */
@@ -163,28 +188,5 @@ public class ReturnCardForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel lbDisplayNameCustomer;
-    private javax.swing.JLabel lbPhonenumber1;
-    private javax.swing.JLabel lbTitle;
-    private javax.swing.JPanel panelBottom;
-    private com.k33ptoo.components.KGradientPanel panelMain;
-    private javax.swing.JPanel panelNameCustomer;
-    private javax.swing.JPanel panelPhonenumberCustomer;
-    private javax.swing.JPanel panelTitle;
-    private javax.swing.JPanel panelTop;
-    private javax.swing.JTable table;
-    private javax.swing.JTextField txtNameCustomer;
-    private javax.swing.JTextField txtNameCustomer1;
-    // End of variables declaration//GEN-END:variables
+    
 }

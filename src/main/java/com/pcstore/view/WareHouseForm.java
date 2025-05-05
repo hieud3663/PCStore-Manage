@@ -50,12 +50,12 @@ public class WareHouseForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
+        panelTitle = new com.k33ptoo.components.KGradientPanel();
         jLabel1 = new javax.swing.JLabel();
         panelAction = new javax.swing.JPanel();
         btnCreatePurchaseOrder = new com.k33ptoo.components.KButton();
         btnHistoryStockIn = new com.k33ptoo.components.KButton();
-        kGradientPanel4 = new com.k33ptoo.components.KGradientPanel();
+        panelBody = new com.k33ptoo.components.KGradientPanel();
         panelTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         WareHouseTable = new javax.swing.JTable();
@@ -63,20 +63,20 @@ public class WareHouseForm extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        kGradientPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        kGradientPanel2.setkFillBackground(false);
-        kGradientPanel2.setOpaque(false);
-        kGradientPanel2.setPreferredSize(new java.awt.Dimension(167, 35));
-        kGradientPanel2.setLayout(new java.awt.BorderLayout());
+        panelTitle.setBackground(new java.awt.Color(255, 255, 255));
+        panelTitle.setkFillBackground(false);
+        panelTitle.setOpaque(false);
+        panelTitle.setPreferredSize(new java.awt.Dimension(167, 35));
+        panelTitle.setLayout(new java.awt.BorderLayout());
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 29, 204));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         jLabel1.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
-        kGradientPanel2.add(jLabel1, java.awt.BorderLayout.CENTER);
+        panelTitle.add(jLabel1, java.awt.BorderLayout.CENTER);
 
-        add(kGradientPanel2);
+        add(panelTitle);
 
         panelAction.setMinimumSize(new java.awt.Dimension(459, 77));
         panelAction.setOpaque(false);
@@ -121,9 +121,9 @@ public class WareHouseForm extends javax.swing.JPanel {
 
         add(panelAction);
 
-        kGradientPanel4.setkFillBackground(false);
-        kGradientPanel4.setPreferredSize(new java.awt.Dimension(1188, 592));
-        kGradientPanel4.setLayout(new java.awt.BorderLayout());
+        panelBody.setkFillBackground(false);
+        panelBody.setPreferredSize(new java.awt.Dimension(1188, 592));
+        panelBody.setLayout(new java.awt.BorderLayout());
 
         panelTable.setBackground(new java.awt.Color(255, 255, 255));
         panelTable.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(51, 29, 204))); // NOI18N
@@ -170,9 +170,9 @@ public class WareHouseForm extends javax.swing.JPanel {
 
         panelTable.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        kGradientPanel4.add(panelTable, java.awt.BorderLayout.CENTER);
+        panelBody.add(panelTable, java.awt.BorderLayout.CENTER);
 
-        add(kGradientPanel4);
+        add(panelBody);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -482,9 +482,9 @@ public class WareHouseForm extends javax.swing.JPanel {
     public com.k33ptoo.components.KButton btnHistoryStockIn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel4;
     private javax.swing.JPanel panelAction;
+    private com.k33ptoo.components.KGradientPanel panelBody;
     private javax.swing.JPanel panelTable;
+    private com.k33ptoo.components.KGradientPanel panelTitle;
     // End of variables declaration//GEN-END:variables
 }

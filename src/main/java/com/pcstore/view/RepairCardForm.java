@@ -49,6 +49,7 @@ public class RepairCardForm extends javax.swing.JPanel {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel5.setText(bundle.getString("lbSDT")); // NOI18N
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -107,8 +108,6 @@ public class RepairCardForm extends javax.swing.JPanel {
         btnPrintCard.setkEndColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnPrintCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnPrintCard.setkStartColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnPrintCardMouseClicked(evt);

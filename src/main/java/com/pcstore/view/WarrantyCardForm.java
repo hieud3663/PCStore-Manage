@@ -36,7 +36,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
         ScrollTable = new javax.swing.JScrollPane();
         TableWarranty = new javax.swing.JTable();
         btnPrintCard = new com.k33ptoo.components.KButton();
@@ -59,11 +59,11 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new java.awt.BorderLayout());
 
-        kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setkEndColor(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setkStartColor(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
+        panelMain.setkEndColor(new java.awt.Color(255, 255, 255));
+        panelMain.setkFillBackground(false);
+        panelMain.setkStartColor(new java.awt.Color(255, 255, 255));
+        panelMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         TableWarranty.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -108,7 +108,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
             TableWarranty.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtWarrantyWarrantyPeriod")); // NOI18N
         }
 
-        kGradientPanel1.add(ScrollTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 230, 622, 257));
+        panelMain.add(ScrollTable, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 230, 622, 257));
 
         btnPrintCard.setText(bundle.getString("btnDetailCard")); // NOI18N
         btnPrintCard.setkBorderRadius(30);
@@ -120,7 +120,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
                 btnPrintCardMouseClicked(evt);
             }
         });
-        kGradientPanel1.add(btnPrintCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 500, -1, -1));
+        panelMain.add(btnPrintCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 500, -1, -1));
 
         pnHeader.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -130,7 +130,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         lbTitile.setToolTipText("");
         pnHeader.add(lbTitile);
 
-        kGradientPanel1.add(pnHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1050, -1));
+        panelMain.add(pnHeader, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1050, -1));
 
         pnDate.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -158,7 +158,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
                 .addGap(27, 27, 27))
         );
 
-        kGradientPanel1.add(pnDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 200, -1));
+        panelMain.add(pnDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 140, 200, -1));
 
         pnSign.setBackground(new java.awt.Color(255, 255, 255));
         pnSign.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -169,7 +169,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         pnSign.add(lbSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 110, -1));
         pnSign.add(txtSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 275, 200));
 
-        kGradientPanel1.add(pnSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 310, 240));
+        panelMain.add(pnSign, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 310, 240));
 
         pnInfo.setBackground(new java.awt.Color(255, 255, 255));
         pnInfo.setLayout(new java.awt.GridLayout(3, 2, 30, 10));
@@ -201,9 +201,9 @@ public class WarrantyCardForm extends javax.swing.JPanel {
         SDT.setText("                                                                                                                             ");
         pnInfo.add(SDT);
 
-        kGradientPanel1.add(pnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 510, 90));
+        panelMain.add(pnInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 510, 90));
 
-        add(kGradientPanel1, java.awt.BorderLayout.CENTER);
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -372,13 +372,13 @@ public class WarrantyCardForm extends javax.swing.JPanel {
     private javax.swing.JScrollPane ScrollTable;
     private javax.swing.JTable TableWarranty;
     private com.k33ptoo.components.KButton btnPrintCard;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel lbDate;
     private javax.swing.JLabel lbName;
     private javax.swing.JLabel lbSDT;
     private javax.swing.JLabel lbSign;
     private javax.swing.JLabel lbTitile;
     private javax.swing.JLabel lbWarrantyCode;
+    private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel pnDate;
     private javax.swing.JPanel pnHeader;
     private javax.swing.JPanel pnInfo;

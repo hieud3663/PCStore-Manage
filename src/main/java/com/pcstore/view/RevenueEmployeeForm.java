@@ -17,6 +17,33 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
 
     private RevenueEmployeeController revenueEmployeeController;
     private com.pcstore.chart.Chart panelChartView;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnApply;
+    private com.k33ptoo.components.KButton btnExportReport;
+    private javax.swing.JButton btnFromDate;
+    private javax.swing.JButton btnToDate;
+    private com.raven.datechooser.DateChooser dateChooserFromDate;
+    private com.raven.datechooser.DateChooser dateChooserToDate;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JLabel lbFromDate;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JLabel lbToDate;
+    private javax.swing.JLabel lbTotal;
+    private javax.swing.JLabel lbTotalText;
+    private javax.swing.JPanel panelAction;
+    private javax.swing.JPanel panelBody;
+    private com.k33ptoo.components.KGradientPanel panelChart;
+    private javax.swing.JPanel panelDate;
+    private javax.swing.JPanel panelEmpty;
+    private javax.swing.JPanel panelFooter;
+    private javax.swing.JPanel panelFromDate;
+    private javax.swing.JPanel panelHeader;
+    private javax.swing.JPanel panelToDate;
+    private javax.swing.JTable tableRevenue;
+    private javax.swing.JTextField txtFromDate;
+    private javax.swing.JTextField txtToDate;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form RevenueDaily
      */
@@ -320,30 +347,5 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
     }
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnApply;
-    private com.k33ptoo.components.KButton btnExportReport;
-    private javax.swing.JButton btnFromDate;
-    private javax.swing.JButton btnToDate;
-    private com.raven.datechooser.DateChooser dateChooserFromDate;
-    private com.raven.datechooser.DateChooser dateChooserToDate;
-    private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JLabel lbFromDate;
-    private javax.swing.JLabel lbTitle;
-    private javax.swing.JLabel lbToDate;
-    private javax.swing.JLabel lbTotal;
-    private javax.swing.JLabel lbTotalText;
-    private javax.swing.JPanel panelAction;
-    private javax.swing.JPanel panelBody;
-    private com.k33ptoo.components.KGradientPanel panelChart;
-    private javax.swing.JPanel panelDate;
-    private javax.swing.JPanel panelEmpty;
-    private javax.swing.JPanel panelFooter;
-    private javax.swing.JPanel panelFromDate;
-    private javax.swing.JPanel panelHeader;
-    private javax.swing.JPanel panelToDate;
-    private javax.swing.JTable tableRevenue;
-    private javax.swing.JTextField txtFromDate;
-    private javax.swing.JTextField txtToDate;
-    // End of variables declaration//GEN-END:variables
+    
 }

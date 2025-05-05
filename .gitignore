@@ -33,3 +33,7 @@ hs_err_pid*
 # OS specific files
 .DS_Store
 Thumbs.db
+
+# Secret files
+**/application-secrets.properties
+**/secrets.properties

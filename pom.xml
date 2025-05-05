@@ -211,5 +211,13 @@
             <artifactId>javax.activation</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+
+        <!-- Payos -->
+        <dependency>
+            <groupId>vn.payos</groupId>
+            <artifactId>payos-java</artifactId>
+            <version>1.0.3</version>
+        </dependency>
     </dependencies>
 </project>

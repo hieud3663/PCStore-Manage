@@ -63,7 +63,6 @@ public class StockInHistoryForm extends JDialog {
      */
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        // Khởi tạo các component
         panelMain = new KGradientPanel();
         lblTitle = new JLabel("LỊCH SỬ NHẬP HÀNG");
         jScrollPaneOrders = new JScrollPane();
@@ -74,34 +73,20 @@ public class StockInHistoryForm extends JDialog {
         btnRefresh = new KButton();
         btnUpdateStatus = new KButton();
         lblOrderDetail = new JLabel("Chi tiết phiếu nhập");
-
-        // Thiết lập cơ bản cho form
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setResizable(false);
-        
-        // Thiết lập layout cho form chính (ContentPane)
         getContentPane().setLayout(new BorderLayout());
-        
-        // Thiết lập panelMain
         panelMain.setkFillBackground(false);
         panelMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         panelMain.setLayout(new BorderLayout(0, 10)); // Khoảng cách 10px giữa các thành phần
-        
-        // === PANEL TIÊU ĐỀ - NORTH ===
         JPanel panelTop = new JPanel(new BorderLayout(0, 10));
         panelTop.setOpaque(false);
-        
-        // Thiết lập tiêu đề
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         lblTitle.setForeground(new Color(0, 102, 204));
         panelTop.add(lblTitle, BorderLayout.NORTH);
-        
-        // Panel chứa các nút trên cùng
         JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panelButtons.setOpaque(false);
-        
-        // Thiết lập nút làm mới
         btnRefresh.setText("Làm Mới");
         btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnRefresh.setkBorderRadius(30);
@@ -115,8 +100,6 @@ public class StockInHistoryForm extends JDialog {
                 btnRefreshMouseClicked(evt);
             }
         });
-        
-        // Thiết lập nút cập nhật trạng thái
         btnUpdateStatus.setText("Cập Nhật Trạng Thái");
         btnUpdateStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnUpdateStatus.setkBorderRadius(30);
@@ -131,13 +114,9 @@ public class StockInHistoryForm extends JDialog {
                 btnUpdateStatusMouseClicked(evt);
             }
         });
-        
-        // Thêm nút vào panel
         panelButtons.add(btnUpdateStatus);
         panelButtons.add(btnRefresh);
         panelTop.add(panelButtons, BorderLayout.CENTER);
-        
-        // === PANEL NỘI DUNG CHÍNH - CENTER ===
         JPanel panelCenter = new JPanel();
         panelCenter.setLayout(new BorderLayout(0, 10));
         panelCenter.setOpaque(false);

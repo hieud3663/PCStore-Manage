@@ -60,23 +60,29 @@ public class StockInConfirm extends javax.swing.JPanel {
         
         // Hiển thị thông tin phiếu nhập
         if (purchaseOrder != null) {
+            // Format ngày tháng để dễ đọc
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             String formattedDate = purchaseOrder.getOrderDate().format(formatter);
-
+            
+            // Hiển thị thông tin phiếu
             lbStockInID2.setText(purchaseOrder.getPurchaseOrderId());
             jLabel38.setText(formattedDate); // Date
             jLabel39.setText(purchaseOrder.getEmployee().getFullName()); // Employee
             jLabel41.setText(purchaseOrder.getSupplier().getName()); // Supplier
             
+            // Hiển thị tổng số lượng sản phẩm
             int totalQuantity = 0;
             for (PurchaseOrderDetail detail : selectedProducts) {
                 totalQuantity += detail.getQuantity();
             }
             jLabel42.setText(String.valueOf(totalQuantity));
+            
+            // Hiển thị sản phẩm đầu tiên trong danh sách
             if (!selectedProducts.isEmpty()) {
                 jLabel40.setText(selectedProducts.get(0).getProduct().getProductName());
             }
-
+            
+            // Hiển thị ngày tháng năm hiện tại
             LocalDate currentDate = LocalDate.now();
             jLabel43.setText(String.valueOf(currentDate.getDayOfMonth())); // Ngày
             jLabel44.setText(String.valueOf(currentDate.getMonthValue())); // Tháng

@@ -24,9 +24,6 @@ import com.k33ptoo.components.KButton;
 import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.controller.StockInHistoryController;
 
-/**
- * Form hiển thị lịch sử nhập kho
- */
 public class StockInHistoryForm extends JDialog {
     private StockInHistoryController controller;
 
@@ -43,24 +40,17 @@ public class StockInHistoryForm extends JDialog {
     private JLabel lblTitle;
     private JLabel lblOrderDetail;
     // End of variables declaration
-    
-    /**
-     * Creates new form StockInHistory
-     */
+
     public StockInHistoryForm(JFrame parent, boolean modal) {
         super(parent, modal);
         setTitle("Lịch Sử Nhập Hàng");
         initComponents();
         setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
-        // Khởi tạo controller
+
         controller = new StockInHistoryController(this);
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     */
     @SuppressWarnings("unchecked")
     private void initComponents() {
         panelMain = new KGradientPanel();
@@ -225,8 +215,8 @@ public class StockInHistoryForm extends JDialog {
         
         int selectedRow = tablePurchaseOrders.getSelectedRow();
         if (selectedRow >= 0) {
-            String purchaseOrderId = tablePurchaseOrders.getValueAt(selectedRow, 1).toString(); // Cột Mã Phiếu
-            String currentStatus = tablePurchaseOrders.getValueAt(selectedRow, 4).toString();   // Cột Trạng Thái
+            String purchaseOrderId = tablePurchaseOrders.getValueAt(selectedRow, 1).toString();
+            String currentStatus = tablePurchaseOrders.getValueAt(selectedRow, 4).toString();
             
             if (controller != null) {
                 controller.showUpdateStatusDialog(purchaseOrderId, currentStatus);

@@ -20,6 +20,30 @@ import java.time.format.DateTimeFormatter;
  */
 public class WarrantyCardForm extends javax.swing.JPanel {
 
+    
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Date;
+    private javax.swing.JLabel NameCustomer;
+    private javax.swing.JLabel SDT;
+    private javax.swing.JScrollPane ScrollTable;
+    private javax.swing.JTable TableWarranty;
+    private com.k33ptoo.components.KButton btnPrintCard;
+    private javax.swing.JLabel lbDate;
+    private javax.swing.JLabel lbName;
+    private javax.swing.JLabel lbSDT;
+    private javax.swing.JLabel lbSign;
+    private javax.swing.JLabel lbTitile;
+    private javax.swing.JLabel lbWarrantyCode;
+    private com.k33ptoo.components.KGradientPanel panelMain;
+    private javax.swing.JPanel pnDate;
+    private javax.swing.JPanel pnHeader;
+    private javax.swing.JPanel pnInfo;
+    private javax.swing.JPanel pnSign;
+    private javax.swing.JTextField txtSign;
+    private javax.swing.JLabel warrantycode;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form WarrantyCard
      */
@@ -364,26 +388,4 @@ public class WarrantyCardForm extends javax.swing.JPanel {
     }
 
 
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Date;
-    private javax.swing.JLabel NameCustomer;
-    private javax.swing.JLabel SDT;
-    private javax.swing.JScrollPane ScrollTable;
-    private javax.swing.JTable TableWarranty;
-    private com.k33ptoo.components.KButton btnPrintCard;
-    private javax.swing.JLabel lbDate;
-    private javax.swing.JLabel lbName;
-    private javax.swing.JLabel lbSDT;
-    private javax.swing.JLabel lbSign;
-    private javax.swing.JLabel lbTitile;
-    private javax.swing.JLabel lbWarrantyCode;
-    private com.k33ptoo.components.KGradientPanel panelMain;
-    private javax.swing.JPanel pnDate;
-    private javax.swing.JPanel pnHeader;
-    private javax.swing.JPanel pnInfo;
-    private javax.swing.JPanel pnSign;
-    private javax.swing.JTextField txtSign;
-    private javax.swing.JLabel warrantycode;
-    // End of variables declaration//GEN-END:variables
 }

@@ -15,6 +15,56 @@ import com.pcstore.controller.UserController;
 public class UserForm extends javax.swing.JPanel {
 
     private UserController userController;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnAdd;
+    private com.k33ptoo.components.KButton btnDelete;
+    private com.k33ptoo.components.KButton btnRefresh;
+    private com.k33ptoo.components.KButton btnResetPassword;
+    private com.k33ptoo.components.KButton btnUpdate;
+    private javax.swing.JComboBox<String> cbbRole;
+    private javax.swing.JComboBox<String> cbbStatus;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPaneListUser;
+    private javax.swing.JLabel labelESC;
+    private javax.swing.JLabel lbEmail;
+    private javax.swing.JLabel lbIDUser;
+    private javax.swing.JLabel lbLastlogin;
+    private javax.swing.JLabel lbName;
+    private javax.swing.JLabel lbPassword;
+    private javax.swing.JLabel lbPhonenumber;
+    private javax.swing.JLabel lbRole;
+    private javax.swing.JLabel lbStatus;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JLabel lbUsername;
+    private javax.swing.JPanel paneIDUser;
+    private javax.swing.JPanel panelAction;
+    private javax.swing.JPanel panelDetail;
+    private javax.swing.JPanel panelEmail;
+    private javax.swing.JPanel panelEmpty;
+    private javax.swing.JPanel panelEmptyAction;
+    private javax.swing.JPanel panelHeader;
+    private javax.swing.JPanel panelInfoDetail;
+    private javax.swing.JPanel panelLastlogin;
+    private javax.swing.JPanel panelListUser;
+    private javax.swing.JPanel panelMain;
+    private javax.swing.JPanel panelName;
+    private javax.swing.JPanel panelPassword;
+    private javax.swing.JPanel panelPhonenumber;
+    private javax.swing.JPanel panelRole;
+    private javax.swing.JPanel panelSearch;
+    private javax.swing.JPanel panelStatus;
+    private javax.swing.JPanel panelUsername;
+    private javax.swing.JTable tableListUser;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtIDUser;
+    private javax.swing.JTextField txtLastlogin;
+    private javax.swing.JTextField txtNameEmployee;
+    private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtPhonenumber;
+    private javax.swing.JTextField txtUsername;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form UserForm
      */
@@ -542,56 +592,4 @@ public class UserForm extends javax.swing.JPanel {
     }
 
     
-
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAdd;
-    private com.k33ptoo.components.KButton btnDelete;
-    private com.k33ptoo.components.KButton btnRefresh;
-    private com.k33ptoo.components.KButton btnResetPassword;
-    private com.k33ptoo.components.KButton btnUpdate;
-    private javax.swing.JComboBox<String> cbbRole;
-    private javax.swing.JComboBox<String> cbbStatus;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPaneListUser;
-    private javax.swing.JLabel labelESC;
-    private javax.swing.JLabel lbEmail;
-    private javax.swing.JLabel lbIDUser;
-    private javax.swing.JLabel lbLastlogin;
-    private javax.swing.JLabel lbName;
-    private javax.swing.JLabel lbPassword;
-    private javax.swing.JLabel lbPhonenumber;
-    private javax.swing.JLabel lbRole;
-    private javax.swing.JLabel lbStatus;
-    private javax.swing.JLabel lbTitle;
-    private javax.swing.JLabel lbUsername;
-    private javax.swing.JPanel paneIDUser;
-    private javax.swing.JPanel panelAction;
-    private javax.swing.JPanel panelDetail;
-    private javax.swing.JPanel panelEmail;
-    private javax.swing.JPanel panelEmpty;
-    private javax.swing.JPanel panelEmptyAction;
-    private javax.swing.JPanel panelHeader;
-    private javax.swing.JPanel panelInfoDetail;
-    private javax.swing.JPanel panelLastlogin;
-    private javax.swing.JPanel panelListUser;
-    private javax.swing.JPanel panelMain;
-    private javax.swing.JPanel panelName;
-    private javax.swing.JPanel panelPassword;
-    private javax.swing.JPanel panelPhonenumber;
-    private javax.swing.JPanel panelRole;
-    private javax.swing.JPanel panelSearch;
-    private javax.swing.JPanel panelStatus;
-    private javax.swing.JPanel panelUsername;
-    private javax.swing.JTable tableListUser;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch;
-    private javax.swing.JTextField txtEmail;
-    private javax.swing.JTextField txtIDUser;
-    private javax.swing.JTextField txtLastlogin;
-    private javax.swing.JTextField txtNameEmployee;
-    private javax.swing.JTextField txtPassword;
-    private javax.swing.JTextField txtPhonenumber;
-    private javax.swing.JTextField txtUsername;
-    // End of variables declaration//GEN-END:variables
 }

@@ -35,8 +35,21 @@ import javax.swing.JPanel;
  */
 public class AddWarrantyForm extends javax.swing.JPanel {
     private WarrantyController controller;
-    private List<InvoiceDetail> currentInvoiceDetails; // Thêm biến này
+    private List<InvoiceDetail> currentInvoiceDetails; 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+
+    
+     private com.k33ptoo.components.KButton btnReturnInformationLookup;
+     private com.k33ptoo.components.KButton btnWarranty;
+     private javax.swing.JScrollPane jScrollPane1;
+     private javax.swing.JPanel panelBody;
+     private javax.swing.JPanel panelFooter;
+     private javax.swing.JPanel panelHeader;
+     private com.k33ptoo.components.KGradientPanel panelMain;
+     private javax.swing.JTable table;
+     private javax.swing.JTextField txtSearch;
+   
 
     /**
      * Constructor với reference đến controller và service form cha
@@ -625,16 +638,4 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             sorter.setRowFilter(RowFilter.regexFilter("^" + status + "$", 7));
         }
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnReturnInformationLookup;
-    private com.k33ptoo.components.KButton btnWarranty;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel panelFooter;
-    private javax.swing.JPanel panelHeader;
-    private com.k33ptoo.components.KGradientPanel panelMain;
-    private javax.swing.JTable table;
-    private javax.swing.JTextField txtSearch;
-    // End of variables declaration//GEN-END:variables
 }

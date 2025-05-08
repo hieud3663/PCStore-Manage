@@ -192,7 +192,7 @@ CREATE TABLE InvoiceDetails (
 
 -- Bảng nhập hàng từ nhà cung cấp
 CREATE TABLE PurchaseOrders (
-    PurchaseOrderID VARCHAR(10) PRIMARY KEY, -- Mã phiếu nhập hàng
+    PurchaseOrderID VARCHAR(30) PRIMARY KEY, -- Mã phiếu nhập hàng
     SupplierID VARCHAR(10) NULL, -- Mã nhà cung cấp (FK)
     EmployeeID VARCHAR(10) NULL, -- Mã nhân viên nhập hàng (FK)
     OrderDate DATETIME DEFAULT GETDATE(), -- Ngày nhập hàng
@@ -208,7 +208,7 @@ CREATE TABLE PurchaseOrders (
 -- Bảng chi tiết nhập hàng
 CREATE TABLE PurchaseOrderDetails (
     PurchaseOrderDetailID INT IDENTITY(1,1) PRIMARY KEY, -- Mã chi tiết nhập hàng
-    PurchaseOrderID VARCHAR(10) NOT NULL, -- Mã phiếu nhập hàng (FK)
+    PurchaseOrderID VARCHAR(30) NOT NULL, -- Mã phiếu nhập hàng (FK)
     ProductID VARCHAR(10) NOT NULL, -- Mã sản phẩm (FK)
     Quantity INT CHECK (Quantity > 0) NOT NULL, -- Số lượng nhập
     UnitCost DECIMAL(10,2) CHECK (UnitCost > 0) NOT NULL, -- Giá nhập từng sản phẩm
@@ -344,7 +344,6 @@ SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
 WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
 
 
-
 -- Thêm trường RoleID vào bẳng Users
 ALTER TABLE Users
 ADD RoleID INT NULL,
@@ -368,3 +367,16 @@ ADD Status NVARCHAR(50) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Complete
 --Thêm cột TotalAmount cho bảng PurchaseOrders
 ALTER TABLE PurchaseOrders
 ADD TotalAmount DECIMAL(10,2) CHECK (TotalAmount >= 0) NOT NULL DEFAULT 0; -- Tổng tiền hóa đơn
+
+
+-- Thay đổi kiểu dữ liệu của cột TotalAmount trong bảng PurchaseOrders
+ALTER TABLE PurchaseOrders 
+ALTER COLUMN TotalAmount decimal(18,2);
+
+-- Thay đổi kiểu dữ liệu của cột UnitCost trong bảng PurchaseOrderDetails
+ALTER TABLE PurchaseOrderDetails 
+ALTER COLUMN UnitCost decimal(18,2);
+
+-- Thay đổi kiểu dữ liệu của các cột giá trong bảng Products nếu cần
+ALTER TABLE Products 
+ALTER COLUMN Price decimal(18,2);

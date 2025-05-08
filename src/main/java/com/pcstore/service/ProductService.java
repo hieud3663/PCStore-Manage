@@ -29,6 +29,10 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
+    public String generateProductID(String categoryId) {
+        return productRepository.generateProductID(categoryId);
+    }
+
     /**
      * Thêm sản phẩm mới
      * @param product Thông tin sản phẩm
@@ -87,7 +91,7 @@ public class ProductService {
      * @param categoryId ID của danh mục
      * @return Danh sách sản phẩm thuộc danh mục
      */
-    public List<Product> findProductsByCategory(Integer categoryId) {
+    public List<Product> findProductsByCategory(String categoryId) {
         return productRepository.findByCategory(categoryId);
     }
     

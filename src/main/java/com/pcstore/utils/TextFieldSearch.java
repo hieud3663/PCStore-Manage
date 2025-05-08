@@ -31,7 +31,7 @@ public class TextFieldSearch extends javax.swing.JPanel {
     }
     
     private void setPlaceHolder(){
-        ResourceBundle bundle = ResourceBundle.getBundle("com.pcstore.resources.vi_VN");
+        ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle();
         placeHolder(txtSearchField, bundle.getString("txtSearchField"));
     }
 
@@ -124,6 +124,29 @@ public class TextFieldSearch extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSearchActionPerformed
 
+    /**
+     * Lấy text từ trường tìm kiếm
+     * @return Nội dung text tìm kiếm
+     */
+    public String getText() {
+        return txtSearchField.getText();
+    }
+
+    /**
+     * Thiết lập text cho trường tìm kiếm
+     * @param text Text cần thiết lập
+     */
+    public void setText(String text) {
+        txtSearchField.setText(text);
+    }
+
+    /**
+     * Lấy document của trường tìm kiếm để thêm DocumentListener
+     * @return Document của trường tìm kiếm
+     */
+    public javax.swing.text.Document getDocument() {
+        return txtSearchField.getDocument();
+    }
 
     public JTextField getTxtSearchField() {
         return txtSearchField;

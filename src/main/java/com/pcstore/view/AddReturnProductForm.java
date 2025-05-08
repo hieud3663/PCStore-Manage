@@ -383,8 +383,6 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         panelMain = new com.k33ptoo.components.KGradientPanel();
         pnSearch = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
@@ -395,19 +393,6 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         panelFooter = new javax.swing.JPanel();
         btnWarranty = new com.k33ptoo.components.KButton();
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Hãng Sản Xuất", "Ngày Mua", "Hạn Bảo Hành", "Tên Khách Hàng", "Số Điện Thoại"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
         setLayout(new java.awt.BorderLayout());
 
         panelMain.setBackground(new java.awt.Color(255, 255, 255));
@@ -417,7 +402,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
         pnSearch.setBackground(new java.awt.Color(255, 255, 255));
-        pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm SĐT Khách Hàng\n"));
+        pnSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("pnSearchPhoneNumberCustomer"))); // NOI18N
 
         txtSearch.setToolTipText("");
         txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
@@ -454,7 +439,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã hóa đơn", "Mã Sản Phẩm", "Tên Sản Phẩm", "Đơn giá", "SL còn lại", "Ngày Mua", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái"
+                "Mã hóa đơn", "Mã Sản Phẩm", "Tên sản phẩm", "Đơn giá", "SL còn lại", "Ngày Mua", "Tên Khách Hàng", "Số Điện Thoại", "Trạng Thái"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -467,12 +452,15 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
-            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("cl1ProductCode")); // NOI18N
-            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameProduct")); // NOI18N
-            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clManufacturer")); // NOI18N
-            table.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("clDateOfPurchase")); // NOI18N
-            table.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("clNameCustomer")); // NOI18N
-            table.getColumnModel().getColumn(8).setHeaderValue(bundle.getString("clStatus")); // NOI18N
+            table.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtAddReturnInvoiceID")); // NOI18N
+            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtAddReturnProductID")); // NOI18N
+            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtAddProductName")); // NOI18N
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtAddReturnManufacturer")); // NOI18N
+            table.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtAddReturnRemainingQuantity")); // NOI18N
+            table.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtAddReturnDateOfPurchase")); // NOI18N
+            table.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtAddReturnNameCustomer")); // NOI18N
+            table.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtAddReturnPhoneNumber")); // NOI18N
+            table.getColumnModel().getColumn(8).setHeaderValue(bundle.getString("txtAddReturnStatus")); // NOI18N
         }
 
         pnMain.add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -505,9 +493,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private com.k33ptoo.components.KButton btnWarranty;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JPanel panelFooter;
     private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel pnMain;

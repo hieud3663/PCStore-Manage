@@ -234,16 +234,22 @@ public class SellForm extends JPanel {
         if (tableListProduct.getColumnModel().getColumnCount() > 0) {
             tableListProduct.getColumnModel().getColumn(0).setResizable(false);
             tableListProduct.getColumnModel().getColumn(0).setPreferredWidth(8);
+            tableListProduct.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtProductID")); // NOI18N
             tableListProduct.getColumnModel().getColumn(1).setResizable(false);
             tableListProduct.getColumnModel().getColumn(1).setPreferredWidth(60);
+            tableListProduct.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtProductName")); // NOI18N
             tableListProduct.getColumnModel().getColumn(2).setResizable(false);
             tableListProduct.getColumnModel().getColumn(2).setPreferredWidth(30);
+            tableListProduct.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtProductCategory")); // NOI18N
             tableListProduct.getColumnModel().getColumn(3).setResizable(false);
             tableListProduct.getColumnModel().getColumn(3).setPreferredWidth(30);
+            tableListProduct.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtProductManufacturer")); // NOI18N
             tableListProduct.getColumnModel().getColumn(4).setResizable(false);
             tableListProduct.getColumnModel().getColumn(4).setPreferredWidth(15);
+            tableListProduct.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtProductQuantity")); // NOI18N
             tableListProduct.getColumnModel().getColumn(5).setResizable(false);
             tableListProduct.getColumnModel().getColumn(5).setPreferredWidth(40);
+            tableListProduct.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtProductPrice")); // NOI18N
         }
 
         panelListProduct.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -298,14 +304,18 @@ public class SellForm extends JPanel {
             tableCart.getColumnModel().getColumn(1).setMinWidth(20);
             tableCart.getColumnModel().getColumn(1).setPreferredWidth(40);
             tableCart.getColumnModel().getColumn(1).setMaxWidth(1000);
+            tableCart.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtProductNo")); // NOI18N
             tableCart.getColumnModel().getColumn(2).setPreferredWidth(60);
             tableCart.getColumnModel().getColumn(2).setMaxWidth(60);
             tableCart.getColumnModel().getColumn(3).setResizable(false);
             tableCart.getColumnModel().getColumn(3).setPreferredWidth(20);
+            tableCart.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtProductName")); // NOI18N
             tableCart.getColumnModel().getColumn(4).setResizable(false);
             tableCart.getColumnModel().getColumn(4).setPreferredWidth(5);
+            tableCart.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtProductQuantirySell")); // NOI18N
             tableCart.getColumnModel().getColumn(5).setResizable(false);
             tableCart.getColumnModel().getColumn(5).setPreferredWidth(10);
+            tableCart.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtProductPrice")); // NOI18N
             tableCart.getColumnModel().getColumn(6).setResizable(false);
             tableCart.getColumnModel().getColumn(6).setPreferredWidth(6);
             tableCart.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtTotalAmount")); // NOI18N

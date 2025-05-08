@@ -394,7 +394,7 @@ public class CustomerForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Mã khách hàng", "Tên khách hàng", "Số diện thoại", "Email", "Tích điểm", "Thời gian tạo"
+                "Mã khách hàng", "Tên khách hàng", "Số điện thoại", "Email", "Tích điểm", "Thời gian tạo"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -410,10 +410,15 @@ public class CustomerForm extends javax.swing.JPanel {
         scrollPane.setViewportView(tableCustomers);
         if (tableCustomers.getColumnModel().getColumnCount() > 0) {
             tableCustomers.getColumnModel().getColumn(0).setPreferredWidth(10);
+            tableCustomers.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtCustomerID")); // NOI18N
             tableCustomers.getColumnModel().getColumn(1).setPreferredWidth(30);
+            tableCustomers.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtCustomerName")); // NOI18N
             tableCustomers.getColumnModel().getColumn(2).setPreferredWidth(10);
+            tableCustomers.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtPhonenumber")); // NOI18N
             tableCustomers.getColumnModel().getColumn(3).setPreferredWidth(20);
+            tableCustomers.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtCustomerPoint")); // NOI18N
             tableCustomers.getColumnModel().getColumn(5).setPreferredWidth(20);
+            tableCustomers.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtCreateAt")); // NOI18N
         }
 
         panelListCustomer.add(scrollPane, java.awt.BorderLayout.CENTER);

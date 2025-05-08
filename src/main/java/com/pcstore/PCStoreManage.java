@@ -4,8 +4,6 @@
 
 package com.pcstore;
 
-import java.sql.SQLException;
-
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -16,6 +14,8 @@ import com.pcstore.controller.LoginController;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.view.LoginForm;
 
+
+// regex: \/\/\s*(GEN-FIRST|GEN-LAST).*$
 /**
  *
  * @author MSII

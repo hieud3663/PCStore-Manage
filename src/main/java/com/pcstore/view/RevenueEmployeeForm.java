@@ -56,8 +56,8 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         tableRevenue = new javax.swing.JTable();
         panelChart = new com.k33ptoo.components.KGradientPanel();
         panelFooter = new javax.swing.JPanel();
+        lbTotalText = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
-        Revenue = new javax.swing.JLabel();
 
         dateChooserFromDate.setTextRefernce(txtFromDate);
 
@@ -200,7 +200,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
                 {null, null, null, null, null}
             },
             new String [] {
-                "STT", "Mã nhân viên", "Nhân viên", "Số lượng sản phẩm", "Doanh thu"
+                "STT", "Mã nhân viên", "Nhân viên", "Số lượng đã bán", "Doanh thu"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -216,8 +216,13 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         if (tableRevenue.getColumnModel().getColumnCount() > 0) {
             tableRevenue.getColumnModel().getColumn(0).setPreferredWidth(50);
             tableRevenue.getColumnModel().getColumn(0).setMaxWidth(50);
+            tableRevenue.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtNo")); // NOI18N
             tableRevenue.getColumnModel().getColumn(1).setPreferredWidth(100);
             tableRevenue.getColumnModel().getColumn(1).setMaxWidth(100);
+            tableRevenue.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtEmployeeID")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtEmployee")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtProductQuantitySell")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtRevenue")); // NOI18N
         }
 
         panelBody.add(jScrollPane, java.awt.BorderLayout.CENTER);
@@ -235,20 +240,20 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         panelFooter.setPreferredSize(new java.awt.Dimension(217, 50));
         panelFooter.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
 
-        lbTotal.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        lbTotal.setForeground(new java.awt.Color(30, 113, 195));
-        lbTotal.setText(bundle.getString("lbTotalRevenue")); // NOI18N
-        lbTotal.setFocusable(false);
-        panelFooter.add(lbTotal);
+        lbTotalText.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbTotalText.setForeground(new java.awt.Color(30, 113, 195));
+        lbTotalText.setText(bundle.getString("lbTotalRevenue")); // NOI18N
+        lbTotalText.setFocusable(false);
+        panelFooter.add(lbTotalText);
 
-        Revenue.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        Revenue.setForeground(new java.awt.Color(26, 162, 106));
-        Revenue.setText("                     ");
-        Revenue.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(204, 204, 204)));
-        Revenue.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        Revenue.setFocusable(false);
-        Revenue.setPreferredSize(new java.awt.Dimension(200, 26));
-        panelFooter.add(Revenue);
+        lbTotal.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lbTotal.setForeground(new java.awt.Color(26, 162, 106));
+        lbTotal.setText("                     ");
+        lbTotal.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(204, 204, 204)));
+        lbTotal.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        lbTotal.setFocusable(false);
+        lbTotal.setPreferredSize(new java.awt.Dimension(200, 26));
+        panelFooter.add(lbTotal);
 
         add(panelFooter);
     }// </editor-fold>//GEN-END:initComponents
@@ -295,7 +300,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
     }
 
     public javax.swing.JLabel getLbTotal() {
-        return lbTotal;
+        return lbTotalText;
     }
 
     public javax.swing.JTable getTableRevenue() {
@@ -316,7 +321,6 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Revenue;
     private com.k33ptoo.components.KButton btnApply;
     private com.k33ptoo.components.KButton btnExportReport;
     private javax.swing.JButton btnFromDate;
@@ -328,6 +332,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
     private javax.swing.JLabel lbTitle;
     private javax.swing.JLabel lbToDate;
     private javax.swing.JLabel lbTotal;
+    private javax.swing.JLabel lbTotalText;
     private javax.swing.JPanel panelAction;
     private javax.swing.JPanel panelBody;
     private com.k33ptoo.components.KGradientPanel panelChart;

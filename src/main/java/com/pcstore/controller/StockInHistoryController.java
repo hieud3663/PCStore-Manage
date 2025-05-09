@@ -485,9 +485,9 @@ public class StockInHistoryController {
                         }
 
                         purchaseOrders.add(order);
-                        System.out.println("Found order: " + order.getPurchaseOrderId() +
-                                " | Date: " + (order.getOrderDate() != null ? order.getOrderDate() : "null") +
-                                " | Status: " + order.getStatus());
+                        // System.out.println("Found order: " + order.getPurchaseOrderId() +
+                        //         " | Date: " + (order.getOrderDate() != null ? order.getOrderDate() : "null") +
+                        //         " | Status: " + order.getStatus());
                     } catch (Exception e) {
                         System.err.println("Error processing row: " + e.getMessage());
                         e.printStackTrace();

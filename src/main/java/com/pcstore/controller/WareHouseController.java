@@ -92,7 +92,7 @@ public class WareHouseController {
             int stt = 1;
             for (Product product : products) {
                 // Kiểm tra số lượng dòng và cột trong model
-                System.out.println("Columns in model: " + model.getColumnCount());
+                // System.out.println("Columns in model: " + model.getColumnCount());
                 
                 Object[] rowData;
                 // Kiểm tra số lượng cột để xác định đúng cấu trúc dữ liệu cần thêm vào

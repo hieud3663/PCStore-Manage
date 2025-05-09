@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableModel;
 import com.pcstore.model.Product;
 import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.PurchaseOrderForm;
 import com.pcstore.view.StockInHistoryForm;
@@ -38,9 +39,10 @@ public class WareHouseController {
         
         // Đăng ký các sự kiện cho form
         registerEvents();
-        
+        initTable();
         // Tải dữ liệu sản phẩm
         loadProducts();
+
     }
 
     /**
@@ -79,136 +81,112 @@ public class WareHouseController {
     /**
      * Tải dữ liệu sản phẩm vào bảng
      */
-    /**
- * Tải dữ liệu sản phẩm vào bảng
- */
-public void loadProducts() {
-    try {
-        List<Product> products = productRepository.findAll();
-        
-        // Sử dụng DefaultTableModel thông thường thay vì EditableTableModel
-        DefaultTableModel model = (DefaultTableModel) wareHouseForm.getTable().getModel();
-        model.setRowCount(0); // Xóa tất cả các dòng hiện tại
-        
-        int stt = 1;
-        for (Product product : products) {
-            // Kiểm tra số lượng dòng và cột trong model
-            System.out.println("Columns in model: " + model.getColumnCount());
+    public void loadProducts() {
+        try {
+            List<Product> products = productRepository.findAll();
             
-            Object[] rowData;
-            // Kiểm tra số lượng cột để xác định đúng cấu trúc dữ liệu cần thêm vào
-            if (model.getColumnCount() == 4) {
-                // Model có 4 cột: STT, Mã Máy, Tên Máy, Số Lượng
-                rowData = new Object[]{
-                    stt++,
-                    product.getProductId(),
-                    product.getProductName(),
-                    product.getStockQuantity()  // Số lượng ở vị trí thứ 3 (index 3)
-                };
-            } else {
-                // Model có 5 cột: STT, Mã Máy, Tên Máy, Nhà Cung Cấp, Số Lượng
-                rowData = new Object[]{
-                    stt++,
-                    product.getProductId(),
-                    product.getProductName(),
-                    product.getSupplier() != null ? product.getSupplier().getName() : "",
-                    product.getStockQuantity()  // Số lượng ở vị trí thứ 4 (index 4)
-                };
+            // Sử dụng DefaultTableModel thông thường thay vì EditableTableModel
+            DefaultTableModel model = (DefaultTableModel) wareHouseForm.getTable().getModel();
+            model.setRowCount(0); // Xóa tất cả các dòng hiện tại
+            
+            int stt = 1;
+            for (Product product : products) {
+                // Kiểm tra số lượng dòng và cột trong model
+                System.out.println("Columns in model: " + model.getColumnCount());
+                
+                Object[] rowData;
+                // Kiểm tra số lượng cột để xác định đúng cấu trúc dữ liệu cần thêm vào
+                if (model.getColumnCount() == 4) {
+                    // Model có 4 cột: STT, Mã Máy, Tên Máy, Số Lượng
+                    rowData = new Object[]{
+                        stt++,
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getStockQuantity()  // Số lượng ở vị trí thứ 3 (index 3)
+                    };
+                } else {
+                    // Model có 5 cột: STT, Mã Máy, Tên Máy, Nhà Cung Cấp, Số Lượng
+                    rowData = new Object[]{
+                        stt++,
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getSupplier() != null ? product.getSupplier().getName() : "",
+                        product.getStockQuantity()  // Số lượng ở vị trí thứ 4 (index 4)
+                    };
+                }
+                
+                // Thêm dữ liệu vào bảng
+                model.addRow(rowData);
             }
             
-            // Thêm dữ liệu vào bảng
-            model.addRow(rowData);
+            System.out.println("Loaded " + products.size() + " products");
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi tải dữ liệu: " + e.getMessage(), 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-        
-        System.out.println("Loaded " + products.size() + " products");
-        
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi tải dữ liệu: " + e.getMessage(), 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
     }
-}
 
-/**
- * Khởi tạo bảng với EditableTableModel
- */
-private void initTable() {
-    JTable table = wareHouseForm.getTable();
-    
-    // Tạo mô hình bảng mới
-    String[] columns = {"STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"};
-    DefaultTableModel model = new DefaultTableModel(new Object[0][0], columns);
-    table.setModel(model);
-    
-    // Tạo renderer căn giữa
-    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-    
-    // Áp dụng cho tất cả các cột
-    for (int i = 0; i < table.getColumnCount(); i++) {
-        table.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+    /**
+     * Khởi tạo bảng với EditableTableModel
+     */
+    private void initTable() {
+        TableStyleUtil.applyDefaultStyle(wareHouseForm.getTable());
     }
-    
-    // Thiết lập độ rộng cho các cột
-    table.getColumnModel().getColumn(0).setPreferredWidth(50);  // STT
-    table.getColumnModel().getColumn(1).setPreferredWidth(150); // Mã Máy
-    table.getColumnModel().getColumn(2).setPreferredWidth(300); // Tên Máy
-    table.getColumnModel().getColumn(3).setPreferredWidth(200); // Nhà Cung Cấp
-    table.getColumnModel().getColumn(4).setPreferredWidth(100); // Số Lượng
-}
 
-/**
- * Cập nhật số lượng sản phẩm
- * @param productId Mã sản phẩm
- * @param quantity Số lượng mới
- */
- 
-public void updateProductQuantity(String productId, int quantity) {
-    try {
-        // Lấy sản phẩm từ database
-        java.util.Optional<Product> productOpt = productRepository.findById(productId);
-        
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
+    /**
+     * Cập nhật số lượng sản phẩm
+     * @param productId Mã sản phẩm
+     * @param quantity Số lượng mới
+     */
+    
+    public void updateProductQuantity(String productId, int quantity) {
+        try {
+            // Lấy sản phẩm từ database
+            java.util.Optional<Product> productOpt = productRepository.findById(productId);
             
-            // Cập nhật số lượng
-            product.setStockQuantity(quantity);
-            
-            // Lưu vào database
-            productRepository.update(product);
+            if (productOpt.isPresent()) {
+                Product product = productOpt.get();
+                
+                // Cập nhật số lượng
+                product.setStockQuantity(quantity);
+                
+                // Lưu vào database
+                productRepository.update(product);
+                
+                // Tải lại dữ liệu
+                loadProducts();
+            } else {
+                throw new Exception("Không tìm thấy sản phẩm với mã: " + productId);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi cập nhật số lượng: " + e.getMessage(), 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Xóa sản phẩm
+     * @param productId Mã sản phẩm
+     */
+    public void deleteProduct(String productId) {
+        try {
+            // Xóa sản phẩm từ database
+            productRepository.delete(productId);
             
             // Tải lại dữ liệu
             loadProducts();
-        } else {
-            throw new Exception("Không tìm thấy sản phẩm với mã: " + productId);
+            
+            JOptionPane.showMessageDialog(wareHouseForm, "Đã xóa sản phẩm thành công!", 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi xóa sản phẩm: " + e.getMessage(), 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi cập nhật số lượng: " + e.getMessage(), 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
     }
-}
-
-/**
- * Xóa sản phẩm
- * @param productId Mã sản phẩm
- */
-public void deleteProduct(String productId) {
-    try {
-        // Xóa sản phẩm từ database
-        productRepository.delete(productId);
-        
-        // Tải lại dữ liệu
-        loadProducts();
-        
-        JOptionPane.showMessageDialog(wareHouseForm, "Đã xóa sản phẩm thành công!", 
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi xóa sản phẩm: " + e.getMessage(), 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
-    }
-}
     
     /**
      * Tìm kiếm sản phẩm theo từ khóa

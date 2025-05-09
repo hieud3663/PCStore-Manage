@@ -56,12 +56,7 @@ public class PurchaseOrderForm extends JDialog {
         // Khởi tạo controller
         controller = new PurchaseOrderController(this, connection);
         
-        // Đăng ký sự kiện cho nút nhập hàng
-        btnStockIn.addActionListener(e -> {
-            if (controller != null) {
-                controller.savePurchaseOrder();
-            }
-        });
+       
     }
 
     /**
@@ -73,71 +68,98 @@ public class PurchaseOrderForm extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
+        panelTitle = new javax.swing.JPanel();
+        lbTitle = new javax.swing.JLabel();
+        panelHeader = new javax.swing.JPanel();
         lbPurchaseOrderID = new javax.swing.JLabel();
         txtPurchaseOrderID = new javax.swing.JTextField();
         lbEmloyeesCreate = new javax.swing.JLabel();
         txtEmloyeesCreate = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        ProductTable = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        SelectedProduct = new javax.swing.JTable();
-        btnStockIn = new com.k33ptoo.components.KButton();
-        lbTotalMoney = new javax.swing.JLabel();
-        txtTotalPrice = new javax.swing.JLabel();
         lbSupplier = new javax.swing.JLabel();
         cbbSupplier = new javax.swing.JComboBox<>();
-        textFieldSearch1 = new com.pcstore.utils.TextFieldSearch();
+        textFieldSearch = new com.pcstore.utils.TextFieldSearch();
+        lbNote = new javax.swing.JLabel();
+        panelBody = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        productTable = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        selectedProductTable = new javax.swing.JTable();
+        panelFooter = new javax.swing.JPanel();
+        lbTotalMoney = new javax.swing.JLabel();
+        txtTotalPrice = new javax.swing.JLabel();
+        btnStockIn = new com.k33ptoo.components.KButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1050, 680));
         setResizable(false);
 
-        kGradientPanel1.setkFillBackground(false);
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
+        panelMain.setkFillBackground(false);
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
+        panelTitle.setBackground(new java.awt.Color(255, 255, 255));
+        panelTitle.setPreferredSize(new java.awt.Dimension(1093, 50));
+        panelTitle.setLayout(new java.awt.BorderLayout());
+
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        lbTitle.setForeground(new java.awt.Color(0, 33, 190));
+        lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        lbPurchaseOrderID.setText(bundle.getString("lbPurchaseOrderId")); // NOI18N
+        lbTitle.setText(bundle.getString("titlePurchaseOrder")); // NOI18N
+        panelTitle.add(lbTitle, java.awt.BorderLayout.CENTER);
 
+        panelMain.add(panelTitle);
+
+        panelHeader.setBackground(new java.awt.Color(255, 255, 255));
+        panelHeader.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 100, 1, 100));
+        panelHeader.setMinimumSize(new java.awt.Dimension(188, 100));
+        panelHeader.setLayout(new java.awt.GridLayout(3, 2, 10, 10));
+
+        lbPurchaseOrderID.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbPurchaseOrderID.setText(bundle.getString("lbPurchaseOrderId")); // NOI18N
+        lbPurchaseOrderID.setPreferredSize(new java.awt.Dimension(81, 30));
+        panelHeader.add(lbPurchaseOrderID);
+
+        txtPurchaseOrderID.setForeground(new java.awt.Color(51, 29, 204));
         txtPurchaseOrderID.setText(bundle.getString("txtPurchaseOrderID")); // NOI18N
         txtPurchaseOrderID.setEnabled(false);
+        panelHeader.add(txtPurchaseOrderID);
 
+        lbEmloyeesCreate.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lbEmloyeesCreate.setText(bundle.getString("lbEmloyeesCreate")); // NOI18N
+        panelHeader.add(lbEmloyeesCreate);
 
+        txtEmloyeesCreate.setForeground(new java.awt.Color(51, 29, 204));
         txtEmloyeesCreate.setText(bundle.getString("txtEmloyeesCreate")); // NOI18N
         txtEmloyeesCreate.setEnabled(false);
+        panelHeader.add(txtEmloyeesCreate);
 
-        ProductTable.setModel(new javax.swing.table.DefaultTableModel(
+        lbSupplier.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lbSupplier.setText(bundle.getString("lbSupplier")); // NOI18N
+        panelHeader.add(lbSupplier);
+
+        cbbSupplier.setForeground(new java.awt.Color(51, 29, 204));
+        panelHeader.add(cbbSupplier);
+
+        panelMain.add(panelHeader);
+
+        textFieldSearch.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 55, 1, 600));
+        panelMain.add(textFieldSearch);
+
+        lbNote.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lbNote.setText(bundle.getString("lbNoteSell")); // NOI18N
+        panelMain.add(lbNote);
+
+        panelBody.setBackground(new java.awt.Color(255, 255, 255));
+        panelBody.setPreferredSize(new java.awt.Dimension(913, 480));
+
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(550, 402));
+
+        productTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Mã Máy", "Tên Máy", "Đơn Giá", "SL Tồn Kho"
@@ -158,35 +180,21 @@ public class PurchaseOrderForm extends JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(ProductTable);
-        if (ProductTable.getColumnModel().getColumnCount() > 0) {
-            ProductTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            ProductTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            ProductTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clPrice")); // NOI18N
+        jScrollPane1.setViewportView(productTable);
+        if (productTable.getColumnModel().getColumnCount() > 0) {
+            productTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            productTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            productTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clPrice")); // NOI18N
+            productTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantityInventory")); // NOI18N
         }
 
-        SelectedProduct.setModel(new javax.swing.table.DefaultTableModel(
+        panelBody.add(jScrollPane1);
+
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(400, 402));
+
+        selectedProductTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Mã Máy", "Tên Máy", "Số Lượng", "Đơn Giá"
@@ -207,100 +215,42 @@ public class PurchaseOrderForm extends JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(SelectedProduct);
-        if (SelectedProduct.getColumnModel().getColumnCount() > 0) {
-            SelectedProduct.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
-            SelectedProduct.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
-            SelectedProduct.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
-            SelectedProduct.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clPrice")); // NOI18N
+        selectedProductTable.setPreferredSize(new java.awt.Dimension(299, 380));
+        jScrollPane2.setViewportView(selectedProductTable);
+        if (selectedProductTable.getColumnModel().getColumnCount() > 0) {
+            selectedProductTable.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clProductID")); // NOI18N
+            selectedProductTable.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clProductName")); // NOI18N
+            selectedProductTable.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+            selectedProductTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clPrice")); // NOI18N
         }
 
-        btnStockIn.setText(bundle.getString("btnStockIn")); // NOI18N
-        btnStockIn.setkBorderRadius(40);
-        btnStockIn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        panelBody.add(jScrollPane2);
 
-        lbTotalMoney.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        panelMain.add(panelBody);
+
+        panelFooter.setBackground(new java.awt.Color(255, 255, 255));
+        panelFooter.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 50, 5));
+
+        lbTotalMoney.setFont(new java.awt.Font("Segoe UI", 1, 17)); // NOI18N
+        lbTotalMoney.setForeground(new java.awt.Color(0, 33, 190));
         lbTotalMoney.setText(bundle.getString("lbTotalMoney")); // NOI18N
+        panelFooter.add(lbTotalMoney);
 
         txtTotalPrice.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         txtTotalPrice.setForeground(new java.awt.Color(255, 51, 51));
         txtTotalPrice.setText(bundle.getString("lbTotalPrice")); // NOI18N
+        panelFooter.add(txtTotalPrice);
 
-        lbSupplier.setText(bundle.getString("lbSupplier")); // NOI18N
+        btnStockIn.setText(bundle.getString("btnCreateStockIn")); // NOI18N
+        btnStockIn.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
+        btnStockIn.setkBorderRadius(40);
+        btnStockIn.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        panelFooter.add(btnStockIn);
 
-        cbbSupplier.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        panelMain.add(panelFooter);
 
-        // Phần layout được giữ nguyên...
-        javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
-        kGradientPanel1.setLayout(kGradientPanel1Layout);
-        kGradientPanel1Layout.setHorizontalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addContainerGap(28, Short.MAX_VALUE)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(textFieldSearch1, javax.swing.GroupLayout.PREFERRED_SIZE, 483, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lbEmloyeesCreate, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                            .addComponent(lbSupplier)
-                            .addGap(26, 26, 26)
-                            .addComponent(cbbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(30, 30, 30)))
-                    .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                        .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, kGradientPanel1Layout.createSequentialGroup()
-                                    .addComponent(lbPurchaseOrderID, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(txtEmloyeesCreate, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
-                                        .addComponent(txtPurchaseOrderID)))
-                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                                .addComponent(lbTotalMoney, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnStockIn, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(29, 29, 29))))
-        );
-        kGradientPanel1Layout.setVerticalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbPurchaseOrderID, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPurchaseOrderID, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                        .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lbEmloyeesCreate)
-                            .addComponent(txtEmloyeesCreate, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(15, 15, 15)
-                        .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(cbbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(lbSupplier))
-                            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                                .addGap(47, 47, 47)
-                                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                    .addComponent(textFieldSearch1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbTotalMoney, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnStockIn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTotalPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
-        );
-
-        getContentPane().add(kGradientPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -312,13 +262,13 @@ public class PurchaseOrderForm extends JDialog {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         
         // Thiết lập căn giữa cho bảng sản phẩm
-        for (int i = 0; i < ProductTable.getColumnCount(); i++) {
-            ProductTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        for (int i = 0; i < productTable.getColumnCount(); i++) {
+            productTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
 
         // Thiết lập căn giữa cho bảng giỏ hàng
-        for (int i = 0; i < SelectedProduct.getColumnCount(); i++) {
-            SelectedProduct.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        for (int i = 0; i < selectedProductTable.getColumnCount(); i++) {
+            selectedProductTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
         javax.swing.Timer searchTimer = new javax.swing.Timer(500, e -> {
             if (controller != null) {
@@ -328,11 +278,11 @@ public class PurchaseOrderForm extends JDialog {
         searchTimer.setRepeats(false); // Chỉ chạy một lần
         
         // Thêm sự kiện mouseClicked để xử lý double click trên bảng sản phẩm
-        ProductTable.addMouseListener(new MouseAdapter() {
+        productTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {  // Double click
-                    int row = ProductTable.getSelectedRow();
+                    int row = productTable.getSelectedRow();
                     if (row != -1 && controller != null) {  // Nếu có dòng được chọn
                         // Gọi phương thức thêm sản phẩm vào giỏ hàng
                         controller.addProductToCartByRowDirect(row);
@@ -342,11 +292,11 @@ public class PurchaseOrderForm extends JDialog {
         });
         
         // Thêm sự kiện double click để xóa sản phẩm khỏi giỏ hàng
-        SelectedProduct.addMouseListener(new MouseAdapter() {
+        selectedProductTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {  // Double click
-                    int row = SelectedProduct.getSelectedRow();
+                    int row = selectedProductTable.getSelectedRow();
                     if (row != -1 && controller != null) {
                         int confirm = JOptionPane.showConfirmDialog(
                                 PurchaseOrderForm.this,
@@ -362,7 +312,7 @@ public class PurchaseOrderForm extends JDialog {
         });
 
          // Kết nối DocumentListener cho thanh tìm kiếm
-    textFieldSearch1.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+    textFieldSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
         @Override
         public void insertUpdate(javax.swing.event.DocumentEvent e) {
             searchTimer.restart();
@@ -381,7 +331,7 @@ public class PurchaseOrderForm extends JDialog {
     
     // Thêm ActionListener cho nút tìm kiếm (nếu có)
     try {
-        textFieldSearch1.getBtnSearch().addActionListener(e -> {
+        textFieldSearch.getBtnSearch().addActionListener(e -> {
             if (controller != null) {
                 controller.searchProducts();
             }
@@ -492,28 +442,28 @@ public class PurchaseOrderForm extends JDialog {
      * Lấy bảng sản phẩm
      */
     public JTable getTableProducts() {
-        return ProductTable;
+        return productTable;
     }
     
     /**
      * Lấy JTable1 - Đồng bộ với getTableProducts()
      */
     public JTable getJTable1() {
-        return ProductTable;
+        return productTable;
     }
 
     /**
      * Lấy bảng sản phẩm đã chọn
      */
     public JTable getTableSelectedProducts() {
-        return SelectedProduct;
+        return selectedProductTable;
     }
     
     /**
      * Lấy JTable2 - Đồng bộ với getTableSelectedProducts()
      */
     public JTable getJTable2() {
-        return SelectedProduct;
+        return selectedProductTable;
     }
 
     /**
@@ -548,7 +498,7 @@ public class PurchaseOrderForm extends JDialog {
      * Lấy ô tìm kiếm
      */
     public TextFieldSearch getTextFieldSearch() {
-        return textFieldSearch1;
+        return textFieldSearch;
     }
     
     /**
@@ -559,18 +509,24 @@ public class PurchaseOrderForm extends JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable ProductTable;
-    private javax.swing.JTable SelectedProduct;
     private com.k33ptoo.components.KButton btnStockIn;
-    private javax.swing.JComboBox cbbSupplier;
+    private javax.swing.JComboBox<Supplier> cbbSupplier;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel lbEmloyeesCreate;
+    private javax.swing.JLabel lbNote;
     private javax.swing.JLabel lbPurchaseOrderID;
     private javax.swing.JLabel lbSupplier;
+    private javax.swing.JLabel lbTitle;
     private javax.swing.JLabel lbTotalMoney;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch1;
+    private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelFooter;
+    private javax.swing.JPanel panelHeader;
+    private com.k33ptoo.components.KGradientPanel panelMain;
+    private javax.swing.JPanel panelTitle;
+    private javax.swing.JTable productTable;
+    private javax.swing.JTable selectedProductTable;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch;
     private javax.swing.JTextField txtEmloyeesCreate;
     private javax.swing.JTextField txtPurchaseOrderID;
     private javax.swing.JLabel txtTotalPrice;

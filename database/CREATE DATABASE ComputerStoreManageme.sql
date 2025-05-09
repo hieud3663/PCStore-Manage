@@ -344,7 +344,6 @@ SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
 WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
 
 
-
 -- Thêm trường RoleID vào bẳng Users
 ALTER TABLE Users
 ADD RoleID INT NULL,
@@ -368,3 +367,16 @@ ADD Status NVARCHAR(50) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Complete
 --Thêm cột TotalAmount cho bảng PurchaseOrders
 ALTER TABLE PurchaseOrders
 ADD TotalAmount DECIMAL(10,2) CHECK (TotalAmount >= 0) NOT NULL DEFAULT 0; -- Tổng tiền hóa đơn
+
+
+-- Thay đổi kiểu dữ liệu của cột TotalAmount trong bảng PurchaseOrders
+ALTER TABLE PurchaseOrders 
+ALTER COLUMN TotalAmount decimal(18,2);
+
+-- Thay đổi kiểu dữ liệu của cột UnitCost trong bảng PurchaseOrderDetails
+ALTER TABLE PurchaseOrderDetails 
+ALTER COLUMN UnitCost decimal(18,2);
+
+-- Thay đổi kiểu dữ liệu của các cột giá trong bảng Products nếu cần
+ALTER TABLE Products 
+ALTER COLUMN Price decimal(18,2);

@@ -205,7 +205,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "STT", "Nhân viên", "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền"
+                "STT", "Nhân viên", "Mã sản phẩm", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -221,10 +221,17 @@ public class RevenueProductForm extends javax.swing.JPanel {
         if (tableRevenue.getColumnModel().getColumnCount() > 0) {
             tableRevenue.getColumnModel().getColumn(0).setPreferredWidth(50);
             tableRevenue.getColumnModel().getColumn(0).setMaxWidth(50);
+            tableRevenue.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtNo")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtEmployee")); // NOI18N
             tableRevenue.getColumnModel().getColumn(2).setPreferredWidth(120);
             tableRevenue.getColumnModel().getColumn(2).setMaxWidth(120);
+            tableRevenue.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtProductID")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtProductName")); // NOI18N
             tableRevenue.getColumnModel().getColumn(4).setPreferredWidth(100);
             tableRevenue.getColumnModel().getColumn(4).setMaxWidth(100);
+            tableRevenue.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtQuantity")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtPrice")); // NOI18N
+            tableRevenue.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtTotalAmount")); // NOI18N
         }
 
         panelBody.add(jScrollPane, java.awt.BorderLayout.CENTER);

@@ -36,6 +36,13 @@ public class LoginForm extends JFrame {
         return instance;
     }
 
+    public static void restartInstance() {
+        if (instance != null) {
+            instance.dispose();
+        }
+        instance = new LoginForm();
+    }
+
     public static void resetInstance() {
         instance = null;
     }
@@ -78,8 +85,8 @@ public class LoginForm extends JFrame {
 
         PanelMainLogin = new com.k33ptoo.components.KGradientPanel();
         PanelContentLogin = new JPanel();
-        title1 = new JLabel();
-        title2 = new JLabel();
+        titleName = new JLabel();
+        titleWelcome = new JLabel();
         lbPicture = new JLabel();
         PanelLogin = new com.k33ptoo.components.KGradientPanel();
         btnLogin = new com.k33ptoo.components.KButton();
@@ -106,16 +113,16 @@ public class LoginForm extends JFrame {
         PanelContentLogin.setOpaque(false);
         PanelContentLogin.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 20));
 
-        title1.setFont(new Font("Segoe UI", 1, 23)); // NOI18N
-        title1.setForeground(new Color(255, 255, 255));
+        titleWelcome.setFont(new Font("Segoe UI", 1, 20)); // NOI18N
+        titleWelcome.setForeground(new Color(255, 255, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        title1.setText(bundle.getString("titleName")); // NOI18N
-        PanelContentLogin.add(title1);
+        titleWelcome.setText(bundle.getString("titleWelcome")); // NOI18N
+        PanelContentLogin.add(titleWelcome);
 
-        title2.setFont(new Font("Segoe UI", 1, 20)); // NOI18N
-        title2.setForeground(new Color(255, 255, 255));
-        title2.setText(bundle.getString("titleWelcome")); // NOI18N
-        PanelContentLogin.add(title2);
+        titleName.setFont(new Font("Segoe UI", 1, 23)); // NOI18N
+        titleName.setForeground(new Color(255, 255, 255));
+        titleName.setText(bundle.getString("titleName")); // NOI18N
+        PanelContentLogin.add(titleName);
 
         lbPicture.setHorizontalAlignment(SwingConstants.CENTER);
         lbPicture.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grap.png"))); // NOI18N
@@ -311,8 +318,8 @@ public class LoginForm extends JFrame {
     private JLabel lbTitleLogin;
     private JTextField lbForgetPassword;
     private JLabel lbPicture;
-    private JLabel title1;
-    private JLabel title2;
+    private JLabel titleName;
+    private JLabel titleWelcome;
     private JTextField txtPassword;
     private JTextField txtUsername;
     // End of variables declaration//GEN-END:variables

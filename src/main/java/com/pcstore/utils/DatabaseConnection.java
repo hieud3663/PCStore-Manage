@@ -40,7 +40,7 @@ public class DatabaseConnection {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    // Bỏ qua lỗi khi đóng kết nối không hợp lệ
+                    e.printStackTrace();
                 }
                 connection = createConnection();
             }
@@ -73,10 +73,7 @@ public class DatabaseConnection {
         }
         return instance;
     }
-    
-    // public static RepositoryFactory getRepositoryFactory() {
-    //     return new RepositoryFactory(getInstance().getConnection());
-    // }
+
     
     public void closeConnection() {
         try {
@@ -92,37 +89,35 @@ public class DatabaseConnection {
             instance = null;  // Reset instance để lần sau tạo mới
         }
     }
-    /**
- * Tạo kết nối mới đến database
- * @return Kết nối database mới
- * @throws SQLException nếu không thể tạo kết nối
- */
-public Connection createConnection() {
-    try {
-        // Load driver
-        Class.forName(driver);
-        System.out.println("DatabaseConnection: Đã tìm thấy driver JDBC");
-        
-        // Tạo kết nối mới
-        Connection newConnection = DriverManager.getConnection(url, username, password);
-        
-        // Kiểm tra kết nối
-        try (Statement stmt = newConnection.createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT 1")) {
-            if (rs.next()) {
-                System.out.println("DatabaseConnection: Tạo kết nối database thành công");
+        /**
+     * Tạo kết nối mới đến database
+     * @return Kết nối database mới
+     * @throws SQLException nếu không thể tạo kết nối
+     */
+    public Connection createConnection() {
+        try {
+            // Load driver
+            Class.forName(driver);
+            
+            Connection newConnection = DriverManager.getConnection(url, username, password);
+            
+            // Kiểm tra kết nối
+            try (Statement stmt = newConnection.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT 1")) {
+                if (rs.next()) {
+                    System.out.println("DatabaseConnection: Tạo kết nối database thành công");
+                }
             }
+            
+            return newConnection;
+        } catch (ClassNotFoundException e) {
+            System.err.println("Lỗi không tìm thấy JDBC driver: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Không tìm thấy JDBC driver", e);
+        } catch (SQLException e) {
+            System.err.println("Lỗi SQL khi kết nối database: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Không thể kết nối đến database", e);
         }
-        
-        return newConnection;
-    } catch (ClassNotFoundException e) {
-        System.err.println("Lỗi không tìm thấy JDBC driver: " + e.getMessage());
-        e.printStackTrace();
-        throw new RuntimeException("Không tìm thấy JDBC driver", e);
-    } catch (SQLException e) {
-        System.err.println("Lỗi SQL khi kết nối database: " + e.getMessage());
-        e.printStackTrace();
-        throw new RuntimeException("Không thể kết nối đến database", e);
     }
-}
 }

@@ -101,9 +101,7 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
         if (product == null) {
             throw new IllegalStateException("Không thể cập nhật tồn kho khi chưa có thông tin sản phẩm");
         }
-        if (purchaseOrder == null || !"Completed".equals(purchaseOrder.getStatus())) {
-            throw new IllegalStateException("Chỉ cập nhật tồn kho khi đơn nhập hàng đã hoàn thành");
-        }
+        
         product.increaseStock(quantity);
     }
     

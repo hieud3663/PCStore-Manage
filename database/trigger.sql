@@ -338,7 +338,7 @@ GO
 ---------------
 -- SỬA TRIGGER
 ----------
--- Cập nhật trigger tự động tạo mã khách hàng và thiết lập UpdatedAt = CreatedAt
+-- Sửa lại trigger tự động tạo mã khách hàng để tránh lỗi chuyển đổi
 ALTER TRIGGER trg_GenerateCustomerID
 ON Customers
 INSTEAD OF INSERT
@@ -362,10 +362,12 @@ BEGIN
     SELECT FullName, PhoneNumber, Email, Address, Point, ISNULL(CreatedAt, GETDATE())
     FROM inserted;
     
-    -- Lấy mã tiếp theo
+    -- Lấy mã tiếp theo - sửa phần này để xử lý giá trị không phải số
     DECLARE @NextCustomerID INT;
-    SELECT @NextCustomerID = ISNULL(MAX(CAST(SUBSTRING(CustomerID, 3, LEN(CustomerID)-2) AS INT)), 0) + 1
-    FROM Customers;
+    SELECT @NextCustomerID = ISNULL(MAX(TRY_CAST(SUBSTRING(CustomerID, 3, LEN(CustomerID)-2) AS INT)), 0) + 1
+    FROM Customers
+    WHERE CustomerID LIKE 'KH%'
+    AND ISNUMERIC(SUBSTRING(CustomerID, 3, LEN(CustomerID)-2)) = 1;
     
     -- Thêm dữ liệu với mã đã tạo và UpdatedAt = CreatedAt
     INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, Point, CreatedAt, UpdatedAt)
@@ -381,7 +383,6 @@ BEGIN
     FROM @InsertedCustomers;
 END;
 GO
-
 -- Tạo trigger để cập nhật UpdatedAt khi cập nhật thông tin khách hàng
 CREATE TRIGGER trg_UpdateCustomerTimestamp
 ON Customers

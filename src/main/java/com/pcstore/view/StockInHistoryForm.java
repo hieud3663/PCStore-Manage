@@ -2,7 +2,9 @@ package com.pcstore.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -15,10 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
-import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import com.k33ptoo.components.KButton;
@@ -50,28 +49,86 @@ public class StockInHistoryForm extends JDialog {
      */
     @SuppressWarnings("unchecked")
     private void initComponents() {
-        kGradientPanel1 = new KGradientPanel();
+        // Khởi tạo các component
+        panelMain = new KGradientPanel();
         lblTitle = new JLabel("LỊCH SỬ NHẬP HÀNG");
-        jScrollPane1 = new JScrollPane();
+        jScrollPaneOrders = new JScrollPane();
         tablePurchaseOrders = new JTable();
-        jScrollPane2 = new JScrollPane();
+        jScrollPaneDetails = new JScrollPane();
         tablePurchaseOrderDetails = new JTable();
         btnClose = new KButton();
-        btnRefresh = new KButton(); // Nút làm mới
-        btnUpdateStatus = new KButton(); // Nút cập nhật trạng thái
+        btnRefresh = new KButton();
+        btnUpdateStatus = new KButton();
         lblOrderDetail = new JLabel("Chi tiết phiếu nhập");
 
+        // Thiết lập cơ bản cho form
         setMinimumSize(new java.awt.Dimension(1000, 700));
         setResizable(false);
-
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        
+        // Thiết lập layout cho form chính (ContentPane)
+        getContentPane().setLayout(new BorderLayout());
+        
+        // Thiết lập panelMain
+        panelMain.setkFillBackground(false);
+        panelMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panelMain.setLayout(new BorderLayout(0, 10)); // Khoảng cách 10px giữa các thành phần
+        
+        // === PANEL TIÊU ĐỀ - NORTH ===
+        JPanel panelTop = new JPanel(new BorderLayout(0, 10));
+        panelTop.setOpaque(false);
+        
         // Thiết lập tiêu đề
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         lblTitle.setForeground(new Color(0, 102, 204));
+        panelTop.add(lblTitle, BorderLayout.NORTH);
         
+        // Panel chứa các nút trên cùng
+        JPanel panelButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelButtons.setOpaque(false);
+        
+        // Thiết lập nút làm mới
+        btnRefresh.setText("Làm Mới");
+        btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnRefresh.setkBorderRadius(30);
+        btnRefresh.setkEndColor(new Color(0, 153, 255));
+        btnRefresh.setkHoverEndColor(new Color(51, 153, 255));
+        btnRefresh.setkHoverForeGround(new Color(255, 255, 255));
+        btnRefresh.setkHoverStartColor(new Color(102, 204, 255));
+        btnRefresh.setPreferredSize(new Dimension(120, 40));
+        btnRefresh.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                btnRefreshMouseClicked(evt);
+            }
+        });
+        
+        // Thiết lập nút cập nhật trạng thái
+        btnUpdateStatus.setText("Cập Nhật Trạng Thái");
+        btnUpdateStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnUpdateStatus.setkBorderRadius(30);
+        btnUpdateStatus.setkEndColor(new Color(51, 153, 102));
+        btnUpdateStatus.setkHoverEndColor(new Color(51, 204, 102));
+        btnUpdateStatus.setkHoverForeGround(new Color(255, 255, 255));
+        btnUpdateStatus.setkHoverStartColor(new Color(102, 204, 102));
+        btnUpdateStatus.setPreferredSize(new Dimension(180, 40));
+        btnUpdateStatus.setEnabled(false);
+        btnUpdateStatus.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                btnUpdateStatusMouseClicked(evt);
+            }
+        });
+        
+        // Thêm nút vào panel
+        panelButtons.add(btnUpdateStatus);
+        panelButtons.add(btnRefresh);
+        panelTop.add(panelButtons, BorderLayout.CENTER);
+        
+        // === PANEL NỘI DUNG CHÍNH - CENTER ===
+        JPanel panelCenter = new JPanel();
+        panelCenter.setLayout(new BorderLayout(0, 10));
+        panelCenter.setOpaque(false);
+        
+        // === BẢNG PHIẾU NHẬP ===
         // Thiết lập bảng phiếu nhập
         tablePurchaseOrders.setModel(new DefaultTableModel(
             new Object [][] {
@@ -91,11 +148,20 @@ public class StockInHistoryForm extends JDialog {
         });
         tablePurchaseOrders.setRowHeight(25);
         tablePurchaseOrders.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tablePurchaseOrders);
+        jScrollPaneOrders.setViewportView(tablePurchaseOrders);
+        jScrollPaneOrders.setPreferredSize(new Dimension(900, 220));
+        
+        panelCenter.add(jScrollPaneOrders, BorderLayout.NORTH);
+        
+        // === PANEL CHI TIẾT PHIẾU NHẬP - SOUTH ===
+        JPanel panelDetails = new JPanel();
+        panelDetails.setLayout(new BorderLayout(0, 5));
+        panelDetails.setOpaque(false);
         
         // Thiết lập nhãn chi tiết
         lblOrderDetail.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblOrderDetail.setForeground(new Color(0, 102, 204));
+        panelDetails.add(lblOrderDetail, BorderLayout.NORTH);
         
         // Thiết lập bảng chi tiết phiếu nhập
         tablePurchaseOrderDetails.setModel(new DefaultTableModel(
@@ -116,50 +182,17 @@ public class StockInHistoryForm extends JDialog {
         });
         tablePurchaseOrderDetails.setRowHeight(25);
         tablePurchaseOrderDetails.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(tablePurchaseOrderDetails);
-
-        // Thiết lập nút làm mới
-        btnRefresh.setText("Làm Mới");
-        btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnRefresh.setkBorderRadius(30);
-        btnRefresh.setkEndColor(new Color(0, 153, 255)); // Màu xanh nhạt
-        btnRefresh.setkHoverEndColor(new Color(51, 153, 255));
-        btnRefresh.setkHoverForeGround(new Color(255, 255, 255));
-        btnRefresh.setkHoverStartColor(new Color(102, 204, 255));
-        btnRefresh.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                btnRefreshMouseClicked(evt);
-            }
-        });
+        jScrollPaneDetails.setViewportView(tablePurchaseOrderDetails);
+        jScrollPaneDetails.setPreferredSize(new Dimension(900, 220));
         
-        // Thiết lập nút cập nhật trạng thái
-        btnUpdateStatus.setText("Cập Nhật Trạng Thái");
-        btnUpdateStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnUpdateStatus.setkBorderRadius(30);
-        btnUpdateStatus.setkEndColor(new Color(51, 153, 102)); // Màu xanh lá cây
-        btnUpdateStatus.setkHoverEndColor(new Color(51, 204, 102));
-        btnUpdateStatus.setkHoverForeGround(new Color(255, 255, 255));
-        btnUpdateStatus.setkHoverStartColor(new Color(102, 204, 102));
-        btnUpdateStatus.setEnabled(false); // Ban đầu vô hiệu hóa
-        btnUpdateStatus.addActionListener(e -> {
-            if (btnUpdateStatus.isEnabled()) {
-                int selectedRow = tablePurchaseOrders.getSelectedRow();
-                if (selectedRow >= 0) {
-                    String purchaseOrderId = tablePurchaseOrders.getValueAt(selectedRow, 1).toString();
-                    String currentStatus = tablePurchaseOrders.getValueAt(selectedRow, 4).toString();
-                    
-                    if (controller != null) {
-                        controller.showUpdateStatusDialog(purchaseOrderId, currentStatus);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                        "Vui lòng chọn một phiếu nhập để cập nhật trạng thái.", 
-                        "Thông báo", 
-                        JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
-
+        panelDetails.add(jScrollPaneDetails, BorderLayout.CENTER);
+        
+        panelCenter.add(panelDetails, BorderLayout.CENTER);
+        
+        // === PANEL BUTTON DƯỚI - SOUTH ===
+        JPanel panelBottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelBottom.setOpaque(false);
+        
         // Thiết lập nút đóng
         btnClose.setText("Đóng");
         btnClose.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -168,57 +201,22 @@ public class StockInHistoryForm extends JDialog {
         btnClose.setkHoverEndColor(new Color(102, 153, 255));
         btnClose.setkHoverForeGround(new Color(255, 255, 255));
         btnClose.setkHoverStartColor(new Color(153, 255, 153));
+        btnClose.setPreferredSize(new Dimension(120, 40));
         btnClose.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 btnCloseMouseClicked(evt);
             }
         });
-
-        // Thiết lập layout
-        GroupLayout kGradientPanel1Layout = new GroupLayout(kGradientPanel1);
-        kGradientPanel1.setLayout(kGradientPanel1Layout);
-        kGradientPanel1Layout.setHorizontalGroup(
-            kGradientPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(kGradientPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitle, GroupLayout.DEFAULT_SIZE, 954, Short.MAX_VALUE)
-                    .addGroup(GroupLayout.Alignment.TRAILING, kGradientPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnUpdateStatus, GroupLayout.PREFERRED_SIZE, 180, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2)
-                    .addGroup(GroupLayout.Alignment.TRAILING, kGradientPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnClose, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblOrderDetail, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        kGradientPanel1Layout.setVerticalGroup(
-            kGradientPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblTitle, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(kGradientPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRefresh, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpdateStatus, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 220, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblOrderDetail)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 220, GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnClose, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
-        );
-
-        // Thiết lập layout của form
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(kGradientPanel1, BorderLayout.CENTER);
+        
+        panelBottom.add(btnClose);
+        
+        // Thêm các panel vào panelMain
+        panelMain.add(panelTop, BorderLayout.NORTH);
+        panelMain.add(panelCenter, BorderLayout.CENTER);
+        panelMain.add(panelBottom, BorderLayout.SOUTH);
+        
+        // Thêm panelMain vào ContentPane
+        getContentPane().add(panelMain, BorderLayout.CENTER);
 
         pack();
     }
@@ -311,9 +309,9 @@ public class StockInHistoryForm extends JDialog {
     private KButton btnRefresh; 
     private KButton btnUpdateStatus; // Nút cập nhật trạng thái
     
-    private JScrollPane jScrollPane1;
-    private JScrollPane jScrollPane2;
-    private KGradientPanel kGradientPanel1;
+    private JScrollPane jScrollPaneOrders;
+    private JScrollPane jScrollPaneDetails;
+    private KGradientPanel panelMain;
     private JLabel lblTitle;
     private JLabel lblOrderDetail;
     // End of variables declaration

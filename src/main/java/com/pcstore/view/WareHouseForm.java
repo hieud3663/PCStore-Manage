@@ -50,33 +50,84 @@ public class WareHouseForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel3 = new com.k33ptoo.components.KGradientPanel();
-        kGradientPanel2 = new com.k33ptoo.components.KGradientPanel();
-        kGradientPanel4 = new com.k33ptoo.components.KGradientPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        WareHouseTable = new javax.swing.JTable();
-        jPanel2 = new javax.swing.JPanel();
+        panelTitle = new com.k33ptoo.components.KGradientPanel();
+        jLabel1 = new javax.swing.JLabel();
+        panelAction = new javax.swing.JPanel();
         btnCreatePurchaseOrder = new com.k33ptoo.components.KButton();
         btnHistoryStockIn = new com.k33ptoo.components.KButton();
+        panelBody = new com.k33ptoo.components.KGradientPanel();
+        panelTable = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        WareHouseTable = new javax.swing.JTable();
 
-        javax.swing.GroupLayout kGradientPanel3Layout = new javax.swing.GroupLayout(kGradientPanel3);
-        kGradientPanel3.setLayout(kGradientPanel3Layout);
-        kGradientPanel3Layout.setHorizontalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        kGradientPanel3Layout.setVerticalGroup(
-            kGradientPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
-        kGradientPanel2.setLayout(new java.awt.GridLayout(1, 0));
+        panelTitle.setBackground(new java.awt.Color(255, 255, 255));
+        panelTitle.setkFillBackground(false);
+        panelTitle.setOpaque(false);
+        panelTitle.setPreferredSize(new java.awt.Dimension(167, 35));
+        panelTitle.setLayout(new java.awt.BorderLayout());
 
-        kGradientPanel4.setkFillBackground(false);
-
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 29, 204));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
+        jLabel1.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
+        panelTitle.add(jLabel1, java.awt.BorderLayout.CENTER);
+
+        add(panelTitle);
+
+        panelAction.setMinimumSize(new java.awt.Dimension(459, 77));
+        panelAction.setOpaque(false);
+        panelAction.setPreferredSize(new java.awt.Dimension(459, 77));
+        panelAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        btnCreatePurchaseOrder.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        btnCreatePurchaseOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/plus.png"))); // NOI18N
+        btnCreatePurchaseOrder.setText(bundle.getString("btnCreatePurchaseOrder")); // NOI18N
+        btnCreatePurchaseOrder.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCreatePurchaseOrder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnCreatePurchaseOrder.setIconTextGap(25);
+        btnCreatePurchaseOrder.setkBorderRadius(40);
+        btnCreatePurchaseOrder.setkEndColor(new java.awt.Color(0, 204, 51));
+        btnCreatePurchaseOrder.setkHoverEndColor(new java.awt.Color(102, 153, 255));
+        btnCreatePurchaseOrder.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnCreatePurchaseOrder.setkStartColor(new java.awt.Color(0, 204, 51));
+        btnCreatePurchaseOrder.setOpaque(true);
+        btnCreatePurchaseOrder.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCreatePurchaseOrderMouseClicked(evt);
+            }
+        });
+        panelAction.add(btnCreatePurchaseOrder);
+
+        btnHistoryStockIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/history.png"))); // NOI18N
+        btnHistoryStockIn.setText(bundle.getString("btnHistoryofStockIn")); // NOI18N
+        btnHistoryStockIn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnHistoryStockIn.setIconTextGap(30);
+        btnHistoryStockIn.setkBorderRadius(40);
+        btnHistoryStockIn.setkEndColor(new java.awt.Color(0, 153, 255));
+        btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(255, 102, 102));
+        btnHistoryStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
+        btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(255, 102, 102));
+        btnHistoryStockIn.setOpaque(true);
+        btnHistoryStockIn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnHistoryStockInMouseClicked(evt);
+            }
+        });
+        panelAction.add(btnHistoryStockIn);
+
+        add(panelAction);
+
+        panelBody.setkFillBackground(false);
+        panelBody.setPreferredSize(new java.awt.Dimension(1188, 592));
+        panelBody.setLayout(new java.awt.BorderLayout());
+
+        panelTable.setBackground(new java.awt.Color(255, 255, 255));
+        panelTable.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnWareHouse"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 15), new java.awt.Color(51, 29, 204))); // NOI18N
+        panelTable.setLayout(new java.awt.BorderLayout());
 
         WareHouseTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -117,94 +168,11 @@ public class WareHouseForm extends javax.swing.JPanel {
             WareHouseTable.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
         }
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1178, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 538, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 14, Short.MAX_VALUE))
-        );
+        panelTable.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        javax.swing.GroupLayout kGradientPanel4Layout = new javax.swing.GroupLayout(kGradientPanel4);
-        kGradientPanel4.setLayout(kGradientPanel4Layout);
-        kGradientPanel4Layout.setHorizontalGroup(
-            kGradientPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        kGradientPanel4Layout.setVerticalGroup(
-            kGradientPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(kGradientPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        panelBody.add(panelTable, java.awt.BorderLayout.CENTER);
 
-        jPanel2.setMinimumSize(new java.awt.Dimension(459, 77));
-        jPanel2.setOpaque(false);
-        jPanel2.setPreferredSize(new java.awt.Dimension(459, 77));
-
-        btnCreatePurchaseOrder.setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        btnCreatePurchaseOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/plus.png"))); // NOI18N
-        btnCreatePurchaseOrder.setText(bundle.getString("btnCreatePurchaseOrder")); // NOI18N
-        btnCreatePurchaseOrder.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnCreatePurchaseOrder.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnCreatePurchaseOrder.setIconTextGap(25);
-        btnCreatePurchaseOrder.setkBorderRadius(40);
-        btnCreatePurchaseOrder.setkEndColor(new java.awt.Color(0, 204, 51));
-        btnCreatePurchaseOrder.setkHoverEndColor(new java.awt.Color(102, 153, 255));
-        btnCreatePurchaseOrder.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnCreatePurchaseOrder.setkStartColor(new java.awt.Color(0, 204, 51));
-        btnCreatePurchaseOrder.setOpaque(true);
-        btnCreatePurchaseOrder.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnCreatePurchaseOrderMouseClicked(evt);
-            }
-        });
-        jPanel2.add(btnCreatePurchaseOrder);
-
-        btnHistoryStockIn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/history.png"))); // NOI18N
-        btnHistoryStockIn.setText(bundle.getString("btnHistoryofStockIn")); // NOI18N
-        btnHistoryStockIn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btnHistoryStockIn.setIconTextGap(30);
-        btnHistoryStockIn.setkBorderRadius(40);
-        btnHistoryStockIn.setkEndColor(new java.awt.Color(0, 153, 255));
-        btnHistoryStockIn.setkHoverEndColor(new java.awt.Color(255, 102, 102));
-        btnHistoryStockIn.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnHistoryStockIn.setkHoverStartColor(new java.awt.Color(255, 102, 102));
-        btnHistoryStockIn.setOpaque(true);
-        btnHistoryStockIn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnHistoryStockInMouseClicked(evt);
-            }
-        });
-        jPanel2.add(btnHistoryStockIn);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(kGradientPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(15, 15, 15))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(kGradientPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 582, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(kGradientPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        add(panelBody);
     }// </editor-fold>//GEN-END:initComponents
 
 
@@ -241,31 +209,6 @@ public class WareHouseForm extends javax.swing.JPanel {
         historyStockInForm.setVisible(true);
     }//GEN-LAST:event_btnHistoryStockInMouseClicked
 
-    private void initTable() {
-        // Tạo mô hình bảng cho phép kiểm soát tính chỉnh sửa
-        String[] columns = {"Chức Năng ", "STT", "Mã Máy", "Tên Máy", "Nhà Cung Cấp", "Số Lượng"};
-        EditableTableModel model = new EditableTableModel(new Object[0][0], columns);
-        WareHouseTable.setModel(model);
-        
-        // Thiết lập renderer và editor cho cột chứa các nút
-        WareHouseTable.getColumnModel().getColumn(0).setCellRenderer(new ButtonRenderer());
-        WareHouseTable.getColumnModel().getColumn(0).setCellEditor(new ButtonEditor(WareHouseTable));
-        
-        // Lưu controller vào thuộc tính của bảng để sử dụng trong ButtonEditor
-        WareHouseTable.putClientProperty("controller", controller);
-        
-        // Thiết lập độ rộng cho các cột
-        WareHouseTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        WareHouseTable.getColumnModel().getColumn(1).setPreferredWidth(50);
-        WareHouseTable.getColumnModel().getColumn(2).setPreferredWidth(150);
-        WareHouseTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-        WareHouseTable.getColumnModel().getColumn(4).setPreferredWidth(200);
-        WareHouseTable.getColumnModel().getColumn(5).setPreferredWidth(100);
-        
-        // Thiết lập độ cao cho hàng
-        WareHouseTable.setRowHeight(32);
-    }
-   
     
     public class ButtonRenderer extends JPanel implements TableCellRenderer {
         private final JButton btnEdit = new JButton();
@@ -537,11 +480,11 @@ public class WareHouseForm extends javax.swing.JPanel {
     private javax.swing.JTable WareHouseTable;
     public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
     public com.k33ptoo.components.KButton btnHistoryStockIn;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel4;
+    private javax.swing.JPanel panelAction;
+    private com.k33ptoo.components.KGradientPanel panelBody;
+    private javax.swing.JPanel panelTable;
+    private com.k33ptoo.components.KGradientPanel panelTitle;
     // End of variables declaration//GEN-END:variables
 }

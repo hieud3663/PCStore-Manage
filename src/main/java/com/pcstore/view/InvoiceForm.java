@@ -166,10 +166,21 @@ public class InvoiceForm extends javax.swing.JPanel  {
             tableInvoice.getColumnModel().getColumn(0).setMaxWidth(20);
             tableInvoice.getColumnModel().getColumn(1).setPreferredWidth(60);
             tableInvoice.getColumnModel().getColumn(1).setMaxWidth(60);
+            tableInvoice.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtNo")); // NOI18N
             tableInvoice.getColumnModel().getColumn(2).setPreferredWidth(80);
             tableInvoice.getColumnModel().getColumn(2).setMaxWidth(80);
+            tableInvoice.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtInvoiceID")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtInvoiceCreateAt")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtInvoiceEmployee")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtInvoiceTotalDiscount")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtInvoiceTotalAmount")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtInvoicePaymentMethod")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(8).setHeaderValue(bundle.getString("txtInvoiceCustomer")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(9).setHeaderValue(bundle.getString("txtPhonenumber")); // NOI18N
+            tableInvoice.getColumnModel().getColumn(10).setHeaderValue(bundle.getString("txtInvoiceStatus")); // NOI18N
             tableInvoice.getColumnModel().getColumn(11).setPreferredWidth(80);
             tableInvoice.getColumnModel().getColumn(11).setMaxWidth(80);
+            tableInvoice.getColumnModel().getColumn(11).setHeaderValue(bundle.getString("txtInvoiceNote")); // NOI18N
         }
 
         panelInvoice.add(jScrollPaneInvoice, java.awt.BorderLayout.CENTER);
@@ -233,7 +244,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "STT", "Mã sản phẩm", "Tên sản phẩm", "Giá tiền", "Số lượng", "Tổng tiền theo sản phẩm"
+                "STT", "Mã sản phẩm", "Tên sản phẩm", "Giá bán", "Số lượng", "Tổng tiền theo sản phẩm"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -247,6 +258,14 @@ public class InvoiceForm extends javax.swing.JPanel  {
         tableInvoiceDetail.setPreferredSize(new java.awt.Dimension(500, 120));
         tableInvoiceDetail.getTableHeader().setReorderingAllowed(false);
         jScrollPaneDetail.setViewportView(tableInvoiceDetail);
+        if (tableInvoiceDetail.getColumnModel().getColumnCount() > 0) {
+            tableInvoiceDetail.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtNo")); // NOI18N
+            tableInvoiceDetail.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtProductID")); // NOI18N
+            tableInvoiceDetail.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtProductName")); // NOI18N
+            tableInvoiceDetail.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtProductPrice")); // NOI18N
+            tableInvoiceDetail.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtQuantity")); // NOI18N
+            tableInvoiceDetail.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtInvoiceTotalAmountProduct")); // NOI18N
+        }
 
         panelInovoiceDetail.add(jScrollPaneDetail, java.awt.BorderLayout.CENTER);
 

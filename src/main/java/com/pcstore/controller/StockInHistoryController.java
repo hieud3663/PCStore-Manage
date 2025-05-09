@@ -388,8 +388,67 @@ public class StockInHistoryController {
      */
     public void loadPurchaseOrderHistory() {
         try {
+            ensureConnection();
+            System.out.println("==== Đang tải lịch sử phiếu nhập ====");
 
-            List<PurchaseOrder> purchaseOrders = purchaseOrderService.findAllPurchaseOrders();
+            // SQL đã được sửa để khớp chính xác với tên cột trong database
+            String directSql = "SELECT po.PurchaseOrderID, po.OrderDate, po.Status, po.TotalAmount, " +
+                    "po.EmployeeID, e.FullName, " + // FullName chính xác
+                    "po.SupplierID, s.Name " + // Name chính xác
+                    "FROM PurchaseOrders po " +
+                    "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
+                    "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
+                    "ORDER BY po.OrderDate DESC";
+
+            List<PurchaseOrder> purchaseOrders = new ArrayList<>();
+
+            try (java.sql.Statement stmt = connection.createStatement();
+                    java.sql.ResultSet rs = stmt.executeQuery(directSql)) {
+
+                while (rs.next()) {
+                    try {
+                        PurchaseOrder order = new PurchaseOrder();
+                        order.setPurchaseOrderId(rs.getString("PurchaseOrderID"));
+
+                        // Đọc OrderDate
+                        java.sql.Timestamp timestamp = rs.getTimestamp("OrderDate");
+                        if (timestamp != null) {
+                            order.setOrderDate(timestamp.toLocalDateTime());
+                        }
+
+                        // Đọc Status và TotalAmount
+                        order.setStatus(rs.getString("Status"));
+                        order.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+
+                        // Thiết lập Employee - sử dụng đúng tên cột FullName
+                        String employeeId = rs.getString("EmployeeID");
+                        if (employeeId != null) {
+                            com.pcstore.model.Employee emp = new com.pcstore.model.Employee();
+                            emp.setEmployeeId(employeeId);
+                            emp.setFullName(rs.getString("FullName"));
+                            order.setEmployee(emp);
+                        }
+
+                        // Thiết lập Supplier - sử dụng đúng tên cột Name
+                        String supplierId = rs.getString("SupplierID");
+                        if (supplierId != null) {
+                            com.pcstore.model.Supplier sup = new com.pcstore.model.Supplier();
+                            sup.setSupplierId(supplierId);
+                            sup.setName(rs.getString("Name")); // Sử dụng Name thay vì SupplierName
+                            order.setSupplier(sup);
+                        }
+
+                        purchaseOrders.add(order);
+                        // System.out.println("Found order: " + order.getPurchaseOrderId() +
+                        //         " | Date: " + (order.getOrderDate() != null ? order.getOrderDate() : "null") +
+                        //         " | Status: " + order.getStatus());
+                    } catch (Exception e) {
+                        System.err.println("Error processing row: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) historyForm.getTablePurchaseOrders().getModel();
 

@@ -16,6 +16,8 @@ public class LocaleManager {
     private final String fileNameVI = "/com/pcstore/resources/vi_VN.properties";
     private final String  fileNameEN = "/com/pcstore/resources/en_US.properties";
 
+    private final String fileNameResourceVI = "com/pcstore/resources/vi_VN";
+    private final String fileNameResourceEN = "com/pcstore/resources/en_US";
     // Singleton instance
     private static LocaleManager instance;
     
@@ -81,9 +83,9 @@ public class LocaleManager {
         ResourceBundle resourceBundle = null;
         try {
             if (currentLocale.getLanguage().equals("vi")) {
-                resourceBundle = ResourceBundle.getBundle(fileNameVI);
+                resourceBundle = ResourceBundle.getBundle(fileNameResourceVI);
             } else {
-                resourceBundle = ResourceBundle.getBundle(fileNameEN);
+                resourceBundle = ResourceBundle.getBundle(fileNameResourceEN);
             }
         } catch (Exception e) {
             e.printStackTrace();

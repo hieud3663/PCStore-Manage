@@ -31,7 +31,7 @@ public class TextFieldSearch extends javax.swing.JPanel {
     }
     
     private void setPlaceHolder(){
-        ResourceBundle bundle = ResourceBundle.getBundle("com.pcstore.resources.vi_VN");
+        ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle();
         placeHolder(txtSearchField, bundle.getString("txtSearchField"));
     }
 

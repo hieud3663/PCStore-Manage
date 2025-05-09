@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.ResourceBundle;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -46,6 +46,8 @@ public class RevenueEmployeeController {
     private final NumberFormat currencyFormatter = LocaleManager.getInstance().getNumberFormatter();
     private LocalDate fromDate;
     private LocalDate toDate;
+    private final ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle();
+
     
     /**
      * Lấy instance duy nhất của controller (Singleton pattern)
@@ -457,8 +459,8 @@ public class RevenueEmployeeController {
             revenueEmployeeForm.getPanelChartView().add(chart, BorderLayout.CENTER);
         
             
-            chart.addLegend("Doanh thu (triệu đồng)", new Color(26, 162, 106));
-            chart.addLegend("Số lượng sản phẩm", new Color(30, 113, 195));
+            chart.addLegend(bundle.getString("textRevenueMillion"), new Color(26, 162, 106));
+            chart.addLegend(bundle.getString("textProductCount"), new Color(30, 113, 195));
             
             int maxToShow = Math.min(revenueData.size(), 8);
             
@@ -576,7 +578,7 @@ public class RevenueEmployeeController {
             Chart dailyChart = new Chart();
             
             // Thêm legend cho biểu đồ
-            dailyChart.addLegend("Doanh thu (triệu đồng)", new Color(26, 162, 106));
+            dailyChart.addLegend(bundle.getString("textRevenueMillion"), new Color(26, 162, 106));
             dailyChart.addLegend("Số lượng sản phẩm", new Color(30, 113, 195));
             
             // Thêm dữ liệu vào biểu đồ

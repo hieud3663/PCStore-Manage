@@ -19,6 +19,6 @@
         "python": true,
         "css": false,
         "html": true,
-        "java": true
+        "java": false
     }
 }

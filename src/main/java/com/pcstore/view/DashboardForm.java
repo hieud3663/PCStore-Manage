@@ -193,6 +193,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(lbMenu);
 
         kPanelHome.setkBorderRadius(30);
+        kPanelHome.setkBorderSize(1.5F);
         kPanelHome.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelHome.setkFillBackground(false);
         kPanelHome.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -213,6 +214,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelHome);
 
         kPanelSell.setkBorderRadius(30);
+        kPanelSell.setkBorderSize(1.5F);
         kPanelSell.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelSell.setkFillBackground(false);
         kPanelSell.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -235,6 +237,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelSell);
 
         kPanelProduct.setkBorderRadius(30);
+        kPanelProduct.setkBorderSize(1.5F);
         kPanelProduct.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelProduct.setkFillBackground(false);
         kPanelProduct.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -244,7 +247,7 @@ public class DashboardForm extends JFrame {
 
         lbProductMenu.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbProductMenu.setForeground(new java.awt.Color(255, 255, 255));
-        lbProductMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/categorize_24px.png"))); // NOI18N
+        lbProductMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/box.png"))); // NOI18N
         lbProductMenu.setText(bundle.getString("txtMenuProduct")); // NOI18N
         lbProductMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbProductMenu.setMaximumSize(new java.awt.Dimension(200, 30));
@@ -256,6 +259,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelProduct);
 
         kPanelInvoice.setkBorderRadius(30);
+        kPanelInvoice.setkBorderSize(1.5F);
         kPanelInvoice.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelInvoice.setkFillBackground(false);
         kPanelInvoice.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -265,7 +269,7 @@ public class DashboardForm extends JFrame {
 
         lbMenuInvoice.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuInvoice.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuInvoice.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/google_forms_24px.png"))); // NOI18N
+        lbMenuInvoice.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/invoice.png"))); // NOI18N
         lbMenuInvoice.setText(bundle.getString("txtMenuInvoice")); // NOI18N
         lbMenuInvoice.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuInvoice.setMaximumSize(new java.awt.Dimension(200, 30));
@@ -276,6 +280,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelInvoice);
 
         kPanelWareHouse.setkBorderRadius(30);
+        kPanelWareHouse.setkBorderSize(1.5F);
         kPanelWareHouse.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelWareHouse.setkFillBackground(false);
         kPanelWareHouse.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -285,7 +290,7 @@ public class DashboardForm extends JFrame {
 
         lbMenuWareHouse.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuWareHouse.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuWareHouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grid_24px.png"))); // NOI18N
+        lbMenuWareHouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/warehouse.png"))); // NOI18N
         lbMenuWareHouse.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
         lbMenuWareHouse.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuWareHouse.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -295,16 +300,17 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelWareHouse);
 
         kPanelEmployee.setkBorderRadius(30);
+        kPanelEmployee.setkBorderSize(1.5F);
         kPanelEmployee.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelEmployee.setkFillBackground(false);
         kPanelEmployee.setkStartColor(new java.awt.Color(255, 255, 255));
         kPanelEmployee.setOpaque(false);
         kPanelEmployee.setPreferredSize(new java.awt.Dimension(200, 10));
-        kPanelEmployee.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
+        kPanelEmployee.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 5));
 
         lbMenuEmployee.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuEmployee.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        lbMenuEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/management.png"))); // NOI18N
         lbMenuEmployee.setText(bundle.getString("txtMenuIEmployee")); // NOI18N
         lbMenuEmployee.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuEmployee.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -314,6 +320,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelEmployee);
 
         kPanelService.setkBorderRadius(30);
+        kPanelService.setkBorderSize(1.5F);
         kPanelService.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelService.setkFillBackground(false);
         kPanelService.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -323,7 +330,7 @@ public class DashboardForm extends JFrame {
 
         lbMenuService.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuService.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        lbMenuService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/service-product.png"))); // NOI18N
         lbMenuService.setText(bundle.getString("txtMenuIService")); // NOI18N
         lbMenuService.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuService.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -333,6 +340,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelService);
 
         kPanelCustomer.setkBorderRadius(30);
+        kPanelCustomer.setkBorderSize(1.5F);
         kPanelCustomer.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelCustomer.setkFillBackground(false);
         kPanelCustomer.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -345,7 +353,7 @@ public class DashboardForm extends JFrame {
         lbMenuCustomer.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuCustomer.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuCustomer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMenuCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        lbMenuCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-bag.png"))); // NOI18N
         lbMenuCustomer.setText(bundle.getString("lbMenuCustomer")); // NOI18N
         lbMenuCustomer.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuCustomer.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -355,6 +363,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelCustomer);
 
         kPanelReport.setkBorderRadius(30);
+        kPanelReport.setkBorderSize(1.5F);
         kPanelReport.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelReport.setkFillBackground(false);
         kPanelReport.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -365,7 +374,7 @@ public class DashboardForm extends JFrame {
         lbMenuReport.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuReport.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuReport.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/account_24px.png"))); // NOI18N
+        lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/monitor.png"))); // NOI18N
         lbMenuReport.setText(bundle.getString("txtMenuIReport")); // NOI18N
         lbMenuReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuReport.setMaximumSize(new java.awt.Dimension(200, 30));

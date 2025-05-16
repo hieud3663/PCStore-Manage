@@ -84,7 +84,8 @@ public class CustomerController {
             this.customerService = ServiceFactory.getCustomerService();
             this.customerForm = customerForm;
             this.customerList = new ArrayList<>();
-            
+
+            setupComboBox();
             setupEventListeners();
             setupTableStyle();
             loadAllCustomers();
@@ -133,6 +134,7 @@ public class CustomerController {
         //làm mới
         customerForm.getBtnRefresh().addActionListener(e -> {
             loadAllCustomers();
+            isAddingNew = false;
             clearForm();
         });
         
@@ -197,6 +199,22 @@ public class CustomerController {
         });
     }
     
+    /**
+     * Setup combobox cho các trường sắp xếp
+     */
+    private void setupComboBox() {
+        if (customerForm == null) return;
+        customerForm.getCbbSortCustomer().removeAllItems();
+        customerForm.getCbbSort().removeAllItems();
+
+        customerForm.getCbbSortCustomer().addItem(prop.getProperty("txtNone"));
+        customerForm.getCbbSortCustomer().addItem(prop.getProperty("txtCustomerName"));
+        customerForm.getCbbSortCustomer().addItem(prop.getProperty("txtCustomerPoint"));
+        
+        customerForm.getCbbSort().addItem(prop.getProperty("txtAscending"));
+        customerForm.getCbbSort().addItem(prop.getProperty("txtDescending"));
+    }
+
     /**
      * Thiết lập style cho bảng
      */
@@ -274,15 +292,7 @@ public class CustomerController {
      */
     public void loadCustomerDetails(String customerId) {
         if(isAddingNew){
-            int option = JOptionPane.showConfirmDialog(customerForm,
-                ErrorMessage.CUSTOMER_ADD_CONTINUE,
-                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
-            if (option == JOptionPane.YES_OPTION) {
-                // clearForm();
-                return;
-            }
-            isAddingNew = false;
-            customerForm.getLabelESC().setVisible(isAddingNew);
+            if(handleEscapeKey())  return;
         }
 
         try {
@@ -328,7 +338,7 @@ public class CustomerController {
         // Reset form để nhập thông tin mới
         isAddingNew = true;
         clearForm();
-        ButtonUtils.setKButtonEnabled(customerForm.getBtnUpdate(), true);
+        ButtonUtils.setKButtonEnabled(customerForm.getBtnUpdate(), isAddingNew);
 
         
         // Tạo mã khách hàng tự động (có thể tùy chỉnh theo yêu cầu)
@@ -344,6 +354,7 @@ public class CustomerController {
         
 
         ButtonUtils.setKButtonEnabled(customerForm.getBtnDeleteCustomer(), false);
+        ButtonUtils.setKButtonEnabled(customerForm.getBtnAddCustomer(), false);
 
         customerForm.getBtnUpdate().setText(prop.getProperty("btnSave"));
         
@@ -391,8 +402,6 @@ public class CustomerController {
                 }
             }
 
-            
-
             // Nếu đang thêm mới
             if (isAddingNew) {
                 Optional<Customer> existingCustomer = customerService.findCustomerById(id);
@@ -429,6 +438,7 @@ public class CustomerController {
                 selectCustomerInTable(savedCustomer.getCustomerId());
                 
                 isAddingNew = false;
+                // ButtonUtils.setKButtonEnabled(customerForm.getBtnAddCustomer(), false);
                 
             } else { //Cập nhật bảng thông tin
                 customerForm.getBtnUpdate().setText(prop.getProperty("btnUpdate"));
@@ -549,7 +559,14 @@ public class CustomerController {
         String sortField = customerForm.getCbbSortCustomer().getSelectedItem().toString();
         String sortOrder = customerForm.getCbbSort().getSelectedItem().toString();
         
-        if (sortField.equals("<Không>") || sortOrder.equals("<Không>")) {
+        // Lấy các giá trị từ file ngôn ngữ
+        String noSort = prop.getProperty("txtNone");
+        String nameSort = prop.getProperty("txtCustomerName");
+        String pointSort = prop.getProperty("txtCustomerPoint");
+        String ascSort = prop.getProperty("txtAscending");
+        String descSort = prop.getProperty("txtDescending");
+
+        if (sortField.equals(noSort) || sortOrder.equals(noSort)) {
             // Bỏ sắp xếp, hiển thị theo thứ tự mặc định
             customerTableSorter.setSortKeys(null);
             return;
@@ -557,16 +574,15 @@ public class CustomerController {
         
         int columnIndex = -1;
         
-        if (sortField.equals("Tên khách hàng")) {
-            columnIndex = 1; 
-        } else if (sortField.equals("Điểm")) {
-            columnIndex = 4; 
+        if (sortField.equals(nameSort)) {
+            columnIndex = 1; // Index của cột tên khách hàng
+        } else if (sortField.equals(pointSort)) {
+            columnIndex = 4; // Index của cột điểm
         }
         
         if (columnIndex != -1) {
-            SortOrder order = sortOrder.equals("Tăng dần") ? 
+            SortOrder order = sortOrder.equals(ascSort) ? 
                     SortOrder.ASCENDING : SortOrder.DESCENDING;
-            
             
             List<SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new SortKey(columnIndex, order));
@@ -590,7 +606,12 @@ public class CustomerController {
             // Tạo dữ liệu xuất ra Excel
             String[] headers = {"Mã khách hàng", "Họ tên", "Số điện thoại", 
                                 "Email", "Điểm tích lũy", "Ngày tạo", "Cập nhật lần cuối"};
-            
+
+            if (LocaleManager.getInstance().getCurrentLocale().getLanguage().equals("en")) {
+                headers = new String[]{"Customer ID", "Full Name", "Phone Number",
+                                "Email", "Points", "Created At", "Updated At"};
+            }
+
             Object[][] data = new Object[customerList.size()][headers.length];
             
             for (int i = 0; i < customerList.size(); i++) {
@@ -631,7 +652,7 @@ public class CustomerController {
         }
     }
 
-    private void handleEscapeKey() {
+    private boolean handleEscapeKey() {
         if (isAddingNew) {
             int option = JOptionPane.showConfirmDialog(customerForm,
                     ErrorMessage.CUSTOMER_ADD_CANCEL,
@@ -642,9 +663,13 @@ public class CustomerController {
                 customerForm.getLabelESC().setVisible(false);
                 customerForm.getBtnUpdate().setText(prop.getProperty("btnUpdate"));
                 clearForm();
-            
+                return false;
+            }else{
+                // ButtonUtils.setKButtonEnabled(customerForm.getBtnAddCustomer(), false);
             }
         }
+        return true;
+
     }
     
     /**
@@ -663,7 +688,8 @@ public class CustomerController {
         customerForm.getTxtCreateUpdate().setText("");
         
         selectedCustomer = null;
-        
+
+        ButtonUtils.setKButtonEnabled(customerForm.getBtnAddCustomer(), true);
         // Disable các nút cập nhật và xóa
         ButtonUtils.setKButtonEnabled(customerForm.getBtnUpdate(), false);
         ButtonUtils.setKButtonEnabled(customerForm.getBtnDeleteCustomer(), false);

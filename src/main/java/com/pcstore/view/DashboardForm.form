@@ -81,6 +81,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelHome">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -132,6 +133,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelSell">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -244,6 +246,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelProduct">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -271,7 +274,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/categorize_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/box.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuProduct" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -296,6 +299,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelInvoice">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -323,7 +327,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/google_forms_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/invoice.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuInvoice" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -347,6 +351,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelWareHouse">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -374,7 +379,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/grid_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/warehouse.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuWareHouse" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -395,6 +400,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelEmployee">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -410,7 +416,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
             <Property name="alignment" type="int" value="0"/>
-            <Property name="horizontalGap" type="int" value="20"/>
+            <Property name="horizontalGap" type="int" value="15"/>
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JLabel" name="lbMenuEmployee">
@@ -422,7 +428,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/management.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuIEmployee" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -443,6 +449,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelService">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -470,7 +477,7 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/service-product.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuIService" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -491,6 +498,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelCustomer">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -514,7 +522,7 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/user-bag.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="lbMenuCustomer" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>
@@ -601,6 +609,7 @@
         <Container class="com.k33ptoo.components.KGradientPanel" name="kPanelReport">
           <Properties>
             <Property name="kBorderRadius" type="int" value="30"/>
+            <Property name="kBorderSize" type="float" value="1.5"/>
             <Property name="kEndColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
@@ -628,7 +637,7 @@
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/pcstore/resources/icon/account_24px.png"/>
+                  <Image iconType="3" name="/com/pcstore/resources/icon/monitor.png"/>
                 </Property>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="com/pcstore/resources/vi_VN.properties" key="txtMenuIReport" replaceFormat="java.util.ResourceBundle.getBundle(&quot;{bundleNameSlashes}&quot;).getString(&quot;{key}&quot;)"/>

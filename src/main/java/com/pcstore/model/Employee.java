@@ -1,5 +1,9 @@
 package com.pcstore.model;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+
 import com.pcstore.model.base.BasePerson;
 import com.pcstore.model.enums.EmployeePositionEnum;
 import com.pcstore.utils.ErrorMessage;
@@ -120,6 +124,19 @@ public class Employee extends BasePerson {
         this.address = address;
     }
    
+    @Override
+    public void setDateOfBirth(Date dateOfBirth) {
+        if (dateOfBirth != null) {
+            LocalDate today = LocalDate.now();
+            LocalDate birthDate = dateOfBirth.toLocalDate();
+            if (Period.between(birthDate, today).getYears() < 18) {
+                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_18));
+            }else if(Period.between(birthDate, today).getYears() > 70) {
+                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_70));
+            }
+        }
+        this.dateOfBirth = dateOfBirth;
+    }
     
     public String getAvatar() {
         return avatar;

@@ -41,7 +41,11 @@ public class ErrorMessage {
   //"Chức vụ không hợp lệ"
   public static String INVALID_EMPLOYEE_POSITION;
   //"Nhân viên phải từ 18 tuổi trở lên"
-  public static String EMPLOYEE_AGE_18;    // Employee controller specific messages
+  public static String EMPLOYEE_AGE_18;
+  //"Nhân viên phải nhỏ hơn 70 tuổi"
+  public static String EMPLOYEE_AGE_70;
+
+  // Employee controller specific messages
   //"Lỗi khi tải danh sách nhân viên: %s"
   public static String EMPLOYEE_LOAD_ERROR;
   //"Lỗi khi lọc danh sách nhân viên: %s"
@@ -691,8 +695,8 @@ public class ErrorMessage {
     EMPLOYEE_ID_FORMAT = LM.getMessageResourceBundle().getString("EMPLOYEE_ID_FORMAT");
     EMPLOYEE_NAME_TOO_SHORT = LM.getMessageResourceBundle().getString("EMPLOYEE_NAME_TOO_SHORT");
     INVALID_EMPLOYEE_POSITION = LM.getMessageResourceBundle().getString("INVALID_EMPLOYEE_POSITION");
-    EMPLOYEE_AGE_18 = LM.getMessageResourceBundle().getString("EMPLOYEE_AGE_18");  
-    
+    EMPLOYEE_AGE_18 = LM.getMessageResourceBundle().getString("EMPLOYEE_AGE_18");
+    EMPLOYEE_AGE_70 = LM.getMessageResourceBundle().getString("EMPLOYEE_AGE_70");
     // Employee controller specific messages
     
     EMPLOYEE_LOAD_ERROR = LM.getMessageResourceBundle().getString("EMPLOYEE_LOAD_ERROR");

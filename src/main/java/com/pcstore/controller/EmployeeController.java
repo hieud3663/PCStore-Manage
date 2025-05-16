@@ -258,14 +258,7 @@ public class EmployeeController {
      */
     public void loadEmployeeDetails(String employeeId) {
         if(isAddingNew){
-            int option = JOptionPane.showConfirmDialog(employeeForm,
-                ErrorMessage.CONFIRM_CONTINUE_ADD_EMPLOYEE,
-                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
-            if (option == JOptionPane.YES_OPTION) {
-                return;
-            }
-            isAddingNew = false;
-            employeeForm.getLabelESC().setVisible(isAddingNew);
+            if(handleEscapeKey())  return;
         }
 
         try {
@@ -330,6 +323,7 @@ public class EmployeeController {
         clearForm();
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnUpdate(), true);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnChangeImage(), true);
+        ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), false);
         // Tạo mã nhân viên tự động
         String newEmployeeId = employeeService.generateEmployeeId();
         employeeForm.getTxtIDEmployee().setText(newEmployeeId);
@@ -451,6 +445,9 @@ public class EmployeeController {
                 employeeForm.getLabelESC().setVisible(false);
                 
             } else { // Cập nhật thông tin
+                ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), true);
+                ButtonUtils.setKButtonEnabled(employeeForm.getBtnUpdate(), true);
+
                 employeeForm.getBtnUpdate().setText(prop.getProperty("btnUpdate"));
 
                 if (selectedEmployee == null) {
@@ -644,7 +641,7 @@ public class EmployeeController {
     /**
      * Xử lý khi nhấn phím Esc để hủy thao tác thêm nhân viên mới
      */
-    private void handleEscapeKey() {
+    private boolean handleEscapeKey() {
         if (isAddingNew) {
             int option = JOptionPane.showConfirmDialog(employeeForm,
                     ErrorMessage.CONFIRM_CANCEL_ADD_EMPLOYEE,
@@ -655,8 +652,13 @@ public class EmployeeController {
                 employeeForm.getLabelESC().setVisible(false);
                 employeeForm.getBtnUpdate().setText(prop.getProperty("btnUpdate"));
                 clearForm();
+                return false;
+            }else{
+                // ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), false);
+                return true;
             }
         }
+        return true;
     }
     
     /**
@@ -683,7 +685,8 @@ public class EmployeeController {
         
         currentAvatar = null;
         displayDefaultAvatar();
-        
+
+        ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), true);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnUpdate(), false);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnDeleteEmployee(), false);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnChangeImage(), false);
@@ -896,7 +899,7 @@ public class EmployeeController {
      */
     private void refereshForm(){
         clearForm();
-        
+        isAddingNew = false;
         if(isAdmin || isManager){
             loadAllEmployees();
         } else {

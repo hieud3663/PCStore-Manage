@@ -7,6 +7,7 @@ import com.pcstore.service.EmployeeService;
 import com.pcstore.service.InvoiceService;
 import com.pcstore.service.RevenueService;
 import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.SessionManager;
 import com.pcstore.view.HomeForm;
@@ -79,8 +80,9 @@ public class HomeController {
             
             startDataRefreshScheduler();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.HOME_CONTROLLER_INIT_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -113,8 +115,9 @@ public class HomeController {
             homeForm.getTxtLoginAt().setText(LocalDateTime.now().format(dateFormatter));
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi tải thông tin người dùng: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.USER_INFO_LOAD_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -137,8 +140,9 @@ public class HomeController {
             
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi tải thống kê hôm nay: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.TODAY_STATS_LOAD_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -161,8 +165,9 @@ public class HomeController {
             
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi tải thống kê tháng: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.MONTH_STATS_LOAD_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -171,6 +176,7 @@ public class HomeController {
      */
     private void loadWeeklyRevenueChart() {
         try {
+            ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle();
             // Lấy locale 
             currentLocale = LocaleManager.getInstance().getCurrentLocale();
             
@@ -214,8 +220,9 @@ public class HomeController {
             
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi tải biểu đồ doanh thu theo tuần: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.WEEKLY_CHART_LOAD_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -252,8 +259,9 @@ public class HomeController {
             return revenueService.getDailyRevenueData(fromDateTime, toDateTime);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi lấy dữ liệu doanh thu theo ngày: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.DAILY_REVENUE_DATA_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return new ArrayList<>();
         }
     }
@@ -272,8 +280,9 @@ public class HomeController {
             return revenueService.getTotalRevenueByDateRange(fromDateTime, toDateTime);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(homeForm, "Lỗi khi lấy tổng doanh thu: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(homeForm, 
+                String.format(ErrorMessage.TOTAL_REVENUE_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return BigDecimal.ZERO;
         }
     }

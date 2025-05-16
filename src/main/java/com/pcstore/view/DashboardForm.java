@@ -26,6 +26,8 @@ import com.pcstore.service.EmployeeService;
 import com.pcstore.service.WarrantyService;
 import com.pcstore.utils.DatabaseConnection;
 
+import raven.toast.Notifications;
+
 /**
  *
  * @author MSII
@@ -45,7 +47,7 @@ public class DashboardForm extends JFrame {
     private ServiceForm serviceForm;
     private ReportForm reportForm;
 
-    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KGradientPanel PanelMenu;
     private com.k33ptoo.components.KGradientPanel PanelNavigation;
     private com.k33ptoo.components.KButton btnSignOut;
@@ -74,7 +76,7 @@ public class DashboardForm extends JFrame {
     private javax.swing.JLabel lbTImeNow;
     private javax.swing.JPanel panelEmpty;
     private javax.swing.JPanel panelLanguage;
-    
+    // End of variables declaration//GEN-END:variables
 
     public static DashboardForm getInstance() {
         if (instance == null) {
@@ -88,6 +90,16 @@ public class DashboardForm extends JFrame {
         DashboardForm.instance = null;
     }
 
+    public static void restartApp() {
+        if (instance != null) {
+            instance.dispose();
+        }
+        instance = new DashboardForm();
+        instance.setVisible(true);
+        instance.setLocationRelativeTo(null);
+        instance.dashboardController = new DashboardController(instance);   
+    }
+    
     public DashboardForm() {
 
         initComponents();
@@ -124,19 +136,12 @@ public class DashboardForm extends JFrame {
         });
 
         
-        RepairController repairController = new RepairController(
-            DatabaseConnection.getInstance().getConnection(),
-            new CustomerService(DatabaseConnection.getInstance().getConnection()),
-            new EmployeeService(DatabaseConnection.getInstance().getConnection()),
-            new WarrantyService(DatabaseConnection.getInstance().getConnection())
-        );
-
-        // Thiết lập controller cho form dịch vụ
-        serviceForm.setRepairController(repairController);
+        Notifications.getInstance().setJFrame(this);
     }
 
    
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         PanelMenu = new com.k33ptoo.components.KGradientPanel();
@@ -422,7 +427,10 @@ public class DashboardForm extends JFrame {
 
         getContentPane().add(PanelNavigation, java.awt.BorderLayout.PAGE_START);
 
-        kMainPanel.setkBorderRadius(12);
+        kMainPanel.setBackground(new java.awt.Color(255, 255, 255));
+        kMainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        kMainPanel.setkBorderColor(new java.awt.Color(204, 204, 204));
+        kMainPanel.setkBorderRadius(20);
         kMainPanel.setkFillBackground(false);
         kMainPanel.setOpaque(false);
         kMainPanel.setPreferredSize(new java.awt.Dimension(1153, 0));
@@ -431,7 +439,7 @@ public class DashboardForm extends JFrame {
 
         pack();
         setLocationRelativeTo(null);
-    }
+    }// </editor-fold>//GEN-END:initComponents
 
     public JLabel getLbNameUser() {
         return lbNameUser;

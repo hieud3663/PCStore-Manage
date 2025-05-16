@@ -19,6 +19,8 @@ import com.pcstore.repository.impl.UserRepository;
 import com.pcstore.model.User;
 import com.pcstore.utils.PCrypt;
 
+import raven.toast.Notifications;
+
 /**
  *
  * @author MSII
@@ -40,7 +42,7 @@ public class LoginForm extends JFrame {
     private JLabel lbPicture;
     private JLabel titleName;
     private JLabel titleWelcome;
-    private JTextField txtPassword;
+    private JPasswordField txtPassword;
     private JTextField txtUsername;
 
     public static LoginForm getInstance() {
@@ -78,7 +80,9 @@ public class LoginForm extends JFrame {
         });
 
         
-        txtUsername.requestFocus();
+        SwingUtilities.invokeLater(() -> {
+            txtUsername.requestFocusInWindow();
+        });
 
         // checkLogin(); //auto login
 
@@ -97,13 +101,13 @@ public class LoginForm extends JFrame {
         btnLogin = new com.k33ptoo.components.KButton();
         lbUsername = new JLabel();
         txtUsername = new JTextField();
-        txtPassword = new JTextField();
+        txtPassword = new JPasswordField();
         lbPassword = new JLabel();
         lbTitleLogin = new JLabel();
         lbForgetPassword = new JTextField();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setAutoRequestFocus(false);
+        setAutoRequestFocus(true);
         setResizable(false);
 
         PanelMainLogin.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
@@ -120,7 +124,7 @@ public class LoginForm extends JFrame {
 
         titleWelcome.setFont(new Font("Segoe UI", 1, 20)); // NOI18N
         titleWelcome.setForeground(new Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         titleWelcome.setText(bundle.getString("titleWelcome")); // NOI18N
         PanelContentLogin.add(titleWelcome);
 
@@ -300,7 +304,8 @@ public class LoginForm extends JFrame {
             if(user != null){
                 this.dispose();
 
-                JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                // JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đăng nhập thành công");
                 
                 this.resetInstance();
             }else{

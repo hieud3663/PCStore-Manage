@@ -81,7 +81,7 @@ public class TextFieldSearch extends javax.swing.JPanel {
         );
 
         btnSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnSearch.setText(bundle.getString("btnSearch")); // NOI18N
         btnSearch.setToolTipText("");
         btnSearch.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N

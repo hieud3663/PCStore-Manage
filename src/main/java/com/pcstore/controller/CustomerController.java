@@ -1,13 +1,17 @@
 package com.pcstore.controller;
 
 import com.pcstore.model.Customer;
+import com.pcstore.model.Invoice;
 import com.pcstore.service.CustomerService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.view.CustomerForm;
+import com.pcstore.view.CustomerInvoicesDialog;
+import com.pcstore.view.DashboardForm;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -87,8 +91,10 @@ public class CustomerController {
             clearForm();
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    ErrorMessage.CUSTOMER_CONTROLLER_INIT_ERROR.formatted(e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, 
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -168,10 +174,27 @@ public class CustomerController {
                 }
             }
             return false; 
-        });
+        });       
 
-        
-        
+        customerForm.getTableCustomers().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {  // Double-click
+                    int selectedRow = customerForm.getTableCustomers().getSelectedRow();
+                    if (selectedRow >= 0) {
+                        int modelRow = customerForm.getTableCustomers().convertRowIndexToModel(selectedRow);
+                        String customerId = customerForm.getTableCustomers().getModel()
+                                .getValueAt(modelRow, 0).toString();
+                        
+                        Optional<Customer> customerOpt = findCustomerById(customerId);
+                        if (customerOpt.isPresent()) {
+                            Customer customer = customerOpt.get();
+                            showCustomerInvoices(customer);
+                        }
+                    }
+                }
+            }
+        });
     }
     
     /**
@@ -213,8 +236,9 @@ public class CustomerController {
         } catch (Exception e) {
             if (customerForm != null) {
                 JOptionPane.showMessageDialog(customerForm, 
-                        "Lỗi khi tải danh sách khách hàng: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_LOAD_ERROR.formatted(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE, 
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -251,8 +275,8 @@ public class CustomerController {
     public void loadCustomerDetails(String customerId) {
         if(isAddingNew){
             int option = JOptionPane.showConfirmDialog(customerForm,
-                "Bạn có muốn tiếp tục thêm khách hàng không?",
-                "Xác nhận", JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CUSTOMER_ADD_CONTINUE,
+                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 // clearForm();
                 return;
@@ -290,8 +314,9 @@ public class CustomerController {
         } catch (Exception e) {
             if (customerForm != null) {
                 JOptionPane.showMessageDialog(customerForm, 
-                        "Lỗi khi tải thông tin khách hàng: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_DETAILS_LOAD_ERROR.formatted(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE, 
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -340,8 +365,9 @@ public class CustomerController {
             
             if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
                 JOptionPane.showMessageDialog(customerForm,
-                        "Mã khách hàng, họ tên và số điện thoại không được để trống",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_REQUIRED_FIELDS,
+                        ErrorMessage.ERROR_TITLE, 
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -351,14 +377,16 @@ public class CustomerController {
                     points = Integer.parseInt(pointText);
                     if (points < 0) {
                         JOptionPane.showMessageDialog(customerForm,
-                                "Điểm tích lũy không được âm",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.CUSTOMER_POINTS_NEGATIVE,
+                                ErrorMessage.ERROR_TITLE, 
+                                JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(customerForm,
-                            "Điểm tích lũy phải là số nguyên",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.CUSTOMER_POINTS_INTEGER,
+                            ErrorMessage.ERROR_TITLE, 
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -370,8 +398,9 @@ public class CustomerController {
                 Optional<Customer> existingCustomer = customerService.findCustomerById(id);
                 if (existingCustomer.isPresent()) {
                     JOptionPane.showMessageDialog(customerForm,
-                            "Mã khách hàng đã tồn tại",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.CUSTOMER_ID_EXISTS,
+                            ErrorMessage.ERROR_TITLE, 
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -393,8 +422,9 @@ public class CustomerController {
                 loadAllCustomers();
                 
                 JOptionPane.showMessageDialog(customerForm,
-                        "Thêm khách hàng mới thành công",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.CUSTOMER_ADD_SUCCESS,
+                        ErrorMessage.INFO_TITLE, 
+                        JOptionPane.INFORMATION_MESSAGE);
                 
                 selectCustomerInTable(savedCustomer.getCustomerId());
                 
@@ -405,8 +435,9 @@ public class CustomerController {
 
                 if (selectedCustomer == null) {
                     JOptionPane.showMessageDialog(customerForm,
-                            "Vui lòng chọn khách hàng cần cập nhật",
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            ErrorMessage.CUSTOMER_SELECT_UPDATE,
+                            ErrorMessage.INFO_TITLE, 
+                            JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 
@@ -427,16 +458,18 @@ public class CustomerController {
                 
                 loadAllCustomers();
                 JOptionPane.showMessageDialog(customerForm,
-                        "Cập nhật thông tin khách hàng thành công",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.CUSTOMER_UPDATE_SUCCESS,
+                        ErrorMessage.INFO_TITLE, 
+                        JOptionPane.INFORMATION_MESSAGE);
                 
                 selectCustomerInTable(updatedCustomer.getCustomerId());
             }
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    "Lỗi khi " + (isAddingNew ? "thêm" : "cập nhật") + " khách hàng: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    (isAddingNew ? ErrorMessage.CUSTOMER_ADD_ERROR : ErrorMessage.CUSTOMER_UPDATE_ERROR).formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, 
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -446,15 +479,17 @@ public class CustomerController {
     public void deleteSelectedCustomer() {
         if (selectedCustomer == null) {
             JOptionPane.showMessageDialog(customerForm,
-                    "Vui lòng chọn khách hàng cần xóa",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_SELECT_DELETE,
+                    ErrorMessage.INFO_TITLE, 
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
         // Hiển thị hộp thoại xác nhận
         int option = JOptionPane.showConfirmDialog(customerForm,
-                "Bạn có chắc chắn muốn xóa khách hàng " + selectedCustomer.getFullName() + "?",
-                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CUSTOMER_DELETE_CONFIRM.formatted(selectedCustomer.getFullName()),
+                ErrorMessage.CUSTOMER_DELETE_TITLE,
+                JOptionPane.YES_NO_OPTION);
         
         if (option == JOptionPane.YES_OPTION) {
             try {
@@ -466,17 +501,20 @@ public class CustomerController {
                     clearForm();
                     
                     JOptionPane.showMessageDialog(customerForm,
-                            "Xóa khách hàng thành công",
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            ErrorMessage.CUSTOMER_DELETE_SUCCESS,
+                            ErrorMessage.INFO_TITLE, 
+                            JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(customerForm,
-                            "Không thể xóa khách hàng. Khách hàng có thể đã có giao dịch trong hệ thống.",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.CUSTOMER_DELETE_CONSTRAINT,
+                            ErrorMessage.ERROR_TITLE, 
+                            JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(customerForm,
-                        "Lỗi khi xóa khách hàng: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_DELETE_ERROR.formatted(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE, 
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -496,8 +534,9 @@ public class CustomerController {
             TableStyleUtil.applyFilter(customerTableSorter, keyword);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    "Lỗi khi tìm kiếm khách hàng: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_SEARCH_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, 
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -541,8 +580,9 @@ public class CustomerController {
     public void exportToExcel() {
         if (customerList == null || customerList.isEmpty()) {
             JOptionPane.showMessageDialog(customerForm,
-                    "Không có dữ liệu để xuất",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_EXPORT_NO_DATA,
+                    ErrorMessage.INFO_TITLE, 
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -574,25 +614,28 @@ public class CustomerController {
             
             if (success) {
                 JOptionPane.showMessageDialog(customerForm,
-                        "Xuất Excel thành công!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.CUSTOMER_EXPORT_SUCCESS,
+                        ErrorMessage.INFO_TITLE, 
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(customerForm,
-                        "Xuất Excel không thành công!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_EXPORT_FAILED,
+                        ErrorMessage.ERROR_TITLE, 
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    "Lỗi khi xuất Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_EXPORT_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, 
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void handleEscapeKey() {
         if (isAddingNew) {
             int option = JOptionPane.showConfirmDialog(customerForm,
-                    "Bạn có muốn hủy thao tác thêm khách hàng mới không?",
-                    "Xác nhận", JOptionPane.YES_NO_OPTION);
+                    ErrorMessage.CUSTOMER_ADD_CANCEL,
+                    ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
                     
             if (option == JOptionPane.YES_OPTION) {
                 isAddingNew = false;
@@ -656,9 +699,50 @@ public class CustomerController {
         try {
             return customerService.findAllCustomers();
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi lấy danh sách khách hàng: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_LOAD_ERROR.formatted(e.getMessage()), e);
         }
     }
+    
+
+    /**
+     * Lấy danh sách hóa đơn của một khách hàng
+     * @param customerId ID của khách hàng
+     * @return Danh sách hóa đơn
+     */
+    public List<Invoice> getCustomerInvoices(String customerId) {
+        try {
+            // Gọi InvoiceService để lấy danh sách hóa đơn theo customerId
+            return ServiceFactory.getInvoiceService().findInvoicesByCustomerID(customerId);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(customerForm,
+                    ErrorMessage.INVOICE_LOAD_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE,
+                    JOptionPane.ERROR_MESSAGE);
+            return new ArrayList<>();
+        }
+    }
+    
+    /**
+     * Hiển thị dialog với danh sách hóa đơn của khách hàng
+     * @param customer Khách hàng cần xem hóa đơn
+     */
+    public void showCustomerInvoices(Customer customer) {
+        if (customer == null) {
+            JOptionPane.showMessageDialog(customerForm,
+                    "Vui lòng chọn khách hàng để xem hóa đơn",
+                    ErrorMessage.INFO_TITLE,
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        List<Invoice> invoices = getCustomerInvoices(customer.getCustomerId());
+        CustomerInvoicesDialog dialog = new CustomerInvoicesDialog(
+                DashboardForm.getInstance(), 
+                customer, 
+                invoices);
+        dialog.setVisible(true);
+    }
+
     
     /**
      * Tìm khách hàng theo ID
@@ -669,7 +753,7 @@ public class CustomerController {
         try {
             return customerService.findCustomerById(customerId);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm khách hàng theo ID: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_FIND_BY_ID_ERROR.formatted(e.getMessage()), e);
         }
     }
     
@@ -682,7 +766,7 @@ public class CustomerController {
         try {
             return customerService.findCustomerByPhone(phoneNumber);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm khách hàng theo số điện thoại: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_FIND_BY_PHONE_ERROR.formatted(e.getMessage()), e);
         }
     }
     
@@ -705,7 +789,7 @@ public class CustomerController {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi cập nhật điểm tích lũy: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_UPDATE_ERROR.formatted(e.getMessage()), e);
         }
     }
     
@@ -729,7 +813,7 @@ public class CustomerController {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi cộng điểm tích lũy: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_ADD_ERROR.formatted(e.getMessage()), e);
         }
     }
     
@@ -747,7 +831,7 @@ public class CustomerController {
                 int currentPoints = customer.getPoints() != null ? customer.getPoints() : 0;
                 
                 if (currentPoints < pointsToDeduct) {
-                    throw new IllegalArgumentException("Số điểm tích lũy không đủ để trừ");
+                    throw new IllegalArgumentException(ErrorMessage.INSUFFICIENT_POINTS);
                 }
                 
                 customer.setPoints(currentPoints - pointsToDeduct);
@@ -758,7 +842,7 @@ public class CustomerController {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi trừ điểm tích lũy: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_DEDUCT_ERROR.formatted(e.getMessage()), e);
         }
     }
     

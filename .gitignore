@@ -37,3 +37,4 @@ Thumbs.db
 # Secret files
 **/application-secrets.properties
 **/secrets.properties
+secrets.properties

@@ -73,6 +73,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         statusTranslation.put("Cancelled", "Đã hủy");
     
         setupSearchFunctionality();
+        
+        repairController = new RepairController();
     }
 
     /**
@@ -205,7 +207,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         pnRepairFunctions.setPreferredSize(new java.awt.Dimension(490, 70));
         pnRepairFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 15));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnAddRepair.setText(bundle.getString("btnReturnProduct")); // NOI18N
         btnAddRepair.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnAddRepair.setkAllowGradient(false);

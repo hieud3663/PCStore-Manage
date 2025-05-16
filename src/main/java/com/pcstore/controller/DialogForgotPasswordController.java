@@ -4,6 +4,7 @@ import com.pcstore.model.User;
 import com.pcstore.service.UserService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.EmailUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.PCrypt;
 import com.pcstore.view.DialogForgotPasswordForm;
 
@@ -38,8 +39,9 @@ public class DialogForgotPasswordController {
             this.userService = ServiceFactory.getUserService();
             setupEventListeners();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(dialog, "Lỗi kết nối đến cơ sở dữ liệu: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, 
+                String.format(ErrorMessage.DATABASE_CONNECTION_ERROR, e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -76,14 +78,14 @@ public class DialogForgotPasswordController {
         String email = dialog.getTxtEmail().getText().trim();
         
         if (email.isEmpty()) {
-            JOptionPane.showMessageDialog(dialog, "Vui lòng nhập địa chỉ email!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_EMPTY, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!isValidEmail(email)) {
-            JOptionPane.showMessageDialog(dialog, "Địa chỉ email không hợp lệ!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_INVALID, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -93,8 +95,8 @@ public class DialogForgotPasswordController {
             currentUser = userOptional.orElse(null);
             
             if (currentUser == null) {
-                JOptionPane.showMessageDialog(dialog, "Email không tồn tại trong hệ thống!", 
-                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_NOT_FOUND, 
+                        ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
                 return;
             }
             
@@ -110,16 +112,17 @@ public class DialogForgotPasswordController {
                 
                 dialog.getTxtEmail().setEnabled(false);
                 
-                JOptionPane.showMessageDialog(dialog, "Mã OTP đã được gửi đến email của bạn!", 
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_SENT_SUCCESS, 
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(dialog, "Không thể gửi mã OTP. Vui lòng thử lại sau!", 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_SENT_FAILED, 
+                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             }
             
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(dialog, "Lỗi hệ thống: " + ex.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, 
+                    String.format(ErrorMessage.SYSTEM_ERROR, ex.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
@@ -165,27 +168,26 @@ public class DialogForgotPasswordController {
         String confirmPassword = new String(dialog.getTxtConfirmPassword().getPassword());
         
         if (otp.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-            JOptionPane.showMessageDialog(dialog, "Vui lòng nhập đầy đủ thông tin!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.FIELDS_REQUIRED, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (generatedOTP == null || !generatedOTP.equals(otp)) {
-            JOptionPane.showMessageDialog(dialog, "Mã OTP không chính xác!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_INVALID, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!newPassword.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(dialog, "Mật khẩu xác nhận không khớp với mật khẩu mới!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_MISMATCH, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!isStrongPassword(newPassword)) {
-            JOptionPane.showMessageDialog(dialog, 
-                    "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_REQUIREMENT, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -199,17 +201,18 @@ public class DialogForgotPasswordController {
                     otpTimer.cancel();
                 }
                 
-                JOptionPane.showMessageDialog(dialog, "Đặt lại mật khẩu thành công!", 
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_RESET_SUCCESS, 
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
                 dialog.dispose();
             } else {
-                JOptionPane.showMessageDialog(dialog, "Không thể cập nhật mật khẩu. Vui lòng thử lại sau!", 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_RESET_FAILED, 
+                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             }
             
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(dialog, "Lỗi hệ thống: " + ex.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, 
+                    String.format(ErrorMessage.SYSTEM_ERROR, ex.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }

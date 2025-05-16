@@ -16,6 +16,7 @@ public class CustomerForm extends javax.swing.JPanel {
     private TableRowSorter<TableModel> tableListCustomerSorter;
     private CustomerController customerController;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnAdd;
     private com.k33ptoo.components.KButton btnDelete;
     private com.k33ptoo.components.KButton btnExportExcel;
@@ -34,6 +35,7 @@ public class CustomerForm extends javax.swing.JPanel {
     private javax.swing.JLabel labelESC;
     private javax.swing.JLabel labelSort;
     private javax.swing.JLabel lableTitle;
+    private javax.swing.JLabel lbNote;
     private javax.swing.JPanel panelAction;
     private javax.swing.JPanel panelCreateAt;
     private javax.swing.JPanel panelCreateUpdate;
@@ -48,6 +50,7 @@ public class CustomerForm extends javax.swing.JPanel {
     private javax.swing.JPanel panelHeader;
     private javax.swing.JPanel panelInfoDetail;
     private javax.swing.JPanel panelListCustomer;
+    private javax.swing.JPanel panelNote;
     private javax.swing.JPanel panelSort;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JTable tableCustomers;
@@ -59,7 +62,7 @@ public class CustomerForm extends javax.swing.JPanel {
     private javax.swing.JTextField txtCustomerName;
     private javax.swing.JTextField txtCustomerPhone;
     private javax.swing.JTextField txtCustomerPoint;
-    
+    // End of variables declaration//GEN-END:variables
     
     public CustomerForm() {
         initComponents();
@@ -70,6 +73,7 @@ public class CustomerForm extends javax.swing.JPanel {
 
 
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelHeader = new javax.swing.JPanel();
@@ -112,6 +116,8 @@ public class CustomerForm extends javax.swing.JPanel {
         cbbSortCustomer = new javax.swing.JComboBox<>();
         cbbSort = new javax.swing.JComboBox<>();
         btnResetSort = new javax.swing.JButton();
+        panelNote = new javax.swing.JPanel();
+        lbNote = new javax.swing.JLabel();
         panelListCustomer = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
         tableCustomers = new javax.swing.JTable();
@@ -381,7 +387,6 @@ public class CustomerForm extends javax.swing.JPanel {
         panelSort.setPreferredSize(new java.awt.Dimension(1197, 70));
         panelSort.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 20));
 
-        textFieldSearch.setForeground(new java.awt.Color(30, 113, 195));
         textFieldSearch.setPreferredSize(new java.awt.Dimension(450, 31));
         panelSort.add(textFieldSearch);
 
@@ -407,6 +412,15 @@ public class CustomerForm extends javax.swing.JPanel {
         panelSort.add(btnResetSort);
 
         add(panelSort);
+
+        panelNote.setBackground(new java.awt.Color(255, 255, 255));
+        panelNote.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        lbNote.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lbNote.setText(bundle.getString("lbNoteCustomer")); // NOI18N
+        panelNote.add(lbNote);
+
+        add(panelNote);
 
         panelListCustomer.setBackground(new java.awt.Color(255, 255, 255));
         panelListCustomer.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), bundle.getString("txtListCustomer"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 14), new java.awt.Color(30, 113, 195))); // NOI18N
@@ -457,8 +471,7 @@ public class CustomerForm extends javax.swing.JPanel {
         panelListCustomer.add(scrollPane, java.awt.BorderLayout.CENTER);
 
         add(panelListCustomer);
-    }
-
+    }// </editor-fold>//GEN-END:initComponents
 
     private void setupCusmizeTable(){
         tableListCustomerSorter = TableStyleUtil.applyDefaultStyle(tableCustomers);

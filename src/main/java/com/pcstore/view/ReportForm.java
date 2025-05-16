@@ -118,7 +118,7 @@ public class ReportForm extends javax.swing.JPanel {
         lbDaily.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbDaily.setForeground(new java.awt.Color(30, 113, 195));
         lbDaily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbDaily.setText(bundle.getString("RevenueProduct")); // NOI18N
         lbDaily.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbDaily.setMaximumSize(new java.awt.Dimension(200, 20));

@@ -25,7 +25,7 @@ public class PCrypt {
             
             return 65536 + ":" + Base64.getEncoder().encodeToString(salt) + ":" + Base64.getEncoder().encodeToString(hash);
         } catch (Exception e) {
-            throw new IllegalStateException("Error hashing a password: " + e.getMessage(), e);
+            throw new IllegalStateException(String.format(ErrorMessage.PASSWORD_HASH_ERROR, e.getMessage()), e);
         }
     }
 
@@ -45,7 +45,7 @@ public class PCrypt {
             
             return Arrays.equals(hash, testHash);
         } catch (Exception e) {
-            throw new IllegalStateException("Error verifying a password: " + e.getMessage(), e);
+            throw new IllegalStateException(String.format(ErrorMessage.PASSWORD_VERIFY_ERROR, e.getMessage()), e);
         }
     }
 }

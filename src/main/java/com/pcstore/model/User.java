@@ -2,6 +2,7 @@ package com.pcstore.model;
 
 import com.pcstore.model.base.BaseTimeEntity;
 import java.time.LocalDateTime;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Class biểu diễn thông tin tài khoản người dùng
@@ -37,10 +38,10 @@ public class User extends BaseTimeEntity {
 
     public void setUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên đăng nhập không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_EMPTY);
         }
         if (username.length() < 3) {
-            throw new IllegalArgumentException("Tên đăng nhập phải có ít nhất 3 ký tự");
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_TOO_SHORT);
         }
         this.username = username;
     }
@@ -51,10 +52,10 @@ public class User extends BaseTimeEntity {
 
     public void setPassword(String password) {
         if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Mật khẩu không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY);
         }
         if (password.length() < 6) {
-            throw new IllegalArgumentException("Mật khẩu phải có ít nhất 6 ký tự");
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_TOO_SHORT);
         }
         this.password = password;
     }

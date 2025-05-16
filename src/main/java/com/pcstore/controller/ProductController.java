@@ -26,6 +26,7 @@ import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.repository.impl.SupplierRepository;
 import com.pcstore.utils.ButtonUtils;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.view.ProductForm;
 
@@ -470,7 +471,7 @@ public void displaySelectedProduct() {
                     productForm.getBtnAdd().setkBackGroundColor(new java.awt.Color(0, 204, 102));
                     productForm.getBtnAdd().repaint();
                 } else {
-                    java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+                    java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
                     productForm.getBtnAdd().setText(bundle.getString("btnAddProduct"));
                     productForm.getBtnAdd().setkBackGroundColor(new java.awt.Color(0, 102, 255));
                     productForm.getBtnAdd().repaint();
@@ -557,14 +558,14 @@ public void displaySelectedProduct() {
             try {
                 if (!quantityStr.isEmpty()) {
                     stockQuantity = Integer.parseInt(quantityStr);
-                    if (stockQuantity < 0) throw new NumberFormatException("Số lượng không được âm");
+                    if (stockQuantity < 0) throw new NumberFormatException(ErrorMessage.PRODUCT_QUANTITY_NEGATIVE);
                 }
                 
                 if (!priceStr.isEmpty()) {
                     price = new BigDecimal(priceStr);
-                    if (price.compareTo(BigDecimal.ZERO) <= 0) throw new NumberFormatException("Giá phải lớn hơn 0");
+                    if (price.compareTo(BigDecimal.ZERO) <= 0) throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
                 } else {
-                    throw new NumberFormatException("Giá không được để trống");
+                    throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.formatted("Giá"));
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(productForm,
@@ -764,7 +765,7 @@ public void displaySelectedProduct() {
                 }
             }
             
-            System.out.println("Số dòng trong bảng sau khi cập nhật: " + model.getRowCount());
+            // System.out.println("Số dòng trong bảng sau khi cập nhật: " + model.getRowCount());
         } catch (Exception e) {
             System.err.println("Lỗi khi cập nhật bảng: " + e.getMessage());
             e.printStackTrace();

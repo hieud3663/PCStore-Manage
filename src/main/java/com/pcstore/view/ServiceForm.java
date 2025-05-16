@@ -102,7 +102,7 @@ public class ServiceForm extends JPanel {
         lbWarranty.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbWarranty.setForeground(new java.awt.Color(30, 113, 195));
         lbWarranty.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbWarranty.setText(bundle.getString("WarrantyServiceW")); // NOI18N
         lbWarranty.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelWarranty.add(lbWarranty, java.awt.BorderLayout.CENTER);

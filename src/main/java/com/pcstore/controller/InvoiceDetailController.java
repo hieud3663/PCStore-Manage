@@ -44,8 +44,9 @@ public class InvoiceDetailController {
             this.productRepository = RepositoryFactory.getInstance(connection).getProductRepository();
             this.invoiceDetailService = ServiceFactory.getInstance().getInvoiceDetailService();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_DETAIL_CONTROLLER_INIT_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -87,8 +88,9 @@ public class InvoiceDetailController {
             
             return savedDetail;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi thêm chi tiết hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_DETAIL_ADD_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -113,7 +115,7 @@ public class InvoiceDetailController {
             // Kiểm tra tồn kho nếu số lượng tăng
             if (quantityDiff > 0) {
                 Product product = productRepository.findById(invoiceDetail.getProduct().getProductId())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm"));
+                        .orElseThrow(() -> new RuntimeException(ErrorMessage.PRODUCT_NOT_FOUND));
                         
                 if (product.getQuantityInStock() < quantityDiff) {
                     throw new IllegalArgumentException(
@@ -137,8 +139,9 @@ public class InvoiceDetailController {
             
             return updatedDetail;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật chi tiết hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_DETAIL_UPDATE_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -160,8 +163,9 @@ public class InvoiceDetailController {
             }
             return success;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi xóa chi tiết hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_DETAIL_DELETE_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -175,8 +179,9 @@ public class InvoiceDetailController {
         try {
             return invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi tìm chi tiết hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_DETAIL_FIND_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return Optional.empty();
         }
     }
@@ -190,8 +195,9 @@ public class InvoiceDetailController {
         try {
             return invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi tìm chi tiết hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_DETAIL_FIND_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return List.of();
         }
     }

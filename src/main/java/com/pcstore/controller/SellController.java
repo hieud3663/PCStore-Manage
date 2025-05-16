@@ -1,5 +1,6 @@
 package com.pcstore.controller;
 
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.text.NumberFormat;
@@ -32,8 +33,14 @@ import com.pcstore.repository.impl.InvoiceDetailRepository;
 import com.pcstore.repository.impl.InvoiceRepository;
 import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.service.InvoiceService;
+import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.ExportInvoice;
+import com.pcstore.utils.JDialogInputUtils;
 import com.pcstore.utils.LocaleManager;
+import com.pcstore.view.DashboardForm;
+import com.pcstore.view.PayForm;
 import com.pcstore.view.SellForm;
 
 /**
@@ -49,6 +56,8 @@ import com.pcstore.view.SellForm;
  * và các tương tác với cơ sở dữ liệu thông qua các repository.
  */
 public class SellController {
+    private Connection connection;
+    private RepositoryFactory repositoryFactory;
     private final InvoiceRepository invoiceRepository;
     private final InvoiceDetailRepository invoiceDetailRepository;
     private final CustomerRepository customerRepository;
@@ -68,8 +77,11 @@ public class SellController {
      * @param connection Kết nối cơ sở dữ liệu
      * @param repositoryFactory Factory để tạo repositories
      */
-    public SellController(SellForm sellForm, Connection connection, RepositoryFactory repositoryFactory) {
+    public SellController(SellForm sellForm) {
         this.sellForm = sellForm;
+
+        this.connection = DatabaseConnection.getInstance().getConnection();
+        this.repositoryFactory = RepositoryFactory.getInstance(connection);
         this.invoiceRepository = new InvoiceRepository(connection, repositoryFactory);
         this.invoiceDetailRepository = new InvoiceDetailRepository(connection, repositoryFactory);
         this.customerRepository = new CustomerRepository(connection);
@@ -79,6 +91,8 @@ public class SellController {
         this.invoiceService = new InvoiceService(invoiceRepository, productRepository);
         
         this.cartItems = new ArrayList<>();
+
+        loadAllProducts();
 
         setuptabelListProductSorter();
     }
@@ -98,8 +112,8 @@ public class SellController {
             Customer defaultCustomer = customerRepository.findById("GUEST").orElse(null);
             if (defaultCustomer == null) {
                 JOptionPane.showMessageDialog(null, 
-                    "Không tìm thấy khách hàng mặc định. Vui lòng kiểm tra lại.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DEFAULT_CUSTOMER_NOT_FOUND,
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -142,7 +156,10 @@ public class SellController {
         }
     }
     
-   
+    
+    //----------------------------------
+    //======================[ BEGIN PHẦN LOAD SẢN PHẨM ]=========================
+    //----------------------------------
     /**
      * Tìm kiếm sản phẩm theo tên hoặc mã
      * @param query Chuỗi tìm kiếm
@@ -161,45 +178,11 @@ public class SellController {
         }
     }
 
-     /**
-     * Cập nhật bảng giỏ hàng với các mục giỏ hàng hiện tại
-     * @param table Bảng cần cập nhật
-     */
-    public void updateCartTable(JTable table) {
 
-        if (table == null) {
-            return;
-        }
-        
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0);   
-        
-        try {
-            
-            NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
- 
-            int index = 1;
-            for (InvoiceDetail detail : cartItems) {
-                Product product = detail.getProduct();
-                Object[] row = {
-                    Boolean.FALSE,
-                    index++,
-                    product.getProductId(),
-                    product.getProductName(),
-                    detail.getQuantity(),
-                    formatter.format(detail.getUnitPrice()),
-                    formatter.format(detail.getTotalAmount())   
-                };
-                model.addRow(row);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, 
-                "Lỗi khi cập nhật bảng giỏ hàng: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
+    public void loadAllProducts() {
+        List<Product> allProducts = searchProducts("");  // Truyền chuỗi rỗng để lấy tất cả
+        updateProductTable(sellForm.getTableListProduct(), allProducts);    // tblProducts là JTable hiển thị sản phẩm
     }
-
 
     /**
      * Cập nhật bảng danh sách sản phẩm
@@ -229,40 +212,87 @@ public class SellController {
         }
     }
 
-
-    public void removeProductFromCart(String productId) {
-        if (productId == null || productId.trim().isEmpty()) {
+    //======================[ END PHẦN LOAD SẢN PHẨM ]=================================
+    
+    //----------------------------------
+    //====================[ BEGIN PHẦN GIỎ HÀNG ]=====================================
+    //----------------------------------
+    
+    /**
+     * Cập nhật bảng giỏ hàng với các mục giỏ hàng hiện tại
+     * @param table Bảng cần cập nhật
+     */
+    public void updateCartTable(JTable table) {
+        if (table == null) {
             return;
         }
         
-        for (int i = 0; i < cartItems.size(); i++) {
-            InvoiceDetail detail = cartItems.get(i);
-            if (detail.getProduct().getProductId().equals(productId)) {
-                cartItems.remove(i);
-                break;
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);   
+        
+        try {
+            NumberFormat formatter = LocaleManager.getInstance().getNumberFormatter();
+ 
+            int index = 1;
+            for (InvoiceDetail detail : cartItems) {
+                Product product = detail.getProduct();
+                Object[] row = {
+                    Boolean.FALSE,
+                    index++,
+                    product.getProductId(),
+                    product.getProductName(),
+                    detail.getQuantity(),
+                    formatter.format(detail.getUnitPrice()),
+                    formatter.format(detail.getTotalAmount())   
+                };
+                model.addRow(row);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                ErrorMessage.CART_UPDATE_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    // xử lý sự kiện 
+   // Phương thức để thêm sản phẩm đã chọn vào giỏ hàng
+    public void addToCart() {
+        int selectedRow = sellForm.getTableListProduct().getSelectedRow();
+        if (selectedRow >= 0) {
+            String productId = sellForm.getTableListProduct().getValueAt(selectedRow, 0).toString();
 
-    public boolean updateProductQuantityInCart(String productId, int newQuantity) {
-        // Kiểm tra số lượng tồn kho
-        Optional<Product> productOpt = productRepository.findById(productId);
-        if (!productOpt.isPresent() || newQuantity > productOpt.get().getQuantityInStock()) {
-            return false;
+            // Hỏi số lượng
+            Integer quantityStr = JDialogInputUtils.showInputDialogInt(sellForm, 
+                ErrorMessage.ENTER_PRODUCT_QUANTITY, 
+                "1");
+                
+            if (quantityStr != null) {
+                try {
+                    int quantity = quantityStr;
+                    if (quantity > 0) {
+                        boolean added = addProductToCart(productId, quantity);
+                        if (added) {
+                            sellForm.updateCartDisplay();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(sellForm,
+                            ErrorMessage.QUANTITY_MUST_BE_POSITIVE,
+                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(sellForm,
+                        ErrorMessage.INVALID_QUANTITY,
+                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                }
+            } 
+        } else {
+            JOptionPane.showMessageDialog(sellForm,
+                ErrorMessage.SELECT_PRODUCT_TO_ADD,
+                ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
         }
-        
-        // Cập nhật số lượng trong giỏ hàng
-        for (InvoiceDetail detail : cartItems) {
-            if (detail.getProduct().getProductId().equals(productId)) {
-                detail.setQuantity(newQuantity);
-                return true;
-            }
-        }
-        
-        return false;
     }
-
+    
     /**
      * Thêm một sản phẩm vào giỏ hàng
      * @param productId ID sản phẩm cần thêm
@@ -292,8 +322,8 @@ public class SellController {
                     // Check if we have enough stock
                     if (!product.hasEnoughStock(newQuantity)) {
                         JOptionPane.showMessageDialog(null, 
-                            "Không đủ số lượng tồn kho. Chỉ còn " + product.getQuantityInStock() + " sản phẩm.",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.INSUFFICIENT_STOCK.formatted(product.getQuantityInStock()),
+                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                         return false;
                     }
                     
@@ -305,8 +335,8 @@ public class SellController {
             // Product not in cart, add new
             if (!product.hasEnoughStock(quantity)) {
                 JOptionPane.showMessageDialog(null, 
-                    "Không đủ số lượng tồn kho. Chỉ còn " + product.getQuantityInStock() + " sản phẩm.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INSUFFICIENT_STOCK.formatted(product.getQuantityInStock()),
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             
@@ -323,38 +353,111 @@ public class SellController {
             return false;
         }
     }
-    
+
     /**
-     * Cập nhật số lượng sản phẩm trong giỏ hàng
-     * @param cartIndex Chỉ số của sản phẩm trong giỏ hàng
-     * @param newQuantity Số lượng mới
-     * @return True nếu cập nhật thành công, false nếu ngược lại
+     * Xóa một sản phẩm khỏi giỏ hàng
+     * @param productId ID sản phẩm cần xóa
      */
-    public boolean updateCartItemQuantity(int cartIndex, int newQuantity) {
-        if (currentInvoice == null || cartIndex < 0 || cartIndex >= cartItems.size() || newQuantity <= 0) {
+    public void removeProductFromCart(String productId) {
+
+        if (productId == null || productId.trim().isEmpty()) {
+            return;
+        }
+        
+        for (int i = 0; i < cartItems.size(); i++) {
+            InvoiceDetail detail = cartItems.get(i);
+            if (detail.getProduct().getProductId().equals(productId)) {
+                cartItems.remove(i);
+                break;
+            }
+        }
+    }
+
+    // Xử lý sự kiện khi nhấn chuột vào bảng giỏ hàng
+    public void processProductQuantityInCart(MouseEvent evt) {
+        int row = sellForm.getTableCart().rowAtPoint(evt.getPoint());
+        if (row >= 0) {
+            String productId = sellForm.getTableCart().getValueAt(row, 2).toString();
+            Boolean isSelected = (Boolean) sellForm.getTableCart().getValueAt(row, 0);
+            if (isSelected != null && isSelected) {
+                sellForm.getTableCart().setValueAt(Boolean.FALSE, row, 0);
+                sellForm.getListSelectProductIDs().remove(productId);
+            } else {
+                sellForm.getTableCart().setValueAt(Boolean.TRUE, row, 0);
+                sellForm.getListSelectProductIDs().add(productId);
+            }
+        }
+
+        //Nếu click duoble thì sửa số lượng sản phẩm
+        if (evt.getClickCount() == 2) {
+            int selectedRow = sellForm.getTableCart().getSelectedRow();
+            if (selectedRow >= 0) {
+                String productId = sellForm.getTableCart().getValueAt(selectedRow, 2).toString();
+                Integer quantity = JDialogInputUtils.showInputDialogInt(sellForm,
+                    ErrorMessage.ENTER_PRODUCT_QUANTITY,
+                    String.valueOf(sellForm.getTableCart().getValueAt(selectedRow, 4)));
+
+                // Cập nhật số lượng trong controller
+                boolean updated = updateProductQuantityInCart(productId, quantity);
+
+                if (updated) {
+                    sellForm.updateCartDisplay();
+                } else {
+                    JOptionPane.showMessageDialog(sellForm,
+                        ErrorMessage.QUANTITY_UPDATE_ERROR,
+                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+
+                    sellForm.updateCartDisplay();
+                }
+            }
+        }
+    }
+
+    // Cập nhật số lượng sản phẩm trong giỏ hàng
+    public boolean updateProductQuantityInCart(String productId, int newQuantity) {
+        // Kiểm tra số lượng tồn kho
+        Optional<Product> productOpt = productRepository.findById(productId);
+        if (!productOpt.isPresent() || newQuantity > productOpt.get().getQuantityInStock()) {
             return false;
         }
         
-        try {
-            InvoiceDetail detail = cartItems.get(cartIndex);
-            Product product = detail.getProduct();
-            
-            // Check if we have enough stock
-            if (!product.hasEnoughStock(newQuantity)) {
-                JOptionPane.showMessageDialog(null, 
-                    "Không đủ số lượng tồn kho. Chỉ còn " + product.getQuantityInStock() + " sản phẩm.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return false;
+        // Cập nhật số lượng trong giỏ hàng
+        for (InvoiceDetail detail : cartItems) {
+            if (detail.getProduct().getProductId().equals(productId)) {
+                detail.setQuantity(newQuantity);
+                return true;
             }
-            
-            detail.setQuantity(newQuantity);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
+        
+        return false;
     }
     
+    //Xử lý sự kiện // Chức năng khi nhấn xóa sản phẩm trong giỏ hàng
+    public void deleteItemCart (){ 
+        if (sellForm.getListSelectProductIDs().isEmpty()) {
+            JOptionPane.showMessageDialog(sellForm, 
+                ErrorMessage.SELECT_PRODUCT_TO_DELETE, 
+                ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(sellForm, 
+            ErrorMessage.CONFIRM_DELETE_PRODUCT, 
+            ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            for (String productId : sellForm.getListSelectProductIDs()) {
+
+                removeProductFromCart(productId);
+
+                // listSelectProductIDs.remove(productId);
+            }
+            sellForm.getListSelectProductIDs().clear();
+        }
+
+        sellForm.updateCartDisplay();
+    }
+
     /**
      * Xóa một sản phẩm khỏi giỏ hàng
      * @param cartIndex Chỉ số của sản phẩm trong giỏ hàng
@@ -380,6 +483,7 @@ public class SellController {
     public void clearCart() {
         cartItems.clear();
     }
+    //=====================[ END PHẦN GIỎ HÀNG ]======================================
     
     /**
      * Tính tổng số tiền của giỏ hàng
@@ -393,6 +497,44 @@ public class SellController {
         return total;
     }
     
+
+    //======================[ BEGIN PHẦN XỬ LÝ ĐIỂM ĐỂ GIẢM GIÁ ]=======================
+    // Xử lý sự kiện khi nhấn nút giảm giá bằng điểm
+    public void processPointDiscount(){
+        Customer customer = getCurrentInvoice().getCustomer();
+
+        if (customer == null || "Khách vãng lai".equalsIgnoreCase(customer.getFullName())) {
+            JOptionPane.showMessageDialog(sellForm, 
+                ErrorMessage.CUSTOMER_SELECT_REQUIRED, 
+                ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
+        int points = customer.getPoints();
+        if (points < 10000) {
+            JOptionPane.showMessageDialog(sellForm, 
+                ErrorMessage.CUSTOMER_POINTS_INSUFFICIENT, 
+                ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(sellForm, 
+            "Khách hàng có " + points + " điểm tích lũy.\nBạn có muốn sử dụng điểm để giảm giá không?", 
+            "Xác nhận", JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            BigDecimal discountAmount = applyPointsDiscount(true);
+            
+            if (discountAmount.compareTo(BigDecimal.ZERO) > 0) {
+                sellForm.updateDiscountAmount(discountAmount);
+            }
+        }else{
+            BigDecimal discountAmount = applyPointsDiscount(false);
+            sellForm.updateDiscountAmount(discountAmount);
+
+        }
+    }
+
     /**
      * Áp dụng giảm giá cho giao dịch
      * @param discountCode Mã giảm giá
@@ -426,6 +568,144 @@ public class SellController {
         }
     }
     
+    //======================[ END PHẦN XỬ LÝ ĐIỂM ĐỂ GIẢM GIÁ ]=========================
+    
+
+    //-----------------------------
+    //======================[ BEGIN PHẦN XỬ LÝ HÓA ĐƠN ]================================
+    //-----------------------------
+
+    // Xử lý khách hàng, nếu chưa có KH thì thêm vào
+    private Customer insertCustomer(String FullNameCustomer, String PhoneNumberCustomer) {
+        // Kiểm tra xem khách hàng đã tồn tại trong cơ sở dữ liệu chưa
+        Customer existingCustomer = searchCustomerByPhone(PhoneNumberCustomer);
+        if (existingCustomer != null) {
+            return existingCustomer;
+        }
+
+        // Nếu chưa có khách hàng, thì tạo khách hàng mới nhé
+        Customer customer = new Customer();
+        if (FullNameCustomer.isEmpty() || FullNameCustomer.equalsIgnoreCase("Khách vãng lai")) {
+            JOptionPane.showMessageDialog(sellForm, 
+                ErrorMessage.CUSTOMER_NAME_REQUIRED,
+                ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+
+        customer.setFullName(FullNameCustomer);
+        customer.setPhoneNumber(PhoneNumberCustomer);
+        customer.setPoints(0); // Hoặc lấy từ cơ sở dữ liệu nếu cần
+        try {
+            if (ServiceFactory.getCustomerService().customerExists(customer.getPhoneNumber())) {
+                //Xác nhận thêm khách hàng
+                int confirm = JOptionPane.showConfirmDialog(sellForm,
+                    ErrorMessage.CUSTOMER_ADD_CONFIRM,
+                    ErrorMessage.INFO_TITLE, JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Thêm khách hàng vào cơ sở dữ liệu TRƯỚC KHI thêm vào hóa đơn
+                    Customer savedCustomer = ServiceFactory.getCustomerService().addCustomer(customer);
+                    
+                    JOptionPane.showMessageDialog(sellForm,
+                        ErrorMessage.CUSTOMER_ADD_SUCCESS.formatted(savedCustomer.getFullName()),
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(sellForm,
+                ErrorMessage.CUSTOMER_ADD_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return null;
+        }
+        return customer;
+    }
+
+
+    public void prepareInvoiceToPay() {
+        if (getCartItems().isEmpty()) {
+            JOptionPane.showMessageDialog(sellForm, 
+                ErrorMessage.EMPTY_CART, 
+                ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        try {
+            boolean checkUpdateInvoive = updateCurrentInvoice();
+            if (!checkUpdateInvoive) {
+                JOptionPane.showMessageDialog(sellForm, 
+                    ErrorMessage.INVOICE_COMPLETE_ERROR, 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+    
+            //===================Lưu thông tin khách hàng=========================
+            String FullNameCustomer = sellForm.getTxtNameKH().getText().trim();
+            String PhoneNumberCustomer = sellForm.getTxtPhoneNumberKH().getText().trim();
+
+            if(!PhoneNumberCustomer.isEmpty()) {
+                Customer customer = insertCustomer(FullNameCustomer, PhoneNumberCustomer);
+                if (customer == null) {
+                    return; 
+                }
+
+                addCustomerToSale(customer);
+            }
+            //====================================================================
+    
+            // Xác nhận lưu hóa đơn
+            int confirm = JOptionPane.showConfirmDialog(sellForm, 
+                ErrorMessage.CONFIRM_SAVE_INVOICE, 
+                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) {
+                return; 
+            }
+    
+            // Lưu hóa đơn trước khi thanh toán 
+            Invoice saveInvoice = saveInvoice(PaymentMethodEnum.CASH); //Mặc định là tiền mặt
+            if (saveInvoice == null) {
+                JOptionPane.showMessageDialog(sellForm, 
+                    ErrorMessage.SAVE_INVOICE_ERROR, 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            JOptionPane.showMessageDialog(sellForm, 
+                ErrorMessage.SAVE_INVOICE_SUCCESS.formatted(saveInvoice.getInvoiceId()), 
+                ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+            
+            DashboardForm dashboard = DashboardForm.getInstance();
+            PayForm payForm = new PayForm(dashboard, true);
+            
+            PaymentController paymentController = new PaymentController(payForm, saveInvoice);
+            paymentController.showPaymentForm();
+            
+            if (paymentController.isPaymentSuccessful()) {
+                
+                saveInvoice.setPaymentMethod(paymentController.getCurrentPayment().getPaymentMethod());
+
+                completeSale(saveInvoice);
+                
+                exportInvoiceToPDF(paymentController.getCurrentPayment());
+    
+                JOptionPane.showMessageDialog(sellForm, 
+                    ErrorMessage.PAYMENT_SUCCESS, 
+                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    
+                // Reset form bán hàng
+                sellForm.resetSaleForm();
+            } else {
+                JOptionPane.showMessageDialog(sellForm, 
+                    ErrorMessage.PAYMENT_FAILED, 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(sellForm,
+                ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * Lưu hóa đơn khi nhấn nút thanh toán 
@@ -435,8 +715,8 @@ public class SellController {
     public Invoice saveInvoice(PaymentMethodEnum paymentMethod) {
         if (currentInvoice == null || cartItems.isEmpty()) {
             JOptionPane.showMessageDialog(null, 
-                "Không thể lưu hóa đơn. Giỏ hàng trống hoặc thông tin hóa đơn không hợp lệ.",
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.INVALID_INVOICE_SAVE,
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
         
@@ -451,8 +731,8 @@ public class SellController {
             Invoice savedInvoice = invoiceRepository.save(currentInvoice);
             if (savedInvoice == null) {
                 JOptionPane.showMessageDialog(null, 
-                    "Lỗi khi lưu hóa đơn. Vui lòng thử lại.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVOICE_SAVE_ERROR,
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return null;
             }
         
@@ -475,8 +755,8 @@ public class SellController {
             
             if (!detailsSaved) {
                 JOptionPane.showMessageDialog(null, 
-                    "Lỗi khi lưu chi tiết hóa đơn. Vui lòng thử lại.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVOICE_DETAIL_SAVE_ERROR,
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
@@ -489,11 +769,12 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, 
-                "Lỗi không xác định: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
-}
+    }
+    
     /**
      * Hoàn thành giao dịch và lưu hóa đơn
      * @param paymentMethod Phương thức thanh toán được sử dụng
@@ -502,8 +783,8 @@ public class SellController {
     public Invoice completeSale(Invoice invoice) {
         if (invoice == null) {
             JOptionPane.showMessageDialog(null, 
-                "Không thể hoàn thành giao dịch. Hóa đơn không hợp lệ.",
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.INVALID_INVOICE_COMPLETE,
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
         
@@ -516,8 +797,8 @@ public class SellController {
             Invoice savedInvoice = invoiceRepository.save(invoice);
             if (savedInvoice == null) {
                 JOptionPane.showMessageDialog(null, 
-                    "Lỗi khi hoàn thành giao dịch. Vui lòng thử lại.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVOICE_COMPLETE_ERROR,
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
                 return null;
             }
             
@@ -532,8 +813,8 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, 
-                "Lỗi không xác định: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -615,8 +896,7 @@ public class SellController {
      * @return BigDecimal Số tiền được giảm
      */
     public BigDecimal applyPointsDiscount(boolean usePoints) {
-        
-        //nếu usepoints = false thif resset laij dungf giarm gias trong hoas down hieenj taij
+        //nếu usepoints = false thì reset lại dùng giảm giá trong hóa đơn hiện tại
         if (!usePoints) {
             currentInvoice.setDiscountAmount(BigDecimal.ZERO);
             currentInvoice.setPointUsed(false);
@@ -629,8 +909,8 @@ public class SellController {
 
         if(currentInvoice.isPointUsed()){
             JOptionPane.showMessageDialog(null, 
-                "Hóa đơn đã sử dụng điểm.",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                ErrorMessage.POINTS_ALREADY_USED,
+                ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
             return BigDecimal.ZERO;
         }
         
@@ -659,8 +939,8 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, 
-                "Lỗi khi áp dụng giảm giá từ điểm thưởng: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return BigDecimal.ZERO;
         }
     }
@@ -779,11 +1059,12 @@ public class SellController {
     }
 
 
+    // Phương thức exportInvoiceToPDF
     public void exportInvoiceToPDF(BasePayment payment) {
         if (currentInvoice == null) {
             JOptionPane.showMessageDialog(null, 
-                "Không thể xuất hóa đơn. Hóa đơn không hợp lệ.",
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.INVALID_INVOICE_COMPLETE,
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -791,14 +1072,15 @@ public class SellController {
             boolean success = ExportInvoice.exportPDF(currentInvoice, payment);
             if (!success) {
                 JOptionPane.showMessageDialog(null, 
-                    "Xuất hóa đơn thất bại. Vui lòng thử lại.",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_INVOICE_FAILED,
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, 
-                "Lỗi khi xuất hóa đơn: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.EXPORT_INVOICE_ERROR.formatted(e.getMessage()),
+                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
+
 }

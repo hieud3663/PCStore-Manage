@@ -106,8 +106,9 @@ public class InvoiceController {
             setupTableSorter();
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -132,9 +133,10 @@ public class InvoiceController {
             this.invoiceList = null;
             this.currentInvoice = null;
             this.tableSorter = null;
-        }catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -281,10 +283,11 @@ public class InvoiceController {
             return result;
         } catch (Exception e) {
             if (invoiceForm != null) {
-                JOptionPane.showMessageDialog(null, "Lỗi khi tạo hóa đơn: " + e.getMessage(), 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, 
+                        String.format(ErrorMessage.INVOICE_CREATE_ERROR, e.getMessage()), 
+                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             }
-            throw new RuntimeException("Lỗi khi tạo hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(String.format(ErrorMessage.INVOICE_CREATE_ERROR, e.getMessage()), e);
         }
     }
 
@@ -341,20 +344,20 @@ public class InvoiceController {
     public InvoiceDetail addProductToInvoice(Invoice invoice, Product product, int quantity, BigDecimal unitPrice) {
         try {
             if (invoice == null) {
-                throw new IllegalArgumentException("Hóa đơn không được để trống");
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
             }
             
             if (product == null) {
-                throw new IllegalArgumentException("Sản phẩm không được để trống");
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL);
             }
             
             if (quantity <= 0) {
-                throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
             }
             
             // Kiểm tra tồn kho
             if (product.getStockQuantity() < quantity) {
-                throw new IllegalArgumentException("Số lượng sản phẩm không đủ. Hiện chỉ còn " + product.getStockQuantity());
+                throw new IllegalArgumentException(String.format("Số lượng sản phẩm không đủ. Hiện chỉ còn %d", product.getStockQuantity()));
             }
             
             // Tạo chi tiết hóa đơn
@@ -392,12 +395,12 @@ public class InvoiceController {
     public InvoiceDetail updateProductQuantity(Integer invoiceDetailId, int newQuantity) {
         try {
             if (newQuantity <= 0) {
-                throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
             }
             
             Optional<InvoiceDetail> detailOpt = invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
             if (!detailOpt.isPresent()) {
-                throw new IllegalArgumentException("Chi tiết hóa đơn không tồn tại");
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_PRODUCT_NULL);
             }
             
             InvoiceDetail detail = detailOpt.get();
@@ -409,7 +412,7 @@ public class InvoiceController {
                 int additionalQuantity = newQuantity - oldQuantity;
                 
                 if (product.getStockQuantity() < additionalQuantity) {
-                    throw new IllegalArgumentException("Số lượng sản phẩm không đủ. Hiện chỉ còn " + product.getStockQuantity());
+                    throw new IllegalArgumentException(String.format("Số lượng sản phẩm không đủ. Hiện chỉ còn %d", product.getStockQuantity()));
                 }
             }
             
@@ -754,7 +757,7 @@ public class InvoiceController {
      */
     public List<Invoice> getInvoicesByCustomer(String customerId) {
         try {
-            return invoiceService.findInvoicesByCustomer(customerId);
+            return invoiceService.findInvoicesByCustomerID(customerId);
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi tìm hóa đơn theo khách hàng: " + e.getMessage(), e);
         }
@@ -772,7 +775,7 @@ public class InvoiceController {
             Optional<Customer> customerOpt = customerService.findCustomerByPhone(phoneNumber);
             
             if (customerOpt.isPresent()) {
-                return invoiceService.findInvoicesByCustomer(customerOpt.get().getCustomerId());
+                return invoiceService.findInvoicesByCustomerID(customerOpt.get().getCustomerId());
             } else {
                 return new ArrayList<>();
             }

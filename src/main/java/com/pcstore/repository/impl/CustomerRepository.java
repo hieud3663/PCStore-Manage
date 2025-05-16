@@ -47,6 +47,8 @@ public class CustomerRepository implements Repository<Customer, String> {
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                     
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            customer.setCustomerId(generateCustomerId());
+            
             statement.setString(1, customer.getCustomerId());
             statement.setString(2, customer.getFullName());
             statement.setString(3, customer.getPhoneNumber());
@@ -61,7 +63,6 @@ public class CustomerRepository implements Repository<Customer, String> {
             statement.setObject(7, customer.getCreatedAt());
             statement.setObject(8, customer.getUpdatedAt());
 
-            // customer.setCustomerId(generateCustomerId());
 
             statement.executeUpdate();
             
@@ -147,10 +148,11 @@ public class CustomerRepository implements Repository<Customer, String> {
     
     @Override
     public boolean exists(String id) {
-        String sql = "SELECT COUNT(*) FROM Customers WHERE CustomerID = ?";
+        String sql = "SELECT COUNT(*) FROM Customers WHERE CustomerID = ? OR PhoneNumber = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
+            statement.setString(2, id);
             ResultSet resultSet = statement.executeQuery();
             
             if (resultSet.next()) {

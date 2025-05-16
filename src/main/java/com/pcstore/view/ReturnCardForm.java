@@ -80,7 +80,7 @@ public class ReturnCardForm extends javax.swing.JPanel {
         panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("lbReturnProductCard")); // NOI18N
         panelTitle.add(lbTitle);
 

@@ -125,7 +125,7 @@ public class WarrantyCardForm extends javax.swing.JPanel {
             }
         });
         ScrollTable.setViewportView(TableWarranty);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         if (TableWarranty.getColumnModel().getColumnCount() > 0) {
             TableWarranty.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtWarrantyCardNumericalOrder")); // NOI18N
             TableWarranty.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtWarrantyNameProduct")); // NOI18N

@@ -60,7 +60,7 @@ public class DialogChooseEmployee extends javax.swing.JDialog {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("titleListEmployee")); // NOI18N
         panelHeader.add(lbTitle, java.awt.BorderLayout.PAGE_START);
 

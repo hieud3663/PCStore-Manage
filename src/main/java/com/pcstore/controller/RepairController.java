@@ -14,17 +14,22 @@ import com.pcstore.model.enums.RepairEnum;
 import com.pcstore.service.CustomerService;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.RepairService;
+import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.WarrantyService;
+import com.pcstore.utils.DatabaseConnection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for managing repair services
  */
 public class RepairController {
-    private final RepairService repairService;
-    private final CustomerService customerService;
-    private final EmployeeService employeeService;
-    private final WarrantyService warrantyService;
-
+    private RepairService repairService;
+    private CustomerService customerService;
+    private EmployeeService employeeService;
+    private WarrantyService warrantyService;
+    private Connection connection;
     /**
      * Constructor with all required services
      * 
@@ -37,10 +42,24 @@ public class RepairController {
                           CustomerService customerService,
                           EmployeeService employeeService,
                           WarrantyService warrantyService) {
+        this.connection = connection;
         this.repairService = new RepairService(connection, customerService, employeeService);
         this.customerService = customerService;
         this.employeeService = employeeService;
         this.warrantyService = warrantyService;
+    }
+    
+    public RepairController(){
+        try {
+            connection = DatabaseConnection.getInstance().getConnection();
+            customerService = ServiceFactory.getCustomerService();
+            employeeService = ServiceFactory.getEmployeeService();
+            warrantyService = ServiceFactory.getWarrantyService();
+            repairService = ServiceFactory.getRepairServiceService();
+        } catch (SQLException ex) {
+            Logger.getLogger(RepairController.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
     }
 
     /**

@@ -318,7 +318,7 @@ KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 25)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(0, 76, 192));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("txtMenuProduct")); // NOI18N
         lbTitle.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         lbTitle.setMaximumSize(new java.awt.Dimension(32828, 1600000));

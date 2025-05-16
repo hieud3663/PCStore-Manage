@@ -4,8 +4,7 @@ import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.RowFilter;
-import javax.swing.SortOrder;
+
 import java.util.regex.Pattern;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,14 +13,24 @@ import java.util.List;
 
 public class TableStyleUtil {
     
-    
+    // Định nghĩa các màu sắc cảnh báo
+    private static final Color ZERO_QUANTITY_COLOR = new Color(255, 102, 102); // Màu đỏ nhạt
+    private static final Color LOW_QUANTITY_COLOR = new Color(255, 204, 102);  // Màu cam nhạt
+
+    // Định nghĩa các màu sắc cho trạng thái hóa đơn
+    private static final Color PROCESSING_COLOR = new Color(255, 204, 102);  // Màu cam nhạt cho "Đang xử lý"
+    private static final Color CANCELLED_COLOR = new Color(255, 102, 102);   // Màu đỏ nhạt cho "Đã hủy"
+    private static final Color COMPLETED_COLOR = new Color(204, 255, 204);   // Màu xanh nhạt cho "Đã hoàn thành"
+        
+
+
     public static TableRowSorter<TableModel> applyDefaultStyle(JTable table) {
         applyHeaderStyle(table);
         
         applyCenterAlignment(table);
         
         TableRowSorter<TableModel> sorter = setupSorting(table);
-        
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         // Thêm comparator đặc biệt cho cột STT
         for (int i = 0; i < table.getColumnCount(); i++) {
             
@@ -273,5 +282,232 @@ public class TableStyleUtil {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
         renderer.setHorizontalAlignment(alignment);
         return renderer;
+    }
+
+    /**
+     * Áp dụng định dạng màu sắc cho bảng sản phẩm
+     * - Số lượng = 0: Màu đỏ
+     * - Số lượng < 3: Màu cam
+     * 
+     * @param table Bảng sản phẩm cần áp dụng định dạng
+     * @param quantityColumnIndex Chỉ số cột chứa thông tin số lượng
+     * @return TableRowSorter đã được tạo
+     */
+    public static TableRowSorter<TableModel> applyProductTableStyle(JTable table, final int quantityColumnIndex) {
+        // Áp dụng các style cơ bản từ lớp cha
+        TableRowSorter<TableModel> sorter = applyDefaultStyle(table);
+        
+        // Tạo custom renderer cho việc hiển thị màu sắc theo số lượng
+        DefaultTableCellRenderer quantityRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                
+                if (!isSelected) { // Chỉ áp dụng màu nền tùy chỉnh khi dòng không được chọn
+                    // Lấy giá trị số lượng từ cột số lượng
+                    Object quantityObj = table.getValueAt(row, quantityColumnIndex);
+                    int quantity = 0;
+                    
+                    // Chuyển đổi giá trị số lượng sang kiểu int
+                    if (quantityObj != null) {
+                        try {
+                            if (quantityObj instanceof Integer) {
+                                quantity = (Integer) quantityObj;
+                            } else {
+                                quantity = Integer.parseInt(quantityObj.toString());
+                            }
+                        } catch (NumberFormatException e) {
+                            // Xử lý lỗi nếu giá trị không phải số
+                        }
+                    }
+                    
+                    // Áp dụng màu sắc dựa trên số lượng
+                    if (quantity == 0) {
+                        c.setBackground(ZERO_QUANTITY_COLOR);
+                    } else if (quantity < 3) {
+                        c.setBackground(LOW_QUANTITY_COLOR);
+                    } else {
+                        c.setBackground(table.getBackground());
+                    }
+                }
+                
+                // Duy trì căn giữa nội dung
+                ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
+                
+                return c;
+            }
+        };
+        
+        // Áp dụng renderer cho tất cả các cột
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(quantityRenderer);
+        }
+        
+        return sorter;
+    }
+    
+    /**
+     * Tô màu cho từng ô trong cột số lượng (thay vì toàn bộ dòng)
+     * 
+     * @param table Bảng sản phẩm cần áp dụng định dạng
+     * @param quantityColumnIndex Chỉ số cột chứa thông tin số lượng
+     */
+    public static void applyQuantityColumnStyle(JTable table, final int quantityColumnIndex) {
+        DefaultTableCellRenderer quantityRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                
+                if (!isSelected && column == quantityColumnIndex) {
+                    int quantity = 0;
+                    if (value != null) {
+                        try {
+                            if (value instanceof Integer) {
+                                quantity = (Integer) value;
+                            } else {
+                                quantity = Integer.parseInt(value.toString());
+                            }
+                        } catch (NumberFormatException e) {
+                            // Xử lý lỗi nếu giá trị không phải số
+                        }
+                    }
+                    
+                    // Áp dụng màu sắc và in đậm chữ
+                    if (quantity == 0) {
+                        c.setBackground(ZERO_QUANTITY_COLOR);
+                        c.setForeground(Color.WHITE);
+                        c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    } else if (quantity < 3) {
+                        c.setBackground(LOW_QUANTITY_COLOR);
+                        c.setFont(c.getFont().deriveFont(Font.BOLD));
+                    } else {
+                        c.setBackground(table.getBackground());
+                        c.setForeground(table.getForeground());
+                    }
+                }
+                
+                // Duy trì căn giữa nội dung
+                ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
+                
+                return c;
+            }
+        };
+        
+        // Chỉ áp dụng renderer cho cột số lượng
+        table.getColumnModel().getColumn(quantityColumnIndex).setCellRenderer(quantityRenderer);
+    }
+
+        
+    /**
+     * Áp dụng định dạng màu sắc cho bảng hóa đơn dựa trên trạng thái
+     * - Đang xử lý: Màu cam
+     * - Đã hủy: Màu đỏ
+     * 
+     * @param table Bảng hóa đơn cần áp dụng định dạng
+     * @param statusColumnIndex Chỉ số cột chứa thông tin trạng thái hóa đơn
+     * @return TableRowSorter đã được tạo
+     */
+    public static TableRowSorter<TableModel> applyInvoiceTableStyle(JTable table, final int statusColumnIndex) {
+        // Áp dụng các style cơ bản từ lớp cha
+        TableRowSorter<TableModel> sorter = applyDefaultStyle(table);
+        
+        // Tạo custom renderer cho việc hiển thị màu sắc theo trạng thái
+        DefaultTableCellRenderer statusRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                
+                if (!isSelected) { // Chỉ áp dụng màu nền tùy chỉnh khi dòng không được chọn
+                    // Lấy giá trị trạng thái từ cột trạng thái
+                    Object statusObj = table.getValueAt(row, statusColumnIndex);
+                    String status = "";
+                    
+                    if (statusObj != null) {
+                        status = statusObj.toString().trim().toLowerCase();
+                    }
+                    
+                    // Áp dụng màu sắc dựa trên trạng thái
+                    if (status.contains("xử lý") || status.contains("processing") || status.contains("pending")) {
+                        c.setBackground(PROCESSING_COLOR);
+                    } else if (status.contains("hủy") || status.contains("cancelled") || status.contains("canceled")) {
+                        c.setBackground(CANCELLED_COLOR);
+                    } else if (status.contains("hoàn thành") || status.contains("completed") || status.contains("done")) {
+                        c.setBackground(COMPLETED_COLOR);
+                    } else {
+                        c.setBackground(table.getBackground());
+                    }
+                }
+                
+                // Duy trì căn giữa nội dung
+                ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
+                
+                return c;
+            }
+        };
+        
+        // Áp dụng renderer cho tất cả các cột
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(statusRenderer);
+        }
+        
+        return sorter;
+    }
+    
+    /**
+     * Tùy chỉnh màu sắc cho bảng hóa đơn dựa trên loại enum hoặc hằng số
+     * 
+     * @param table Bảng hóa đơn cần áp dụng định dạng
+     * @param statusColumnIndex Chỉ số cột chứa thông tin trạng thái
+     * @param processingValue Giá trị tương ứng với trạng thái "Đang xử lý"
+     * @param cancelledValue Giá trị tương ứng với trạng thái "Đã hủy"
+     * @param completedValue Giá trị tương ứng với trạng thái "Đã hoàn thành"
+     */
+    public static void applyInvoiceStatusStyle(JTable table, final int statusColumnIndex, 
+            final Object processingValue, final Object cancelledValue, final Object completedValue) {
+        
+        DefaultTableCellRenderer statusRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                
+                if (!isSelected) {
+                    Object statusObj = table.getValueAt(row, statusColumnIndex);
+                    
+                    if (statusObj != null) {
+                        if (statusObj.equals(processingValue)) {
+                            c.setBackground(PROCESSING_COLOR);
+                        } else if (statusObj.equals(cancelledValue)) {
+                            c.setBackground(CANCELLED_COLOR);
+                        } else if (statusObj.equals(completedValue)) {
+                            c.setBackground(COMPLETED_COLOR);
+                        } else {
+                            c.setBackground(table.getBackground());
+                        }
+                    }
+                }
+                
+                // Duy trì căn giữa nội dung
+                ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
+                
+                return c;
+            }
+        };
+        
+        // Áp dụng renderer cho tất cả các cột
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(statusRenderer);
+        }
     }
 }

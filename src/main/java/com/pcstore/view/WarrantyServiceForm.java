@@ -133,7 +133,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         pnFunctions.setBackground(new java.awt.Color(255, 255, 255));
         pnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 10));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnWarrantyRegistration.setText(bundle.getString("btnReturnProduct")); // NOI18N
         btnWarrantyRegistration.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnWarrantyRegistration.setkAllowGradient(false);

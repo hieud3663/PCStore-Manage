@@ -103,7 +103,7 @@ public class InvoiceForm extends javax.swing.JPanel  {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("txtMenuInvoice")); // NOI18N
         lbTitle.setFocusable(false);
         lbTitle.setPreferredSize(new java.awt.Dimension(1173, 50));
@@ -314,13 +314,13 @@ public class InvoiceForm extends javax.swing.JPanel  {
 
         panelBody.revalidate();
         panelBody.repaint();
-
         // setupCusmizeHeaderTable();
     }
 
     private void setupCusmizeTable(){
         // Áp dụng kiểu dáng bảng từ TableStyleUtil
-        invoiceTableSorter = TableStyleUtil.applyDefaultStyle(tableInvoice);
+        invoiceTableSorter = TableStyleUtil.applyInvoiceTableStyle(tableInvoice, 10);
+
         invoiceDetailTableSorter = TableStyleUtil.applyDefaultStyle(tableInvoiceDetail);
         
         TableStyleUtil.setBooleanColumns(tableInvoice, 0); // Cột checkbox

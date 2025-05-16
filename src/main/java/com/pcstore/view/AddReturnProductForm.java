@@ -28,7 +28,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private ReturnServiceForm parentForm;
 
-
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private com.k33ptoo.components.KButton btnWarranty;
     private javax.swing.JScrollPane jScrollPane2;
@@ -38,7 +38,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     private javax.swing.JPanel pnSearch;
     private javax.swing.JTable table;
     private javax.swing.JTextField txtSearch;
-  
+    // End of variables declaration//GEN-END:variables
 
     public AddReturnProductForm() {
         initComponents();
@@ -385,6 +385,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
 
   
     @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         panelMain = new com.k33ptoo.components.KGradientPanel();
@@ -400,7 +401,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
 
         panelMain.setBackground(new java.awt.Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         panelMain.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("ReTurnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         panelMain.setkFillBackground(false);
         panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
@@ -489,6 +490,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
 
         add(panelMain, java.awt.BorderLayout.CENTER);
     }
+    // </editor-fold>//GEN-END:initComponents
 
     private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {
         searchByPhoneNumber();

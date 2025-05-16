@@ -79,7 +79,7 @@
     </build>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>24</maven.compiler.release>
+        <maven.compiler.release>23</maven.compiler.release>
         <exec.mainClass>com.pcstore.PCStoreManage</exec.mainClass>
     </properties>
     
@@ -219,5 +219,16 @@
             <artifactId>payos-java</artifactId>
             <version>1.0.3</version>
         </dependency>
+        
+            <!-- notification -->
+        <dependency>
+            <groupId>raven.toast</groupId>
+            <artifactId>swing-toast-notifications</artifactId>
+            <version>1.0.4</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/swing-toast-notifications-1.0.4.jar</systemPath>
+        </dependency>
     </dependencies>
+
+    
 </project>

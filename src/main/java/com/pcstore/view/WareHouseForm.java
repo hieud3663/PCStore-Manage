@@ -83,7 +83,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(51, 29, 204));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         jLabel1.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
         panelTitle.add(jLabel1, java.awt.BorderLayout.CENTER);
 

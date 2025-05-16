@@ -89,7 +89,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
 
         panelMain.setBackground(new java.awt.Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         panelMain.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 24))); // NOI18N
         panelMain.setkBorderRadius(15);
         panelMain.setkEndColor(new java.awt.Color(0, 0, 0));

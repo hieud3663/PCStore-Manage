@@ -76,7 +76,7 @@ public class WarrantyServiceHomeForm extends javax.swing.JPanel {
 
         jTextField2.setText("jTextField2");
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         kGradientPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel1.setkFillBackground(false);
         kGradientPanel1.setMaximumSize(new java.awt.Dimension(1153, 713));

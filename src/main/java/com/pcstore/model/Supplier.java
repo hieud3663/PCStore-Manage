@@ -4,6 +4,7 @@ import com.pcstore.model.base.BaseTimeEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Class biểu diễn nhà cung cấp
@@ -40,7 +41,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setSupplierId(String supplierId) {
         if (supplierId == null || supplierId.trim().isEmpty()) {
-            throw new IllegalArgumentException("Mã nhà cung cấp không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Mã nhà cung cấp"));
         }
         this.supplierId = supplierId;
     }
@@ -58,7 +59,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên nhà cung cấp không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_NAME_EMPTY);
         }
         this.name = name;
     }
@@ -69,7 +70,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setPhoneNumber(String phoneNumber) {
         if (phoneNumber == null || !isValidPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException("Số điện thoại không hợp lệ");
+            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_PHONE_INVALID);
         }
         this.phoneNumber = phoneNumber;
     }
@@ -79,8 +80,8 @@ public class Supplier extends BaseTimeEntity {
     }
 
     public void setEmail(String email) {
-        if (email == null || !isValidEmail(email)) {
-            throw new IllegalArgumentException("Email không hợp lệ");
+        if (email != null && !email.trim().isEmpty() && !isValidEmail(email)) {
+            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_EMAIL_INVALID);
         }
         this.email = email;
     }
@@ -91,7 +92,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException("Địa chỉ không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Địa chỉ"));
         }
         this.address = address;
     }

@@ -3,6 +3,7 @@ package com.pcstore.controller;
 import com.pcstore.model.User;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.UserService;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.SessionManager;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.LoginForm;
@@ -34,7 +35,10 @@ public class LoginController {
         try {
             this.userService = ServiceFactory.getUserService();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi kết nối đến cơ sở dữ liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                String.format(ErrorMessage.LOGIN_SERVICE_ERROR, e.getMessage()), 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -51,8 +55,11 @@ public class LoginController {
         try {
             this.userService = ServiceFactory.getUserService();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi kết nối đến cơ sở dữ liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }finally {
+            JOptionPane.showMessageDialog(null, 
+                String.format(ErrorMessage.USER_SERVICE_ERROR, e.getMessage()), 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
+        } finally {
             this.loginView = loginView;
         }
     }
@@ -65,6 +72,23 @@ public class LoginController {
      */
     public User authenticate(String username, String password) {
         try {
+            // Validate input
+            if (username == null || username.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, 
+                    ErrorMessage.USERNAME_EMPTY, 
+                    ErrorMessage.LOGIN_ERROR, 
+                    JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            
+            if (password == null || password.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, 
+                    ErrorMessage.PASSWORD_EMPTY, 
+                    ErrorMessage.LOGIN_ERROR, 
+                    JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+            
             User user = userService.authenticate(username, password);
             
             if (user != null) {
@@ -81,9 +105,20 @@ public class LoginController {
             
             return user;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi xác thực người dùng: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, 
+                String.format(ErrorMessage.AUTHENTICATION_ERROR, e.getMessage()), 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
             return null;
+        } finally {
+            try {
+                // ServiceFactory.closeConnection();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.DB_CONNECTION_ERROR, e.getMessage()), 
+                    ErrorMessage.LOGIN_ERROR, 
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
     
@@ -94,7 +129,10 @@ public class LoginController {
         try {
             ServiceFactory.close();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Đã xảy ra lỗi khi đóng kết nối", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                String.format(ErrorMessage.DB_CONNECTION_CLOSE_ERROR, e.getMessage()), 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -106,12 +144,45 @@ public class LoginController {
      */
     public boolean validateLoginInfo(String username, String password) {
         if (username == null || username.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Tên đăng nhập không được để trống", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                ErrorMessage.USERNAME_EMPTY, 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
         if (password == null || password.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Mật khẩu không được để trống", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                ErrorMessage.PASSWORD_EMPTY, 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Kiểm tra thông tin đăng nhập
+     * @param username Tên đăng nhập
+     * @param password Mật khẩu
+     * @return true nếu đăng nhập thành công, false nếu thất bại
+     */
+    public boolean login(String username, String password) {
+        // Kiểm tra input
+        if (username == null || username.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, 
+                ErrorMessage.USERNAME_EMPTY, 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        if (password == null || password.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, 
+                ErrorMessage.PASSWORD_EMPTY, 
+                ErrorMessage.LOGIN_ERROR, 
+                JOptionPane.ERROR_MESSAGE);
             return false;
         }
         

@@ -98,7 +98,9 @@ public class EmployeeRepository implements Repository<Employee, String> {
     
     @Override
     public boolean delete(String id) {
-        String sql = "DELETE FROM Employees WHERE EmployeeID = ?";
+        // String sql = "DELETE FROM Employees WHERE EmployeeID = ?";
+        // set nhân viên là đã xóa thành IsActive = 0
+        String sql = "UPDATE Employees SET IsActive = 0 WHERE EmployeeID = ?";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
@@ -135,7 +137,10 @@ public class EmployeeRepository implements Repository<Employee, String> {
              ResultSet resultSet = statement.executeQuery(sql)) {
             
             while (resultSet.next()) {
-                employees.add(mapResultSetToEmployee(resultSet));
+                Employee employee = mapResultSetToEmployee(resultSet);
+                if (employee != null) {
+                    employees.add(employee);
+                }
             }
             return employees;
         } catch (SQLException e) {
@@ -170,7 +175,10 @@ public class EmployeeRepository implements Repository<Employee, String> {
             ResultSet resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
-                employees.add(mapResultSetToEmployee(resultSet));
+                Employee employee = mapResultSetToEmployee(resultSet);
+                if (employee != null) {
+                    employees.add(employee);
+                }
             }
             return employees;
         } catch (SQLException e) {
@@ -247,7 +255,10 @@ public class EmployeeRepository implements Repository<Employee, String> {
             ResultSet resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
-                employees.add(mapResultSetToEmployee(resultSet));
+                Employee employee = mapResultSetToEmployee(resultSet);
+                if (employee != null) {
+                    employees.add(employee);
+                }
             }
             return employees;
         } catch (SQLException e) {
@@ -272,7 +283,10 @@ public class EmployeeRepository implements Repository<Employee, String> {
             ResultSet resultSet = statement.executeQuery();
             
             while (resultSet.next()) {
-                employees.add(mapResultSetToEmployee(resultSet));
+                Employee employee = mapResultSetToEmployee(resultSet);
+                if (employee != null) {
+                    employees.add(employee);
+                }
             }
             return employees;
         } catch (SQLException e) {
@@ -282,6 +296,12 @@ public class EmployeeRepository implements Repository<Employee, String> {
     
     private Employee mapResultSetToEmployee(ResultSet resultSet) throws SQLException {
         Employee employee = new Employee();
+
+        if (resultSet.getInt("IsActive") == 0) { 
+            //nếu IsActive = 0 thì nhân viên đã xóa
+            return null;
+        }
+           
 
         employee.setEmployeeId(resultSet.getString("EmployeeID"));
         employee.setFullName(resultSet.getString("FullName"));

@@ -7,6 +7,7 @@ import com.pcstore.service.EmployeeService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.UserService;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.PCrypt;
 import com.pcstore.utils.SessionManager;
@@ -80,8 +81,9 @@ public class UserController {
             checkUserPermissions();
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.USER_CONTROLLER_INIT_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -208,7 +210,6 @@ public class UserController {
      * Tải danh sách tất cả người dùng
      */
     public void loadAllUsers() {
-        
         try {
             List<User> users = userService.getAllUsers();
             displayUsers(users);
@@ -216,12 +217,11 @@ public class UserController {
             if (userForm.getTableListUser().getRowSorter() != null) {
                 userForm.getTableListUser().getRowSorter().setSortKeys(null);
             }
-
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(userForm, "Lỗi khi tải danh sách người dùng: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(userForm, 
+                    String.format(ErrorMessage.USER_LOAD_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-
         }
     }
     
@@ -265,10 +265,10 @@ public class UserController {
             
             TableStyleUtil.applyFilter(sorter, searchText);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(userForm, "Lỗi khi lọc danh sách người dùng: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(userForm, 
+                    String.format(ErrorMessage.USER_FILTER_ERROR, e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-            
         }
     }
     

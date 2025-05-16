@@ -10,8 +10,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.pcstore.controller.LoginController;
-import com.pcstore.utils.LocaleManager;
 import com.pcstore.view.LoginForm;
 
 

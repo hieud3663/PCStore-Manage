@@ -3,10 +3,13 @@ package com.pcstore.controller;
 import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.model.User;
 import com.pcstore.utils.SessionManager;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.RoleManager;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.LoginForm;
+
+import test.Main;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -55,8 +58,8 @@ public class DashboardController {
         // Kiểm tra người dùng đã đăng nhập chưa
         if (!sessionManager.isLoggedIn()) {
             JOptionPane.showMessageDialog(dashboardForm, 
-                "Bạn cần đăng nhập để sử dụng hệ thống", 
-                "Yêu cầu đăng nhập", 
+                ErrorMessage.LOGIN_REQUIRED, 
+                ErrorMessage.LOGIN_REQUIRED_TITLE, 
                 JOptionPane.WARNING_MESSAGE);
             redirectToLogin();
             return;
@@ -457,8 +460,8 @@ public class DashboardController {
     public void logout() {
         int confirm = JOptionPane.showConfirmDialog(
             dashboardForm,
-            "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?",
-            "Xác nhận đăng xuất",
+            ErrorMessage.LOGOUT_CONFIRM,
+            ErrorMessage.LOGOUT_TITLE,
             JOptionPane.YES_NO_OPTION
         );
         
@@ -486,8 +489,8 @@ public class DashboardController {
             LoginForm.getInstance().setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(dashboardForm, 
-                "Đã xảy ra lỗi khi mở trang đăng nhập: " + e.getMessage(), 
-                "Lỗi", 
+                String.format(ErrorMessage.LOGIN_REDIRECT_ERROR, e.getMessage()), 
+                ErrorMessage.ERROR_TITLE, 
                 JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -558,12 +561,12 @@ public class DashboardController {
         if (!currentLanguage.equals(newLanguage)) {
             // Hiển thị hộp thoại xác nhận khởi động lại
             String message = currentLanguage.equals("vi") 
-                ? "Cần khởi động lại ứng dụng để áp dụng thay đổi ngôn ngữ. Bạn có muốn tiếp tục không?" 
-                : "The application needs to restart to apply language changes. Do you want to continue?";
+                ? ErrorMessage.LANGUAGE_CHANGE_CONFIRM_VI 
+                : ErrorMessage.LANGUAGE_CHANGE_CONFIRM_EN;
                 
             String title = currentLanguage.equals("vi") 
-                ? "Thay đổi ngôn ngữ" 
-                : "Language Change";
+                ? ErrorMessage.LANGUAGE_CHANGE_TITLE_VI 
+                : ErrorMessage.LANGUAGE_CHANGE_TITLE_EN;
                 
             int response = JOptionPane.showConfirmDialog(
                 dashboardForm,
@@ -579,16 +582,10 @@ public class DashboardController {
                 // Dọn dẹp tài nguyên
                 cleanup();
                 
-                // Đóng cửa sổ hiện tại
-                dashboardForm.dispose();
-                dashboardForm.resetInstance();
-                
                 // Khởi động lại ứng dụng
                 SwingUtilities.invokeLater(() -> {
                     try {
-                        // Bắt đầu lại ứng dụng từ màn hình đăng nhập
-                        LoginForm.restartInstance();
-                        LoginForm.getInstance().setVisible(true);
+                        dashboardForm.restartApp();
                     } catch (Exception ex) {
                         String errorMsg = currentLanguage.equals("vi") 
                             ? "Lỗi khởi động lại ứng dụng: " 
@@ -605,17 +602,12 @@ public class DashboardController {
                 updateLanguageComboBox();
             }
         } else {
-            // Nếu ngôn ngữ không thay đổi, vẫn cập nhật các thành phần UI
-            // Cập nhật lại bundle
             bundle = localeManager.getProperties();
-            
-            // Cập nhật giao diện
+
             refreshLanguage();
             
-            // Cập nhật trạng thái ComboBox
             updateLanguageComboBox();
             
-            // Cập nhật các thành phần khác của giao diện
             updateUITexts();
         }
     }

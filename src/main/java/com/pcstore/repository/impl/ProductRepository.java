@@ -118,7 +118,7 @@ public class ProductRepository implements Repository<Product, String> {
                     // Debug log
                     try {
                         String specs = resultSet.getString("Specifications");
-                        System.out.println("DB value for Specifications: " + (specs == null ? "NULL" : "'" + specs + "'"));
+                        // System.out.println("DB value for Specifications: " + (specs == null ? "NULL" : "'" + specs + "'"));
                     } catch (Exception e) {
                         System.err.println("Error reading Specifications: " + e.getMessage());
                     }

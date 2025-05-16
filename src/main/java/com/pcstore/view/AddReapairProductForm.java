@@ -13,43 +13,45 @@ import java.util.List;
  */
 public class AddReapairProductForm extends JDialog {
 
-        private com.pcstore.controller.RepairController repairController;
+    private com.pcstore.controller.RepairController repairController;
 
-        private javax.swing.JTextField TxtNameCustomer;
-        private com.k33ptoo.components.KButton btnAddRepairDevice;
-        private com.k33ptoo.components.KButton btnReturnInformationLookup;
-        private javax.swing.JComboBox<String> cbEmployee;
-        private javax.swing.JComboBox<String> cbStatus;
-        private javax.swing.JLabel lbCost;
-        private javax.swing.JLabel lbDiagnose;
-        private javax.swing.JLabel lbEmployee;
-        private javax.swing.JLabel lbNameCustomer;
-        private javax.swing.JLabel lbNameProduct;
-        private javax.swing.JLabel lbNote;
-        private javax.swing.JLabel lbProblem;
-        private javax.swing.JLabel lbSDT;
-        private javax.swing.JLabel lbStasus;
-        private javax.swing.JLabel lbTitle;
-        private com.k33ptoo.components.KGradientPanel panelBody;
-        private javax.swing.JPanel panelBottom;
-        private javax.swing.JPanel panelMain;
-        private javax.swing.JPanel panelRepairID;
-        private javax.swing.JPanel panelRepairID1;
-        private javax.swing.JPanel panelRepairID2;
-        private javax.swing.JPanel panelRepairID3;
-        private javax.swing.JPanel panelRepairID4;
-        private javax.swing.JPanel panelRepairID5;
-        private javax.swing.JPanel panelRepairID6;
-        private javax.swing.JPanel panelRepairID7;
-        private javax.swing.JPanel panelRepairID8;
-        private javax.swing.JPanel panelTop;
-        private javax.swing.JTextField txtCost;
-        private javax.swing.JTextField txtDiagnose;
-        private javax.swing.JTextField txtNameProduct;
-        private javax.swing.JTextField txtNote;
-        private javax.swing.JTextField txtProblem;
-        private javax.swing.JTextField txtSDT;
-   
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField TxtNameCustomer;
+    private com.k33ptoo.components.KButton btnAddRepairDevice;
+    private com.k33ptoo.components.KButton btnReturnInformationLookup;
+    private javax.swing.JComboBox<String> cbEmployee;
+    private javax.swing.JComboBox<String> cbStatus;
+    private javax.swing.JLabel lbCost;
+    private javax.swing.JLabel lbDiagnose;
+    private javax.swing.JLabel lbEmployee;
+    private javax.swing.JLabel lbNameCustomer;
+    private javax.swing.JLabel lbNameProduct;
+    private javax.swing.JLabel lbNote;
+    private javax.swing.JLabel lbProblem;
+    private javax.swing.JLabel lbSDT;
+    private javax.swing.JLabel lbStasus;
+    private javax.swing.JLabel lbTitle;
+    private com.k33ptoo.components.KGradientPanel panelBody;
+    private javax.swing.JPanel panelBottom;
+    private javax.swing.JPanel panelMain;
+    private javax.swing.JPanel panelRepairID;
+    private javax.swing.JPanel panelRepairID1;
+    private javax.swing.JPanel panelRepairID2;
+    private javax.swing.JPanel panelRepairID3;
+    private javax.swing.JPanel panelRepairID4;
+    private javax.swing.JPanel panelRepairID5;
+    private javax.swing.JPanel panelRepairID6;
+    private javax.swing.JPanel panelRepairID7;
+    private javax.swing.JPanel panelRepairID8;
+    private javax.swing.JPanel panelTop;
+    private javax.swing.JTextField txtCost;
+    private javax.swing.JTextField txtDiagnose;
+    private javax.swing.JTextField txtNameProduct;
+    private javax.swing.JTextField txtNote;
+    private javax.swing.JTextField txtProblem;
+    private javax.swing.JTextField txtSDT;
+    // End of variables declaration//GEN-END:variables
+    
     public AddReapairProductForm() {
         initComponents();
         loadStatusComboBox(); 
@@ -180,7 +182,7 @@ public class AddReapairProductForm extends JDialog {
         lbTitle.setBackground(new java.awt.Color(0, 153, 255));
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(0, 153, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
         lbTitle.setMaximumSize(new java.awt.Dimension(346, 100));
         lbTitle.setMinimumSize(new java.awt.Dimension(346, 100));

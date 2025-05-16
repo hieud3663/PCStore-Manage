@@ -48,8 +48,8 @@ public class JExcel {
             // Kiểm tra nếu file đã tồn tại
             if (selectedFile.exists()) {
                 int result = JOptionPane.showConfirmDialog(null,
-                        "File đã tồn tại. Bạn có muốn ghi đè không?",
-                        "Xác nhận ghi đè",
+                        ErrorMessage.FILE_EXISTS_OVERWRITE,
+                        ErrorMessage.CONFIRM_TITLE,
                         JOptionPane.YES_NO_OPTION);
                 
                 if (result != JOptionPane.YES_OPTION) {
@@ -135,15 +135,30 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        "Xuất Excel thành công!\nĐường dẫn: " + selectedFile.getAbsolutePath(), 
-                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+
+                // Mở file sau khi xuất
+                try {
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        if (desktop.isSupported(Desktop.Action.OPEN)) {
+                            desktop.open(selectedFile);
+                        }
+                    }
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null,
+                            ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()),
+                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                }
+
                 return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    "Lỗi khi xuất file Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -220,15 +235,28 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        "Xuất Excel thành công!\nĐường dẫn: " + selectedFile.getAbsolutePath(), 
-                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+
+                // Mở file sau khi xuất
+                try {
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop desktop = Desktop.getDesktop();
+                        if (desktop.isSupported(Desktop.Action.OPEN)) {
+                            desktop.open(selectedFile);
+                        }
+                    }
+                } catch (Exception ex) {
+                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()));
+                }
+
                 return true;
             }
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    "Lỗi khi xuất file Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -324,8 +352,8 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        "Xuất Excel thành công!\nĐường dẫn: " + selectedFile.getAbsolutePath(), 
-                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
 
                 //Mở file sau khi xuất
                 try {
@@ -336,7 +364,7 @@ public class JExcel {
                         }
                     }
                 } catch (Exception ex) {
-                    System.out.println("Không thể tự động mở file: " + ex.getMessage());
+                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()));
                 }
 
                 return true;
@@ -345,8 +373,8 @@ public class JExcel {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    "Lỗi khi xuất file Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -495,8 +523,8 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        "Xuất Excel thành công!\nĐường dẫn: " + selectedFile.getAbsolutePath(), 
-                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
 
                 // Mở file sau khi xuất
                 try {
@@ -507,7 +535,7 @@ public class JExcel {
                         }
                     }
                 } catch (Exception ex) {
-                    System.out.println("Không thể tự động mở file: " + ex.getMessage());
+                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()));
                 }
 
                 return selectedFile.getAbsolutePath();
@@ -516,8 +544,8 @@ public class JExcel {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    "Lỗi khi xuất file Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }

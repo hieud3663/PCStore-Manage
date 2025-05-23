@@ -2,7 +2,11 @@ package com.pcstore.model;
 
 import com.pcstore.model.base.BaseTimeEntity;
 import com.pcstore.utils.ErrorMessage;
+import com.pcstore.utils.LocaleManager;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +23,9 @@ public class Product extends BaseTimeEntity {
     private Category category;
     private Supplier supplier;
     private String manufacturer;    
-
-    
+    private BigDecimal costPrice;        // Giá vốn gần nhất
+    private BigDecimal averageCostPrice; // Giá vốn trung bình
+    private BigDecimal profitMargin;     // Tỷ suất lợi nhuận (%)
 
     public Product(String productId, String productName, BigDecimal price, int stockQuantity, String specifications,
             String description, Category category, Supplier supplier) {
@@ -165,6 +170,40 @@ public class Product extends BaseTimeEntity {
         this.manufacturer = manufacturer;
     }
 
+    public BigDecimal getCostPrice() {
+        return costPrice == null ? BigDecimal.ZERO : costPrice;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public BigDecimal getAverageCostPrice() {
+        return averageCostPrice == null ? BigDecimal.ZERO : averageCostPrice;
+    }
+
+    public void setAverageCostPrice(BigDecimal averageCostPrice) {
+        this.averageCostPrice = averageCostPrice;
+    }
+
+    public BigDecimal getProfitMargin() {
+        return profitMargin == null ? new BigDecimal(LocaleManager.profitMargin) : profitMargin;
+    }
+
+    public void setProfitMargin(BigDecimal profitMargin) {
+        this.profitMargin = profitMargin;
+    }
+
+    public BigDecimal calculateSellingPrice() {
+        BigDecimal avgCost = getAverageCostPrice();
+        if (avgCost.compareTo(BigDecimal.ZERO) <= 0) {
+            return price; // Trả về giá hiện tại nếu không có giá vốn
+        }
+        
+        BigDecimal margin = getProfitMargin().divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
+        BigDecimal factor = BigDecimal.ONE.add(margin);
+        return avgCost.multiply(factor).setScale(0, RoundingMode.CEILING); // Làm tròn lên đến đơn vị
+    }
 
     // Factory method để tạo sản phẩm mới
     public static Product createNew(String productId, String productName, 

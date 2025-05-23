@@ -28,6 +28,7 @@ public class ServiceFactory {
     private static ReturnService returnService;
     private static RevenueService revenueService;
     // private static UserService userService;
+    private static PurchaseOrderDetailService purchaseOrderDetailService;
     
     /**
      * Khởi tạo factory và kết nối đến cơ sở dữ liệu
@@ -149,6 +150,17 @@ public class ServiceFactory {
             purchaseOrderService = new PurchaseOrderService(getInstance().getConnection(), repositoryFactory);
         }
         return purchaseOrderService;
+    }
+
+    /*
+     * Lấy PurchaseOrderDetailService
+     * @return PurchaseOrderDetailService instance
+     */
+    public static PurchaseOrderDetailService getPurchaseOrderDetailService() throws SQLException {
+        if (purchaseOrderDetailService == null) {
+            purchaseOrderDetailService = new PurchaseOrderDetailService(getInstance().getConnection());
+        }
+        return purchaseOrderDetailService; 
     }
     
     /**

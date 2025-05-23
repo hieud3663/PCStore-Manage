@@ -6,12 +6,13 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
 /**
  * Lớp quản lý thiết lập Locale toàn cục trong ứng dụng
  */
 public class LocaleManager {
-    
-    private static final double pointRate = 0.1; // Tỷ lệ điểm quy đổi
+    public static final double pointRate = 0.1; // Tỷ lệ điểm quy đổi
+    public static final double profitMargin = 0.2; // Tỷ lệ lợi nhuận
 
     private final String fileNameVI = "/com/pcstore/resources/vi_VN.properties";
     private final String  fileNameEN = "/com/pcstore/resources/en_US.properties";
@@ -206,6 +207,5 @@ public class LocaleManager {
             .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             .toFormatter(currentLocale);
     }
-
 
 }

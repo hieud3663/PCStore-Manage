@@ -14,13 +14,13 @@ import java.util.List;
 public class TableStyleUtil {
     
     // Định nghĩa các màu sắc cảnh báo
-    private static final Color ZERO_QUANTITY_COLOR = new Color(255, 102, 102); // Màu đỏ nhạt
-    private static final Color LOW_QUANTITY_COLOR = new Color(255, 204, 102);  // Màu cam nhạt
+    public static final Color ZERO_QUANTITY_COLOR = new Color(255, 102, 102); // Màu đỏ nhạt
+    public static final Color LOW_QUANTITY_COLOR = new Color(255, 204, 102);  // Màu cam nhạt
 
     // Định nghĩa các màu sắc cho trạng thái hóa đơn
-    private static final Color PROCESSING_COLOR = new Color(255, 204, 102);  // Màu cam nhạt cho "Đang xử lý"
-    private static final Color CANCELLED_COLOR = new Color(255, 102, 102);   // Màu đỏ nhạt cho "Đã hủy"
-    private static final Color COMPLETED_COLOR = new Color(204, 255, 204);   // Màu xanh nhạt cho "Đã hoàn thành"
+    public static final Color PROCESSING_COLOR = new Color(255, 204, 102);  // Màu cam nhạt cho "Đang xử lý"
+    public static final Color CANCELLED_COLOR = new Color(255, 102, 102);   // Màu đỏ nhạt cho "Đã hủy"
+    public static final Color COMPLETED_COLOR = new Color(204, 255, 204);   // Màu xanh nhạt cho "Đã hoàn thành"
         
 
 
@@ -164,7 +164,37 @@ public class TableStyleUtil {
         table.setRowSorter(sorter);
         return sorter;
     }
-    
+
+
+    /*
+     * Thiết lập cột có số
+     */
+    public static void setNumberColumns(TableRowSorter<TableModel> tableSort, int... columns) {
+        for (int column : columns) {
+            tableSort.setSortable(column, true);
+            tableSort.setComparator(column, new Comparator<Object>() {
+                @Override
+                public int compare(Object o1, Object o2) {
+                    if (o1 instanceof Number && o2 instanceof Number) {
+                        return Double.compare(((Number) o1).doubleValue(), ((Number) o2).doubleValue());
+                    }else{
+                        try {
+                            String v1 = o1.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim().replaceAll("\\.", "").replaceAll("\\,", "");
+                            String v2 = o2.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim().replaceAll("\\.", "").replaceAll("\\,", "");
+
+                            double d1 = Double.parseDouble(v1);
+                            double d2 = Double.parseDouble(v2);
+                            
+                            return Double.compare(d1, d2);
+                        } catch (Exception e) {
+                            return o1.toString().compareTo(o2.toString());
+                        }
+                    }
+                }
+            });
+        }
+    }
+
     /**
      * Vô hiệu hóa sắp xếp cho các cột cụ thể
      * @param sorter TableRowSorter để thiết lập
@@ -294,6 +324,7 @@ public class TableStyleUtil {
      * @return TableRowSorter đã được tạo
      */
     public static TableRowSorter<TableModel> applyProductTableStyle(JTable table, final int quantityColumnIndex) {
+        
         // Áp dụng các style cơ bản từ lớp cha
         TableRowSorter<TableModel> sorter = applyDefaultStyle(table);
         
@@ -320,7 +351,7 @@ public class TableStyleUtil {
                                 quantity = Integer.parseInt(quantityObj.toString());
                             }
                         } catch (NumberFormatException e) {
-                            // Xử lý lỗi nếu giá trị không phải số
+                            e.printStackTrace();
                         }
                     }
                     

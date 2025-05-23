@@ -29,8 +29,8 @@ public class ProductService {
         this.productRepository = productRepository;
     }
     
-    public String generateProductID(String categoryId) {
-        return productRepository.generateProductID(categoryId);
+    public String generateProductID() {
+        return productRepository.generateProductID();
     }
 
     /**

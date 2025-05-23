@@ -144,8 +144,8 @@ public class SellController {
 
     private int compareAmount(String s1, String s2) {
         try {
-            String v1 = s1.replaceAll("\\.", "");
-            String v2 = s2.replaceAll("\\.", "");
+            String v1 = s1.replaceAll("\\.", "").replaceAll("\\,", "");
+            String v2 = s2.replaceAll("\\.", "").replaceAll("\\,", "");
             
             double d1 = Double.parseDouble(v1);
             double d2 = Double.parseDouble(v2);

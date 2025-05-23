@@ -205,6 +205,7 @@ public class DashboardForm extends JFrame {
         lbMenuHome.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/home_24px.png"))); // NOI18N
         lbMenuHome.setText(bundle.getString("txtMenuHome")); // NOI18N
+        lbMenuHome.setToolTipText(bundle.getString("txtMenuHome")); // NOI18N
         lbMenuHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuHome.setMaximumSize(new java.awt.Dimension(104, 30));
         lbMenuHome.setMinimumSize(new java.awt.Dimension(104, 30));

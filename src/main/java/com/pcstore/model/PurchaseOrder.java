@@ -229,7 +229,7 @@ public class PurchaseOrder extends BaseTimeEntity {
         if (detail.getQuantity() <= 0) {
             throw new IllegalArgumentException("Số lượng phải lớn hơn 0");
         }
-        if (detail.getUnitPrice() == null || detail.getUnitPrice().compareTo(BigDecimal.ZERO) <= 0) {
+        if (detail.getUnitCost() == null || detail.getUnitCost().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Đơn giá phải lớn hơn 0");
         }
         return true;

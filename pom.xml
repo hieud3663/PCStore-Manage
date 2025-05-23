@@ -14,17 +14,6 @@
     </repositories>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -134,8 +123,9 @@
             <artifactId>timingframework</artifactId>
             <version>0.55</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/TimingFramework-0.55.jar</systemPath>
+            <systemPath>${basedir}/lib/TimingFramework-0.55.jar</systemPath>
         </dependency>
+
 
         
     <!-- Apache POI Core -->

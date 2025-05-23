@@ -36,10 +36,10 @@ public class JDialogInputUtils {
         }
     }
     
-    public static BigDecimal showInputDialogBigDecimal(Component parent, String message, String title ){
+    public static BigDecimal showInputDialogBigDecimal(Component parent, String message, String defaultValue ){
         // Hiển thị dialog nhập liệu
-        Object result = JOptionPane.showInputDialog(parent, message, title, 
-                JOptionPane.QUESTION_MESSAGE);
+        Object result = JOptionPane.showInputDialog(parent, message, "Input value", 
+                JOptionPane.QUESTION_MESSAGE, null, null, defaultValue);
         
         // Kiểm tra nếu người dùng nhấn Cancel hoặc đóng dialog
         if (result == null) {
@@ -49,7 +49,7 @@ public class JDialogInputUtils {
         String input = result.toString();
         if (input.trim().isEmpty()) {            
             JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            return showInputDialogBigDecimal(parent, message, title); // Gọi lại hàm để yêu cầu nhập lại
+            return showInputDialogBigDecimal(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
           try {
             BigDecimal value = new BigDecimal(input);
@@ -60,10 +60,12 @@ public class JDialogInputUtils {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE, 
                     ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            return showInputDialogBigDecimal(parent, message, title); // Gọi lại hàm để yêu cầu nhập lại
+            return showInputDialogBigDecimal(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
-    }    public static int getPositiveIntegerInput(Component parent, String message, String title) {
-        String input = JOptionPane.showInputDialog(parent, message, title, JOptionPane.QUESTION_MESSAGE);
+    }
+
+    public static int getPositiveIntegerInput(Component parent, String message, String defaultValue) {
+        String input = JOptionPane.showInputDialog(parent, message, defaultValue, JOptionPane.QUESTION_MESSAGE);
         
         if (input == null || input.trim().isEmpty()) {
             JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
@@ -83,8 +85,9 @@ public class JDialogInputUtils {
             throw e;
         }
     }
-      public static double getPositiveDoubleInput(Component parent, String message, String title) {
-        String input = JOptionPane.showInputDialog(parent, message, title, JOptionPane.QUESTION_MESSAGE);
+    
+    public static double getPositiveDoubleInput(Component parent, String message, String defaultValue) {
+        String input = JOptionPane.showInputDialog(parent, message, defaultValue, JOptionPane.QUESTION_MESSAGE);
         
         if (input == null || input.trim().isEmpty()) {
             JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);

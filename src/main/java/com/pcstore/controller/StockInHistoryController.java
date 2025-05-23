@@ -21,9 +21,11 @@ import javax.swing.table.TableColumnModel;
 
 import com.pcstore.model.PurchaseOrder;
 import com.pcstore.model.PurchaseOrderDetail;
-import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
+import com.pcstore.service.PurchaseOrderDetailService;
+import com.pcstore.service.PurchaseOrderService;
+import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.CurrencyFormatter;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.TableStyleUtil;
@@ -34,17 +36,11 @@ import com.pcstore.view.StockInHistoryForm;
  */
 public class StockInHistoryController {
     private StockInHistoryForm historyForm;
-    private PurchaseOrderRepository purchaseOrderRepository;
-    private PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     private Connection connection;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // Tạo RepositoryFactory và các Service cần thiết
-  
-    private PurchaseOrderRepository purchaseOrderRepo ;
-    private PurchaseOrderDetailRepository purchaseOrderDetailRepo;
-    
-
+    private PurchaseOrderService purchaseOrderService;
+    private PurchaseOrderDetailService purchaseOrderDetailService;
     /**
      * Khởi tạo controller với form lịch sử nhập hàng
      * 
@@ -55,25 +51,11 @@ public class StockInHistoryController {
 
         try {
             this.connection = DatabaseConnection.getInstance().getConnection();
-
-            purchaseOrderDetailRepo = RepositoryFactory.getInstance(connection).getPurchaseOrderDetailRepository();
-            purchaseOrderRepo = RepositoryFactory.getInstance(connection).getPurchaseOrderRepository();
-            // Kiểm tra connection
-            if (connection == null || connection.isClosed()) {
-                throw new SQLException("Cannot establish database connection");
-            }
-
-            System.out.println("Connection established: " + !connection.isClosed());
-
-            // Tạo repository trực tiếp với connection
-            this.purchaseOrderRepository = new PurchaseOrderRepository(connection, null);
-            this.purchaseOrderDetailRepository = new PurchaseOrderDetailRepository(connection, null);
+            this.purchaseOrderService = ServiceFactory.getInstance().getPurchaseOrderService();
+            this.purchaseOrderDetailService = ServiceFactory.getInstance().getPurchaseOrderDetailService();
 
             // Đăng ký sự kiện
             registerEvents();
-
-            // Debug trực tiếp database
-            // debugDatabase();
 
             // Thiết lập các bảng
             TableStyleUtil.applyDefaultStyle(historyForm.getTablePurchaseOrders());
@@ -86,34 +68,15 @@ public class StockInHistoryController {
             setupStatusRenderer();
 
             // System.out.println("StockInHistoryController: Khởi tạo thành công");
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(historyForm,
+                    "Lỗi kết nối đến cơ sở dữ liệu: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (Exception e ) {
             JOptionPane.showMessageDialog(historyForm,
                     "Lỗi khởi tạo form lịch sử nhập kho: " + e.getMessage(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    // Thêm phương thức debug để truy vấn trực tiếp
-    private void debugDatabase() {
-        try {
-            java.sql.Statement stmt = connection.createStatement();
-            java.sql.ResultSet rs = stmt.executeQuery("SELECT COUNT(*) AS total FROM PurchaseOrders");
-
-            if (rs.next()) {
-                System.out.println("Tổng số phiếu nhập trong database: " + rs.getInt("total"));
-            }
-
-            rs = stmt.executeQuery(
-                    "SELECT TOP 5 PurchaseOrderID, OrderDate, Status FROM PurchaseOrders ORDER BY OrderDate DESC");
-            System.out.println("5 phiếu nhập gần đây nhất:");
-            while (rs.next()) {
-                System.out.println(rs.getString("PurchaseOrderID") + " | " +
-                        rs.getTimestamp("OrderDate") + " | " +
-                        rs.getString("Status"));
-            }
-        } catch (Exception e) {
-            System.err.println("Debug database error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -235,7 +198,7 @@ public class StockInHistoryController {
             connection.setAutoCommit(false);
             
             // 1. Lấy thông tin phiếu nhập hiện tại 
-            Optional<PurchaseOrder> orderOpt = purchaseOrderRepository.findById(purchaseOrderId);
+            Optional<PurchaseOrder> orderOpt = purchaseOrderService.findPurchaseOrderById(purchaseOrderId);
             if (!orderOpt.isPresent()) {
                 System.err.println("Không tìm thấy phiếu nhập: " + purchaseOrderId);
                 connection.rollback();
@@ -261,7 +224,7 @@ public class StockInHistoryController {
             order.setStatus(newStatus);
             
             // Cập nhật vào cơ sở dữ liệu cho tất cả các trường hợp
-            PurchaseOrder updatedOrder = purchaseOrderRepository.update(order);
+            PurchaseOrder updatedOrder = purchaseOrderService.updatePurchaseOrder(order);
             if (updatedOrder == null) {
                 System.err.println("Không thể cập nhật trạng thái phiếu nhập trong cơ sở dữ liệu.");
                 connection.rollback();
@@ -273,11 +236,11 @@ public class StockInHistoryController {
                 System.out.println("Đang cập nhật số lượng sản phẩm trong kho cho phiếu nhập: " + purchaseOrderId);
                 
                 // Lấy chi tiết phiếu nhập
-                List<PurchaseOrderDetail> details = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrderId);
+                List<PurchaseOrderDetail> details = purchaseOrderDetailService.findPurchaseOrderDetailsByOrderId(purchaseOrderId);
                 
                 // Hoàn thành phiếu nhập sẽ cập nhật số lượng sản phẩm
-                purchaseOrderRepository.completePurchaseOrder(purchaseOrderId);
-                
+                purchaseOrderService.completePurchaseOrder(purchaseOrderId);
+
                 System.out.println("Đã cập nhật số lượng cho " + details.size() + " sản phẩm");
             }
             
@@ -408,93 +371,73 @@ public class StockInHistoryController {
         }
     }
 
-    /**
-     * Lấy định dạng màu cho trạng thái
-     */
-    private Color getStatusColor(String status) {
-        if (status == null)
-            return Color.BLACK;
 
-        status = status.toLowerCase();
-        if (status.contains("hoàn thành") || status.contains("completed")) {
-            return new Color(0, 128, 0); // Xanh lá
-        } else if (status.contains("chờ") || status.contains("pending")) {
-            return new Color(255, 165, 0); // Cam
-        } else if (status.contains("hủy") || status.contains("cancelled")) {
-            return Color.RED; // Đỏ
-        }
-        return Color.BLACK; // Mặc định
-    }
-
-    /**
-     * Tải lịch sử phiếu nhập hàng
-     */
     /**
      * Load lịch sử phiếu nhập hàng từ database
      */
     public void loadPurchaseOrderHistory() {
         try {
-            ensureConnection();
-            System.out.println("==== Đang tải lịch sử phiếu nhập ====");
+            
 
-            // SQL đã được sửa để khớp chính xác với tên cột trong database
-            String directSql = "SELECT po.PurchaseOrderID, po.OrderDate, po.Status, po.TotalAmount, " +
-                    "po.EmployeeID, e.FullName, " + // FullName chính xác
-                    "po.SupplierID, s.Name " + // Name chính xác
-                    "FROM PurchaseOrders po " +
-                    "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
-                    "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
-                    "ORDER BY po.OrderDate DESC";
+            // // SQL đã được sửa để khớp chính xác với tên cột trong database
+            // String directSql = "SELECT po.PurchaseOrderID, po.OrderDate, po.Status, po.TotalAmount, " +
+            //         "po.EmployeeID, e.FullName, " + // FullName chính xác
+            //         "po.SupplierID, s.Name " + // Name chính xác
+            //         "FROM PurchaseOrders po " +
+            //         "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
+            //         "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
+            //         "ORDER BY po.OrderDate DESC";
 
-            List<PurchaseOrder> purchaseOrders = new ArrayList<>();
+            // List<PurchaseOrder> purchaseOrders = new ArrayList<>();
 
-            try (java.sql.Statement stmt = connection.createStatement();
-                    java.sql.ResultSet rs = stmt.executeQuery(directSql)) {
+            // try (java.sql.Statement stmt = connection.createStatement();
+            //         java.sql.ResultSet rs = stmt.executeQuery(directSql)) {
 
-                while (rs.next()) {
-                    try {
-                        PurchaseOrder order = new PurchaseOrder();
-                        order.setPurchaseOrderId(rs.getString("PurchaseOrderID"));
+            //     while (rs.next()) {
+            //         try {
+            //             PurchaseOrder order = new PurchaseOrder();
+            //             order.setPurchaseOrderId(rs.getString("PurchaseOrderID"));
 
-                        // Đọc OrderDate
-                        java.sql.Timestamp timestamp = rs.getTimestamp("OrderDate");
-                        if (timestamp != null) {
-                            order.setOrderDate(timestamp.toLocalDateTime());
-                        }
+            //             // Đọc OrderDate
+            //             java.sql.Timestamp timestamp = rs.getTimestamp("OrderDate");
+            //             if (timestamp != null) {
+            //                 order.setOrderDate(timestamp.toLocalDateTime());
+            //             }
 
-                        // Đọc Status và TotalAmount
-                        order.setStatus(rs.getString("Status"));
-                        order.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+            //             // Đọc Status và TotalAmount
+            //             order.setStatus(rs.getString("Status"));
+            //             order.setTotalAmount(rs.getBigDecimal("TotalAmount"));
 
-                        // Thiết lập Employee - sử dụng đúng tên cột FullName
-                        String employeeId = rs.getString("EmployeeID");
-                        if (employeeId != null) {
-                            com.pcstore.model.Employee emp = new com.pcstore.model.Employee();
-                            emp.setEmployeeId(employeeId);
-                            emp.setFullName(rs.getString("FullName"));
-                            order.setEmployee(emp);
-                        }
+            //             // Thiết lập Employee - sử dụng đúng tên cột FullName
+            //             String employeeId = rs.getString("EmployeeID");
+            //             if (employeeId != null) {
+            //                 com.pcstore.model.Employee emp = new com.pcstore.model.Employee();
+            //                 emp.setEmployeeId(employeeId);
+            //                 emp.setFullName(rs.getString("FullName"));
+            //                 order.setEmployee(emp);
+            //             }
 
-                        // Thiết lập Supplier - sử dụng đúng tên cột Name
-                        String supplierId = rs.getString("SupplierID");
-                        if (supplierId != null) {
-                            com.pcstore.model.Supplier sup = new com.pcstore.model.Supplier();
-                            sup.setSupplierId(supplierId);
-                            sup.setName(rs.getString("Name")); // Sử dụng Name thay vì SupplierName
-                            order.setSupplier(sup);
-                        }
+            //             // Thiết lập Supplier - sử dụng đúng tên cột Name
+            //             String supplierId = rs.getString("SupplierID");
+            //             if (supplierId != null) {
+            //                 com.pcstore.model.Supplier sup = new com.pcstore.model.Supplier();
+            //                 sup.setSupplierId(supplierId);
+            //                 sup.setName(rs.getString("Name")); // Sử dụng Name thay vì SupplierName
+            //                 order.setSupplier(sup);
+            //             }
 
-                        purchaseOrders.add(order);
-                        System.out.println("Found order: " + order.getPurchaseOrderId() +
-                                " | Date: " + (order.getOrderDate() != null ? order.getOrderDate() : "null") +
-                                " | Status: " + order.getStatus());
-                    } catch (Exception e) {
-                        System.err.println("Error processing row: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                }
-            }
+            //             purchaseOrders.add(order);
+            //             System.out.println("Found order: " + order.getPurchaseOrderId() +
+            //                     " | Date: " + (order.getOrderDate() != null ? order.getOrderDate() : "null") +
+            //                     " | Status: " + order.getStatus());
+            //         } catch (Exception e) {
+            //             System.err.println("Error processing row: " + e.getMessage());
+            //             e.printStackTrace();
+            //         }
+            //     }
+            // }
 
+            List<PurchaseOrder> purchaseOrders = purchaseOrderService.findAllPurchaseOrders();
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) historyForm.getTablePurchaseOrders().getModel();
 
@@ -537,106 +480,6 @@ public class StockInHistoryController {
     }
 
     /**
-     * Tìm kiếm phiếu nhập theo mã sản phẩm
-     * 
-     * @param productId Mã sản phẩm cần tìm
-     */
-    public void searchByProductId(String productId) {
-        try {
-            ensureConnection();
-            System.out.println("Searching for product ID: " + productId);
-
-            String sql = "SELECT DISTINCT po.PurchaseOrderID, po.OrderDate, po.Status, po.TotalAmount, " +
-                    "po.EmployeeID, e.FullName, " + // FullName từ bảng Employees
-                    "po.SupplierID, s.Name " + // Name từ bảng Suppliers
-                    "FROM PurchaseOrders po " +
-                    "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
-                    "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
-                    "JOIN PurchaseOrderDetails pod ON po.PurchaseOrderID = pod.PurchaseOrderID " +
-                    "JOIN Products p ON pod.ProductID = p.ProductID " +
-                    "WHERE p.ProductID LIKE ? " +
-                    "ORDER BY po.OrderDate DESC";
-
-            System.out.println("Executing search SQL: " + sql);
-
-            List<PurchaseOrder> searchResults = new ArrayList<>();
-
-            try (java.sql.PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                pstmt.setString(1, "%" + productId + "%");
-
-                try (java.sql.ResultSet rs = pstmt.executeQuery()) {
-                    while (rs.next()) {
-                        PurchaseOrder order = new PurchaseOrder();
-                        order.setPurchaseOrderId(rs.getString("PurchaseOrderID"));
-
-                        java.sql.Timestamp timestamp = rs.getTimestamp("OrderDate");
-                        if (timestamp != null) {
-                            order.setOrderDate(timestamp.toLocalDateTime());
-                        }
-
-                        order.setStatus(rs.getString("Status"));
-                        order.setTotalAmount(rs.getBigDecimal("TotalAmount"));
-
-                        // Thiết lập Employee
-                        String employeeId = rs.getString("EmployeeID");
-                        if (employeeId != null) {
-                            com.pcstore.model.Employee emp = new com.pcstore.model.Employee();
-                            emp.setEmployeeId(employeeId);
-                            emp.setFullName(rs.getString("FullName"));
-                            order.setEmployee(emp);
-                        }
-
-                        // Thiết lập Supplier
-                        String supplierId = rs.getString("SupplierID");
-                        if (supplierId != null) {
-                            com.pcstore.model.Supplier sup = new com.pcstore.model.Supplier();
-                            sup.setSupplierId(supplierId);
-                            sup.setName(rs.getString("Name"));
-                            order.setSupplier(sup);
-                        }
-
-                        searchResults.add(order);
-                    }
-                }
-            }
-
-            // Hiển thị kết quả tìm kiếm trong bảng
-            DefaultTableModel model = (DefaultTableModel) historyForm.getTablePurchaseOrders().getModel();
-            model.setRowCount(0);
-
-            int stt = 1;
-            for (PurchaseOrder order : searchResults) {
-                String employeeName = (order.getEmployee() != null) ? order.getEmployee().getFullName() : "N/A";
-
-                String formattedDate = order.getOrderDate() != null ? order.getOrderDate().format(dateFormatter) : "";
-
-                String formattedAmount = order.getTotalAmount() != null
-                        ? CurrencyFormatter.format(order.getTotalAmount())
-                        : "0";
-
-                model.addRow(new Object[] {
-                        stt++,
-                        order.getPurchaseOrderId(),
-                        formattedDate,
-                        employeeName,
-                        order.getStatus(),
-                        formattedAmount
-                });
-            }
-
-            // Xóa dữ liệu bảng chi tiết
-            DefaultTableModel detailModel = (DefaultTableModel) historyForm.getTablePurchaseOrderDetails().getModel();
-            detailModel.setRowCount(0);
-
-            System.out
-                    .println("Found " + searchResults.size() + " purchase orders containing product ID: " + productId);
-        } catch (Exception e) {
-            System.err.println("Error searching for product ID: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Tải chi tiết phiếu nhập khi click vào một dòng trong bảng
      * 
      * @param purchaseOrderId Mã phiếu nhập
@@ -647,7 +490,7 @@ public class StockInHistoryController {
             ensureConnection();
 
             // Lấy chi tiết phiếu nhập
-            List<PurchaseOrderDetail> details = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrderId);
+            List<PurchaseOrderDetail> details = purchaseOrderDetailService.findPurchaseOrderDetailsByOrderId(purchaseOrderId);
 
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) historyForm.getTablePurchaseOrderDetails().getModel();
@@ -661,20 +504,20 @@ public class StockInHistoryController {
                 String productId = detail.getProduct() != null ? detail.getProduct().getProductId() : "";
                 String productName = detail.getProduct() != null ? detail.getProduct().getProductName() : "";
 
-                BigDecimal totalPrice = detail.getUnitPrice().multiply(new BigDecimal(detail.getQuantity()));
+                BigDecimal totalPrice = detail.getUnitCost().multiply(new BigDecimal(detail.getQuantity()));
 
                 model.addRow(new Object[] {
                         stt++,
                         productId,
                         productName,
                         detail.getQuantity(),
-                        CurrencyFormatter.format(detail.getUnitPrice()),
+                        CurrencyFormatter.format(detail.getUnitCost()),
                         CurrencyFormatter.format(totalPrice)
                 });
             }
 
-            System.out.println("StockInHistoryController: Đã tải " + details.size() +
-                    " chi tiết phiếu nhập cho phiếu " + purchaseOrderId);
+            // System.out.println("StockInHistoryController: Đã tải " + details.size() +
+                    // " chi tiết phiếu nhập cho phiếu " + purchaseOrderId);
         } catch (Exception e) {
             System.err.println("Lỗi khi tải chi tiết phiếu nhập: " + e.getMessage());
             e.printStackTrace();

@@ -3,22 +3,21 @@ package com.pcstore.controller;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import com.pcstore.model.Product;
 import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.PurchaseOrderForm;
 import com.pcstore.view.StockInHistoryForm;
 import com.pcstore.view.WareHouseForm;
-import com.pcstore.view.WareHouseForm.EditableTableModel;
 
 /**
  * Controller cho màn hình quản lý kho hàng
@@ -57,23 +56,32 @@ public class WareHouseController {
         
         // Nút tìm kiếm (nếu có)
         if (wareHouseForm.getTextFieldSearch() != null) {
-            wareHouseForm.getTextFieldSearch().getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
-                @Override
-                public void insertUpdate(javax.swing.event.DocumentEvent e) {
-                    searchProducts();
-                }
-
-                @Override
-                public void removeUpdate(javax.swing.event.DocumentEvent e) {
-                    searchProducts();
-                }
-
-                @Override
-                public void changedUpdate(javax.swing.event.DocumentEvent e) {
+            wareHouseForm.getTextFieldSearch().getTxtSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyReleased(java.awt.event.KeyEvent evt) {
                     searchProducts();
                 }
             });
         }
+
+        // Nhấn F5 toàn cục để tải lại dữ liệu
+        wareHouseForm.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_F5) {
+                    loadProducts();
+                }
+            }
+        });
+
+        wareHouseForm.getBtnRefresh().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loadProducts();
+            }
+        });
+        
+        // Đảm bảo form có thể nhận key events
+        wareHouseForm.setFocusable(true);
         
     }
     
@@ -83,6 +91,7 @@ public class WareHouseController {
      */
     public void loadProducts() {
         try {
+            int cntZeroQuantity = 0, cntLowQuantity = 0, cntNormalQuantity = 0;
             List<Product> products = productRepository.findAll();
             
             // Sử dụng DefaultTableModel thông thường thay vì EditableTableModel
@@ -117,9 +126,26 @@ public class WareHouseController {
                 
                 // Thêm dữ liệu vào bảng
                 model.addRow(rowData);
+                if (product.getStockQuantity() == 0) {
+                    cntZeroQuantity++;
+                } else if (product.getStockQuantity() < 5) {
+                    cntLowQuantity++;
+                } else {
+                    cntNormalQuantity++;
+                }
             }
+
+            ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle();
+            String textZeroLabel = bundle.getString("txtOutOfStock");
+            String textLowLabel = bundle.getString("txtLowStock");  
+            String textNormalLabel = bundle.getString("txtInStock");
             
-            System.out.println("Loaded " + products.size() + " products");
+            // Cập nhật số lượng sản phẩm vào các label
+            wareHouseForm.getRedLabel().setText(textZeroLabel + " (" + cntZeroQuantity + ")");
+            wareHouseForm.getOrangeLabel().setText(textLowLabel + " (" + cntLowQuantity + ")");
+            wareHouseForm.getNormalLabel().setText(textNormalLabel + " (" + cntNormalQuantity + ")");
+
+            // System.out.println("Loaded " + products.size() + " products");
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(wareHouseForm, "Lỗi khi tải dữ liệu: " + e.getMessage(), 
@@ -133,6 +159,7 @@ public class WareHouseController {
      */
     private void initTable() {
         TableStyleUtil.applyDefaultStyle(wareHouseForm.getTable());
+        TableStyleUtil.applyProductTableStyle(wareHouseForm.getTable(), 3);
     }
 
     /**
@@ -144,7 +171,7 @@ public class WareHouseController {
     public void updateProductQuantity(String productId, int quantity) {
         try {
             // Lấy sản phẩm từ database
-            java.util.Optional<Product> productOpt = productRepository.findById(productId);
+            Optional<Product> productOpt = productRepository.findById(productId);
             
             if (productOpt.isPresent()) {
                 Product product = productOpt.get();

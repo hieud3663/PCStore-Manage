@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hóa Đơn Nhập Hàng</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 40px;
+            background: #f8f9fa;
+        }
+        .bill-container {
+            background: #fff;
+            padding: 32px 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            max-width: 900px;
+            margin: auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }
+        .logo {
+            height: 60px;
+        }
+        .company-info {
+            text-align: right;
+        }
+        .bill-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 24px 0 12px 0;
+            letter-spacing: 1px;
+            color: #6c3483;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 18px;
+        }
+        .info-table td {
+            padding: 4px 8px;
+            font-size: 1rem;
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 18px;
+        }
+        .product-table th, .product-table td {
+            border: 1px solid #bdbdbd;
+            padding: 8px 6px;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .product-table th {
+            background: #f1f3f4;
+            font-weight: bold;
+        }
+        .summary {
+            width: 350px;
+            float: right;
+            margin-top: 12px;
+        }
+        .summary td {
+            padding: 6px 8px;
+            font-size: 1rem;
+        }
+        .footer {
+            clear: both;
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .sign-block {
+            text-align: center;
+            width: 220px;
+        }
+        .sign-block .label {
+            font-weight: bold;
+        }
+        .note {
+            margin-top: 18px;
+            font-size: 0.95rem;
+            color: #757575;
+        }
+    </style>
+</head>
+<body>
+    <div class="bill-container">
+        <div class="header">
+            <img src="..//icon/LOGO.png" alt="Logo" class="logo">
+            <div class="company-info">
+                <div><strong>LOREM CO., LTD</strong></div>
+                <div>Mã hóa đơn: <strong>HD20250601</strong></div>
+                <div>Ngày lập: 01/06/2025</div>
+                <div>Ngày giao dự kiến: 03/06/2025</div>
+            </div>
+        </div>
+        <div class="bill-title">PHIẾU NHẬP KHO</div>
+        <table class="info-table">
+            <tr>
+                <td><strong>Nhà cung cấp:</strong> Công ty TNHH ABC</td>
+                <td><strong>Điện thoại:</strong> 0988 123 456</td>
+            </tr>
+            <tr>
+                <td><strong>Địa chỉ NCC:</strong> 123 Đường Mới, Quận 1, TP.HCM</td>
+                <td><strong>Mã số thuế:</strong> 0123456789</td>
+            </tr>
+            <tr>
+                <td><strong>Người lập phiếu:</strong> Trần Thị B</td>
+                <td><strong>Ghi chú:</strong> Nhập hàng đợt 1 tháng 6</td>
+                            </tr>
+            </table>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Mã hàng</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Chiết khấu</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Bột giặt OMO 3kg</td>
+                        <td>SP001</td>
+                        <td>5</td>
+                        <td>120,000đ</td>
+                        <td>5%</td>
+                        <td>570,000đ</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Nước rửa chén Sunlight 750ml</td>
+                        <td>SP002</td>
+                        <td>10</td>
+                        <td>35,000đ</td>
+                        <td>0%</td>
+                        <td>350,000đ</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Khăn giấy Bless You</td>
+                        <td>SP003</td>
+                        <td>20</td>
+                        <td>18,000đ</td>
+                        <td>2%</td>
+                        <td>352,800đ</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Nước lau sàn Gift 1L</td>
+                        <td>SP004</td>
+                        <td>8</td>
+                        <td>45,000đ</td>
+                        <td>3%</td>
+                        <td>349,200đ</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Giấy vệ sinh Pulppy 10 cuộn</td>
+                        <td>SP005</td>
+                        <td>6</td>
+                        <td>65,000đ</td>
+                        <td>0%</td>
+                        <td>390,000đ</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>Nước xả vải Comfort 3.8L</td>
+                        <td>SP006</td>
+                        <td>4</td>
+                        <td>120,000đ</td>
+                        <td>4%</td>
+                        <td>460,800đ</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>Bột ngọt Ajinomoto 454g</td>
+                        <td>SP007</td>
+                        <td>12</td>
+                        <td>28,000đ</td>
+                        <td>0%</td>
+                        <td>336,000đ</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>Dầu ăn Tường An 1L</td>
+                        <td>SP008</td>
+                        <td>10</td>
+                        <td>52,000đ</td>
+                        <td>1%</td>
+                        <td>514,800đ</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>Đường Biên Hòa 1kg</td>
+                        <td>SP009</td>
+                        <td>15</td>
+                        <td>24,000đ</td>
+                        <td>0%</td>
+                        <td>360,000đ</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>Muối i-ốt 500g</td>
+                        <td>SP010</td>
+                        <td>18</td>
+                        <td>7,000đ</td>
+                        <td>0%</td>
+                        <td>126,000đ</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="summary">
+            </tbody>
+        </table>
+        <table class="summary">
+            <tr>
+                <td><strong>Tổng số lượng:</strong></td>
+                <td>35</td>
+            </tr>
+            <tr>
+                <td><strong>Tổng tiền hàng:</strong></td>
+                <td>1,272,800đ</td>
+            </tr>
+            <tr>
+                <td><strong>Tổng chiết khấu:</strong></td>
+                <td>27,200đ</td>
+            </tr>
+            <tr>
+                <td><strong>Thuế (VAT):</strong></td>
+                <td>127,280đ</td>
+            </tr>
+            <tr>
+                <td><strong>Chi phí vận chuyển:</strong></td>
+                <td>20,000đ</td>
+            </tr>
+            <tr>
+                <td><strong>Giá trị đơn:</strong></td>
+                <td><strong>1,420,080đ</strong></td>
+            </tr>
+        </table>
+        <div class="footer">
+            <div class="sign-block">
+                <div class="label">Người lập phiếu</div>
+                <div style="height: 60px;"></div>
+                <div>(Trần Thị B)</div>
+            </div>
+            <div class="sign-block">
+                <div class="label">Người nhận hàng</div>
+                <div style="height: 60px;"></div>
+                <div>(................................)</div>
+            </div>
+            <div class="sign-block">
+                <div class="label">Kế toán trưởng</div>
+                <div style="height: 60px;"></div>
+                <div>(................................)</div>
+            </div>
+        </div>
+        <div class="note">
+            <em>Ghi chú: Vui lòng kiểm tra kỹ hàng hóa và số lượng trước khi ký nhận.</em>
+        </div>
+    </div>
+</body>
+</html>

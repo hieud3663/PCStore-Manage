@@ -157,11 +157,43 @@ public class WareHouseController {
     /**
      * Khởi tạo bảng với EditableTableModel
      */
-    private void initTable() {
-        TableUtils.applyDefaultStyle(wareHouseForm.getTable());
-        TableUtils.applyProductTableStyle(wareHouseForm.getTable(), 3);
-    }
-
+                private void initTable() {
+            TableStyleUtil.applyDefaultStyle(wareHouseForm.getTable());
+            
+            // Thêm renderer tùy chỉnh để đổi màu cột Tên Máy dựa trên số lượng sản phẩm
+                    wareHouseForm.getTable().setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+                    @Override
+                    public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value,
+                            boolean isSelected, boolean hasFocus, int row, int column) {
+                        java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                
+                        // Chỉ đổi màu cho cột "Tên Máy" (index 2)
+                        if (column == 2) {
+                            try {
+                                Object quantityObj = table.getModel().getValueAt(table.convertRowIndexToModel(row), 3);
+                                int quantity = Integer.parseInt(quantityObj.toString());
+                
+                                if (quantity < 10) {
+                                    c.setBackground(new java.awt.Color(255, 200, 200));
+                                } else if (quantity < 50) {
+                                    c.setBackground(new java.awt.Color(255, 255, 200));
+                                } else {
+                                    c.setBackground(new java.awt.Color(220, 255, 220));
+                                }
+                            } catch (Exception ex) {
+                                c.setBackground(table.getBackground());
+                            }
+                        } else {
+                            c.setBackground(table.getBackground());
+                        }
+                
+                        // Giữ màu chữ đen cho tất cả các ô (kể cả khi chọn dòng)
+                        c.setForeground(java.awt.Color.BLACK);
+                
+                        return c;
+                    }
+                });
+        }
     /**
      * Cập nhật số lượng sản phẩm
      * @param productId Mã sản phẩm

@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.JOptionPane;
+
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Return;
 import com.pcstore.repository.RepositoryFactory;
@@ -19,6 +21,7 @@ import com.pcstore.service.InvoiceDetailService;
 import com.pcstore.service.InvoiceService;
 import com.pcstore.service.ProductService;
 import com.pcstore.service.ReturnService;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Controller để quản lý các thao tác trả hàng
@@ -278,14 +281,16 @@ public class ReturnController {
         try {
             Optional<Return> returnOpt = returnService.findReturnById(returnId);
             if (!returnOpt.isPresent()) {
-                throw new IllegalArgumentException("Đơn trả hàng không tồn tại");
+                JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_NOT_FOUND, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return null;
             }
             
             Return returnObj = returnOpt.get();
             
             // Chỉ cho phép cập nhật khi đơn hàng ở trạng thái Pending
             if (!returnObj.canUpdate()) {
-                throw new IllegalStateException("Không thể cập nhật đơn trả hàng ở trạng thái hiện tại");
+                JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_CANNOT_UPDATE, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return null;
             }
             
             // Cập nhật các trường nếu được chỉ định
@@ -293,7 +298,8 @@ public class ReturnController {
                 // Kiểm tra số lượng không vượt quá số lượng trong hóa đơn ban đầu
                 InvoiceDetail invoiceDetail = returnObj.getInvoiceDetail();
                 if (quantity > invoiceDetail.getQuantity()) {
-                    throw new IllegalArgumentException("Số lượng trả không thể lớn hơn số lượng trong hóa đơn");
+                    JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_QUANTITY_EXCEED, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return null;
                 }
                 returnObj.setQuantity(quantity);
             }
@@ -308,7 +314,8 @@ public class ReturnController {
             
             return returnService.updateReturn(returnObj);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi cập nhật đơn trả hàng: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_UPDATE_ERROR + ": " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return null;
         }
     }
     
@@ -433,33 +440,31 @@ public class ReturnController {
         try {
             Optional<Return> returnOpt = returnService.findReturnById(returnId);
             if (!returnOpt.isPresent()) {
-                throw new IllegalArgumentException("Đơn trả hàng không tồn tại");
+                JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_NOT_FOUND, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
             
             Return returnObj = returnOpt.get();
             
             // Chỉ cho phép đổi sản phẩm khi đơn hàng ở trạng thái Pending hoặc Approved
             if (!"Pending".equals(returnObj.getStatus()) && !"Approved".equals(returnObj.getStatus())) {
-                throw new IllegalStateException("Không thể đổi sản phẩm với đơn trả hàng ở trạng thái hiện tại");
+                JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_CANNOT_EXCHANGE, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
             
             // Kiểm tra sản phẩm mới tồn tại
             if (!productService.productExists(newProductId)) {
-                throw new IllegalArgumentException("Sản phẩm mới không tồn tại");
+                JOptionPane.showMessageDialog(null, ErrorMessage.PRODUCT_NOT_FOUND, "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
-            
-            // Cập nhật thông tin đổi sản phẩm trong CSDL (cần thêm phương thức trong RepairService)
-            // Đây là giả định để giữ mã đơn giản, trong thực tế phức tạp hơn
             
             // Đánh dấu đơn trả hàng là hoàn thành
             returnService.completeReturn(returnId, processorId, "Đã đổi sang sản phẩm " + newProductId + ". " + notes);
             
-            // Giảm số lượng tồn kho của sản phẩm mới
-            // productService.decreaseProductStock(newProductId, returnObj.getQuantity());
-            
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi đổi sản phẩm: " + e.getMessage(), e);
+            JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_EXCHANGE_ERROR + ": " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
     
@@ -505,6 +510,7 @@ public class ReturnController {
         // Lấy đối tượng Return hiện tại để kiểm tra
         Optional<Return> currentReturn = getReturnById(returnId);
         if (currentReturn.isEmpty()) {
+            JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_NOT_FOUND, "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
@@ -514,7 +520,8 @@ public class ReturnController {
         // Kiểm tra logic chuyển đổi trạng thái
         // Ví dụ: không cho phép chuyển từ Rejected về Pending
         if ("Rejected".equals(currentStatus) && "Pending".equals(newStatus)) {
-            throw new IllegalStateException("Không thể chuyển từ trạng thái 'Đã từ chối' về 'Đang chờ xử lý'");
+            JOptionPane.showMessageDialog(null, ErrorMessage.RETURN_STATUS_INVALID, "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
         
         // Cập nhật trạng thái trong cơ sở dữ liệu

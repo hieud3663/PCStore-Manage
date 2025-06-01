@@ -7,6 +7,7 @@ package com.pcstore.view;
 import com.pcstore.controller.ReturnController;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableStyleUtil;
 
 import java.sql.SQLException;
@@ -60,7 +61,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             );
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, 
-                "Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage(),
+                ErrorMessage.DB_CONNECTION_ERROR + ": " + ex.getMessage(),
                 "Lỗi kết nối", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -89,13 +90,11 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             if (returnController == null) {
                 return;
             }
-            
-            // Gọi controller để lấy tất cả đơn trả hàng
             List<Return> returns = returnController.getAllReturns();
             displayReturns(returns);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tải dữ liệu đơn trả hàng: " + ex.getMessage(),
+                ErrorMessage.RETURN_LOAD_ERROR + ": " + ex.getMessage(),
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -177,7 +176,6 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             loadAllReturns();
             return;
         }
-        
         try {
             List<Return> searchResults;
             
@@ -204,15 +202,14 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             }
             
             displayReturns(searchResults);
-            
             if (searchResults.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy đơn trả hàng nào phù hợp với từ khóa: " + keyword,
+                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_KEYWORD, keyword),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tìm kiếm: " + ex.getMessage(),
+                ErrorMessage.RETURN_SEARCH_ERROR + ": " + ex.getMessage(),
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -238,7 +235,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         int selectedRow = tbReturn.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(this, 
-                "Vui lòng chọn một đơn trả hàng để xem chi tiết",
+                ErrorMessage.RETURN_SELECT_ONE,
                 "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -251,16 +248,15 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         try {
             Optional<Return> returnOpt = returnController.getReturnById(returnId);
             if (returnOpt.isPresent()) {
-                // Sử dụng ReturnDetailForm để hiển thị thông tin
                 showReturnDetailInDialog(returnOpt.get());
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy thông tin đơn trả hàng với ID: " + returnId, 
+                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_ID, returnId), 
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tải chi tiết đơn trả hàng: " + ex.getMessage(),
+                ErrorMessage.RETURN_DETAIL_LOAD_ERROR + ": " + ex.getMessage(),
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -307,10 +303,11 @@ public class ReturnServiceForm extends javax.swing.JPanel {
      * Xử lý sự kiện khi click vào nút xóa đơn trả hàng
      */
     private void deleteSelectedReturn() {
-        // Lấy dòng đang được chọn
         int selectedRow = tbReturn.getSelectedRow();
         if (selectedRow == -1) {
-
+            JOptionPane.showMessageDialog(this, 
+                ErrorMessage.RETURN_SELECT_ONE,
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -325,42 +322,34 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         // Kiểm tra trạng thái - chỉ cho phép xóa đơn trả có trạng thái "Đang chờ xử lý"
         if (!status.equals(statusTranslation.get("Pending"))) {
             JOptionPane.showMessageDialog(this, 
-                "Chỉ có thể xóa đơn trả hàng ở trạng thái 'Đang chờ xử lý'.\n" +
-                "Đơn trả hàng này đang ở trạng thái: " + status, 
+                ErrorMessage.RETURN_DELETE_ONLY_PENDING + "\n" +
+                ErrorMessage.RETURN_CURRENT_STATUS + status, 
                 "Không thể xóa", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         // Hiển thị dialog xác nhận
         int confirm = JOptionPane.showConfirmDialog(this, 
-            "Bạn có chắc chắn muốn xóa đơn trả hàng này?\n" +
-            "- Mã đơn: " + returnId + "\n" +
-            "- Sản phẩm: " + productName, 
+            String.format(ErrorMessage.RETURN_DELETE_CONFIRM, returnId, productName), 
             "Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        
         if (confirm != JOptionPane.YES_OPTION) {
-            return; // Người dùng không xác nhận
+            return;
         }
-        
         try {
-            // Gọi controller để xóa đơn trả hàng
             boolean result = returnController.deleteReturn(returnId);
-            
             if (result) {
-                // Xóa dòng khỏi bảng
                 tableModel.removeRow(modelRow);
-                
                 JOptionPane.showMessageDialog(this, 
-                    "Đã xóa đơn trả hàng thành công!", 
+                    ErrorMessage.RETURN_DELETE_SUCCESS, 
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "Không thể xóa đơn trả hàng. Vui lòng thử lại sau!", 
+                    ErrorMessage.RETURN_DELETE_FAIL, 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi xóa đơn trả hàng: " + e.getMessage(), 
+                ErrorMessage.RETURN_DELETE_ERROR + ": " + e.getMessage(), 
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -370,11 +359,10 @@ public class ReturnServiceForm extends javax.swing.JPanel {
      * Cập nhật trạng thái đơn trả hàng
      */
     private void updateReturnStatus() {
-        // Lấy dòng đang được chọn
         int selectedRow = tbReturn.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, 
-                "Vui lòng chọn một đơn trả hàng để cập nhật trạng thái",
+                ErrorMessage.RETURN_SELECT_ONE,
                 "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
@@ -392,7 +380,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             Optional<Return> returnOptional = returnController.getReturnById(returnId);
             if (returnOptional.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy thông tin đơn trả hàng với ID: " + returnId, 
+                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_ID, returnId), 
                     "Thông báo", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -429,7 +417,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             
             if (englishStatus == null) {
                 JOptionPane.showMessageDialog(this, 
-                    "Lỗi chuyển đổi trạng thái", 
+                    ErrorMessage.RETURN_STATUS_CONVERT_ERROR, 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -453,23 +441,19 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             boolean result = returnController.updateReturnStatus(returnId, englishStatus);
             
             if (result) {
-                // Cập nhật lại bảng
                 tableModel.setValueAt(newStatus, modelRow, 6);
-                
                 JOptionPane.showMessageDialog(this, 
-                    "Cập nhật trạng thái thành công!", 
+                    ErrorMessage.RETURN_STATUS_UPDATE_SUCCESS, 
                     "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
-                // Tải lại dữ liệu để đảm bảo hiển thị đúng
                 loadAllReturns();
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    "Không thể cập nhật trạng thái. Vui lòng thử lại sau!", 
+                    ErrorMessage.RETURN_STATUS_UPDATE_FAIL, 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi cập nhật trạng thái: " + e.getMessage(), 
+                ErrorMessage.RETURN_STATUS_UPDATE_ERROR + ": " + e.getMessage(), 
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }

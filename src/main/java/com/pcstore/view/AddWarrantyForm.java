@@ -7,6 +7,7 @@ package com.pcstore.view;
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.model.*;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableStyleUtil;
 
 import java.awt.Color;
@@ -313,14 +314,11 @@ public class AddWarrantyForm extends javax.swing.JPanel {
 
     private void searchProductsByPhone() {
         String phoneNumber = txtSearch.getText().trim();
-        
-                
         try {
-            // Tìm kiếm tất cả sản phẩm đã mua theo số điện thoại
             List<InvoiceDetail> invoiceDetails = controller.findPurchasedProductsByPhone(phoneNumber);
-            
             if (invoiceDetails.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm nào theo số điện thoại này", 
+                JOptionPane.showMessageDialog(this, 
+                    ErrorMessage.WARRANTY_NOT_FOUND_BY_PHONE,
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
@@ -335,9 +333,9 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             ButtonUtils.setKButtonEnabled(btnWarranty, true);
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm sản phẩm: " + e.getMessage(), 
+            JOptionPane.showMessageDialog(this, 
+                ErrorMessage.WARRANTY_SEARCH_ERROR + ": " + e.getMessage(),
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
     }
 
@@ -484,7 +482,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(
                 this,
-                "Vui lòng chọn sản phẩm để đăng ký bảo hành",
+                ErrorMessage.WARRANTY_SELECT_ONE,
                 "Thông báo",
                 JOptionPane.WARNING_MESSAGE
             );
@@ -492,35 +490,30 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         }
 
         try {
-            // Kiểm tra trạng thái bảo hành từ cột trạng thái
             String warrantyStatus = (String) table.getValueAt(selectedRow, 7);
-            
+
             if ("Hết hạn".equals(warrantyStatus)) {
-                // Lấy ngày hết hạn từ cột thứ 4
                 String expiryDate = (String) table.getValueAt(selectedRow, 4);
-                
                 JOptionPane.showMessageDialog(
                     this,
-                    "Sản phẩm này đã hết hạn bảo hành vào ngày " + expiryDate + ".\n" +
-                    "Vui lòng liên hệ nhân viên để được hỗ trợ thêm!",
+                    String.format(ErrorMessage.WARRANTY_EXPIRED, expiryDate),
                     "Không thể bảo hành",
                     JOptionPane.ERROR_MESSAGE
                 );
                 return;
             }
-            
+
             if ("Đã bảo hành".equals(warrantyStatus)) {
-                // Thêm code để lấy thông tin về phiếu bảo hành hiện có
                 Integer selectedDetailId = (Integer) table.getValueAt(selectedRow, 0);
                 Optional<Warranty> warranty = controller.getWarrantyService()
                     .findWarrantyByInvoiceDetailId(selectedDetailId);
-                
-                String message = "Sản phẩm này đã được đăng ký bảo hành trước đó!";
+
+                String message = ErrorMessage.WARRANTY_ALREADY_REGISTERED;
                 if (warranty.isPresent()) {
-                    message += "\nMã bảo hành: " + warranty.get().getWarrantyId() + 
+                    message += "\nMã bảo hành: " + warranty.get().getWarrantyId() +
                               "\nNgày đăng ký: " + dateFormatter.format(warranty.get().getCreatedAt());
                 }
-                
+
                 JOptionPane.showMessageDialog(
                     this,
                     message,
@@ -529,13 +522,9 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 );
                 return;
             }
-            
-            // Lấy mã chi tiết hóa đơn từ cột đầu tiên của dòng được chọn
+
             Integer selectedDetailId = (Integer) table.getValueAt(selectedRow, 0);
-            
-            System.out.println("Đã chọn chi tiết hóa đơn ID: " + selectedDetailId);
-            
-            // Tìm chi tiết hóa đơn trong danh sách đã lưu
+
             InvoiceDetail selectedDetail = null;
             for (InvoiceDetail detail : currentInvoiceDetails) {
                 if (detail != null && detail.getInvoiceDetailId() != null && 
@@ -544,48 +533,34 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                     break;
                 }
             }
-            
+
             if (selectedDetail == null) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "Không thể tìm thấy thông tin chi tiết của sản phẩm đã chọn",
+                    ErrorMessage.WARRANTY_DETAIL_NOT_FOUND,
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE
                 );
                 return;
             }
-            
-            // In thông tin để debug
-            System.out.println("Thông tin chi tiết đã chọn:");
-            System.out.println("- ID: " + selectedDetail.getInvoiceDetailId());
-            System.out.println("- Sản phẩm: " + (selectedDetail.getProduct() != null ? 
-                              selectedDetail.getProduct().getProductName() : "null"));
-            
-            Invoice invoice = selectedDetail.getInvoice();
-            System.out.println("- Hóa đơn: " + (invoice != null ? invoice.getInvoiceId() : "null"));
-            System.out.println("- Ngày mua: " + (invoice != null && invoice.getInvoiceDate() != null ? 
-                              invoice.getInvoiceDate() : "null"));
-            
-            // Gọi controller để tạo phiếu bảo hành
+
             Warranty warranty = controller.createWarrantyFromInvoiceDetail(selectedDetail);
 
             JOptionPane.showMessageDialog(
                 this,
-                "Đã đăng ký bảo hành thành công với mã: " + warranty.getWarrantyId(),
+                String.format(ErrorMessage.WARRANTY_REGISTER_SUCCESS, warranty.getWarrantyId()),
                 "Thành công",
                 JOptionPane.INFORMATION_MESSAGE
             );
 
-            // Cập nhật trạng thái sản phẩm đã được đăng ký bảo hành
             table.setValueAt("Đã bảo hành", selectedRow, 7);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
-                this, 
-                "Lỗi khi đăng ký bảo hành: " + e.getMessage(),
+                this,
+                ErrorMessage.WARRANTY_REGISTER_ERROR + ": " + e.getMessage(),
                 "Lỗi",
                 JOptionPane.ERROR_MESSAGE
             );
-            e.printStackTrace();
         }
     }
 

@@ -15,6 +15,7 @@ import com.pcstore.service.CustomerService;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.RepairService;
 import com.pcstore.service.WarrantyService;
+import com.pcstore.utils.ErrorMessage;
 
 /**
  * Controller for managing repair services
@@ -91,7 +92,7 @@ public class RepairController {
             // Get employee
             Optional<Employee> employeeOpt = employeeService.findEmployeeById(employeeId);
             if (!employeeOpt.isPresent()) {
-                throw new IllegalArgumentException("Nhân viên không tồn tại");
+                throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NOT_FOUND);
             }
             Employee employee = employeeOpt.get();
             
@@ -121,7 +122,7 @@ public class RepairController {
             
             return repairService.addRepairService(repair);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tạo dịch vụ sửa chữa: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.REPAIR_CREATE_ERROR + ": " + e.getMessage(), e);
         }
     }
     
@@ -134,7 +135,7 @@ public class RepairController {
         try {
             return repairService.getAllRepairServicesWithFullInfo();
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi lấy danh sách dịch vụ sửa chữa: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.REPAIR_LIST_ERROR + ": " + e.getMessage(), e);
         }
     }
     
@@ -148,7 +149,7 @@ public class RepairController {
         try {
             return repairService.findRepairServiceWithFullInfo(repairId);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm dịch vụ sửa chữa: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.REPAIR_FIND_ERROR + ": " + e.getMessage(), e);
         }
     }
     
@@ -171,7 +172,7 @@ public class RepairController {
         try {
             Optional<Repair> repairOpt = repairService.findRepairServiceWithFullInfo(repairId);
             if (!repairOpt.isPresent()) {
-                throw new IllegalArgumentException("Dịch vụ sửa chữa không tồn tại");
+                throw new IllegalArgumentException(ErrorMessage.REPAIR_NOT_FOUND);
             }
             
             Repair repair = repairOpt.get();
@@ -203,7 +204,7 @@ public class RepairController {
             
             return repairService.updateRepairService(repair);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi cập nhật dịch vụ sửa chữa: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.REPAIR_UPDATE_ERROR + ": " + e.getMessage(), e);
         }
     }
     
@@ -218,17 +219,17 @@ public class RepairController {
         try {
             Optional<Repair> repairOpt = repairService.findRepairServiceWithFullInfo(repairId);
             if (!repairOpt.isPresent()) {
-                throw new IllegalArgumentException("Dịch vụ sửa chữa không tồn tại");
+                throw new IllegalArgumentException(ErrorMessage.REPAIR_NOT_FOUND);
             }
             
             Optional<Employee> employeeOpt = employeeService.findEmployeeById(employeeId);
             if (!employeeOpt.isPresent()) {
-                throw new IllegalArgumentException("Nhân viên không tồn tại");
+                throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NOT_FOUND);
             }
             
             return repairService.assignEmployee(repairId, employeeOpt.get());
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi phân công nhân viên: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.REPAIR_ASSIGN_EMPLOYEE_ERROR + ": " + e.getMessage(), e);
         }
     }
     
@@ -371,7 +372,7 @@ public class RepairController {
         try {
             return repairService.updateServiceFee(repairId, serviceFee);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi cập nhật phí dịch vụ: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.REPAIR_UPDATE_FEE_ERROR + ": " + e.getMessage(), e);
         }
     }
     

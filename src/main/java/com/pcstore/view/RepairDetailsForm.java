@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.ErrorMessage;
+
 /**
  *
  * @author DUC ANH
@@ -258,7 +260,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this,
-                "Lỗi khi hiển thị chi tiết: " + e.getMessage(),
+                ErrorMessage.REPAIR_FORM_DETAIL_ERROR + ": " + e.getMessage(),
                 "Lỗi",
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }

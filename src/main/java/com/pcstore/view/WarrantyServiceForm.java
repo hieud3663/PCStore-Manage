@@ -6,6 +6,7 @@ package com.pcstore.view;
 
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableStyleUtil;
 import com.pcstore.repository.*;
 import com.pcstore.service.*;
@@ -44,11 +45,9 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             initController();
             TableStyleUtil.applyDefaultStyle(tableListWarranty);
         } catch (Exception e) {
-            System.err.println("Error initializing WarrantyServiceForm: " + e.getMessage());
-            e.printStackTrace();
             JOptionPane.showMessageDialog(
                 this,
-                "Lỗi khởi tạo form: " + e.getMessage(),
+                ErrorMessage.WARRANTY_FORM_INIT_ERROR + ": " + e.getMessage(),
                 "Lỗi",
                 JOptionPane.ERROR_MESSAGE
             );
@@ -252,14 +251,13 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         add(pnWarrantyMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyRegistrationActionPerformed
+    private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            // Kiểm tra controller
             if (controller == null) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "Controller chưa được khởi tạo.",
+                JOptionPane.showMessageDialog(this,
+                    ErrorMessage.WARRANTY_CONTROLLER_NOT_SET,
                     "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -281,11 +279,10 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             controller.loadWarranties();
             
         } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Lỗi khi mở form đăng ký bảo hành: " + e.getMessage(),
+            JOptionPane.showMessageDialog(this,
+                ErrorMessage.WARRANTY_FORM_ADD_ERROR + ": " + e.getMessage(),
                 "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+                JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnWarrantyRegistrationActionPerformed
 
@@ -294,94 +291,79 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         btnRemoveRepairActionPerformed(null);
     }//GEN-LAST:event_btnRemoveRepairMouseClicked
 
-    private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveRepairActionPerformed
-    try {
-        // Kiểm tra xem có hàng nào được chọn không
-        int selectedRow = tableListWarranty.getSelectedRow();
-        if (selectedRow == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Vui lòng chọn một bảo hành để xóa.",
-                "Thông báo",
-                javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-
-        // Lấy ID của bảo hành được chọn dưới dạng chuỗi
-        Object warrantyIdObj = tableListWarranty.getValueAt(selectedRow, 0);
-        if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Bảo hành không có ID hợp lệ.",
+    private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int selectedRow = tableListWarranty.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(this,
+                    ErrorMessage.WARRANTY_SELECT_ONE_DELETE,
+                    "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            Object warrantyIdObj = tableListWarranty.getValueAt(selectedRow, 0);
+            if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                    ErrorMessage.WARRANTY_ID_INVALID,
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String warrantyId = warrantyIdObj.toString();
+            if (controller == null) {
+                JOptionPane.showMessageDialog(this,
+                    ErrorMessage.WARRANTY_CONTROLLER_NOT_SET,
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int choice = JOptionPane.showConfirmDialog(this,
+                ErrorMessage.WARRANTY_DELETE_CONFIRM,
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+            boolean success = controller.deleteWarranty(warrantyId);
+            if (success) {
+                JOptionPane.showMessageDialog(this,
+                    ErrorMessage.WARRANTY_DELETE_SUCCESS,
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+                controller.loadWarranties();
+            } else {
+                JOptionPane.showMessageDialog(this,
+                    ErrorMessage.WARRANTY_DELETE_FAIL,
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                ErrorMessage.WARRANTY_DELETE_ERROR + ": " + e.getMessage(),
                 "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
+                JOptionPane.ERROR_MESSAGE);
         }
-        
-        // Sử dụng ID bảo hành dưới dạng chuỗi
-        String warrantyId = warrantyIdObj.toString();
+    }//GEN-LAST:event_btnRemoveRepairActionPerformed
 
-        // Kiểm tra controller
-        if (controller == null) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Controller chưa được khởi tạo.",
-                "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Xác nhận trước khi xóa
-        int choice = javax.swing.JOptionPane.showConfirmDialog(this,
-            "Bạn có chắc chắn muốn xóa bảo hành này không?",
-            "Xác nhận xóa",
-            javax.swing.JOptionPane.YES_NO_OPTION,
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-
-        if (choice != javax.swing.JOptionPane.YES_OPTION) {
-            return; // Người dùng đã hủy việc xóa
-        }
-
-        // Tiến hành xóa bảo hành với ID dạng chuỗi
-        boolean success = controller.deleteWarranty(warrantyId);
-
-        if (success) {
-            // Hiển thị thông báo thành công
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Đã xóa bảo hành thành công!",
-                "Thành công",
-                javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-            // Cập nhật lại bảng
-            controller.loadWarranties();
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Không thể xóa bảo hành. Vui lòng thử lại sau.",
-                "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
-    } catch (Exception e) {
-
-    }
-}//GEN-LAST:event_btnRemoveRepairActionPerformed
-
-    private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailWarrantyCardActionPerformed
+    private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {
         if (controller != null) {
             int selectedRow = tableListWarranty.getSelectedRow();
             if (selectedRow == -1) {
                 JOptionPane.showMessageDialog(
                     this,
-                    "Vui lòng chọn một bảo hành để xem chi tiết",
+                    ErrorMessage.WARRANTY_SELECT_ONE_DETAIL,
                     "Chưa Chọn",
                     JOptionPane.WARNING_MESSAGE
                 );
                 return;
             }
-            
-            // Lấy mã bảo hành từ dòng đã chọn
             String warrantyId = tableListWarranty.getValueAt(selectedRow, 0).toString();
             controller.viewWarrantyDetail(warrantyId);
         }
     }//GEN-LAST:event_btnDetailWarrantyCardActionPerformed
 
-    private void btnWarrantyInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnWarrantyInformationLookupActionPerformed
+    private void btnWarrantyInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {
         if (controller != null) {
             String keyword = jTextField1.getText().trim();
             controller.searchWarranties(keyword);

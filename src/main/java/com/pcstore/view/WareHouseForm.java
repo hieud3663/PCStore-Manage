@@ -30,12 +30,31 @@ import com.pcstore.utils.DatabaseConnection;
 public class WareHouseForm extends javax.swing.JPanel {
 
     private WareHouseController controller;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable WareHouseTable;
+    public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
+    public com.k33ptoo.components.KButton btnHistoryStockIn;
+    private javax.swing.JLabel colorGreen;
+    private javax.swing.JLabel colorRed;
+    private javax.swing.JLabel colorYellow;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbColorNote;
+    private javax.swing.JPanel panelAction;
+    private com.k33ptoo.components.KGradientPanel panelBody;
+    private javax.swing.JPanel panelTable;
+    private com.k33ptoo.components.KGradientPanel panelTitle;
+    // End of variables declaration//GEN-END:variables
 
     /**
      * Creates new form PurchaseOder
      */
-    public WareHouseForm() {
+        public WareHouseForm() {
         initComponents();
+        
+        // Tùy chỉnh các nhãn màu
+        setupColorLegend();
+        
         
         // Khởi tạo controller
         controller = new WareHouseController(this);
@@ -55,6 +74,10 @@ public class WareHouseForm extends javax.swing.JPanel {
         panelAction = new javax.swing.JPanel();
         btnCreatePurchaseOrder = new com.k33ptoo.components.KButton();
         btnHistoryStockIn = new com.k33ptoo.components.KButton();
+        lbColorNote = new javax.swing.JLabel();
+        colorRed = new javax.swing.JLabel();
+        colorYellow = new javax.swing.JLabel();
+        colorGreen = new javax.swing.JLabel();
         panelBody = new com.k33ptoo.components.KGradientPanel();
         panelTable = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -119,6 +142,18 @@ public class WareHouseForm extends javax.swing.JPanel {
         });
         panelAction.add(btnHistoryStockIn);
 
+        lbColorNote.setText(bundle.getString("lbColorNote")); // NOI18N
+        panelAction.add(lbColorNote);
+
+        colorRed.setText(bundle.getString("colorRed")); // NOI18N
+        panelAction.add(colorRed);
+
+        colorYellow.setText(bundle.getString("colorYellow")); // NOI18N
+        panelAction.add(colorYellow);
+
+        colorGreen.setText(bundle.getString("colorGreen")); // NOI18N
+        panelAction.add(colorGreen);
+
         add(panelAction);
 
         panelBody.setkFillBackground(false);
@@ -174,7 +209,51 @@ public class WareHouseForm extends javax.swing.JPanel {
 
         add(panelBody);
     }// </editor-fold>//GEN-END:initComponents
-
+    private void setupColorLegend() {
+        // Định dạng cho nhãn tiêu đề
+        lbColorNote.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 13));
+        lbColorNote.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 15, 0, 5));
+        
+        // Tạo các ô màu mẫu
+        javax.swing.JPanel redBox = new javax.swing.JPanel();
+        redBox.setBackground(new java.awt.Color(255, 200, 200));
+        redBox.setPreferredSize(new java.awt.Dimension(15, 15));
+        redBox.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.GRAY));
+        
+        javax.swing.JPanel yellowBox = new javax.swing.JPanel();
+        yellowBox.setBackground(new java.awt.Color(255, 255, 200));
+        yellowBox.setPreferredSize(new java.awt.Dimension(15, 15));
+        yellowBox.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.GRAY));
+        
+        javax.swing.JPanel greenBox = new javax.swing.JPanel();
+        greenBox.setBackground(new java.awt.Color(220, 255, 220));
+        greenBox.setPreferredSize(new java.awt.Dimension(15, 15));
+        greenBox.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.GRAY));
+        
+        // Định dạng cho các nhãn mô tả
+        colorRed.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+        colorRed.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 15));
+        
+        colorYellow.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+        colorYellow.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 15));
+        
+        colorGreen.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+        colorGreen.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 5));
+        
+        // Thêm các ô màu mẫu vào trước mỗi nhãn tương ứng
+        panelAction.remove(colorRed);
+        panelAction.remove(colorYellow);
+        panelAction.remove(colorGreen);
+        
+        panelAction.add(redBox, panelAction.getComponentZOrder(lbColorNote) + 1);
+        panelAction.add(colorRed, panelAction.getComponentZOrder(redBox) + 1);
+        
+        panelAction.add(yellowBox, panelAction.getComponentZOrder(colorRed) + 1);
+        panelAction.add(colorYellow, panelAction.getComponentZOrder(yellowBox) + 1);
+        
+        panelAction.add(greenBox, panelAction.getComponentZOrder(colorYellow) + 1);
+        panelAction.add(colorGreen, panelAction.getComponentZOrder(greenBox) + 1);
+    }
 
     private void btnCreatePurchaseOrderMouseClicked(java.awt.event.MouseEvent evt) {
     try {
@@ -474,17 +553,4 @@ public class WareHouseForm extends javax.swing.JPanel {
         // Nếu chưa có ô tìm kiếm, hãy thêm vào form và thay đổi tên phù hợp
         return null; // Tạm thời trả về null
     }
-   
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable WareHouseTable;
-    public com.k33ptoo.components.KButton btnCreatePurchaseOrder;
-    public com.k33ptoo.components.KButton btnHistoryStockIn;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelAction;
-    private com.k33ptoo.components.KGradientPanel panelBody;
-    private javax.swing.JPanel panelTable;
-    private com.k33ptoo.components.KGradientPanel panelTitle;
-    // End of variables declaration//GEN-END:variables
 }

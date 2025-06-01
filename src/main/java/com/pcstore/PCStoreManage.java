@@ -17,7 +17,7 @@ import com.pcstore.view.LoginForm;
 
 // regex: \/\/\s*(GEN-FIRST|GEN-LAST).*$
 /**
- *
+ *      
  * @author MSII
  */
 public class PCStoreManage {

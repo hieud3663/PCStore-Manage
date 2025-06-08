@@ -1,0 +1,119 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "DetailInventoryCheckForm",
+            "request": "launch",
+            "mainClass": "com.pcstore.view.DetailInventoryCheckForm",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "html2pdf",
+            "request": "launch",
+            "mainClass": "html2pdf",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "ProgressStepsPanel",
+            "request": "launch",
+            "mainClass": "com.pcstore.utils.ProgressStepsPanel",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "AddInventoryCheckForm",
+            "request": "launch",
+            "mainClass": "com.pcstore.view.AddInventoryCheckForm",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "PayFormTest",
+            "request": "launch",
+            "mainClass": "PayFormTest",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "TabbedTest",
+            "request": "launch",
+            "mainClass": "TabbedTest",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "PCStoreManage",
+            "request": "launch",
+            "mainClass": "com.pcstore.PCStoreManage",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "BankPayment",
+            "request": "launch",
+            "mainClass": "com.pcstore.payment.BankPayment",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "CategoryForm",
+            "request": "launch",
+            "mainClass": "com.pcstore.view.CategoryForm",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "test",
+            "request": "launch",
+            "mainClass": "test",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "testCustomer",
+            "request": "launch",
+            "mainClass": "testCustomer",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "testPDF",
+            "request": "launch",
+            "mainClass": "testPDF",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "testProductController",
+            "request": "launch",
+            "mainClass": "testProductController",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "testUnirest",
+            "request": "launch",
+            "mainClass": "testUnirest",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
+            "name": "testbill",
+            "request": "launch",
+            "mainClass": "testbill",
+            "projectName": "PCStore-Manage"
+        }
+    ]
+}

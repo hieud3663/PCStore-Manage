@@ -30,8 +30,8 @@ public class Invoice extends BaseTimeEntity {
     }
 
     public Invoice(Customer customer, Employee employee, BigDecimal totalAmount, LocalDateTime invoiceDate,
-            InvoiceStatusEnum status, PaymentMethodEnum paymentMethod, BigDecimal discountAmount,
-            List<InvoiceDetail> invoiceDetails) {
+                   InvoiceStatusEnum status, PaymentMethodEnum paymentMethod, BigDecimal discountAmount,
+                   List<InvoiceDetail> invoiceDetails) {
         this.customer = customer;
         this.employee = employee;
         this.totalAmount = totalAmount;
@@ -42,10 +42,9 @@ public class Invoice extends BaseTimeEntity {
         this.invoiceDetails = invoiceDetails;
     }
 
-    
 
     public Invoice(Customer customer, Employee employee, BigDecimal totalAmount, PaymentMethodEnum paymentMethod,
-            List<InvoiceDetail> invoiceDetails) {
+                   List<InvoiceDetail> invoiceDetails) {
         this.customer = customer;
         this.employee = employee;
         this.totalAmount = totalAmount;
@@ -56,7 +55,7 @@ public class Invoice extends BaseTimeEntity {
     }
 
     @Override
-    
+
     public Object getId() {
         return invoiceId;
     }
@@ -74,9 +73,9 @@ public class Invoice extends BaseTimeEntity {
     }
 
     public void setCustomer(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
-        }
+//        if (customer == null) {
+//            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
+//        }
         this.customer = customer;
     }
 
@@ -99,7 +98,7 @@ public class Invoice extends BaseTimeEntity {
         return totalAmount;
     }
 
- 
+
     public void setTotalAmount(BigDecimal totalAmount) {
         if (totalAmount == null) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Tổng tiền"));
@@ -153,7 +152,7 @@ public class Invoice extends BaseTimeEntity {
     public void setInvoiceDetails(List<InvoiceDetail> invoiceDetails) {
         this.invoiceDetails = invoiceDetails;
     }
-    
+
     public void addInvoiceDetail(InvoiceDetail invoiceDetail) {
         if (invoiceDetail == null) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chi tiết hóa đơn"));
@@ -167,7 +166,7 @@ public class Invoice extends BaseTimeEntity {
             updateTotalAmount();
         }
     }
-    
+
     public void removeInvoiceDetail(InvoiceDetail detail) {
         if (!canUpdate()) {
             throw new IllegalStateException("Không thể xóa chi tiết của hóa đơn đã hoàn thành hoặc đã hủy");
@@ -186,7 +185,7 @@ public class Invoice extends BaseTimeEntity {
         }
         return total;
     }
-    
+
     // Phương thức cập nhật tổng tiền hóa đơn
     public void updateTotalAmount() {
         setTotalAmount(calculateTotal());
@@ -231,18 +230,18 @@ public class Invoice extends BaseTimeEntity {
         }
 
         // System.out.println("Current status: " + status + ", New status: " + newStatus);
-        
+
         switch (status) {
             case PENDING:
-                return  newStatus == InvoiceStatusEnum.PROCESSING || 
+                return newStatus == InvoiceStatusEnum.PROCESSING ||
                         newStatus == InvoiceStatusEnum.CANCELLED ||
                         newStatus == InvoiceStatusEnum.PAID;
             case PROCESSING:
-                return  newStatus == InvoiceStatusEnum.COMPLETED || 
+                return newStatus == InvoiceStatusEnum.COMPLETED ||
                         newStatus == InvoiceStatusEnum.CANCELLED ||
                         newStatus == InvoiceStatusEnum.PAID;
             case PAID:
-                return  newStatus == InvoiceStatusEnum.DELIVERED || 
+                return newStatus == InvoiceStatusEnum.DELIVERED ||
                         newStatus == InvoiceStatusEnum.CANCELLED ||
                         newStatus == InvoiceStatusEnum.RETURNED ||
                         newStatus == InvoiceStatusEnum.COMPLETED;
@@ -262,17 +261,17 @@ public class Invoice extends BaseTimeEntity {
         if (status != InvoiceStatusEnum.PROCESSING) {
             throw new IllegalStateException("Chỉ có thể hoàn thành hóa đơn đang xử lý");
         }
-        
+
         // Cập nhật tồn kho
         for (InvoiceDetail detail : invoiceDetails) {
             Product product = detail.getProduct();
             if (!product.hasEnoughStock(detail.getQuantity())) {
-                throw new IllegalStateException("Sản phẩm " + product.getProductName() + 
-                    " không đủ số lượng tồn kho");
+                throw new IllegalStateException("Sản phẩm " + product.getProductName() +
+                        " không đủ số lượng tồn kho");
             }
             product.decreaseStock(detail.getQuantity());
         }
-        
+
         setStatus(InvoiceStatusEnum.COMPLETED);
     }
 
@@ -289,7 +288,7 @@ public class Invoice extends BaseTimeEntity {
         if (discountAmount == null) {
             return BigDecimal.ZERO;
         }
-        
+
         // Nếu giá trị là String hoặc kiểu không phải số, chuyển đổi nó
         if (!(discountAmount instanceof BigDecimal)) {
             try {
@@ -298,14 +297,14 @@ public class Invoice extends BaseTimeEntity {
                 return BigDecimal.ZERO;
             }
         }
-        
+
         return (BigDecimal) discountAmount;
     }
 
     public void setDiscountAmount(BigDecimal discountAmount) {
         this.discountAmount = discountAmount;
     }
-    
+
     // Factory method để tạo hóa đơn mới
     public static Invoice createNew(Customer customer, Employee employee) {
         if (customer == null) {
@@ -314,7 +313,7 @@ public class Invoice extends BaseTimeEntity {
         if (employee == null) {
             throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL);
         }
-        
+
         Invoice invoice = new Invoice();
         invoice.setCustomer(customer);
         invoice.setEmployee(employee);
@@ -333,5 +332,5 @@ public class Invoice extends BaseTimeEntity {
         this.pointUsed = pointUsed;
     }
 
-    
+
 }

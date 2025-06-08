@@ -4,25 +4,16 @@
  */
 package com.pcstore.view;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import com.pcstore.controller.LoginController;
+import com.pcstore.model.User;
+import com.pcstore.utils.DatabaseConnection;
+import raven.toast.Notifications;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
-import com.formdev.flatlaf.FlatLightLaf;
-import com.pcstore.controller.LoginController;
-import com.pcstore.utils.DatabaseConnection;
-import com.pcstore.repository.impl.UserRepository;
-import com.pcstore.model.User;
-import com.pcstore.utils.PCrypt;
-
-import raven.toast.Notifications;
-
 /**
- *
  * @author MSII
  */
 public class LoginForm extends JFrame {
@@ -67,9 +58,9 @@ public class LoginForm extends JFrame {
 
 
         initComponents();
-       
+
         loginController = new LoginController();
-        
+
         // Thêm sự kiện window listener để xử lý đóng cửa sổ
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -79,12 +70,12 @@ public class LoginForm extends JFrame {
             }
         });
 
-        
+
         SwingUtilities.invokeLater(() -> {
             txtUsername.requestFocusInWindow();
         });
 
-        // checkLogin(); //auto login
+       checkLogin(); //auto login
 
     }
 
@@ -189,7 +180,7 @@ public class LoginForm extends JFrame {
         txtUsername.setFont(new Font("Segoe UI", 0, 13)); // NOI18N
         txtUsername.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(204, 204, 204)));
         txtUsername.setCursor(new Cursor(Cursor.TEXT_CURSOR));
- 
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -203,7 +194,7 @@ public class LoginForm extends JFrame {
         txtPassword.setFont(new Font("Segoe UI", 0, 13)); // NOI18N
         txtPassword.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, new Color(204, 204, 204)));
         txtPassword.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-    
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -252,7 +243,7 @@ public class LoginForm extends JFrame {
         });
         lbForgetPassword.setFocusable(false);
         // lbForgetPassword.setEditable(false);    
-  
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
@@ -271,7 +262,7 @@ public class LoginForm extends JFrame {
     }
 
     private void btnLoginKeyPressed(KeyEvent evt) {
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER){
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             checkLogin();
         }
     }
@@ -287,32 +278,33 @@ public class LoginForm extends JFrame {
     }
 
 
-    public void checkLogin(){
-        String username = txtUsername.getText();
-        String password = txtPassword.getText();
+    public void checkLogin() {
+        // String username = txtUsername.getText();
+        // String password = txtPassword.getText();
 
-        // String username = "admin";
-        // String password = "admin";
+       String username = "admin";
+       String password = "admin";
 
-        if(username.isEmpty() && password.isEmpty()){
+        if (username.isEmpty() && password.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Tên đăng nhập và mật khẩu không được để trống", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
         }
 
-        try{
+        try {
             User user = loginController.authenticate(username, password);
-            
-            if(user != null){
+
+            if (user != null) {
                 this.dispose();
 
                 // JOptionPane.showMessageDialog(this, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 Notifications.getInstance().show(Notifications.Type.SUCCESS, Notifications.Location.TOP_CENTER, "Đăng nhập thành công");
-                
+
                 this.resetInstance();
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(this, "Tên đăng nhập hoặc mật khẩu không đúng", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

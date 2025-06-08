@@ -13,7 +13,7 @@ import com.pcstore.model.Product;
 import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.PurchaseOrderForm;
 import com.pcstore.view.StockInHistoryForm;
@@ -158,8 +158,8 @@ public class WareHouseController {
      * Khởi tạo bảng với EditableTableModel
      */
     private void initTable() {
-        TableStyleUtil.applyDefaultStyle(wareHouseForm.getTable());
-        TableStyleUtil.applyProductTableStyle(wareHouseForm.getTable(), 3);
+        TableUtils.applyDefaultStyle(wareHouseForm.getTable());
+        TableUtils.applyProductTableStyle(wareHouseForm.getTable(), 3);
     }
 
     /**

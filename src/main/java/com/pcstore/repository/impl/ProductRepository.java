@@ -67,7 +67,7 @@ public class ProductRepository implements Repository<Product, String> {
         String sql = "UPDATE Products SET ProductName = ?, Price = ?, StockQuantity = ?, " +
                 "Specifications = ?, Description = ?, CategoryID = ?, SupplierID = ?, " +
                 "UpdatedAt = ?, Manufacturer = ?, CostPrice = ?, AverageCostPrice = ?, ProfitMargin = ? " +
-                "WHERE ProductID = ?";
+                "WHERE ProductID = ? ";
                 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, product.getProductName());
@@ -96,7 +96,7 @@ public class ProductRepository implements Repository<Product, String> {
     
     @Override
     public boolean delete(String id) {
-        String sql = "DELETE FROM Products WHERE ProductID = ?";
+        String sql = "UPDATE Products SET IsActive = 0 WHERE ProductID = ? AND IsActive = 1";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
@@ -112,7 +112,7 @@ public class ProductRepository implements Repository<Product, String> {
         // Sửa truy vấn để bao gồm tất cả các cột cần thiết
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.ProductID = ?";
+                    "WHERE p.ProductID = ? AND p.IsActive = 1";
         
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -147,7 +147,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findByName(String name) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.ProductName LIKE ?";
+                    "WHERE p.ProductName LIKE ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -175,7 +175,7 @@ public class ProductRepository implements Repository<Product, String> {
                     "FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
                     "LEFT JOIN Suppliers s ON p.SupplierID = s.SupplierID " +
-                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ?";
+                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ? AND p.IsActive = 1";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String searchPattern = "%" + keyword + "%";
@@ -201,8 +201,9 @@ public class ProductRepository implements Repository<Product, String> {
         // Sửa truy vấn để bao gồm tất cả các cột cần thiết
         String sql = "SELECT p.*, c.CategoryName "
                 + "FROM Products p "
-                + "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID";
-        
+                + "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID "
+                + "WHERE p.IsActive = 1";
+
         List<Product> products = new ArrayList<>();
         
         try (Statement statement = connection.createStatement();
@@ -226,7 +227,7 @@ public class ProductRepository implements Repository<Product, String> {
     
     @Override
     public boolean exists(String id) {
-        String sql = "SELECT COUNT(*) FROM Products WHERE ProductID = ?";
+        String sql = "SELECT COUNT(*) FROM Products WHERE ProductID = ? AND IsActive = 1";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
@@ -245,7 +246,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findByCategory(String categoryId) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.CategoryID = ?";
+                    "WHERE p.CategoryID = ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -265,7 +266,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findBySupplier(String supplierId) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.SupplierID = ?";
+                    "WHERE p.SupplierID = ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -285,7 +286,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findLowStock(int threshold) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.StockQuantity < ?";
+                    "WHERE p.StockQuantity < ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -305,7 +306,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findByIdOrName(String idOrName) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ?";
+                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

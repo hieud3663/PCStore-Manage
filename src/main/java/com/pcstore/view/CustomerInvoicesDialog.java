@@ -5,7 +5,7 @@ import com.pcstore.model.Customer;
 import com.pcstore.model.Invoice;
 import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -226,7 +226,7 @@ public class CustomerInvoicesDialog extends JDialog {
         tableInvoices.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
         
         // Áp dụng TableStyleUtil
-        tableSorter = TableStyleUtil.applyDefaultStyle(tableInvoices);
+        tableSorter = TableUtils.applyDefaultStyle(tableInvoices);
         
         // Double-click to view details
         tableInvoices.addMouseListener(new MouseAdapter() {
@@ -267,7 +267,7 @@ public class CustomerInvoicesDialog extends JDialog {
         }
 
         // Áp dụng màu sắc cho cột trạng thái
-        TableStyleUtil.applyInvoiceTableStyle(tableInvoices, 5);
+        TableUtils.applyInvoiceTableStyle(tableInvoices, 5);
     }
     
     private void viewInvoiceDetail() {

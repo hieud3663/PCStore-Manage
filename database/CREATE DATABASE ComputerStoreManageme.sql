@@ -417,3 +417,45 @@ CREATE TABLE PricingStrategies (
     IsActive BIT DEFAULT 1
 );
 
+-- Bảng phiếu kiểm kê
+CREATE TABLE InventoryChecks (
+    InventoryCheckID INT PRIMARY KEY IDENTITY(1,1), -- Mã kiểm kê
+    CheckCode VARCHAR(20) UNIQUE NOT NULL, -- Mã kiểm kê duy nhất, VD: KK01, KK02...
+    EmployeeID VARCHAR(10) NOT NULL, -- Mã nhân viên thực hiện kiểm kê (FK)
+    CheckName NVARCHAR(255) NOT NULL, -- Tên kiểm kê
+    CheckDate DATETIME DEFAULT GETDATE(), --Ngày chốt kiểm kê
+    CheckType VARCHAR(20) DEFAULT 'FULL' CHECK (CheckType IN ('FULL', 'PARTIAL', 'CATEGORY')), -- Loại kiểm kê
+    Status VARCHAR(20) DEFAULT 'DRAFT' CHECK (Status IN ('DRAFT', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')), -- Trạng thái kiểm kê
+    Notes NVARCHAR(500), -- Ghi chú
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+-- Bảng chi tiết kiểm kê
+CREATE TABLE InventoryCheckDetails (
+    InventoryCheckDetailID INT PRIMARY KEY IDENTITY(1,1),
+    InventoryCheckID INT NOT NULL,
+    ProductID VARCHAR(10) NOT NULL, -- Mã sản phẩm (FK)
+    SystemQuantity INT NOT NULL DEFAULT 0, -- Số lượng theo hệ thống
+    ActualQuantity INT NOT NULL DEFAULT 0, -- Số lượng thực tế
+    Discrepancy AS (ActualQuantity - SystemQuantity), -- Chênh lệch (computed column)
+    Reason NVARCHAR(255), -- Lý do chênh lệch
+    LossValue DECIMAL(15,2) DEFAULT 0, -- Giá trị mất mát (nếu có)
+    CreatedAt DATETIME DEFAULT GETDATE(), 
+    FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+-- --Bảng lịch sử kiểm kê
+-- CREATE TABLE InventoryCheckHistory (
+--     HistoryID INT PRIMARY KEY IDENTITY(1,1), -- Mã lịch sử kiểm kê
+--     InventoryCheckID INT NOT NULL, -- Mã kiểm kê (FK)
+--     EmployeeID VARCHAR(10) NOT NULL, -- Mã nhân viên thực hiện kiểm kê (FK)
+--     Action NVARCHAR(50) NOT NULL, -- Hành động (VD: 'CREATE', 'UPDATE', 'DELETE')
+--     ActionDate DATETIME DEFAULT GETDATE(), -- Ngày thực hiện hành động
+--     Notes NVARCHAR(500), -- Ghi chú
+--     FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
+--     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE CASCADE
+-- );
+

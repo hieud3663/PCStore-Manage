@@ -1,17 +1,35 @@
 package com.pcstore.utils;
 
-import javax.swing.*;
-import javax.swing.table.*;
-import java.awt.*;
-import javax.swing.RowSorter.SortKey;
-
-import java.util.regex.Pattern;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 
 
-public class TableStyleUtil {
+public class TableUtils {
     
     // Định nghĩa các màu sắc cảnh báo
     public static final Color ZERO_QUANTITY_COLOR = new Color(255, 102, 102); // Màu đỏ nhạt
@@ -58,7 +76,7 @@ public class TableStyleUtil {
         table.setSelectionBackground(new Color(173, 216, 230));
         table.setSelectionForeground(Color.BLACK);
         Font boldFont = new Font("Segoe UI", Font.BOLD, 12);
-        TableStyleUtil.setSelectedRowFont(table, boldFont);
+        TableUtils.setSelectedRowFont(table, boldFont);
         table.getTableHeader().setReorderingAllowed(false);
         
         return sorter;
@@ -180,6 +198,7 @@ public class TableStyleUtil {
                     }else{
                         try {
                             String v1 = o1.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim().replaceAll("\\.", "").replaceAll("\\,", "");
+                            
                             String v2 = o2.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim().replaceAll("\\.", "").replaceAll("\\,", "");
 
                             double d1 = Double.parseDouble(v1);
@@ -541,4 +560,204 @@ public class TableStyleUtil {
             table.getColumnModel().getColumn(i).setCellRenderer(statusRenderer);
         }
     }
+    
+    
+
+
+    /**
+     * Interface cho action listener của button xóa
+     */
+    @FunctionalInterface
+    public interface DeleteButtonActionListener {
+        /**
+         * Được gọi khi button xóa được click
+         * @param table Bảng chứa button
+         * @param modelRow Chỉ số hàng trong model (đã convert từ view)
+         * @param column Chỉ số cột
+         * @param firstColumnValue Giá trị cột đầu tiên (thường là ID hoặc mã)
+         */
+        void onDeleteClicked(JTable table, int modelRow, int column, Object firstColumnValue);
+    }
+    
+    /**
+     * Thêm nút xóa dạng Label vào cột chỉ định với hover tự động
+     * @param table Bảng cần thêm nút xóa
+     * @param columnIndex Chỉ số cột cần thêm nút xóa
+     * @param deleteListener Action listener khi nút xóa được click
+     */
+    public static void addDeleteButton(JTable table, int columnIndex, DeleteButtonActionListener deleteListener) {
+        if (columnIndex < 0 || columnIndex >= table.getColumnCount()) {
+            return;
+        }
+
+        FlatSVGIcon deleteIcon = new FlatSVGIcon("com/pcstore/resources/icon/delete-2.svg", 16, 16);
+
+        // Biến để theo dõi vị trí hover
+        final int[] hoverPosition = {-1, -1}; // [row, column]
+        
+        // Tạo renderer cho nút xóa
+        TableCellRenderer deleteRenderer = new TableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                JLabel deleteLabel = new JLabel("",JLabel.CENTER);
+                deleteLabel.setOpaque(true);
+                deleteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                deleteLabel.setIcon(deleteIcon);
+                // deleteLabel.setToolTipText("Xóa");
+                deleteLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+                deleteLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                deleteLabel.setForeground(new Color(120, 120, 120)); // Màu xám nhạt
+                
+                // Kiểm tra nếu đang hover vào ô này
+                boolean isHovering = (hoverPosition[0] == row && hoverPosition[1] == column);
+                
+                if (isHovering) {
+                    deleteLabel.setBackground(new Color(255, 51, 51)); 
+                    deleteLabel.setForeground(Color.WHITE);
+                    // deleteLabel.setText("Xóa"); 
+                    deleteLabel.setIcon(deleteIcon);
+                    deleteLabel.setFont(new Font("Segoe UI", Font.BOLD,14));
+                } else if (isSelected) {
+                    deleteLabel.setBackground(table.getSelectionBackground());
+                    deleteLabel.setForeground(table.getSelectionForeground());
+                } else {
+                    deleteLabel.setBackground(table.getBackground());
+                    deleteLabel.setForeground(new Color(120, 120, 120)); 
+                }
+                
+                return deleteLabel;
+            }
+        };
+        
+        // Tạo editor cho nút xóa với xử lý click ngay lập tức
+        DefaultCellEditor deleteEditor = new DefaultCellEditor(new JCheckBox()) {
+            private JLabel deleteLabel;
+            
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value,
+                    boolean isSelected, int row, int column) {
+                
+                deleteLabel = new JLabel("", JLabel.CENTER);
+                deleteLabel.setOpaque(true);
+                deleteLabel.setIcon(deleteIcon);
+                deleteLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                deleteLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+                deleteLabel.setBackground(new Color(255, 51, 51));
+                deleteLabel.setForeground(Color.WHITE);
+                deleteLabel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                
+                // Xử lý click ngay lập tức
+                SwingUtilities.invokeLater(() -> {
+                    int modelRow = table.convertRowIndexToModel(row);
+                    Object firstColumnValue = table.getModel().getValueAt(modelRow, 1);
+                    
+                    if (deleteListener != null) {
+                        deleteListener.onDeleteClicked(table, modelRow, column, firstColumnValue);
+                    }
+                    
+                    stopCellEditing();
+                });
+                
+                return deleteLabel;
+            }
+            
+            @Override
+            public Object getCellEditorValue() {
+                return "";
+            }
+            
+            @Override
+            public boolean isCellEditable(java.util.EventObject e) {
+                return true;
+            }
+            
+            @Override
+            public boolean shouldSelectCell(java.util.EventObject anEvent) {
+                return false; // Không select cell
+            }
+            
+            @Override
+            public boolean stopCellEditing() {
+                return super.stopCellEditing();
+            }
+        };
+        
+        // Thêm MouseMotionListener để theo dõi hover
+        table.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+                
+                // Chỉ xử lý hover cho cột delete button
+                if (column == columnIndex && row >= 0) {
+                    if (hoverPosition[0] != row || hoverPosition[1] != column) {
+                        hoverPosition[0] = row;
+                        hoverPosition[1] = column;
+                        table.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        table.repaint();
+                    }
+                } else {
+                    if (hoverPosition[0] != -1 || hoverPosition[1] != -1) {
+                        hoverPosition[0] = -1;
+                        hoverPosition[1] = -1;
+                        table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                        table.repaint();
+                    }
+                }
+            }
+        });
+        
+        // Thêm MouseListener để xử lý click trực tiếp (backup method)
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                int row = table.rowAtPoint(e.getPoint());
+                int column = table.columnAtPoint(e.getPoint());
+                
+                // Nếu click vào cột delete button
+                if (column == columnIndex && row >= 0) {
+                    // Nếu editor đang không hoạt động, xử lý click trực tiếp
+                    if (!table.isEditing()) {
+                        int modelRow = table.convertRowIndexToModel(row);
+                        Object firstColumnValue = table.getModel().getValueAt(modelRow, 0);
+                        
+                        if (deleteListener != null) {
+                            deleteListener.onDeleteClicked(table, modelRow, column, firstColumnValue);
+                        }
+                    }
+                }
+            }
+            
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                // Xóa hover effect khi chuột rời khỏi bảng
+                if (hoverPosition[0] != -1 || hoverPosition[1] != -1) {
+                    hoverPosition[0] = -1;
+                    hoverPosition[1] = -1;
+                    table.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    table.repaint();
+                }
+            }
+        });
+        
+        // Áp dụng renderer và editor cho cột
+        table.getColumnModel().getColumn(columnIndex).setCellRenderer(deleteRenderer);
+        table.getColumnModel().getColumn(columnIndex).setCellEditor(deleteEditor);
+        
+        // Thiết lập kích thước cột phù hợp
+        table.getColumnModel().getColumn(columnIndex).setPreferredWidth(60);
+        table.getColumnModel().getColumn(columnIndex).setMaxWidth(60);
+        table.getColumnModel().getColumn(columnIndex).setMinWidth(60);
+        
+        // Vô hiệu hóa sắp xếp cho cột nút xóa
+        if (table.getRowSorter() instanceof TableRowSorter) {
+            TableRowSorter<?> sorter = (TableRowSorter<?>) table.getRowSorter();
+            sorter.setSortable(columnIndex, false);
+        }
+    }
+    
+    
 }

@@ -6,7 +6,7 @@ import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -45,7 +45,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         initControllers();
         addListeners(); 
         setupTable();
-        TableStyleUtil.applyDefaultStyle(table);
+        TableUtils.applyDefaultStyle(table);
         loadAllInvoices();
     }
 
@@ -59,7 +59,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
         initControllers();
         addListeners(); 
         setupTable();
-        TableStyleUtil.applyDefaultStyle(table);
+        TableUtils.applyDefaultStyle(table);
         loadAllInvoices();
     }
 

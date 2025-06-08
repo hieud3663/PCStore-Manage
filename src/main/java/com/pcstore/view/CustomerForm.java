@@ -8,7 +8,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import com.pcstore.controller.CustomerController;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 public class CustomerForm extends javax.swing.JPanel {
 
@@ -474,7 +474,7 @@ public class CustomerForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void setupCusmizeTable(){
-        tableListCustomerSorter = TableStyleUtil.applyDefaultStyle(tableCustomers);
+        tableListCustomerSorter = TableUtils.applyDefaultStyle(tableCustomers);
 
         //Thiết lập kích thước cột
 

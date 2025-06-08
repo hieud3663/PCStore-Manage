@@ -38,7 +38,7 @@ import com.pcstore.model.Invoice;
 import com.pcstore.model.InvoiceDetail;
 import com.pcstore.utils.ExportInvoice;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 public class InvoiceDetailDialog extends JDialog {
     
@@ -326,7 +326,7 @@ public class InvoiceDetailDialog extends JDialog {
         tableProducts.getTableHeader().setBorder(BorderFactory.createEmptyBorder());
         
         // Áp dụng TableStyleUtil
-        tableSorter = TableStyleUtil.applyDefaultStyle(tableProducts);
+        tableSorter = TableUtils.applyDefaultStyle(tableProducts);
         
         // Sử dụng InvoiceDetailController để cập nhật bảng
         populateProductsTable();

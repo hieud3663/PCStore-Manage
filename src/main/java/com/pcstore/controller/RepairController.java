@@ -52,13 +52,16 @@ public class RepairController {
     public RepairController(){
         try {
             connection = DatabaseConnection.getInstance().getConnection();
-            customerService = ServiceFactory.getCustomerService();
-            employeeService = ServiceFactory.getEmployeeService();
-            warrantyService = ServiceFactory.getWarrantyService();
-            repairService = ServiceFactory.getRepairServiceService();
+            customerService = ServiceFactory.getInstance().getCustomerService();
+            employeeService = ServiceFactory.getInstance().getEmployeeService();
+            warrantyService = ServiceFactory.getInstance().getWarrantyService();
+            repairService = ServiceFactory.getInstance().getRepairServiceService();
         } catch (SQLException ex) {
             Logger.getLogger(RepairController.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();
+        } catch (Exception e) {
+            Logger.getLogger(RepairController.class.getName()).log(Level.SEVERE, null, e);
+            e.printStackTrace();
         }
     }
 
@@ -101,6 +104,7 @@ public class RepairController {
                         System.out.println("Đã tạo khách hàng mới với ID: " + customer.getCustomerId());
                     }
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     throw new IllegalArgumentException("Lỗi khi kiểm tra hoặc tạo khách hàng: " + ex.getMessage(), ex);
                 }
             } else {
@@ -140,9 +144,11 @@ public class RepairController {
             
             return repairService.addRepairService(repair);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi tạo dịch vụ sửa chữa: " + e.getMessage(), e);
         }
     }
+
     
     /**
      * Get all repair services
@@ -167,7 +173,9 @@ public class RepairController {
         try {
             return repairService.findRepairServiceWithFullInfo(repairId);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi tìm dịch vụ sửa chữa: " + e.getMessage(), e);
+
         }
     }
     
@@ -430,6 +438,7 @@ public class RepairController {
             Repair repair = repairService.createNewRepairService(customer, employee, description, warranty);
             return repairService.addRepairService(repair);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi tạo dịch vụ sửa chữa bảo hành: " + e.getMessage(), e);
         }
     }

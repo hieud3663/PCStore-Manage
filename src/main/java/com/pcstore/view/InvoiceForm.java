@@ -15,7 +15,7 @@ import javax.swing.table.TableRowSorter;
 import com.pcstore.controller.InvoiceController;
 import com.pcstore.utils.IActionButtonTableListener;
 import com.pcstore.utils.TableActionCellComponent;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.utils.TextFieldSearch;
 import com.k33ptoo.components.*;
 /**
@@ -319,16 +319,16 @@ public class InvoiceForm extends javax.swing.JPanel  {
 
     private void setupCusmizeTable(){
         // Áp dụng kiểu dáng bảng từ TableStyleUtil
-        invoiceTableSorter = TableStyleUtil.applyInvoiceTableStyle(tableInvoice, 10);
+        invoiceTableSorter = TableUtils.applyInvoiceTableStyle(tableInvoice, 10);
 
-        invoiceDetailTableSorter = TableStyleUtil.applyDefaultStyle(tableInvoiceDetail);
+        invoiceDetailTableSorter = TableUtils.applyDefaultStyle(tableInvoiceDetail);
         
-        TableStyleUtil.setBooleanColumns(tableInvoice, 0); // Cột checkbox
-        TableStyleUtil.disableSortingForColumns(invoiceTableSorter, 0);
+        TableUtils.setBooleanColumns(tableInvoice, 0); // Cột checkbox
+        TableUtils.disableSortingForColumns(invoiceTableSorter, 0);
         
         // Thiết lập kích thước cột
         if (tableInvoice.getColumnModel().getColumnCount() > 0) {
-            TableStyleUtil.setupColumnWidths(tableInvoice, 20, 60, 80);
+            TableUtils.setupColumnWidths(tableInvoice, 20, 60, 80);
         }
     }
 

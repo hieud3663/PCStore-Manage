@@ -11,7 +11,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.pcstore.controller.EmployeeController;
 import com.pcstore.model.enums.EmployeePositionEnum;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 /**
  *
@@ -581,7 +581,7 @@ public class EmployeeForm extends javax.swing.JPanel {
 
 
     private void setupCusmizeTable(){
-        tableListEmployeeSorter = TableStyleUtil.applyDefaultStyle(tableListEmployee);
+        tableListEmployeeSorter = TableUtils.applyDefaultStyle(tableListEmployee);
     }
 
     //Hiển thị cbbPositionEmployee là danh sách trong PositionEnum

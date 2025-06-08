@@ -10,7 +10,7 @@ import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.SessionManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.EmployeeForm;
 import com.raven.datechooser.SelectedDate;
 
@@ -178,7 +178,7 @@ public class EmployeeController {
     private void setupTableStyle() {
         if (employeeForm == null) return;
         
-        employeeTableSorter = TableStyleUtil.applyDefaultStyle(employeeForm.getTableListEmployee());
+        employeeTableSorter = TableUtils.applyDefaultStyle(employeeForm.getTableListEmployee());
         
         //Comparator cho cột ngày sinh
         employeeTableSorter.setComparator(3, new Comparator<Object>() {
@@ -531,12 +531,12 @@ public class EmployeeController {
      */
     public void searchEmployees(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
-            TableStyleUtil.applyFilter(employeeTableSorter, "");
+            TableUtils.applyFilter(employeeTableSorter, "");
             return;
         }
         
         try {
-            TableStyleUtil.applyFilter(employeeTableSorter, keyword, 1, 2, 3, 6, 7);
+            TableUtils.applyFilter(employeeTableSorter, keyword, 1, 2, 3, 6, 7);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
                     ErrorMessage.SEARCH_EMPLOYEE_ERROR + e.getMessage(),

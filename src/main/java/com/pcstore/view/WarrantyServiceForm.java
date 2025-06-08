@@ -6,7 +6,7 @@ package com.pcstore.view;
 
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.utils.DatabaseConnection;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.repository.*;
 import com.pcstore.service.*;
 
@@ -56,7 +56,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         try {
             initComponents();
             initController();
-            TableStyleUtil.applyDefaultStyle(tableListWarranty);
+            TableUtils.applyDefaultStyle(tableListWarranty);
         } catch (Exception e) {
             System.err.println("Error initializing WarrantyServiceForm: " + e.getMessage());
             e.printStackTrace();

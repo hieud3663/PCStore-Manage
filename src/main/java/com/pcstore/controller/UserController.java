@@ -11,7 +11,7 @@ import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.PCrypt;
 import com.pcstore.utils.SessionManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.UserForm;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.DialogChangePassword;
@@ -174,8 +174,8 @@ public class UserController {
     private void setupTableStyle() {
         if (userForm == null) return;
         
-        TableStyleUtil.applyDefaultStyle(userForm.getTableListUser());
-        TableStyleUtil.setBooleanColumns(userForm.getTableListUser(), 0);
+        TableUtils.applyDefaultStyle(userForm.getTableListUser());
+        TableUtils.setBooleanColumns(userForm.getTableListUser(), 0);
     }
 
     //Check admin
@@ -263,7 +263,7 @@ public class UserController {
                 userForm.getTableListUser().setRowSorter(sorter);
             }
             
-            TableStyleUtil.applyFilter(sorter, searchText);
+            TableUtils.applyFilter(sorter, searchText);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(userForm, 
                     String.format(ErrorMessage.USER_FILTER_ERROR, e.getMessage()), 

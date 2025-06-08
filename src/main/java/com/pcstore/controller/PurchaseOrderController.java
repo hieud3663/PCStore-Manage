@@ -37,7 +37,7 @@ import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JDialogInputUtils;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.SessionManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.PurchaseOrderForm;
 
 import raven.toast.Notifications;
@@ -181,11 +181,11 @@ public class PurchaseOrderController {
 
     private void initTableStyle(){
         // Khởi tạo sorter cho bảng sản phẩm
-        productTableSorter = TableStyleUtil.applyDefaultStyle(purchaseOrderForm.getTableProducts());
-        TableStyleUtil.applyDefaultStyle(purchaseOrderForm.getTableSelectedProducts());
-        TableStyleUtil.setBooleanColumns(purchaseOrderForm.getTableSelectedProducts(), 0);
-        TableStyleUtil.setNumberColumns(productTableSorter, 2, 3);
-        TableStyleUtil.applyProductTableStyle(purchaseOrderForm.getTableProducts(), 3);
+        productTableSorter = TableUtils.applyDefaultStyle(purchaseOrderForm.getTableProducts());
+        TableUtils.applyDefaultStyle(purchaseOrderForm.getTableSelectedProducts());
+        TableUtils.setBooleanColumns(purchaseOrderForm.getTableSelectedProducts(), 0);
+        TableUtils.setNumberColumns(productTableSorter, 2, 3);
+        TableUtils.applyProductTableStyle(purchaseOrderForm.getTableProducts(), 3);
     }
 
     /**
@@ -461,7 +461,7 @@ public class PurchaseOrderController {
 
             // Làm mới sorter nếu đã khởi tạo
             if (productTableSorter != null) {
-                TableStyleUtil.refreshSorter(purchaseOrderForm.getTableProducts());
+                TableUtils.refreshSorter(purchaseOrderForm.getTableProducts());
             }
 
             System.out.println("PurchaseOrderController: Đã cập nhật bảng sản phẩm thành công với " + products.size()
@@ -646,11 +646,11 @@ public class PurchaseOrderController {
             // Lấy sorter từ bảng sản phẩm
             TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) purchaseOrderForm.getTableProducts().getRowSorter();
             if (sorter == null) {
-                sorter = TableStyleUtil.setupSorting(purchaseOrderForm.getTableProducts());
+                sorter = TableUtils.setupSorting(purchaseOrderForm.getTableProducts());
             }
 
             // Áp dụng filter trên các cột mã sản phẩm, tên sản phẩm và giá
-            TableStyleUtil.applyFilter(sorter, keyword, 0, 1, 2);
+            TableUtils.applyFilter(sorter, keyword, 0, 1, 2);
 
         } catch (Exception e) {
             System.err.println("Lỗi khi tìm kiếm sản phẩm: " + e.getMessage());
@@ -840,7 +840,7 @@ public class PurchaseOrderController {
                     System.err.println("Lỗi khi thêm sản phẩm vào bảng giỏ hàng: " + e.getMessage());
                 }
             }
-            TableStyleUtil.setBooleanColumns(purchaseOrderForm.getTableSelectedProducts(), 0);
+            TableUtils.setBooleanColumns(purchaseOrderForm.getTableSelectedProducts(), 0);
 
             // System.out.println("Đã cập nhật bảng giỏ hàng với " + selectedProducts.size() + " sản phẩm");
 

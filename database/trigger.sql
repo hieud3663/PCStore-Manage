@@ -722,3 +722,22 @@ GO
 IF OBJECT_ID('trg_UpdateMarginFromPrice', 'TR') IS NOT NULL
     DROP TRIGGER trg_UpdateMarginFromPrice;
 GO
+
+
+-- Trigger tự động tạo mã kiểm kê
+CREATE TRIGGER trg_GenerateCheckCode
+ON InventoryChecks
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @NextCheckID INT;
+    SELECT @NextCheckID = ISNULL(MAX(CAST(SUBSTRING(CheckCode, 3, LEN(CheckCode)-2) AS INT)), 0) + 1
+    FROM InventoryChecks WHERE CheckCode LIKE 'KK%';
+    
+    INSERT INTO InventoryChecks (CheckCode, EmployeeID, CheckDate, CheckType, Status, Notes)
+    SELECT 'KK' + RIGHT('000' + CAST(@NextCheckID AS VARCHAR(3)), 3),
+           EmployeeID, CheckDate, CheckType, Status, Notes
+    FROM inserted;
+END;

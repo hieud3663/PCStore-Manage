@@ -28,7 +28,7 @@ import com.pcstore.service.RevenueService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.RevenueEmployeeForm;
 import com.pcstore.chart.Chart;
 import com.pcstore.chart.ModelChart;
@@ -273,7 +273,7 @@ public class RevenueEmployeeController {
      * Thiết lập style cho bảng
      */
     private void setupTableStyle() {
-        TableStyleUtil.applyDefaultStyle(revenueEmployeeForm.getTableRevenue());
+        TableUtils.applyDefaultStyle(revenueEmployeeForm.getTableRevenue());
     }
     
     /**

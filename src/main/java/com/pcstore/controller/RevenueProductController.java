@@ -20,7 +20,7 @@ import com.pcstore.service.RevenueService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.RevenueProductForm;
 
 // Thêm các import sau
@@ -241,7 +241,7 @@ public class RevenueProductController {
 
     //setupTable
     private void setupTableStyle(){
-        TableStyleUtil.applyDefaultStyle(revenueProductForm.getTableRevenue());
+        TableUtils.applyDefaultStyle(revenueProductForm.getTableRevenue());
     }
 
     /**

@@ -30,7 +30,7 @@ import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.ExportInvoice;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.InvoiceForm;
 import com.pcstore.view.PayForm;
@@ -858,7 +858,7 @@ public class InvoiceController {
             // 8: Tên khách hàng
             // 9: SĐT khách hàng
             // 10: Trạng thái
-            TableStyleUtil.applyFilter(tableSorter, keyword, 2, 3, 4, 6, 7, 8, 9, 10);
+            TableUtils.applyFilter(tableSorter, keyword, 2, 3, 4, 6, 7, 8, 9, 10);
             
             // Tạo danh sách kết quả từ các hàng được lọc
             List<Invoice> filteredInvoices = new ArrayList<>();

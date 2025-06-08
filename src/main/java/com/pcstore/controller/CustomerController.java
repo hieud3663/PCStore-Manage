@@ -8,7 +8,7 @@ import com.pcstore.utils.ButtonUtils;
 import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.CustomerForm;
 import com.pcstore.view.CustomerInvoicesDialog;
 import com.pcstore.view.DashboardForm;
@@ -221,7 +221,7 @@ public class CustomerController {
     private void setupTableStyle() {
         if (customerForm == null) return;
         
-        customerTableSorter = TableStyleUtil.applyDefaultStyle(customerForm.getTableCustomers());
+        customerTableSorter = TableUtils.applyDefaultStyle(customerForm.getTableCustomers());
         
         // cột điểm tích lũy (index 4)
         customerTableSorter.setComparator(4, new Comparator<Object>() {
@@ -250,7 +250,7 @@ public class CustomerController {
             customerList = customerService.findAllCustomers();
             updateCustomerTable(customerList);
             
-            TableStyleUtil.refreshSorter(customerForm.getTableCustomers());
+            TableUtils.refreshSorter(customerForm.getTableCustomers());
         } catch (Exception e) {
             if (customerForm != null) {
                 JOptionPane.showMessageDialog(customerForm, 
@@ -536,12 +536,12 @@ public class CustomerController {
     public void searchCustomers(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             // Nếu từ khóa rỗng, hiển thị tất cả khách hàng (bỏ filter)
-            TableStyleUtil.applyFilter(customerTableSorter, "");
+            TableUtils.applyFilter(customerTableSorter, "");
             return;
         }
         
         try {
-            TableStyleUtil.applyFilter(customerTableSorter, keyword);
+            TableUtils.applyFilter(customerTableSorter, keyword);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
                     ErrorMessage.CUSTOMER_SEARCH_ERROR.formatted(e.getMessage()),

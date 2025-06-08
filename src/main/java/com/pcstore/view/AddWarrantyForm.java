@@ -7,7 +7,7 @@ package com.pcstore.view;
 import com.pcstore.controller.WarrantyController;
 import com.pcstore.model.*;
 import com.pcstore.utils.ButtonUtils;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -73,7 +73,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
      * Thiết lập các thuộc tính cho bảng
      */
     private void setupTable() {
-        TableStyleUtil.applyDefaultStyle(table);
+        TableUtils.applyDefaultStyle(table);
 
         // Đặt tên cột
         String[] columnNames = {

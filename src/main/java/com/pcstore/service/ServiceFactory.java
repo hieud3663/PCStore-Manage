@@ -29,7 +29,9 @@ public class ServiceFactory {
     private static RevenueService revenueService;
     // private static UserService userService;
     private static PurchaseOrderDetailService purchaseOrderDetailService;
-    
+    private static CategoryService categoryService;
+    private static InventoryCheckService inventoryCheckService;
+
     /**
      * Khởi tạo factory và kết nối đến cơ sở dữ liệu
      * @throws SQLException Nếu không thể kết nối đến database
@@ -103,6 +105,18 @@ public class ServiceFactory {
         return invoiceDetailService;
     }
     
+    /*
+     * Lấy CategoryService
+     * @return CategoryService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static CategoryService getCategoryService() throws SQLException {
+        if (categoryService == null) {
+            categoryService = new CategoryService(getInstance().getConnection());
+        }
+        return categoryService;
+    }
+
     /**
      * Lấy ProductService
      * @return ProductService instance
@@ -211,6 +225,18 @@ public class ServiceFactory {
         return revenueService;
     }
     
+    /*
+     * Lấy InventoryCheckService
+     * @return InventoryCheckService instance
+     * @throws SQLException Nếu có lỗi với kết nối database
+     */
+    public static InventoryCheckService getInventoryCheckService() throws SQLException {
+        if (inventoryCheckService == null) {
+            inventoryCheckService = new InventoryCheckService(getInstance().getConnection());
+        }
+        return inventoryCheckService;
+    }
+
     /**
      * Đóng kết nối đến cơ sở dữ liệu
      * @throws SQLException Nếu có lỗi khi đóng kết nối
@@ -231,7 +257,10 @@ public class ServiceFactory {
             warrantyService = null;
             returnService = null;
             revenueService = null;
-            
+            invoiceDetailService = null;
+            purchaseOrderDetailService = null;
+            categoryService = null;
+            repositoryFactory = null;
             instance = null;
         }
     }

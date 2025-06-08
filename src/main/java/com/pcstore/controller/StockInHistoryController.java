@@ -28,7 +28,7 @@ import com.pcstore.service.PurchaseOrderService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.CurrencyFormatter;
 import com.pcstore.utils.DatabaseConnection;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.StockInHistoryForm;
 
 /**
@@ -58,8 +58,8 @@ public class StockInHistoryController {
             registerEvents();
 
             // Thiết lập các bảng
-            TableStyleUtil.applyDefaultStyle(historyForm.getTablePurchaseOrders());
-            TableStyleUtil.applyDefaultStyle(historyForm.getTablePurchaseOrderDetails());
+            TableUtils.applyDefaultStyle(historyForm.getTablePurchaseOrders());
+            TableUtils.applyDefaultStyle(historyForm.getTablePurchaseOrderDetails());
 
             // Tải dữ liệu lịch sử
             loadPurchaseOrderHistory();

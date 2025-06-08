@@ -3,7 +3,7 @@ package com.pcstore.controller;
 import com.pcstore.model.Employee;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.utils.ErrorMessage;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.DialogChooseEmployee;
 
 import javax.swing.*;
@@ -72,8 +72,8 @@ public class DialogChooseEmployeeController {
      * Thiết lập style cho bảng
      */
     private void setupTableStyle() {
-        TableStyleUtil.applyDefaultStyle(dialog.getTableListEmployee());
-        TableStyleUtil.setBooleanColumns(dialog.getTableListEmployee(), 0);
+        TableUtils.applyDefaultStyle(dialog.getTableListEmployee());
+        TableUtils.setBooleanColumns(dialog.getTableListEmployee(), 0);
     }
     
     /**
@@ -129,7 +129,7 @@ public class DialogChooseEmployeeController {
                 dialog.getTableListEmployee().setRowSorter(sorter);
             }
             
-            TableStyleUtil.applyFilter(sorter, searchText);
+            TableUtils.applyFilter(sorter, searchText);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error filtering employees", e);
             // No need to show message to user for non-critical error

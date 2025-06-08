@@ -29,7 +29,7 @@ import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.NumberUtils;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.utils.SessionManager;
 import com.pcstore.view.ProductForm;
 
@@ -229,7 +229,7 @@ public class ProductController {
                 model.setRowCount(0);
             }
 
-            TableStyleUtil.refreshSorter(productForm.getTable());
+            TableUtils.refreshSorter(productForm.getTable());
         } catch (Exception e) {
             System.err.println("Lỗi khi tải dữ liệu sản phẩm: " + e.getMessage());
             e.printStackTrace();
@@ -253,7 +253,7 @@ public class ProductController {
             
             // Không cần lọc theo mã sản phẩm theo kiểu danh mục nữa
             // Áp dụng bộ lọc cho bảng
-            TableStyleUtil.applyFilter(productTableSorter, keyword);
+            TableUtils.applyFilter(productTableSorter, keyword);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(productForm, 
                     "Lỗi tìm kiếm sản phẩm: " + e.getMessage(),
@@ -887,8 +887,8 @@ public class ProductController {
      */
     private void initializeFormData() {
         try {
-            productTableSorter = TableStyleUtil.applyDefaultStyle(productForm.getTable());
-            TableStyleUtil.setNumberColumns(productTableSorter, 4, 5, 6, 7);
+            productTableSorter = TableUtils.applyDefaultStyle(productForm.getTable());
+            TableUtils.setNumberColumns(productTableSorter, 4, 5, 6, 7);
 
             loadCategories();
             

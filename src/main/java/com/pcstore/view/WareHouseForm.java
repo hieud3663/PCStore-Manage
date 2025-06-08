@@ -28,7 +28,7 @@ import com.k33ptoo.components.KButton;
 import com.pcstore.controller.WareHouseController;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.LocaleManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.utils.TextFieldSearch;
 
 /**
@@ -237,7 +237,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         // Thêm chú thích cho màu đỏ (Hết hàng)
         JPanel redPanel = new JPanel();
         redPanel.setPreferredSize(new Dimension(15, 15));
-        redPanel.setBackground(TableStyleUtil.ZERO_QUANTITY_COLOR);
+        redPanel.setBackground(TableUtils.ZERO_QUANTITY_COLOR);
         redLabel = new JLabel(bundle.getString("txtOutOfStock"));
         redLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         JPanel redContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
@@ -248,7 +248,7 @@ public class WareHouseForm extends javax.swing.JPanel {
         // Thêm chú thích cho màu cam (Sắp hết hàng)
         JPanel orangePanel = new JPanel();
         orangePanel.setPreferredSize(new Dimension(15, 15));
-        orangePanel.setBackground(TableStyleUtil.LOW_QUANTITY_COLOR);
+        orangePanel.setBackground(TableUtils.LOW_QUANTITY_COLOR);
         orangeLabel = new JLabel(bundle.getString("txtLowStock"));
         orangeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         JPanel orangeContainer = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));

@@ -7,7 +7,7 @@ package com.pcstore.view;
 import com.pcstore.controller.ReturnController;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -92,7 +92,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         };
         
         tableModel.setColumnIdentifiers(columnNames);
-        TableStyleUtil.applyDefaultStyle(tbReturn);
+        TableUtils.applyDefaultStyle(tbReturn);
     }
 
     /**

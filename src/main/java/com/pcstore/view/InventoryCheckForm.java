@@ -4,6 +4,8 @@
  */
 package com.pcstore.view;
 
+import java.awt.Cursor;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,12 +20,32 @@ public class InventoryCheckForm extends javax.swing.JPanel {
     
     private InventoryCheckController controller;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnAdd;
+    private javax.swing.JComboBox<String> cbbStatus;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JLabel lbStatus;
+    private javax.swing.JLabel lbSum;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JPanel panelAction;
+    private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelBottom;
+    private javax.swing.JPanel panelCenter;
+    private javax.swing.JPanel panelEmpty;
+    private javax.swing.JPanel panelFilter;
+    private com.k33ptoo.components.KGradientPanel panelFilterStatus;
+    private javax.swing.JPanel panelTop;
+    private javax.swing.JTable tableListInventory;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch;
+    private javax.swing.JLabel txtSum;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form InventoryCheck
      */
     public InventoryCheckForm() {
         initComponents();
-        initTable();
+        initV2();
         initController();
     }
     
@@ -222,14 +244,8 @@ public class InventoryCheckForm extends javax.swing.JPanel {
         add(panelCenter, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void initTable() {
-        // Không cần thiết lập lại table ở đây vì Controller sẽ handle
-        // Controller sẽ thiết lập bảng và load dữ liệu từ database
-        // TableUtils.applyDefaultStyle(tableListInventory);
-        // TableUtils.setBooleanColumns(tableListInventory, 0);
-
-        // Xóa dữ liệu mẫu vì sẽ load từ database
-        // loadSampleData();
+    private void initV2() {
+        cbbStatus.setCursor(new Cursor(Cursor.HAND_CURSOR));
     }
 
     // Getter methods cho Controller
@@ -257,34 +273,5 @@ public class InventoryCheckForm extends javax.swing.JPanel {
         return controller;
     }
 
-    //dữ liệu mẫu cho bảng - không còn sử dụng
-    private void loadSampleData() {
-        // Dữ liệu mẫu đã được thay thế bằng dữ liệu từ database
-        // DefaultTableModel model = (DefaultTableModel) tableListInventory.getModel();
-        // model.setRowCount(0); // Xóa dữ liệu cũ
-        // model.addRow(new Object[]{false, "INV001", "Kiểm kê kho 1", "2023-10-01", "Nguyễn Văn A", "2023-10-02", "Đã chốt", null});
-        // model.addRow(new Object[]{false, "INV002", "Kiểm kê kho 2", "2023-10-03", "Trần Thị B", "2023-10-04", "Chưa chốt", null});
-        // txtSum.setText(String.valueOf(model.getRowCount()));
-    }
 
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAdd;
-    private javax.swing.JComboBox<String> cbbStatus;
-    private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JLabel lbStatus;
-    private javax.swing.JLabel lbSum;
-    private javax.swing.JLabel lbTitle;
-    private javax.swing.JPanel panelAction;
-    private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel panelBottom;
-    private javax.swing.JPanel panelCenter;
-    private javax.swing.JPanel panelEmpty;
-    private javax.swing.JPanel panelFilter;
-    private com.k33ptoo.components.KGradientPanel panelFilterStatus;
-    private javax.swing.JPanel panelTop;
-    private javax.swing.JTable tableListInventory;
-    private com.pcstore.utils.TextFieldSearch textFieldSearch;
-    private javax.swing.JLabel txtSum;
-    // End of variables declaration//GEN-END:variables
 }

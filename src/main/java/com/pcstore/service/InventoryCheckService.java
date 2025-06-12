@@ -128,10 +128,8 @@ public class InventoryCheckService {
             throw new IllegalStateException("Chỉ có thể hoàn thành phiếu đang thực hiện hoặc nháp");
         }
 
-        // Lấy chi tiết kiểm kê
         List<InventoryCheckDetail> details = inventoryCheckDetailRepository.findByInventoryCheckId(inventoryCheckId);
         
-        // Cập nhật tồn kho theo kết quả kiểm kê
         for (InventoryCheckDetail detail : details) {
             if (detail.getDiscrepancy() != 0) {
                 Product product = detail.getProduct();
@@ -140,7 +138,6 @@ public class InventoryCheckService {
             }
         }
 
-        // Cập nhật trạng thái phiếu kiểm kê
         return inventoryCheckRepository.updateStatus(inventoryCheckId, "COMPLETED");
     }
 

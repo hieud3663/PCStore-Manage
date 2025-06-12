@@ -15,11 +15,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.EventObject;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
@@ -42,6 +38,9 @@ import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.ButtonUtils;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
+import com.pcstore.utils.BillDataUtils;
+import com.pcstore.utils.BillPrintUtils;
+
 import com.pcstore.view.DetailInventoryCheckForm;
 
 import raven.toast.Notifications;
@@ -54,14 +53,14 @@ public class DetailInventoryCheckController {
     private InventoryCheckService inventoryCheckService;
     private EmployeeService employeeService;
     private Connection connection;
-    
+
     private InventoryCheck currentInventoryCheck;
     private List<InventoryCheckDetail> inventoryCheckDetails;
 
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("vi-VN"));
     private final DecimalFormat numberFormat = new DecimalFormat("#,###");
     private final ResourceBundle bundle = LocaleManager.getInstance().getResourceBundle();
-    
+
     // Các trạng thái của phiếu kiểm kê
     private static final String STATUS_DRAFT = "DRAFT";
     private static final String STATUS_IN_PROGRESS = "IN_PROGRESS";
@@ -76,7 +75,7 @@ public class DetailInventoryCheckController {
         initializeView();
         setupEventListeners();
     }
-    
+
     /**
      * Constructor với ID phiếu kiểm kê
      */
@@ -94,34 +93,34 @@ public class DetailInventoryCheckController {
             this.inventoryCheckService = ServiceFactory.getInstance().getInventoryCheckService();
             this.employeeService = ServiceFactory.getInstance().getEmployeeService();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(view, 
-                "Lỗi khởi tạo services: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view,
+                    "Lỗi khởi tạo services: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     private void initializeView() {
         setupInventoryDetailTable();
-        
+
         setupProgressSteps();
-        
+
         setFormEditable(false);
     }
-    
+
 
     private void setupProgressSteps() {
         String[] steps = {
-            bundle.getString("inventory.check.detail.controller.create"), 
-            bundle.getString("inventory.check.detail.controller.input"), 
-            bundle.getString("inventory.check.detail.controller.closing"), 
-            bundle.getString("inventory.check.detail.controller.complete")
+                bundle.getString("inventory.check.detail.controller.create"),
+                bundle.getString("inventory.check.detail.controller.input"),
+                bundle.getString("inventory.check.detail.controller.closing"),
+                bundle.getString("inventory.check.detail.controller.complete")
         };
 
         view.getProgressStepsPanel().setSteps(steps);
         updateProgressSteps();
     }
-    
+
     private void setupEventListeners() {
         // Sự kiện nút cập nhật
         view.getBtnUpdate().addActionListener(new ActionListener() {
@@ -130,7 +129,7 @@ public class DetailInventoryCheckController {
                 handleUpdateInventoryCheck();
             }
         });
-        
+
         // Sự kiện nút hoàn thành
         view.getBtnComplete().addActionListener(new ActionListener() {
             @Override
@@ -138,7 +137,7 @@ public class DetailInventoryCheckController {
                 handleCompleteInventoryCheck();
             }
         });
-        
+
         // Sự kiện nút import Excel
         view.getBtnImportExcel().addActionListener(new ActionListener() {
             @Override
@@ -146,7 +145,7 @@ public class DetailInventoryCheckController {
                 handleImportExcel();
             }
         });
-        
+
         // Sự kiện nút export Excel
         view.getBtnExportExcel().addActionListener(new ActionListener() {
             @Override
@@ -154,7 +153,7 @@ public class DetailInventoryCheckController {
                 handleExportExcel();
             }
         });
-        
+
         // Sự kiện nút in
         view.getBtnPrint().addActionListener(new ActionListener() {
             @Override
@@ -162,7 +161,7 @@ public class DetailInventoryCheckController {
                 handlePrint();
             }
         });
-        
+
         // Sự kiện tìm kiếm
         view.getTextFieldSearch().getTxtSearchField().addKeyListener(new KeyAdapter() {
             @Override
@@ -170,9 +169,9 @@ public class DetailInventoryCheckController {
                 performSearch();
             }
         });
-        
+
     }
-    
+
     /**
      * Tải thông tin phiếu kiểm kê theo mã
      */
@@ -188,18 +187,18 @@ public class DetailInventoryCheckController {
                 updateButtonStates();
             } else {
                 JOptionPane.showMessageDialog(view,
-                    "Không tìm thấy phiếu kiểm kê!",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        "Không tìm thấy phiếu kiểm kê!",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
                 view.dispose();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải phiếu kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi tải phiếu kiểm kê: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Tải chi tiết kiểm kê
      */
@@ -210,44 +209,44 @@ public class DetailInventoryCheckController {
             updateSummaryData();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải chi tiết kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi tải chi tiết kiểm kê: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Điền dữ liệu vào form
      */
     private void populateFormWithData() {
         if (currentInventoryCheck == null) return;
-        
-        // view.getLbTitle().setText("CHI TIẾT PHIẾU KIỂM KÊ - " + currentInventoryCheck.getCheckCode());
 
-        String title = view.getLbTitle().getText();
+        String title = bundle.getString("inventory.detail.label.title") + " %s";
+
         if (title != null && !title.isEmpty()) {
-            view.getLbTitle().setText(title + " - " + currentInventoryCheck.getCheckCode());
+            view.getLbTitle().setText(String.format(title, currentInventoryCheck.getCheckCode()));
         } else {
             view.getLbTitle().setText("CHI TIẾT PHIẾU KIỂM KÊ - " + currentInventoryCheck.getCheckCode());
         }
-        
+
         view.getTxtInventoryName().setText(currentInventoryCheck.getCheckName());
-        
+
         if (currentInventoryCheck.getCheckDate() != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             view.getTxtCreateDate().setText(currentInventoryCheck.getCheckDate().format(formatter));
         }
-        
-        view.getTxtNotes().setText(currentInventoryCheck.getNotes() != null ? 
-            currentInventoryCheck.getNotes() : "");
-        
+
+        view.getTxtNotes().setText(currentInventoryCheck.getNotes() != null ?
+                currentInventoryCheck.getNotes() : "");
+
         loadEmployees();
-        
+
         if (currentInventoryCheck.getEmployee() != null) {
             view.getCbbChecker().setSelectedItem(currentInventoryCheck.getEmployee().getFullName());
         }
     }
-      /**
+
+    /**
      * Tải danh sách nhân viên
      */
     private void loadEmployees() {
@@ -260,31 +259,31 @@ public class DetailInventoryCheckController {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải danh sách nhân viên: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi tải danh sách nhân viên: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Điền dữ liệu vào bảng chi tiết kiểm kê
      */
     private void populateInventoryDetailTable() {
         DefaultTableModel model = (DefaultTableModel) view.getTableProducts().getModel();
         model.setRowCount(0);
-        
+
         if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
             return;
         }
-        
-        int index = 1;        
+
+        int index = 1;
         for (InventoryCheckDetail detail : inventoryCheckDetails) {
             BigDecimal unitPrice = detail.getProduct().getPrice();
-            
+
             // Xử lý hiển thị actual quantity và tổng giá trị
             String actualQuantityStr;
             BigDecimal totalValue;
-            
+
             if (detail.getActualQuantity() != null && detail.getActualQuantity() >= 0) {
                 actualQuantityStr = numberFormat.format(detail.getActualQuantity());
                 totalValue = unitPrice.multiply(new BigDecimal(detail.getActualQuantity()));
@@ -292,41 +291,41 @@ public class DetailInventoryCheckController {
                 actualQuantityStr = null;
                 totalValue = BigDecimal.ZERO;
             }
-            
+
             Object[] row = new Object[]{
-                index++,
-                detail.getProduct().getProductName(),
-                detail.getProduct().getProductId(), 
-                "code test",
-                numberFormat.format(detail.getSystemQuantity()),
-                actualQuantityStr, // Hiển thị số đã nhập trước đó
-                currencyFormat.format(unitPrice),
-                currencyFormat.format(totalValue)
+                    index++,
+                    detail.getProduct().getProductName(),
+                    detail.getProduct().getProductId(),
+                    "code test",
+                    numberFormat.format(detail.getSystemQuantity()),
+                    actualQuantityStr, // Hiển thị số đã nhập trước đó
+                    currencyFormat.format(unitPrice),
+                    currencyFormat.format(totalValue)
             };
             model.addRow(row);
         }
     }
-    
+
     /**
      * Thiết lập editor có validation cho cột số lượng thực tế
      */
     private void setupActualQuantityEditor(int columnIndex) {
         DefaultCellEditor actualQuantityEditor = new DefaultCellEditor(new JTextField()) {
             private JTextField textField;
-            
+
             @Override
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 textField = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
-                
+
                 // Thiết lập cursor cho textfield
                 textField.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-                
+
                 // Quan trọng: XÓA TẤT CẢ LISTENERS CŨ trước khi thêm mới
                 // Xóa KeyListeners cũ
                 for (KeyListener listener : textField.getKeyListeners()) {
                     textField.removeKeyListener(listener);
                 }
-                
+
                 textField.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyTyped(KeyEvent e) {
@@ -336,7 +335,7 @@ public class DetailInventoryCheckController {
                             e.consume();
                         }
                     }
-                    
+
                     @Override
                     public void keyPressed(KeyEvent e) {
                         // Xử lý phím Enter để confirm nhập liệu
@@ -344,26 +343,25 @@ public class DetailInventoryCheckController {
                             if (validateAndUpdateActualQuantity(table, row, textField.getText())) {
                                 stopCellEditing();
                             }
-                        }
-                        else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                             cancelCellEditing();
                         }
                     }
 
                     @Override
-                    public void keyReleased(KeyEvent e){
+                    public void keyReleased(KeyEvent e) {
                         validateAndUpdateActualQuantity(table, row, textField.getText());
                     }
                 });
-                
+
                 return textField;
             }
-            
+
             @Override
             public boolean stopCellEditing() {
                 return super.stopCellEditing();
             }
-            
+
             @Override
             public Object getCellEditorValue() {
                 String text = textField.getText().trim();
@@ -373,7 +371,7 @@ public class DetailInventoryCheckController {
                     return 0;
                 }
             }
-            
+
             // Quan trọng: Override phương thức này để chỉ cần 1 click
             @Override
             public boolean isCellEditable(EventObject e) {
@@ -384,50 +382,52 @@ public class DetailInventoryCheckController {
                 return super.isCellEditable(e);
             }
         };
-        
+
         view.getTableProducts().getColumnModel().getColumn(columnIndex).setCellEditor(actualQuantityEditor);
     }
 
     private void setupInventoryDetailTable() {
         tableRowSorter = TableUtils.applyDefaultStyle(view.getTableProducts());
-        
-        TableUtils.setupColumnWidths(view.getTableProducts(), 
-            40, 200, 120, 120, 80, 80, 100, 120);
-            
-        TableUtils.setNumberColumns(tableRowSorter, 0, 6, 7);
+
+        TableUtils.setupColumnWidths(view.getTableProducts(),
+                40, 200, 120, 120, 80, 80, 100, 120);
+
+        TableUtils.setNumberColumns(tableRowSorter, 0, 4, 5, 6, 7);
 
         for (int i = 0; i < view.getTableProducts().getColumnCount(); i++) {
             if (i != 5) { // Cột Thực tế
                 view.getTableProducts().getColumnModel().getColumn(i).setCellEditor(null);
-                
+
             } else {
-                if (currentInventoryCheck != null && 
-                    (STATUS_DRAFT.equals(currentInventoryCheck.getStatus()) || 
-                     STATUS_IN_PROGRESS.equals(currentInventoryCheck.getStatus()))) {
+                if (currentInventoryCheck != null &&
+                        (STATUS_DRAFT.equals(currentInventoryCheck.getStatus()) ||
+                                STATUS_IN_PROGRESS.equals(currentInventoryCheck.getStatus()))) {
                     setupActualQuantityEditor(i);
                 } else {
                     DefaultTableModel currentModel = (DefaultTableModel) view.getTableProducts().getModel();
-                
+
                     java.util.Vector<String> columnNames = new java.util.Vector<>();
                     for (int col = 0; col < currentModel.getColumnCount(); col++) {
                         columnNames.add(currentModel.getColumnName(col));
                     }
-                    
+
                     view.getTableProducts().setModel(new DefaultTableModel(
-                        currentModel.getDataVector(), 
-                        columnNames) {
+                            currentModel.getDataVector(),
+                            columnNames) {
                         @Override
                         public boolean isCellEditable(int row, int column) {
                             return false;
                         }
                     });
+
+                    TableUtils.setNumberColumns(tableRowSorter, 0, 4, 5, 6, 7);
                 }
             }
         }
 
         setupActualQuantityRenderer();
         highlightIncompleteRows();
-        
+
     }
 
     /**
@@ -437,33 +437,33 @@ public class DetailInventoryCheckController {
         DefaultTableCellRenderer actualQuantityRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                
+
                 // Thiết lập cursor text cho cột thực tế
                 if (column == 5) {
                     c.setCursor(new Cursor(Cursor.TEXT_CURSOR));
-                    
+
                     if (!isSelected && row < table.getRowCount()) {
                         try {
                             String productId = table.getValueAt(row, 2).toString();
-                            
+
                             InventoryCheckDetail detail = findDetailByProductId(productId);
-                            
+
                             if (detail != null) {
                                 if (detail.getActualQuantity() == null || detail.getActualQuantity() < 0) {
                                     c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
                                     c.setForeground(Color.BLACK);
-                                    
+
                                     if (c instanceof JLabel) {
                                         ((JLabel) c).setToolTipText("Click để nhập số lượng thực tế");
-                                        ((JLabel)c).setBorder(
-                                            javax.swing.BorderFactory.createLineBorder(Color.GRAY, 2));
+                                        ((JLabel) c).setBorder(
+                                                javax.swing.BorderFactory.createLineBorder(Color.GRAY, 2));
                                     }
                                 } else {
                                     c.setBackground(table.getBackground());
                                     c.setForeground(table.getForeground());
-                                    
+
                                     if (c instanceof JLabel) {
                                         ((JLabel) c).setToolTipText("Click để chỉnh sửa số lượng thực tế");
                                     }
@@ -478,12 +478,12 @@ public class DetailInventoryCheckController {
                 } else {
                     c.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
-                
-                ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
+
+                ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
                 return c;
             }
         };
-        
+
         // Áp dụng renderer cho tất cả các cột
         for (int i = 0; i < view.getTableProducts().getColumnCount(); i++) {
             view.getTableProducts().getColumnModel().getColumn(i).setCellRenderer(actualQuantityRenderer);
@@ -497,7 +497,7 @@ public class DetailInventoryCheckController {
         if (inventoryCheckDetails == null || productId == null) {
             return null;
         }
-        
+
         for (InventoryCheckDetail detail : inventoryCheckDetails) {
             if (detail.getProduct().getProductId().equals(productId)) {
                 return detail;
@@ -515,55 +515,55 @@ public class DetailInventoryCheckController {
             if (row < 0 || row >= table.getRowCount()) {
                 return false;
             }
-            
+
             if (inputValue == null || inputValue.trim().isEmpty()) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                    "Số lượng thực tế không được để trống!");
+                        "Số lượng thực tế không được để trống!");
                 return false;
             }
-            
+
             int actualQuantity;
             try {
                 actualQuantity = Integer.parseInt(inputValue.trim());
             } catch (NumberFormatException e) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                    "Số lượng phải là một số nguyên hợp lệ!");
+                        "Số lượng phải là một số nguyên hợp lệ!");
                 return false;
             }
-            
+
             if (actualQuantity < 0) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                    "Số lượng thực tế không được âm!");
+                        "Số lượng thực tế không được âm!");
                 return false;
             }
-            
+
             if (actualQuantity > 999999) {
                 Notifications.getInstance().show(Notifications.Type.WARNING,
-                    "Số lượng thực tế quá lớn (tối đa 999,999)!");
+                        "Số lượng thực tế quá lớn (tối đa 999,999)!");
                 return false;
             }
-            
+
             // Quan trọng: Đảm bảo lấy productId từ đúng dòng đang chỉnh sửa
             String productId = table.getValueAt(row, 2).toString();
-            
+
             //Cập nhật SL Thực tế vào bảng tạm
             if (updateActualQuantityByProductId(productId, actualQuantity)) {
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 model.setValueAt(numberFormat.format(actualQuantity), row, 5);
-                
+
                 updateRowTotalValueByProductId(table, row, productId, actualQuantity);
-                
+
                 updateSummaryData();
-                
+
                 return true;
             }
-            
+
             return false;
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(table,
-                "Lỗi cập nhật số lượng: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi cập nhật số lượng: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return false;
         }
@@ -578,15 +578,15 @@ public class DetailInventoryCheckController {
             if (detail == null) {
                 return false;
             }
-            
+
             detail.setActualQuantity(actualQuantity);
-            
+
             // Tính toán chênh lệch
             int discrepancy = actualQuantity - detail.getSystemQuantity();
             detail.setDiscrepancy(discrepancy);
-            
+
             return true;
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -602,14 +602,14 @@ public class DetailInventoryCheckController {
             if (detail == null) {
                 return;
             }
-            
+
             BigDecimal unitPrice = detail.getProduct().getPrice();
             BigDecimal totalValue = unitPrice.multiply(new BigDecimal(actualQuantity));
-            
+
             // Cập nhật cột tổng giá trị (cột 7)
             DefaultTableModel model = (DefaultTableModel) table.getModel();
             model.setValueAt(currencyFormat.format(totalValue), row, 7);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -621,34 +621,34 @@ public class DetailInventoryCheckController {
     private boolean validateAllActualQuantities() {
         if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
             JOptionPane.showMessageDialog(view,
-                "Chưa có dữ liệu kiểm kê!",
-                "Lỗi validation", JOptionPane.WARNING_MESSAGE);
+                    "Chưa có dữ liệu kiểm kê!",
+                    "Lỗi validation", JOptionPane.WARNING_MESSAGE);
             return false;
         }
-        
+
         int unfinishedCount = 0;
         for (int i = 0; i < inventoryCheckDetails.size(); i++) {
             InventoryCheckDetail detail = inventoryCheckDetails.get(i);
-            
+
             // Kiểm tra các sản phẩm chưa nhập số lượng thực tế
             if (detail.getActualQuantity() == null || detail.getActualQuantity() < 0) {
                 unfinishedCount++;
             }
         }
-        
+
         if (unfinishedCount > 0) {
             int result = JOptionPane.showConfirmDialog(view,
-                String.format("Còn %d sản phẩm chưa nhập số lượng thực tế.\n" +
-                             "Bạn có muốn tiếp tục hoàn thành kiểm kê?\n" +
-                             "(Các sản phẩm chưa nhập sẽ được tính bằng 0)",
-                             unfinishedCount),
-                "Xác nhận", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-                
+                    String.format("Còn %d sản phẩm chưa nhập số lượng thực tế.\n" +
+                                    "Bạn có muốn tiếp tục hoàn thành kiểm kê?\n" +
+                                    "(Các sản phẩm chưa nhập sẽ được tính bằng 0)",
+                            unfinishedCount),
+                    "Xác nhận",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
             return result == JOptionPane.YES_OPTION;
         }
-        
+
         return true;
     }
 
@@ -659,15 +659,15 @@ public class DetailInventoryCheckController {
         DefaultTableCellRenderer warningRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
+                                                           boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                
+
                 if (!isSelected && row < table.getRowCount()) {
                     try {
                         String productId = table.getValueAt(row, 2).toString();
-                        
+
                         InventoryCheckDetail detail = findDetailByProductId(productId);
-                        
+
                         if (detail != null && column == 5) {
                             if (detail.getActualQuantity() == null || detail.getActualQuantity() < 0) {
                                 c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
@@ -675,8 +675,7 @@ public class DetailInventoryCheckController {
                             } else if (detail.getActualQuantity() == 0) {
                                 c.setBackground(new Color(255, 200, 200)); // Màu đỏ nhạt
                                 c.setForeground(Color.BLACK);
-                            } 
-                            else {
+                            } else {
                                 c.setBackground(table.getBackground());
                                 c.setForeground(table.getForeground());
                             }
@@ -686,17 +685,17 @@ public class DetailInventoryCheckController {
                         c.setForeground(table.getForeground());
                     }
                 }
-                
-                ((JLabel)c).setHorizontalAlignment(JLabel.CENTER);
+
+                ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
                 return c;
             }
         };
-        
+
         // Áp dụng renderer cho cột số lượng thực tế
         view.getTableProducts().getColumnModel().getColumn(5).setCellRenderer(warningRenderer);
     }
 
-    
+
     /**
      * Cập nhật dữ liệu tổng kết
      */
@@ -708,39 +707,39 @@ public class DetailInventoryCheckController {
             view.getLbTotalDifferenceValue().setText("0");
             return;
         }
-        
+
         int totalProducts = inventoryCheckDetails.size();
         int totalIncrease = 0;
         int totalDecrease = 0;
         int totalDifference = 0;
-        
+
         for (InventoryCheckDetail detail : inventoryCheckDetails) {
             int discrepancy = detail.getActualQuantity() - detail.getSystemQuantity();
-            
+
             if (discrepancy > 0) {
                 totalIncrease += discrepancy;
             } else if (discrepancy < 0) {
                 totalDecrease += Math.abs(discrepancy);
             }
-            
+
             totalDifference += Math.abs(discrepancy);
         }
-        
+
         view.getLbTotalValue().setText(String.valueOf(totalProducts));
         view.getLbTotalIncreaseValue().setText(String.valueOf(totalIncrease));
         view.getLbTotalDecreaseValue().setText(String.valueOf(totalDecrease));
         view.getLbTotalDifferenceValue().setText(String.valueOf(totalDifference));
     }
-    
+
     /**
      * Cập nhật progress steps theo trạng thái
      */
     private void updateProgressSteps() {
         if (currentInventoryCheck == null) return;
-        
+
         int currentStep = 2;
         String status = currentInventoryCheck.getStatus();
-        
+
         switch (status) {
             case STATUS_DRAFT:
                 currentStep = 2;
@@ -757,18 +756,18 @@ public class DetailInventoryCheckController {
             default:
                 currentStep = 1;
         }
-        
+
         view.getProgressStepsPanel().setCurrentStep(currentStep);
     }
-    
+
     /**
      * Cập nhật trạng thái các nút
      */
     private void updateButtonStates() {
         if (currentInventoryCheck == null) return;
-        
+
         String status = currentInventoryCheck.getStatus();
-        
+
         // Nút cập nhật: chỉ cho phép khi phiếu đang DRAFT hoặc IN_PROGRESS
         boolean canUpdate = STATUS_DRAFT.equals(status) || STATUS_IN_PROGRESS.equals(status);
         ButtonUtils.setKButtonEnabled(view.getBtnUpdate(), canUpdate);
@@ -785,7 +784,7 @@ public class DetailInventoryCheckController {
         boolean formEditable = !STATUS_COMPLETED.equals(status) && !STATUS_CANCELLED.equals(status);
         setFormEditable(formEditable);
     }
-    
+
     /**
      * Thiết lập form có thể chỉnh sửa hay không
      */
@@ -799,21 +798,21 @@ public class DetailInventoryCheckController {
 
     private boolean saveDetailsToDatabase() {
         if (inventoryCheckDetails == null) return false;
-        
-        boolean allSuccess = true;
+
+        boolean checkSuccess = true;
         for (InventoryCheckDetail detail : inventoryCheckDetails) {
             if (detail.getActualQuantity() != null) {
                 try {
                     inventoryCheckService.updateCheckDetail(detail);
                 } catch (Exception e) {
-                    allSuccess = false;
+                    checkSuccess = false;
                     e.printStackTrace();
                 }
             }
         }
-        return allSuccess;
+        return checkSuccess;
     }
-    
+
     /**
      * Xử lý cập nhật phiếu kiểm kê
      */
@@ -822,46 +821,49 @@ public class DetailInventoryCheckController {
             if (!validateInput()) {
                 return;
             }
-                        
-            // Xác nhận cập nhật
+
             int result = JOptionPane.showConfirmDialog(view,
-                "Bạn có chắc chắn muốn cập nhật phiếu kiểm kê?",
-                "Xác nhận cập nhật", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-            
+                    "Bạn có chắc chắn muốn cập nhật phiếu kiểm kê?",
+                    "Xác nhận cập nhật",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
             if (result != JOptionPane.YES_OPTION) {
-                return; 
+                return;
             }
 
             updateInventoryCheckFromForm();
 
+            if (STATUS_DRAFT.equals(currentInventoryCheck.getStatus())) {
+                currentInventoryCheck.setStatus(STATUS_IN_PROGRESS);
+            }
+
             InventoryCheck updatedCheck = inventoryCheckService.updateInventoryCheck(currentInventoryCheck);
             this.currentInventoryCheck = updatedCheck;
-            
+
             JOptionPane.showMessageDialog(view,
-                "Cập nhật phiếu kiểm kê thành công!",
-                "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            
+                    "Cập nhật phiếu kiểm kê thành công!",
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+
             populateFormWithData();
 
             boolean detailSaved = saveDetailsToDatabase();
             if (!detailSaved) {
-                JOptionPane.showMessageDialog(view, 
-                    "Cập nhật thành công phiếu kiểm kê, nhưng có lỗi khi lưu chi tiết!",
-                    "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(view,
+                        "Cập nhật thành công phiếu kiểm kê, nhưng có lỗi khi lưu chi tiết!",
+                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
             }
-            
-            refreshForm(); 
+
+            refreshForm();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi cập nhật phiếu kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi cập nhật phiếu kiểm kê: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Xử lý hoàn thành phiếu kiểm kê
      */
@@ -869,15 +871,15 @@ public class DetailInventoryCheckController {
         try {
             if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
                 JOptionPane.showMessageDialog(view,
-                    "Phiếu kiểm kê chưa có chi tiết. Vui lòng thêm sản phẩm kiểm kê!",
-                    "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                        "Phiếu kiểm kê chưa có chi tiết. Vui lòng thêm sản phẩm kiểm kê!",
+                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
+
             if (!validateAllActualQuantities()) {
                 return;
             }
-            
+
             // Hiển thị thông tin tổng kết
             StringBuilder summary = new StringBuilder();
             summary.append("Thông tin tổng kết:\n");
@@ -887,114 +889,207 @@ public class DetailInventoryCheckController {
             summary.append("- Tổng chênh lệch: ").append(view.getLbTotalDifferenceValue().getText()).append("\n\n");
             summary.append("Bạn có chắc chắn muốn hoàn thành kiểm kê?\n");
             summary.append("Sau khi hoàn thành, tồn kho sẽ được cập nhật theo số liệu thực tế.");
-            
+
             int result = JOptionPane.showConfirmDialog(view,
-                summary.toString(),
-                "Xác nhận hoàn thành kiểm kê", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-            
+                    summary.toString(),
+                    "Xác nhận hoàn thành kiểm kê",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
             if (result == JOptionPane.YES_OPTION) {
-                
-                // Thêm vào trước khi gọi completeInventoryCheck:
+
                 if (!saveDetailsToDatabase()) {
                     JOptionPane.showMessageDialog(view,
-                        "Có lỗi khi lưu chi tiết kiểm kê. Vui lòng thử lại!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            "Có lỗi khi lưu chi tiết kiểm kê. Vui lòng thử lại!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                
+
                 boolean success = inventoryCheckService.completeInventoryCheck(currentInventoryCheck.getId());
-                
+
                 if (success) {
                     JOptionPane.showMessageDialog(view,
-                        "Hoàn thành kiểm kê thành công!\nTồn kho đã được cập nhật theo số liệu thực tế.",
-                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
+                            "Hoàn thành kiểm kê thành công!\nTồn kho đã được cập nhật theo số liệu thực tế.",
+                            "Thành công", JOptionPane.INFORMATION_MESSAGE);
+
                     // Refresh form
                     refreshForm();
                 } else {
                     JOptionPane.showMessageDialog(view,
-                        "Lỗi hoàn thành kiểm kê. Vui lòng thử lại!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            "Lỗi hoàn thành kiểm kê. Vui lòng thử lại!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi hoàn thành kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi hoàn thành kiểm kê: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Xử lý import Excel
      */
     private void handleImportExcel() {
         // TODO: Implement Excel import functionality
         JOptionPane.showMessageDialog(view,
-            "Chức năng import Excel đang được phát triển",
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                "Chức năng import Excel đang được phát triển",
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     /**
      * Xử lý export Excel
      */
     private void handleExportExcel() {
         if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
             JOptionPane.showMessageDialog(view,
-                "Không có dữ liệu để xuất!",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    "Không có dữ liệu để xuất!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         // TODO: Implement Excel export functionality
         JOptionPane.showMessageDialog(view,
-            "Chức năng xuất Excel đang được phát triển",
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                "Chức năng xuất Excel đang được phát triển",
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     /**
-     * Xử lý in phiếu
+     * Xử lý in phiếu - Sử dụng Map
      */
     private void handlePrint() {
-        if (currentInventoryCheck == null) {
-            JOptionPane.showMessageDialog(view,
-                "Không có dữ liệu để in!",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        // Validate dữ liệu
+        if (!BillPrintUtils.validatePrintData(view, currentInventoryCheck, inventoryCheckDetails)) {
             return;
         }
-        
-        // TODO: Implement print functionality
-        JOptionPane.showMessageDialog(view,
-            "Chức năng in đang được phát triển",
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+        try {
+            Map<String, Object> printData = createPrintDataMap();
+
+            String defaultFileName = "PhieuKiemKe_" + currentInventoryCheck.getCheckCode();
+            BillPrintUtils.printBill(view, "bill_inventory_check_template", printData, defaultFileName);
+            //Sửa lại reposive nhé
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Lỗi in phiếu: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
-    
+
+    /**
+     * Tạo Map dữ liệu cho việc in phiếu
+     */
+    private Map<String, Object> createPrintDataMap() {
+        Map<String, Object> data = new HashMap<>();
+
+        // Thông tin cơ bản
+        data.put("inventoryCheckCode", currentInventoryCheck.getCheckCode());
+        data.put("inventoryCheckName", currentInventoryCheck.getCheckName());
+        data.put("checkDate", currentInventoryCheck.getCheckDate());
+        data.put("createdDate", currentInventoryCheck.getCreatedAt());
+        data.put("status", currentInventoryCheck.getStatus());
+        data.put("notes", currentInventoryCheck.getNotes());
+        data.put("warehouseName", "Kho chính");
+
+        // Thông tin nhân viên
+        if (currentInventoryCheck.getEmployee() != null) {
+            data.put("checkerName", currentInventoryCheck.getEmployee().getFullName());
+            data.put("createdBy", currentInventoryCheck.getEmployee().getFullName());
+        } else {
+            data.put("checkerName", "");
+            data.put("createdBy", "");
+        }
+
+        data.put("inventoryItems", createInventoryItemsList());
+
+        // Thống kê
+        Map<String, Integer> summary = calculateSummary();
+        data.put("totalProducts", summary.get("totalProducts"));
+        data.put("totalIncrease", summary.get("totalIncrease"));
+        data.put("totalDecrease", summary.get("totalDecrease"));
+        data.put("totalDifference", summary.get("totalDifference"));
+
+        return data;
+    }
+
+    private List<Map<String, Object>> createInventoryItemsList() {
+        List<Map<String, Object>> items = new ArrayList<>();
+
+        if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
+            return items;
+        }
+
+        for (InventoryCheckDetail detail : inventoryCheckDetails) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("productName", detail.getProduct().getProductName());
+            item.put("productId", detail.getProduct().getProductId());
+            item.put("systemQuantity", detail.getSystemQuantity());
+            item.put("actualQuantity", detail.getActualQuantity() != null ? detail.getActualQuantity() : 0);
+//            item.put("unitPrice", detail.getProduct().getPrice());
+//            item.put("totalValue", detail.getTotalValue());
+            item.put("discrepancy", detail.getDiscrepancy() != null ? detail.getDiscrepancy() : 0);
+            item.put("reseaon", detail.getReason() != null ? detail.getReason() : "");
+            items.add(item);
+        }
+        return items;
+    }
+
+    private Map<String, Integer> calculateSummary() {
+        Map<String, Integer> summary = new HashMap<>();
+        summary.put("totalProducts", 0);
+        summary.put("totalIncrease", 0);
+        summary.put("totalDecrease", 0);
+        summary.put("totalDifference", 0);
+
+        if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
+            return summary;
+        }
+
+        for (InventoryCheckDetail detail : inventoryCheckDetails) {
+            int actualQuantity = detail.getActualQuantity() != null ? detail.getActualQuantity() : 0;
+            int systemQuantity = detail.getSystemQuantity();
+
+            summary.put("totalProducts", summary.get("totalProducts") + 1);
+
+            if (actualQuantity > systemQuantity) {
+                summary.put("totalIncrease", summary.get("totalIncrease") + (actualQuantity - systemQuantity));
+            } else if (actualQuantity < systemQuantity) {
+                summary.put("totalDecrease", summary.get("totalDecrease") + (systemQuantity - actualQuantity));
+            }
+
+            summary.put("totalDifference", summary.get("totalDifference") + Math.abs(actualQuantity - systemQuantity));
+        }
+
+        return summary;
+    }
+
     /**
      * Thực hiện tìm kiếm trong bảng
      */
     private void performSearch() {
         String searchText = view.getTextFieldSearch().getText().trim().toLowerCase();
-        
+
         if (searchText.isEmpty() || inventoryCheckDetails == null) {
             populateInventoryDetailTable();
             return;
         }
 
         TableUtils.applyFilter(tableRowSorter, searchText, 1, 2, 3);
-        
+
     }
-    
-    
+
+
     /**
      * Cập nhật thông tin phiếu kiểm kê từ form
      */
     private void updateInventoryCheckFromForm() throws Exception {
         if (currentInventoryCheck == null) return;
-        
+
         currentInventoryCheck.setCheckName(view.getTxtInventoryName().getText().trim());
-        
+
         currentInventoryCheck.setNotes(view.getTxtNotes().getText().trim());
         String selectedEmployeeName = (String) view.getCbbChecker().getSelectedItem();
         if (selectedEmployeeName != null) {
@@ -1006,10 +1101,10 @@ public class DetailInventoryCheckController {
                 }
             }
         }
-        
+
         currentInventoryCheck.setUpdatedAt(LocalDateTime.now());
     }
-    
+
     /**
      * Validate dữ liệu đầu vào
      */
@@ -1022,23 +1117,23 @@ public class DetailInventoryCheckController {
             view.getTxtInventoryName().requestFocus();
 
             Notifications.getInstance().show(Notifications.Type.ERROR,
-                "Tên phiếu kiểm kê không được để trống!");
+                    "Tên phiếu kiểm kê không được để trống!");
 
             return false;
         }
-        
+
         // Kiểm tra nhân viên được chọn
         if (view.getCbbChecker().getSelectedItem() == null) {
             Notifications.getInstance().show(Notifications.Type.ERROR,
-                "Vui lòng chọn nhân viên thực hiện kiểm kê!");
+                    "Vui lòng chọn nhân viên thực hiện kiểm kê!");
 
             view.getCbbChecker().requestFocus();
             return false;
         }
-        
+
         return true;
     }
-    
+
 
     /**
      * Refresh dữ liệu form
@@ -1046,18 +1141,21 @@ public class DetailInventoryCheckController {
     public void refreshForm() {
         if (currentInventoryCheck != null) {
             loadInventoryCheck(currentInventoryCheck.getCheckCode());
+            updateProgressSteps();
+            updateButtonStates();
+            populateFormWithData();
 
         }
         TableUtils.refreshSorter(view.getTableProducts());
     }
-    
+
     /**
      * Bắt đầu kiểm kê (chuyển từ DRAFT sang IN_PROGRESS)
      */
     public boolean startInventoryCheck() {
         try {
             if (currentInventoryCheck == null) return false;
-            
+
             boolean success = inventoryCheckService.startInventoryCheck(currentInventoryCheck.getId());
             if (success) {
                 refreshForm();
@@ -1067,25 +1165,25 @@ public class DetailInventoryCheckController {
             return false;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi bắt đầu kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi bắt đầu kiểm kê: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
-    
+
     /**
      * Hủy phiếu kiểm kê
      */
     public boolean cancelInventoryCheck() {
         try {
             if (currentInventoryCheck == null) return false;
-            
+
             int result = JOptionPane.showConfirmDialog(view,
-                "Bạn có chắc chắn muốn hủy phiếu kiểm kê?\nThao tác này không thể hoàn tác!",
-                "Xác nhận hủy", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-            
+                    "Bạn có chắc chắn muốn hủy phiếu kiểm kê?\nThao tác này không thể hoàn tác!",
+                    "Xác nhận hủy",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
+
             if (result == JOptionPane.YES_OPTION) {
                 boolean success = inventoryCheckService.cancelInventoryCheck(currentInventoryCheck.getId());
                 if (success) {
@@ -1096,31 +1194,32 @@ public class DetailInventoryCheckController {
             return false;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi hủy phiếu kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    "Lỗi hủy phiếu kiểm kê: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
-      /**
+
+    /**
      * Cleanup resources
      */
     public void dispose() {
         // Cleanup resources nếu cần
     }
-    
+
     // Getter methods
     public InventoryCheck getCurrentInventoryCheck() {
         return currentInventoryCheck;
     }
-    
+
     public List<InventoryCheckDetail> getInventoryCheckDetails() {
         return inventoryCheckDetails;
     }
-    
+
     public InventoryCheckService getInventoryCheckService() {
         return inventoryCheckService;
     }
-    
+
     public EmployeeService getEmployeeService() {
         return employeeService;
     }

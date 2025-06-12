@@ -197,9 +197,8 @@ public class TableUtils {
                         return Double.compare(((Number) o1).doubleValue(), ((Number) o2).doubleValue());
                     }else{
                         try {
-                            String v1 = o1.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim().replaceAll("\\.", "").replaceAll("\\,", "");
-                            
-                            String v2 = o2.toString().replace(" đ", "").replace("đ", "").replace("VND", "").replace(".", "").trim().replaceAll("\\.", "").replaceAll("\\,", "");
+                            String v1 = o1.toString().replaceAll("[^0-9.]", "").replaceAll("\\.", "");
+                            String v2 = o2.toString().replaceAll("[^0-9.]", "").replaceAll("\\.", "");
 
                             double d1 = Double.parseDouble(v1);
                             double d2 = Double.parseDouble(v2);

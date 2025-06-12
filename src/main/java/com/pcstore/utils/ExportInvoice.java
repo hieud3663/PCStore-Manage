@@ -29,7 +29,7 @@ public class ExportInvoice {
             NumberFormat formatter = LocaleManager.getInstance().getCurrencyFormatter();
 
             // Kiểm tra đường dẫn file mẫu
-            File f = new File("src\\main\\java\\com\\pcstore\\resources\\bill_form.xlsx");
+            File f = new File("src\\main\\java\\com\\pcstore\\resources\\bill_sell_template.xlsx");
             if (!f.exists()) {
                 JOptionPane.showMessageDialog(null,
                         "Không tìm thấy file mẫu hóa đơn!\nĐường dẫn: " + f.getAbsolutePath(),

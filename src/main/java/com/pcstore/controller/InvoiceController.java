@@ -1388,7 +1388,7 @@ public class InvoiceController {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể xuất Excel khi không có form");
         }
-        
+            
         JTable table = invoiceForm.getTableInvoice();
         int rowCount = table.getRowCount();
         

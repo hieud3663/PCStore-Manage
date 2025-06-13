@@ -79,8 +79,7 @@ public class InventoryCheckService {
      * @param reason Lý do chênh lệch
      * @return Chi tiết kiểm kê đã thêm
      */
-    public InventoryCheckDetail addCheckDetail(Integer inventoryCheckId, String productId, 
-                                             Integer actualQuantity, String reason) {
+    public InventoryCheckDetail addCheckDetail(Integer inventoryCheckId, String productId, Integer actualQuantity, String reason) {
         // Tìm phiếu kiểm kê
         Optional<InventoryCheck> inventoryCheck = inventoryCheckRepository.findById(inventoryCheckId);
         if (!inventoryCheck.isPresent()) {

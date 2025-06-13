@@ -4,6 +4,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JFileChooser;
@@ -388,8 +389,7 @@ public class JExcel {
      * @param suggestedFilename Tên file đề xuất (sẽ hiển thị trong hộp thoại lưu)
      * @return Đường dẫn đến file nếu xuất thành công, null nếu thất bại hoặc hủy
      */
-    public String toExcel(List<String> headers, List<List<Object>> data, String title, 
-                          Map<String, Object> metaData, String suggestedFilename) {
+    public String toExcel(List<String> headers, List<List<Object>> data, String title, Map<String, Object> metaData, String suggestedFilename) {
         if (headers == null || headers.isEmpty() || data == null || data.isEmpty()) {
             return null;
         }
@@ -438,9 +438,8 @@ public class JExcel {
             titleCell.setCellStyle(titleStyle);
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headers.size() - 1));
             
-            // Tính toán số dòng metadata cần thêm vào
-            int metaDataRows = (metaData != null) ? metaData.size() : 0;
-            int currentRow = 1; // Dòng tiếp theo sau tiêu đề
+         
+            int currentRow = 1; 
             
             // Thêm metadata nếu có
             if (metaData != null && !metaData.isEmpty()) {
@@ -548,5 +547,201 @@ public class JExcel {
                     ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
             return null;
         }
+    }
+
+
+    /**
+     * Đọc dữ liệu từ file Excel và trả về dưới dạng List<List<Object>>
+     * @param filePath Đường dẫn đến file Excel
+     * @return List<List<Object>> chứa dữ liệu từ Excel, null nếu có lỗi
+     */
+    public List<List<Object>> fromExcel(String filePath) {
+        if (filePath == null || filePath.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "Đường dẫn file không hợp lệ.",
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    
+        File file = new File(filePath);
+        if (!file.exists() || !file.isFile()) {
+            JOptionPane.showMessageDialog(null,
+                    "File không tồn tại: " + filePath,
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    
+        try (Workbook workbook = WorkbookFactory.create(file)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            if (sheet == null) {
+                JOptionPane.showMessageDialog(null,
+                        "File Excel không có sheet nào.",
+                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
+    
+            List<List<Object>> data = new ArrayList<>();
+            
+            // Xác định số dòng có dữ liệu
+            int lastRowNum = sheet.getLastRowNum();
+            
+            // Duyệt qua từng dòng
+            for (int i = 0; i <= lastRowNum; i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) {
+                    data.add(new ArrayList<>());
+                    continue;
+                }
+    
+                List<Object> rowData = new ArrayList<>();
+                int lastCellNum = row.getLastCellNum();
+                
+                // Duyệt qua từng ô trong dòng
+                for (int j = 0; j < lastCellNum; j++) {
+                    Cell cell = row.getCell(j);
+                    Object cellValue = getCellValue(cell);
+                    rowData.add(cellValue);
+                }
+                
+                data.add(rowData);
+            }
+    
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "Lỗi khi đọc file Excel: " + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+    }
+    
+    /**
+     * Lấy giá trị từ cell dựa vào kiểu dữ liệu
+     * @param cell Cell cần lấy giá trị
+     * @return Object chứa giá trị của cell
+     */
+    private Object getCellValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue();
+                } else {
+                    double value = cell.getNumericCellValue();
+                    if (value == Math.floor(value) && !Double.isInfinite(value)) {
+                        return (int) value;
+                    }
+                    return value;
+                }
+            case BOOLEAN:
+                return cell.getBooleanCellValue();
+            case FORMULA:
+                switch (cell.getCachedFormulaResultType()) {
+                    case STRING:
+                        return cell.getStringCellValue();
+                    case NUMERIC:
+                        if (DateUtil.isCellDateFormatted(cell)) {
+                            return cell.getDateCellValue();
+                        } else {
+                            double value = cell.getNumericCellValue();
+                            if (value == Math.floor(value) && !Double.isInfinite(value)) {
+                                return (int) value;
+                            }
+                            return value;
+                        }
+                    case BOOLEAN:
+                        return cell.getBooleanCellValue();
+                    default:
+                        return null;
+                }
+            default:
+                return null;
+        }
+    }
+    
+    /**
+     * Đọc dữ liệu từ file Excel với header và tự động tìm dữ liệu trong bảng
+     * @param filePath Đường dẫn đến file Excel
+     * @param hasHeaderRow Có dòng header hay không
+     * @return List<List<Object>> chứa dữ liệu từ Excel, null nếu có lỗi
+     */
+    public List<List<Object>> fromExcelTable(String filePath, boolean hasHeaderRow) {
+        List<List<Object>> rawData = fromExcel(filePath);
+        if (rawData == null || rawData.isEmpty()) {
+            return null;
+        }
+        
+        // Tìm dòng bắt đầu của bảng (dòng header nếu có)
+        int startRow = -1;
+        for (int i = 0; i < rawData.size(); i++) {
+            List<Object> row = rawData.get(i);
+            if (!row.isEmpty() && !isEmptyRow(row)) {
+                startRow = i;
+                break;
+            }
+        }
+        
+        if (startRow == -1) {
+            return new ArrayList<>(); // Không có dữ liệu
+        }
+        
+        // Nếu có header, bỏ qua dòng header
+        int dataStartRow = hasHeaderRow ? startRow + 1 : startRow;
+        
+        // Tìm dòng kết thúc của bảng (dòng cuối cùng không rỗng)
+        int endRow = rawData.size() - 1;
+        for (int i = rawData.size() - 1; i >= dataStartRow; i--) {
+            List<Object> row = rawData.get(i);
+            if (!isEmptyRow(row)) {
+                endRow = i;
+                break;
+            }
+        }
+        
+        // Trích xuất dữ liệu từ bảng
+        List<List<Object>> tableData = new ArrayList<>();
+        
+        // Thêm dòng header nếu có
+        if (hasHeaderRow) {
+            tableData.add(rawData.get(startRow));
+        }
+        
+        // Thêm các dòng dữ liệu
+        for (int i = dataStartRow; i <= endRow; i++) {
+            tableData.add(rawData.get(i));
+        }
+        
+        return tableData;
+    }
+    
+    /**
+     * Kiểm tra xem một dòng có rỗng không
+     * @param row Dòng cần kiểm tra
+     * @return true nếu dòng rỗng, false nếu không
+     */
+    private boolean isEmptyRow(List<Object> row) {
+        if (row == null || row.isEmpty()) {
+            return true;
+        }
+        
+        for (Object cell : row) {
+            if (cell != null) {
+                if (cell instanceof String) {
+                    if (!((String) cell).trim().isEmpty()) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
     }
 }

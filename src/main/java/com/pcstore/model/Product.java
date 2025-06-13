@@ -16,6 +16,7 @@ import java.util.List;
 public class Product extends BaseTimeEntity {
     private String productId;
     private String productName;
+    private String barcode; // Mã vạch sản phẩm
     private BigDecimal price;
     private int stockQuantity;
     private String specifications;
@@ -56,6 +57,14 @@ public class Product extends BaseTimeEntity {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Mã sản phẩm"));
         }
         this.productId = productId;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     public String getProductName() {

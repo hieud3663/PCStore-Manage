@@ -496,7 +496,7 @@ public class AddInventoryCheckController {
                 inventoryCheckService.addCheckDetail(
                     inventoryCheck.getId(),
                     product.getProductId(),
-                    product.getQuantityInStock(), // Mặc định số lượng thực tế = số lượng hệ thống
+                    product.getQuantityInStock(),
                     ""
                 );
             }

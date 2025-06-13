@@ -16,7 +16,9 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -32,10 +34,12 @@ import javax.swing.table.TableRowSorter;
 import com.pcstore.model.Employee;
 import com.pcstore.model.InventoryCheck;
 import com.pcstore.model.InventoryCheckDetail;
+import com.pcstore.model.enums.InventoryCheckStatus;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.InventoryCheckService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
 import com.pcstore.utils.BillDataUtils;
@@ -280,16 +284,12 @@ public class DetailInventoryCheckController {
         for (InventoryCheckDetail detail : inventoryCheckDetails) {
             BigDecimal unitPrice = detail.getProduct().getPrice();
 
-            // Xử lý hiển thị actual quantity và tổng giá trị
-            String actualQuantityStr;
-            BigDecimal totalValue;
+            String actualQuantityStr = null;
+            BigDecimal totalValue = BigDecimal.ZERO;
 
             if (detail.getActualQuantity() != null && detail.getActualQuantity() >= 0) {
                 actualQuantityStr = numberFormat.format(detail.getActualQuantity());
                 totalValue = unitPrice.multiply(new BigDecimal(detail.getActualQuantity()));
-            } else {
-                actualQuantityStr = null;
-                totalValue = BigDecimal.ZERO;
             }
 
             Object[] row = new Object[]{
@@ -298,7 +298,7 @@ public class DetailInventoryCheckController {
                     detail.getProduct().getProductId(),
                     "code test",
                     numberFormat.format(detail.getSystemQuantity()),
-                    actualQuantityStr, // Hiển thị số đã nhập trước đó
+                    actualQuantityStr, 
                     currencyFormat.format(unitPrice),
                     currencyFormat.format(totalValue)
             };
@@ -662,7 +662,8 @@ public class DetailInventoryCheckController {
                                                            boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-                if (!isSelected && row < table.getRowCount()) {
+                // if (!isSelected && row < table.getRowCount()) {
+                // if (true){
                     try {
                         String productId = table.getValueAt(row, 2).toString();
 
@@ -675,16 +676,20 @@ public class DetailInventoryCheckController {
                             } else if (detail.getActualQuantity() == 0) {
                                 c.setBackground(new Color(255, 200, 200)); // Màu đỏ nhạt
                                 c.setForeground(Color.BLACK);
+                                 ((JLabel) c).setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
                             } else {
-                                c.setBackground(table.getBackground());
-                                c.setForeground(table.getForeground());
+                                c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
+                                c.setForeground(Color.BLACK);
+                                ((JLabel) c).setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+                                ((JLabel) c).setToolTipText("Click to edit quantity");
+                                
                             }
                         }
                     } catch (Exception e) {
                         c.setBackground(table.getBackground());
                         c.setForeground(table.getForeground());
                     }
-                }
+                // }
 
                 ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
                 return c;
@@ -768,21 +773,21 @@ public class DetailInventoryCheckController {
 
         String status = currentInventoryCheck.getStatus();
 
-        // Nút cập nhật: chỉ cho phép khi phiếu đang DRAFT hoặc IN_PROGRESS
         boolean canUpdate = STATUS_DRAFT.equals(status) || STATUS_IN_PROGRESS.equals(status);
         ButtonUtils.setKButtonEnabled(view.getBtnUpdate(), canUpdate);
 
-        // Nút hoàn thành: chỉ cho phép khi phiếu đang IN_PROGRESS
         boolean canComplete = STATUS_IN_PROGRESS.equals(status);
         ButtonUtils.setKButtonEnabled(view.getBtnComplete(), canComplete);
 
-        // Import Excel: chỉ cho phép khi phiếu chưa hoàn thành
         boolean canImport = !STATUS_COMPLETED.equals(status) && !STATUS_CANCELLED.equals(status);
         ButtonUtils.setKButtonEnabled(view.getBtnImportExcel(), canImport);
 
-        // Form có thể chỉnh sửa khi phiếu chưa hoàn thành
         boolean formEditable = !STATUS_COMPLETED.equals(status) && !STATUS_CANCELLED.equals(status);
         setFormEditable(formEditable);
+
+        boolean canExport = (view.getTableProducts().getRowCount() > 0);
+        ButtonUtils.setKButtonEnabled(view.getBtnExportExcel(), canExport);
+
     }
 
     /**
@@ -931,11 +936,112 @@ public class DetailInventoryCheckController {
     /**
      * Xử lý import Excel
      */
+    
     private void handleImportExcel() {
-        // TODO: Implement Excel import functionality
-        JOptionPane.showMessageDialog(view,
-                "Chức năng import Excel đang được phát triển",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        if (currentInventoryCheck == null) {
+            JOptionPane.showMessageDialog(view,
+                    "Không có phiếu kiểm kê hiện tại!",
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+    
+        if (!STATUS_DRAFT.equals(currentInventoryCheck.getStatus()) && 
+            !STATUS_IN_PROGRESS.equals(currentInventoryCheck.getStatus())) {
+            JOptionPane.showMessageDialog(view,
+                    "Chỉ có thể import dữ liệu trong trạng thái nháp hoặc đang kiểm kê!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+    
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setDialogTitle("Chọn file Excel chứa dữ liệu kiểm kê");
+        
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                "Excel files (*.xlsx, *.xls)", "xlsx", "xls"));
+        
+        int result = fileChooser.showOpenDialog(view);
+        
+        if (result == javax.swing.JFileChooser.APPROVE_OPTION) {
+            try {
+                java.io.File selectedFile = fileChooser.getSelectedFile();
+                
+                // Đọc file Excel
+                JExcel jExcel = new JExcel();
+                List<List<Object>> data = jExcel.fromExcel(selectedFile.getAbsolutePath());
+
+                // System.out.println(data.toString());
+                
+
+                if (data == null || data.isEmpty()) {
+                    JOptionPane.showMessageDialog(view,
+                            "File không có dữ liệu hoặc không đúng định dạng!",
+                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                int invalidRows = 0;
+                int updatedRows = 0;
+                
+                // Bỏ qua các dòng thừa
+                for (int i = 1; i < data.size(); i++) {
+                    List<Object> row = data.get(i);
+                    
+                    if (row.size() < 6) {
+                        invalidRows++;
+                        continue;
+                    }
+                    
+                    try {
+                        String productId = row.get(2).toString(); // Cột mã sản phẩm
+                        String actualQuantityStr = row.get(5).toString(); // Cột số lượng thực tế
+                        
+                        if (productId == null || productId.trim().isEmpty() || 
+                            actualQuantityStr == null || actualQuantityStr.trim().isEmpty()) {
+                            invalidRows++;
+                            continue;
+                        }
+
+                        int actualQuantity = Integer.parseInt(actualQuantityStr.trim());
+                        
+                        boolean success = updateActualQuantityByProductId( productId, actualQuantity);
+
+                        if (success) updatedRows++; else invalidRows++;
+
+                    } catch (NumberFormatException e) {
+                        invalidRows++;
+                        continue;
+                    } catch (Exception e) {
+                        invalidRows++;
+                        JOptionPane.showMessageDialog(view,
+                                "Lỗi xử lý dòng " + (i + 1) + ": " + e.getMessage(),
+                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+                populateInventoryDetailTable();
+                populateFormWithData();
+                updateSummaryData();
+                
+                StringBuilder message = new StringBuilder();
+                message.append("Import hoàn tất!\n");
+                message.append("- Số lượng sản phẩm đã cập nhật: ").append(updatedRows).append("\n");
+                
+                if (invalidRows > 0) {
+                    message.append("- Số lượng dòng không hợp lệ: ").append(invalidRows).append("\n");
+                }
+                
+                
+                JOptionPane.showMessageDialog(view, 
+                        message.toString(),
+                        "Kết quả import", JOptionPane.INFORMATION_MESSAGE);
+                
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(view,
+                        "Lỗi khi import file Excel: " + e.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -948,11 +1054,57 @@ public class DetailInventoryCheckController {
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        JTable table = view.getTableProducts();
+        int rowCnt = view.getTableProducts().getRowCount();
+        String[] header = new String[]{"STT", "Tên sản phẩm", "Mã sản phẩm", "Barcode", "SL Tồn kho", "SL thực tế (*)", "Đơn giá", "Thành tiền"};
 
-        // TODO: Implement Excel export functionality
-        JOptionPane.showMessageDialog(view,
-                "Chức năng xuất Excel đang được phát triển",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("Kho kiểm kê", "Kho chính");
+        metadata.put("Mã phiếu kiểm kê", currentInventoryCheck.getCheckCode());
+        metadata.put("Tên phiếu kiểm kê", currentInventoryCheck.getCheckName());
+        metadata.put("Người tạo phiếu", currentInventoryCheck.getEmployee() != null ? currentInventoryCheck.getEmployee().getFullName() : "Chưa có");
+        metadata.put("Ngày tạo phiếu", currentInventoryCheck.getCreatedAt() != null ? currentInventoryCheck.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Chưa có");
+        metadata.put("Lưu ý", "Sử dụng file này để nhập số lượng thực tế và cập nhật trên hệ thống. Chỉ được phép nhập ở cột (*)");
+
+        Object data[][] = new Object[rowCnt][header.length];
+        try{
+            for(int i=0; i<rowCnt; i++){
+                data[i][0] = table.getValueAt(i, 0); // STT
+                data[i][1] = table.getValueAt(i, 1); // Tên sản phẩm
+                data[i][2] = table.getValueAt(i, 2); // Mã sản phẩm
+                data[i][3] = table.getValueAt(i, 3); // Barcode
+                data[i][4] = table.getValueAt(i, 4); // SL Tồn kho
+                data[i][5] = table.getValueAt(i, 5); // SL thực tế
+                data[i][6] = table.getValueAt(i, 6).toString().replaceAll("[^0-9.]", "");
+                data[i][7] = table.getValueAt(i, 7).toString().replaceAll("[^0-9.]", "");
+            }
+
+            List<String> headerList = Arrays.asList(header);
+            List<List<Object>> dataList = Arrays.stream(data)
+                    .map(Arrays::asList)
+                    .collect(Collectors.toList());
+
+            String fileName = "DANH_SACH_SAN_PHAM_KIEM_KE_" + currentInventoryCheck.getCheckCode();
+
+            JExcel jExcel = new JExcel();
+            String success = jExcel.toExcel(headerList, dataList, "DANH SÁCH SẢN PHẨM KIỂM KÊ", metadata, fileName);
+
+            if (success != null) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS,
+                        "Xuất Excel thành công!\nFile đã được lưu tại: " + fileName);
+            } else {
+                JOptionPane.showMessageDialog(view,
+                        "Xuất Excel không thành công!",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Lỗi khi Xuất Excel: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return;
+        }
     }
 
     /**
@@ -1021,17 +1173,18 @@ public class DetailInventoryCheckController {
         if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
             return items;
         }
-
+        String status= InventoryCheckStatus.COMPLETED.getDbValue();
         for (InventoryCheckDetail detail : inventoryCheckDetails) {
             Map<String, Object> item = new HashMap<>();
             item.put("productName", detail.getProduct().getProductName());
             item.put("productId", detail.getProduct().getProductId());
             item.put("systemQuantity", detail.getSystemQuantity());
-            item.put("actualQuantity", detail.getActualQuantity() != null ? detail.getActualQuantity() : 0);
-//            item.put("unitPrice", detail.getProduct().getPrice());
-//            item.put("totalValue", detail.getTotalValue());
-            item.put("discrepancy", detail.getDiscrepancy() != null ? detail.getDiscrepancy() : 0);
-            item.put("reseaon", detail.getReason() != null ? detail.getReason() : "");
+
+            item.put("actualQuantity", currentInventoryCheck.getStatus().equals(status) ? detail.getActualQuantity() : "");
+
+            item.put("barcode", detail.getProduct().getBarcode() != null ? detail.getProduct().getBarcode() : "test");
+            item.put("discrepancy", currentInventoryCheck.getStatus().equals(status) ? detail.getActualQuantity() : ""); 
+            item.put("notes", detail.getReason() != null ? detail.getReason() : "");
             items.add(item);
         }
         return items;
@@ -1141,9 +1294,10 @@ public class DetailInventoryCheckController {
     public void refreshForm() {
         if (currentInventoryCheck != null) {
             loadInventoryCheck(currentInventoryCheck.getCheckCode());
-            updateProgressSteps();
-            updateButtonStates();
-            populateFormWithData();
+            // updateProgressSteps();
+            // updateButtonStates();
+            // populateFormWithData();
+            updateSummaryData();
 
         }
         TableUtils.refreshSorter(view.getTableProducts());

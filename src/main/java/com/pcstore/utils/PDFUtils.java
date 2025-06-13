@@ -2,9 +2,15 @@ package com.pcstore.utils;
 
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
+import com.itextpdf.html2pdf.css.apply.impl.DefaultCssApplierFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.font.FontProvider;
+import com.itextpdf.io.font.FontProgramFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.io.font.constants.StandardFonts;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -44,23 +50,50 @@ public class PDFUtils {
      */
     public static void generatePDF(String htmlContent, String outputPath) throws Exception {
         generatePDF(htmlContent, outputPath, PageSize.A4);
-    }
-
-    /**
+    }    /**
      * Tạo PDF từ HTML content với kích thước trang tùy chỉnh
      */
     public static void generatePDF(String htmlContent, String outputPath, PageSize pageSize) throws Exception {
         ConverterProperties properties = new ConverterProperties();
         properties.setCharset("UTF-8");
+        
+        // Cấu hình để tràn viền
+        properties.setImmediateFlush(false);
+
+        FontProvider fontProvider = new FontProvider();
+        
+        try {
+            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman bold.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman italic.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman 2 bold italic.ttf");
+        } catch (Exception e) {
+            try {
+                fontProvider.addFont("Times New Roman");
+                fontProvider.addFont("Times New Roman Bold");
+            } catch (Exception ex) {
+                fontProvider.addFont(StandardFonts.TIMES_ROMAN);
+                fontProvider.addFont(StandardFonts.TIMES_BOLD);
+                fontProvider.addFont(StandardFonts.TIMES_ITALIC);
+                fontProvider.addFont(StandardFonts.TIMES_BOLDITALIC);
+            }
+        }
+
+        properties.setFontProvider(fontProvider);
 
         try (FileOutputStream fos = new FileOutputStream(outputPath)) {
             PdfWriter writer = new PdfWriter(fos);
             PdfDocument pdf = new PdfDocument(writer);
+            
+            // Thiết lập page size KHÔNG có margin
             pdf.setDefaultPageSize(pageSize);
-
+            
+            // Tạo PDF từ HTML
             HtmlConverter.convertToPdf(htmlContent, pdf, properties);
         }
     }
+
+    
 
     /**
      * Render template thành HTML
@@ -146,4 +179,5 @@ public class PDFUtils {
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
 }

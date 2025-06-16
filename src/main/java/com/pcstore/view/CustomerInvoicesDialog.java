@@ -284,8 +284,8 @@ public class CustomerInvoicesDialog extends JDialog {
         } else {
             JOptionPane.showMessageDialog(this,
                     "Vui lòng chọn hóa đơn để xem chi tiết.",
-                    // ErrorMessage.SELECT_INVOICE,
-                    ErrorMessage.ERROR_TITLE,
+                    // ErrorMessage.SELECT_INVOICE.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(),
                     JOptionPane.ERROR_MESSAGE);
         }
     }

@@ -65,5 +65,4 @@ public class InventoryCheckDetail extends BaseTimeEntity {
         this.lossValue = lossValue;
     }
     
-    // Constructors, getters, setters
 }

@@ -287,8 +287,8 @@ public class BankPayment extends BasePayment {
                 setStatus(InvoiceStatusEnum.FAILED);
                 setDescription("Không thể tạo link thanh toán");
                 JOptionPane.showMessageDialog(parent, 
-                    ErrorMessage.PAYMENT_LINK_CREATE_ERROR, 
-                    ErrorMessage.ERROR_TITLE, 
+                    ErrorMessage.PAYMENT_LINK_CREATE_ERROR.toString(), 
+                    ErrorMessage.ERROR_TITLE.toString(), 
                     JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -297,8 +297,8 @@ public class BankPayment extends BasePayment {
             if (!openWebBrowser(paymentUrl)) {
                 setDescription("Không thể mở trình duyệt để thanh toán");
                 JOptionPane.showMessageDialog(parent, 
-                    ErrorMessage.BROWSER_OPEN_ERROR, 
-                    ErrorMessage.ERROR_TITLE, 
+                    ErrorMessage.BROWSER_OPEN_ERROR.toString(), 
+                    ErrorMessage.ERROR_TITLE.toString(), 
                     JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -306,8 +306,8 @@ public class BankPayment extends BasePayment {
             // Hiển thị dialog chờ thanh toán
             int option = JOptionPane.showConfirmDialog(
                 parent,
-                ErrorMessage.PAYMENT_WAITING_MESSAGE,
-                ErrorMessage.PAYMENT_CONFIRM_TITLE,
+                ErrorMessage.PAYMENT_WAITING_MESSAGE.toString(),
+                ErrorMessage.PAYMENT_CONFIRM_TITLE.toString(),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
             );
@@ -317,14 +317,14 @@ public class BankPayment extends BasePayment {
                 int status = checkPaymentStatus();
                 if (status == 1) {
                     JOptionPane.showMessageDialog(parent, 
-                        ErrorMessage.PAYMENT_SUCCESS, 
-                        ErrorMessage.INFO_TITLE, 
+                        ErrorMessage.PAYMENT_SUCCESS.toString(), 
+                        ErrorMessage.INFO_TITLE.toString(), 
                         JOptionPane.INFORMATION_MESSAGE);
                     return true;
                 } else {
                     JOptionPane.showMessageDialog(parent, 
-                        ErrorMessage.PAYMENT_VERIFICATION_FAILED, 
-                        ErrorMessage.WARNING_TITLE, 
+                        ErrorMessage.PAYMENT_VERIFICATION_FAILED.toString(), 
+                        ErrorMessage.WARNING_TITLE.toString(), 
                         JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
@@ -336,8 +336,8 @@ public class BankPayment extends BasePayment {
         } catch (Exception e) {
             setDescription("Lỗi xử lý thanh toán ngân hàng: " + e.getMessage());
             JOptionPane.showMessageDialog(parent, 
-                ErrorMessage.PAYMENT_PROCESSING_ERROR.formatted(e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, 
+                ErrorMessage.PAYMENT_PROCESSING_ERROR.toString().formatted(e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), 
                 JOptionPane.ERROR_MESSAGE);
             return false;
         }

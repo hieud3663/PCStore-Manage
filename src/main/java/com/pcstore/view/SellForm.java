@@ -119,8 +119,8 @@ public class SellForm extends JPanel {
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, ErrorMessage.FORM_INIT_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, ErrorMessage.FORM_INIT_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
 
         //sự kiện tìm kiếm
@@ -622,8 +622,8 @@ public class SellForm extends JPanel {
 
     private void btnResetMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnResetMouseClicked
         int confirm = JOptionPane.showConfirmDialog(this,
-                ErrorMessage.CONFIRM_RESET_CART,
-                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CONFIRM_RESET_CART.toString(),
+                ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION)
             resetSaleForm();
@@ -696,8 +696,8 @@ public class SellForm extends JPanel {
         boolean check = sellController.initializeSale(employee);
         if (!check) {
             JOptionPane.showMessageDialog(this,
-                    ErrorMessage.INVOICE_CREATE_ERROR,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVOICE_CREATE_ERROR.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return;
         }
 

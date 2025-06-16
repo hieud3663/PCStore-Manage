@@ -19,19 +19,19 @@ public class JDialogInputUtils {
         }        
         String input = result.toString();
         if (input.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return showInputDialogInt(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
         
         try {
             int value = Integer.parseInt(input);
             if (value <= 0) {
-                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
             }
             return value;
         } catch (NumberFormatException e) {            
-            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE, 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE.toString(), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return showInputDialogInt(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
     }
@@ -48,18 +48,18 @@ public class JDialogInputUtils {
         
         String input = result.toString();
         if (input.trim().isEmpty()) {            
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return showInputDialogBigDecimal(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
           try {
             BigDecimal value = new BigDecimal(input);
             if (value.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
             }
             return value;
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE, 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE.toString(), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return showInputDialogBigDecimal(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
     }
@@ -68,20 +68,20 @@ public class JDialogInputUtils {
         String input = JOptionPane.showInputDialog(parent, message, defaultValue, JOptionPane.QUESTION_MESSAGE);
         
         if (input == null || input.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.formatted("Giá trị"));
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"));
         }
           try {
             int value = Integer.parseInt(input.trim());
             if (value <= 0) {
-                JOptionPane.showMessageDialog(parent, ErrorMessage.VALUE_MUST_BE_POSITIVE,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                JOptionPane.showMessageDialog(parent, ErrorMessage.VALUE_MUST_BE_POSITIVE.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
             }
             return value;
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             throw e;
         }
     }
@@ -90,20 +90,20 @@ public class JDialogInputUtils {
         String input = JOptionPane.showInputDialog(parent, message, defaultValue, JOptionPane.QUESTION_MESSAGE);
         
         if (input == null || input.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.formatted("Giá trị"), ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.formatted("Giá trị"));
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"));
         }
           try {
             double value = Double.parseDouble(input.trim());
             if (value <= 0) {
-                JOptionPane.showMessageDialog(parent, ErrorMessage.VALUE_MUST_BE_POSITIVE,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                JOptionPane.showMessageDialog(parent, ErrorMessage.VALUE_MUST_BE_POSITIVE.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+                throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
             }
             return value;
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.INVALID_VALUE.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             throw e;
         }
     }

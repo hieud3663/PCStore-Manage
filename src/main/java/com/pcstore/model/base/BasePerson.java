@@ -81,7 +81,7 @@ public abstract class BasePerson extends BaseTimeEntity {
 
     public boolean isValidPhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Số điện thoại"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Số điện thoại"));
         }
         String phoneRegex = "^\\d{10,11}$";
         Pattern pattern = Pattern.compile(phoneRegex);
@@ -105,7 +105,7 @@ public abstract class BasePerson extends BaseTimeEntity {
             LocalDate today = LocalDate.now();
             LocalDate birthDate = dateOfBirth.toLocalDate();
             if (Period.between(birthDate, today).getYears() < 18) {
-                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_18));
+                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_18.toString()));
             }
         }
         this.dateOfBirth = dateOfBirth;

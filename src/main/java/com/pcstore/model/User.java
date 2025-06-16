@@ -38,10 +38,10 @@ public class User extends BaseTimeEntity {
 
     public void setUsername(String username) {
         if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.USERNAME_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_EMPTY.toString());
         }
         if (username.length() < 3) {
-            throw new IllegalArgumentException(ErrorMessage.USERNAME_TOO_SHORT);
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_TOO_SHORT.toString());
         }
         this.username = username;
     }
@@ -52,10 +52,10 @@ public class User extends BaseTimeEntity {
 
     public void setPassword(String password) {
         if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY.toString());
         }
         if (password.length() < 6) {
-            throw new IllegalArgumentException(ErrorMessage.PASSWORD_TOO_SHORT);
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_TOO_SHORT.toString());
         }
         this.password = password;
     }

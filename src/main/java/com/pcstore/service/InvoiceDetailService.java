@@ -69,7 +69,7 @@ public class InvoiceDetailService {
         if (productOpt.isPresent()) {
             Product product = productOpt.get();
             if (product.getQuantityInStock() < quantity) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK.toString());
             }
             
             // Cập nhật chi tiết hóa đơn với thông tin đầy đủ của sản phẩm
@@ -78,7 +78,7 @@ public class InvoiceDetailService {
             // Thêm chi tiết hóa đơn - không xử lý tồn kho ở đây vì đã được xử lý trong repository
             return invoiceDetailRepository.add(invoiceDetail);
         } else {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL.toString());
         }
     }
     

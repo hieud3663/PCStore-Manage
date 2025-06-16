@@ -84,15 +84,15 @@ public class PaymentController {
         if (!currentPayment.processPayment(paymentForm)) {
             JOptionPane.showMessageDialog(paymentForm, 
                 currentPayment.getDescription(), 
-                ErrorMessage.ERROR_TITLE, 
+                ErrorMessage.ERROR_TITLE.toString(), 
                 JOptionPane.ERROR_MESSAGE);
             return null;
         }
         
         // Hiển thị thông tin tiền thừa
         CashPayment cashPayment = (CashPayment) currentPayment;
-        String message = String.format(ErrorMessage.PAYMENT_SUCCESS_CHANGE, cashPayment.getChange());
-        JOptionPane.showMessageDialog(paymentForm, message, ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+        String message = String.format(ErrorMessage.PAYMENT_SUCCESS_CHANGE.toString(), cashPayment.getChange());
+        JOptionPane.showMessageDialog(paymentForm, message, ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
         
         confirmPayment("Cash");
         return cashPayment;
@@ -108,7 +108,7 @@ public class PaymentController {
         if (!currentPayment.processPayment(paymentForm)) {
             JOptionPane.showMessageDialog(paymentForm, 
                 currentPayment.getDescription(), 
-                ErrorMessage.ERROR_TITLE, 
+                ErrorMessage.ERROR_TITLE.toString(), 
                 JOptionPane.ERROR_MESSAGE);
 
             paymentSuccessful = false;
@@ -127,7 +127,7 @@ public class PaymentController {
         if (!currentPayment.processPayment(paymentForm)) {
             JOptionPane.showMessageDialog(paymentForm, 
                 currentPayment.getDescription(), 
-                ErrorMessage.ERROR_TITLE, 
+                ErrorMessage.ERROR_TITLE.toString(), 
                 JOptionPane.ERROR_MESSAGE);
             paymentSuccessful = false;
             return null;
@@ -137,7 +137,7 @@ public class PaymentController {
         confirmPayment("Bank Transfer");
         JOptionPane.showMessageDialog(paymentForm, 
             currentPayment.getDescription(), 
-            ErrorMessage.INFO_TITLE, 
+            ErrorMessage.INFO_TITLE.toString(), 
             JOptionPane.INFORMATION_MESSAGE);
         return currentPayment;
     }
@@ -152,8 +152,8 @@ public class PaymentController {
             // Xác nhận hoàn thành giao dịch
             confirm = JOptionPane.showConfirmDialog(
                 paymentForm,
-                ErrorMessage.PAYMENT_CONFIRM,
-                ErrorMessage.PAYMENT_CONFIRM_TITLE,
+                ErrorMessage.PAYMENT_CONFIRM.toString(),
+                ErrorMessage.PAYMENT_CONFIRM_TITLE.toString(),
                 JOptionPane.YES_NO_OPTION
             );
         } else {

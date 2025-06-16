@@ -81,8 +81,8 @@ public class HomeController {
             startDataRefreshScheduler();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.HOME_CONTROLLER_INIT_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.HOME_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -116,8 +116,8 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.USER_INFO_LOAD_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.USER_INFO_LOAD_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -141,8 +141,8 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.TODAY_STATS_LOAD_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.TODAY_STATS_LOAD_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -166,8 +166,8 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.MONTH_STATS_LOAD_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.MONTH_STATS_LOAD_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -221,8 +221,8 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.WEEKLY_CHART_LOAD_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.WEEKLY_CHART_LOAD_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -260,8 +260,8 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.DAILY_REVENUE_DATA_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.DAILY_REVENUE_DATA_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return new ArrayList<>();
         }
     }
@@ -281,8 +281,8 @@ public class HomeController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(homeForm, 
-                String.format(ErrorMessage.TOTAL_REVENUE_ERROR, e.getMessage()), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.TOTAL_REVENUE_ERROR.toString(), e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return BigDecimal.ZERO;
         }
     }

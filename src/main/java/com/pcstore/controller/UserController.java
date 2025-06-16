@@ -82,8 +82,8 @@ public class UserController {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.USER_CONTROLLER_INIT_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.USER_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -219,8 +219,8 @@ public class UserController {
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(userForm, 
-                    String.format(ErrorMessage.USER_LOAD_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.USER_LOAD_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -266,8 +266,8 @@ public class UserController {
             TableUtils.applyFilter(sorter, searchText);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(userForm, 
-                    String.format(ErrorMessage.USER_FILTER_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.USER_FILTER_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }

@@ -1096,7 +1096,7 @@ public class PurchaseOrderController {
             
             // Hỏi số lượng
             Integer quantity = JDialogInputUtils.showInputDialogInt(purchaseOrderForm,
-                    ErrorMessage.ENTER_PRODUCT_QUANTITY,
+                    ErrorMessage.ENTER_PRODUCT_QUANTITY.toString(),
                     "1");
 
             if (quantity == null)

@@ -41,7 +41,7 @@ public class Return extends BaseTimeEntity {
 
     public void setInvoiceDetail(InvoiceDetail invoiceDetail) {
         if (invoiceDetail == null) {
-            throw new IllegalArgumentException(ErrorMessage.RETURN_INVOICE_NULL);
+            throw new IllegalArgumentException(ErrorMessage.RETURN_INVOICE_NULL.toString());
         }
         this.invoiceDetail = invoiceDetail;
     }
@@ -52,7 +52,7 @@ public class Return extends BaseTimeEntity {
 
     public void setReturnDate(LocalDateTime returnDate) {
         if (returnDate == null) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Ngày trả hàng"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.toString().formatted("Ngày trả hàng"));
         }
         this.returnDate = returnDate;
     }
@@ -63,7 +63,7 @@ public class Return extends BaseTimeEntity {
 
     public void setQuantity(int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_QUANTITY_NEGATIVE);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_QUANTITY_NEGATIVE.toString());
         }
         this.quantity = quantity;
     }
@@ -74,7 +74,7 @@ public class Return extends BaseTimeEntity {
 
     public void setReason(String reason) {
         if (reason == null || reason.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.RETURN_REASON_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.RETURN_REASON_EMPTY.toString());
         }
         this.reason = reason;
     }
@@ -85,13 +85,13 @@ public class Return extends BaseTimeEntity {
 
     public void setStatus(String status) {
         if (status == null) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Trạng thái"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.toString().formatted("Trạng thái"));
         }
         if (!isValidStatus(status)) {
-            throw new IllegalArgumentException(ErrorMessage.REPAIR_STATUS_INVALID);
+            throw new IllegalArgumentException(ErrorMessage.REPAIR_STATUS_INVALID.toString());
         }
         if (this.status != null && !canTransitionTo(status)) {
-            throw new IllegalStateException(String.format(ErrorMessage.RETURN_CANNOT_TRANSITION, status));
+            throw new IllegalStateException(String.format(ErrorMessage.RETURN_CANNOT_TRANSITION.toString(), status));
         }
         this.status = status;
     }
@@ -140,7 +140,7 @@ public class Return extends BaseTimeEntity {
     // Xử lý khi chấp nhận đơn trả hàng
     public void approve() {
         if (!"Pending".equals(status)) {
-            throw new IllegalStateException(ErrorMessage.RETURN_APPROVE_PENDING_ONLY);
+            throw new IllegalStateException(ErrorMessage.RETURN_APPROVE_PENDING_ONLY.toString());
         }
         setStatus("Approved");
     }
@@ -148,7 +148,7 @@ public class Return extends BaseTimeEntity {
     // Xử lý khi từ chối đơn trả hàng
     public void reject() {
         if (!"Pending".equals(status)) {
-            throw new IllegalStateException(ErrorMessage.RETURN_REJECT_PENDING_ONLY);
+            throw new IllegalStateException(ErrorMessage.RETURN_REJECT_PENDING_ONLY.toString());
         }
         setStatus("Rejected");
     }
@@ -156,7 +156,7 @@ public class Return extends BaseTimeEntity {
     // Xử lý khi hoàn thành trả hàng
     public void complete() {
         if (!"Approved".equals(status)) {
-            throw new IllegalStateException(ErrorMessage.RETURN_COMPLETE_APPROVED_ONLY);
+            throw new IllegalStateException(ErrorMessage.RETURN_COMPLETE_APPROVED_ONLY.toString());
         }
         setStatus("Completed");
     }
@@ -164,11 +164,11 @@ public class Return extends BaseTimeEntity {
     // Factory method để tạo đơn trả hàng mới
     public static Return createNew(InvoiceDetail invoiceDetail, String reason) {
         if (invoiceDetail == null) {
-            throw new IllegalArgumentException(ErrorMessage.RETURN_INVOICE_NULL);
+            throw new IllegalArgumentException(ErrorMessage.RETURN_INVOICE_NULL.toString());
         }
         
         if (reason == null || reason.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.RETURN_REASON_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.RETURN_REASON_EMPTY.toString());
         }
 
         Return returnItem = new Return();
@@ -212,10 +212,10 @@ public class Return extends BaseTimeEntity {
      */
     public void setReturnAmount(java.math.BigDecimal returnAmount) {
         if (returnAmount == null) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Số tiền hoàn trả"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.toString().formatted("Số tiền hoàn trả"));
         }
         if (returnAmount.compareTo(java.math.BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_NEGATIVE.formatted("Số tiền hoàn trả"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_NEGATIVE.toString().formatted("Số tiền hoàn trả"));
         }
         this.returnAmount = returnAmount;
     }
@@ -249,10 +249,10 @@ public class Return extends BaseTimeEntity {
 
     public void setRefundAmount(BigDecimal refundAmount) {
         if (refundAmount == null) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Số tiền hoàn trả"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.toString().formatted("Số tiền hoàn trả"));
         }
         if (refundAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_NEGATIVE.formatted("Số tiền hoàn trả"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_NEGATIVE.toString().formatted("Số tiền hoàn trả"));
         }
         this.returnAmount = refundAmount;
     }

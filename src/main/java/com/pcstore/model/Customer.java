@@ -36,7 +36,7 @@ public class Customer extends BasePerson {
     public void setCustomerId(String customerId) {
         
         if (customerId == null || customerId.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Mã khách hàng"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Mã khách hàng"));
         }
 
         if (customerId.equalsIgnoreCase("GUEST")) {
@@ -49,7 +49,7 @@ public class Customer extends BasePerson {
     
     public void setPhoneNumber(String phoneNumber) {
         if(!isValidPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_PHONE_NUMBER);
+            throw new IllegalArgumentException(ErrorMessage.INVALID_PHONE_NUMBER.toString());
         }
         this.phoneNumber = phoneNumber;
     }
@@ -58,10 +58,10 @@ public class Customer extends BasePerson {
     @Override
     public void setFullName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Họ tên khách hàng"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Họ tên khách hàng"));
         }
         if (fullName.length() < 2) {
-            throw new IllegalArgumentException(ErrorMessage.CUSTOMER_NAME_TOO_SHORT);
+            throw new IllegalArgumentException(ErrorMessage.CUSTOMER_NAME_TOO_SHORT.toString());
         }
         this.fullName = fullName;
     }
@@ -72,7 +72,7 @@ public class Customer extends BasePerson {
         if(isValidEmail(emailString) || emailString.isEmpty()) {
             this.email = emailString;
         } else {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL);
+            throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL.toString());
         }
 
     }

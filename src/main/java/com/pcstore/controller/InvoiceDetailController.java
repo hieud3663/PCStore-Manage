@@ -45,8 +45,8 @@ public class InvoiceDetailController {
             this.invoiceDetailService = ServiceFactory.getInstance().getInvoiceDetailService();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_DETAIL_CONTROLLER_INIT_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_DETAIL_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -62,13 +62,13 @@ public class InvoiceDetailController {
         try {
             // Kiểm tra số lượng
             if (quantity <= 0) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
             }
             
             // Kiểm tra tồn kho
             if (product.getQuantityInStock() < quantity) {
                 throw new IllegalArgumentException(
-                        String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK, 
+                        String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK.toString(), 
                                 product.getQuantityInStock(), quantity));
             }
             
@@ -89,8 +89,8 @@ public class InvoiceDetailController {
             return savedDetail;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_DETAIL_ADD_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_DETAIL_ADD_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -106,7 +106,7 @@ public class InvoiceDetailController {
         try {
             // Kiểm tra số lượng
             if (quantity <= 0) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
             }
             
             // Tính toán sự chênh lệch số lượng
@@ -115,11 +115,11 @@ public class InvoiceDetailController {
             // Kiểm tra tồn kho nếu số lượng tăng
             if (quantityDiff > 0) {
                 Product product = productRepository.findById(invoiceDetail.getProduct().getProductId())
-                        .orElseThrow(() -> new RuntimeException(ErrorMessage.PRODUCT_NOT_FOUND));
+                        .orElseThrow(() -> new RuntimeException(ErrorMessage.PRODUCT_NOT_FOUND.toString()));
                         
                 if (product.getQuantityInStock() < quantityDiff) {
                     throw new IllegalArgumentException(
-                            String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK, 
+                            String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK.toString(), 
                                     product.getQuantityInStock(), quantityDiff));
                 }
             }
@@ -140,8 +140,8 @@ public class InvoiceDetailController {
             return updatedDetail;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_DETAIL_UPDATE_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_DETAIL_UPDATE_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -164,8 +164,8 @@ public class InvoiceDetailController {
             return success;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_DETAIL_DELETE_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_DETAIL_DELETE_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -180,8 +180,8 @@ public class InvoiceDetailController {
             return invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_DETAIL_FIND_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_DETAIL_FIND_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return Optional.empty();
         }
     }
@@ -196,8 +196,8 @@ public class InvoiceDetailController {
             return invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_DETAIL_FIND_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_DETAIL_FIND_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return List.of();
         }
     }
@@ -238,17 +238,17 @@ public class InvoiceDetailController {
      */
     public InvoiceDetail createInvoiceDetailFromProduct(Invoice invoice, Product product, int quantity) {
         if (product == null) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL.toString());
         }
         
         if (quantity <= 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
         }
         
         // Kiểm tra tồn kho
         if (product.getQuantityInStock() < quantity) {
             throw new IllegalArgumentException(
-                    String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK, 
+                    String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK.toString(), 
                             product.getQuantityInStock(), quantity));
         }
         

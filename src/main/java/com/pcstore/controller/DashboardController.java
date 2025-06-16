@@ -70,8 +70,8 @@ public class DashboardController {
         // Kiểm tra người dùng đã đăng nhập chưa
         if (!sessionManager.isLoggedIn()) {
             JOptionPane.showMessageDialog(dashboardForm,
-                    ErrorMessage.LOGIN_REQUIRED,
-                    ErrorMessage.LOGIN_REQUIRED_TITLE,
+                    ErrorMessage.LOGIN_REQUIRED.toString(),
+                    ErrorMessage.LOGIN_REQUIRED_TITLE.toString(),
                     JOptionPane.WARNING_MESSAGE);
             redirectToLogin();
             return;
@@ -407,8 +407,8 @@ public class DashboardController {
     public void logout() {
         int confirm = JOptionPane.showConfirmDialog(
                 dashboardForm,
-                ErrorMessage.LOGOUT_CONFIRM,
-                ErrorMessage.LOGOUT_TITLE,
+                ErrorMessage.LOGOUT_CONFIRM.toString(),
+                ErrorMessage.LOGOUT_TITLE.toString(),
                 JOptionPane.YES_NO_OPTION
         );
 
@@ -436,8 +436,8 @@ public class DashboardController {
             LoginForm.getInstance().setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(dashboardForm,
-                    String.format(ErrorMessage.LOGIN_REDIRECT_ERROR, e.getMessage()),
-                    ErrorMessage.ERROR_TITLE,
+                    String.format(ErrorMessage.LOGIN_REDIRECT_ERROR.toString(), e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -509,12 +509,12 @@ public class DashboardController {
         if (!currentLanguage.equals(newLanguage)) {
             // Hiển thị hộp thoại xác nhận khởi động lại
             String message = currentLanguage.equals("vi")
-                    ? ErrorMessage.LANGUAGE_CHANGE_CONFIRM_VI
-                    : ErrorMessage.LANGUAGE_CHANGE_CONFIRM_EN;
+                    ? ErrorMessage.LANGUAGE_CHANGE_CONFIRM_VI.toString()
+                    : ErrorMessage.LANGUAGE_CHANGE_CONFIRM_EN.toString();
 
             String title = currentLanguage.equals("vi")
-                    ? ErrorMessage.LANGUAGE_CHANGE_TITLE_VI
-                    : ErrorMessage.LANGUAGE_CHANGE_TITLE_EN;
+                    ? ErrorMessage.LANGUAGE_CHANGE_TITLE_VI.toString()
+                    : ErrorMessage.LANGUAGE_CHANGE_TITLE_EN.toString();
 
             int response = JOptionPane.showConfirmDialog(
                     dashboardForm,

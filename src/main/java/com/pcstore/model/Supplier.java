@@ -41,7 +41,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setSupplierId(String supplierId) {
         if (supplierId == null || supplierId.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Mã nhà cung cấp"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.toString().formatted("Mã nhà cung cấp"));
         }
         this.supplierId = supplierId;
     }
@@ -59,7 +59,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_NAME_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_NAME_EMPTY.toString());
         }
         this.name = name;
     }
@@ -70,7 +70,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setPhoneNumber(String phoneNumber) {
         if (phoneNumber == null || !isValidPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_PHONE_INVALID);
+            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_PHONE_INVALID.toString());
         }
         this.phoneNumber = phoneNumber;
     }
@@ -81,7 +81,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setEmail(String email) {
         if (email != null && !email.trim().isEmpty() && !isValidEmail(email)) {
-            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_EMAIL_INVALID);
+            throw new IllegalArgumentException(ErrorMessage.SUPPLIER_EMAIL_INVALID.toString());
         }
         this.email = email;
     }
@@ -92,7 +92,7 @@ public class Supplier extends BaseTimeEntity {
 
     public void setAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.formatted("Địa chỉ"));
+            throw new IllegalArgumentException(ErrorMessage.FIELD_EMPTY.toString().formatted("Địa chỉ"));
         }
         this.address = address;
     }

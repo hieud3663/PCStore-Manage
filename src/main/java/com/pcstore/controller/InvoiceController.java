@@ -107,8 +107,8 @@ public class InvoiceController {
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -135,8 +135,8 @@ public class InvoiceController {
             this.tableSorter = null;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -284,10 +284,10 @@ public class InvoiceController {
         } catch (Exception e) {
             if (invoiceForm != null) {
                 JOptionPane.showMessageDialog(null, 
-                        String.format(ErrorMessage.INVOICE_CREATE_ERROR, e.getMessage()), 
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        String.format(ErrorMessage.INVOICE_CREATE_ERROR.toString(), e.getMessage()), 
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
-            throw new RuntimeException(String.format(ErrorMessage.INVOICE_CREATE_ERROR, e.getMessage()), e);
+            throw new RuntimeException(String.format(ErrorMessage.INVOICE_CREATE_ERROR.toString(), e.getMessage()), e);
         }
     }
 
@@ -300,10 +300,10 @@ public class InvoiceController {
      */
     public Invoice createInvoice(Customer customer, Employee employee) {
         if (customer == null) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL.toString());
         }
         if (employee == null) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL.toString());
         }
         
         try {
@@ -344,15 +344,15 @@ public class InvoiceController {
     public InvoiceDetail addProductToInvoice(Invoice invoice, Product product, int quantity, BigDecimal unitPrice) {
         try {
             if (invoice == null) {
-                throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL.toString());
             }
             
             if (product == null) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL.toString());
             }
             
             if (quantity <= 0) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
             }
             
             // Kiểm tra tồn kho
@@ -395,12 +395,12 @@ public class InvoiceController {
     public InvoiceDetail updateProductQuantity(Integer invoiceDetailId, int newQuantity) {
         try {
             if (newQuantity <= 0) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
             }
             
             Optional<InvoiceDetail> detailOpt = invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
             if (!detailOpt.isPresent()) {
-                throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_PRODUCT_NULL);
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_PRODUCT_NULL.toString());
             }
             
             InvoiceDetail detail = detailOpt.get();

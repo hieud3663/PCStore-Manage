@@ -117,8 +117,8 @@ public class SellController {
             Customer defaultCustomer = customerRepository.findById("GUEST").orElse(null);
             if (defaultCustomer == null) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.DEFAULT_CUSTOMER_NOT_FOUND,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DEFAULT_CUSTOMER_NOT_FOUND.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -259,8 +259,8 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.CART_UPDATE_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CART_UPDATE_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -273,7 +273,7 @@ public class SellController {
 
             // Hỏi số lượng
             Integer quantityStr = JDialogInputUtils.showInputDialogInt(sellForm,
-                    ErrorMessage.ENTER_PRODUCT_QUANTITY,
+                    ErrorMessage.ENTER_PRODUCT_QUANTITY.toString(),
                     "1");
 
             if (quantityStr != null) {
@@ -286,19 +286,19 @@ public class SellController {
                         }
                     } else {
                         JOptionPane.showMessageDialog(sellForm,
-                                ErrorMessage.QUANTITY_MUST_BE_POSITIVE,
-                                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.QUANTITY_MUST_BE_POSITIVE.toString(),
+                                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(sellForm,
-                            ErrorMessage.INVALID_QUANTITY,
-                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.INVALID_QUANTITY.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
             }
         } else {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.SELECT_PRODUCT_TO_ADD,
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.SELECT_PRODUCT_TO_ADD.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -332,8 +332,8 @@ public class SellController {
                     // Check if we have enough stock
                     if (!product.hasEnoughStock(newQuantity)) {
                         JOptionPane.showMessageDialog(null,
-                                ErrorMessage.INSUFFICIENT_STOCK.formatted(product.getQuantityInStock()),
-                                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.INSUFFICIENT_STOCK.toString().formatted(product.getQuantityInStock()),
+                                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                         return false;
                     }
 
@@ -345,8 +345,8 @@ public class SellController {
             // Product not in cart, add new
             if (!product.hasEnoughStock(quantity)) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.INSUFFICIENT_STOCK.formatted(product.getQuantityInStock()),
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INSUFFICIENT_STOCK.toString().formatted(product.getQuantityInStock()),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
@@ -405,7 +405,7 @@ public class SellController {
             if (selectedRow >= 0) {
                 String productId = sellForm.getTableCart().getValueAt(selectedRow, 2).toString();
                 Integer quantity = JDialogInputUtils.showInputDialogInt(sellForm,
-                        ErrorMessage.ENTER_PRODUCT_QUANTITY,
+                        ErrorMessage.ENTER_PRODUCT_QUANTITY.toString(),
                         String.valueOf(sellForm.getTableCart().getValueAt(selectedRow, 4)));
 
                 if (quantity == null) {
@@ -419,8 +419,8 @@ public class SellController {
                     sellForm.updateCartDisplay();
                 } else {
                     JOptionPane.showMessageDialog(sellForm,
-                            ErrorMessage.QUANTITY_UPDATE_ERROR,
-                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.QUANTITY_UPDATE_ERROR.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
 
                     sellForm.updateCartDisplay();
                 }
@@ -451,14 +451,14 @@ public class SellController {
     public void deleteItemCart() {
         if (sellForm.getListSelectProductIDs().isEmpty()) {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.SELECT_PRODUCT_TO_DELETE,
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+                    ErrorMessage.SELECT_PRODUCT_TO_DELETE.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         Integer confirm = JOptionPane.showConfirmDialog(sellForm,
-                ErrorMessage.CONFIRM_DELETE_PRODUCT,
-                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CONFIRM_DELETE_PRODUCT.toString(),
+                ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             for (String productId : sellForm.getListSelectProductIDs()) {
@@ -525,16 +525,16 @@ public class SellController {
 
         if (customer == null || "Khách vãng lai".equalsIgnoreCase(customer.getFullName())) {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.CUSTOMER_SELECT_REQUIRED,
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_SELECT_REQUIRED.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
         int points = customer.getPoints();
         if (points < 10000) {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.CUSTOMER_POINTS_INSUFFICIENT,
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_POINTS_INSUFFICIENT.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -608,8 +608,8 @@ public class SellController {
 
         if (currentInvoice.isPointUsed()) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.POINTS_ALREADY_USED,
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.POINTS_ALREADY_USED.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return BigDecimal.ZERO;
         }
 
@@ -638,8 +638,8 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.UNKNOWN_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return BigDecimal.ZERO;
         }
     }
@@ -714,8 +714,8 @@ public class SellController {
         Customer customer = new Customer();
         if (FullNameCustomer.isEmpty() || FullNameCustomer.equalsIgnoreCase("Khách vãng lai")) {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.CUSTOMER_NAME_REQUIRED,
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+                    ErrorMessage.CUSTOMER_NAME_REQUIRED.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return null;
         }
 
@@ -726,17 +726,17 @@ public class SellController {
 
             //Xác nhận thêm khách hàng
             int confirm = JOptionPane.showConfirmDialog(sellForm,
-                    ErrorMessage.CUSTOMER_ADD_CONFIRM,
-                    ErrorMessage.INFO_TITLE, JOptionPane.YES_NO_OPTION);
+                    ErrorMessage.CUSTOMER_ADD_CONFIRM.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 // Thêm khách hàng vào cơ sở dữ liệu TRƯỚC KHI thêm vào hóa đơn
                 Customer savedCustomer = ServiceFactory.getCustomerService().addCustomer(customer);
 
 //                JOptionPane.showMessageDialog(sellForm,
-//                        ErrorMessage.CUSTOMER_ADD_SUCCESS.formatted(savedCustomer.getFullName()),
-//                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+//                        ErrorMessage.CUSTOMER_ADD_SUCCESS.toString().formatted(savedCustomer.getFullName()),
+//                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.CUSTOMER_ADD_SUCCESS.formatted(savedCustomer.getFullName()));
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.CUSTOMER_ADD_SUCCESS.toString().formatted(savedCustomer.getFullName()));
 
                 updateUsePointsButtonState();
             }
@@ -744,8 +744,8 @@ public class SellController {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.CUSTOMER_ADD_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_ADD_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return null;
         }
@@ -756,8 +756,8 @@ public class SellController {
     public void prepareInvoiceToPay() {
         if (getCartItems().isEmpty()) {
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.EMPTY_CART,
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+                    ErrorMessage.EMPTY_CART.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -765,8 +765,8 @@ public class SellController {
             boolean checkUpdateInvoive = updateCurrentInvoice();
             if (!checkUpdateInvoive) {
                 JOptionPane.showMessageDialog(sellForm,
-                        ErrorMessage.INVOICE_COMPLETE_ERROR,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVOICE_COMPLETE_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -786,8 +786,8 @@ public class SellController {
 
             // Xác nhận lưu hóa đơn
             int confirm = JOptionPane.showConfirmDialog(sellForm,
-                    ErrorMessage.CONFIRM_SAVE_INVOICE,
-                    ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                    ErrorMessage.CONFIRM_SAVE_INVOICE.toString(),
+                    ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
             if (confirm != JOptionPane.YES_OPTION) {
                 return;
             }
@@ -796,17 +796,17 @@ public class SellController {
             Invoice saveInvoice = saveInvoice(PaymentMethodEnum.CASH); //Mặc định là tiền mặt
             if (saveInvoice == null) {
 //                JOptionPane.showMessageDialog(sellForm,
-//                        ErrorMessage.SAVE_INVOICE_ERROR,
-//                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
-                Notifications.getInstance().show(Notifications.Type.ERROR, ErrorMessage.SAVE_INVOICE_ERROR);
+//                        ErrorMessage.SAVE_INVOICE_ERROR.toString(),
+//                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.ERROR, ErrorMessage.SAVE_INVOICE_ERROR.toString());
                 return;
             }
 
 //            JOptionPane.showMessageDialog(sellForm,
-//                    ErrorMessage.SAVE_INVOICE_SUCCESS.formatted(saveInvoice.getInvoiceId()),
-//                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+//                    ErrorMessage.SAVE_INVOICE_SUCCESS.toString().formatted(saveInvoice.getInvoiceId()),
+//                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.SAVE_INVOICE_SUCCESS.formatted(saveInvoice.getInvoiceId()));
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.SAVE_INVOICE_SUCCESS.toString().formatted(saveInvoice.getInvoiceId()));
 
             DashboardForm dashboard = DashboardForm.getInstance();
             PayForm payForm = new PayForm(dashboard, true);
@@ -823,23 +823,23 @@ public class SellController {
                 exportInvoiceToPDF(paymentController.getCurrentPayment());
 
 //                JOptionPane.showMessageDialog(sellForm,
-//                        ErrorMessage.PAYMENT_SUCCESS,
-//                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+//                        ErrorMessage.PAYMENT_SUCCESS.toString(),
+//                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
-                Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.PAYMENT_SUCCESS);
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.PAYMENT_SUCCESS.toString());
 
                 // Reset form bán hàng
                 sellForm.resetSaleForm();
             } else {
                 JOptionPane.showMessageDialog(sellForm,
-                        ErrorMessage.PAYMENT_FAILED,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PAYMENT_FAILED.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(sellForm,
-                    ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.UNKNOWN_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -852,8 +852,8 @@ public class SellController {
     public Invoice saveInvoice(PaymentMethodEnum paymentMethod) {
         if (currentInvoice == null || cartItems.isEmpty()) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.INVALID_INVOICE_SAVE,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVALID_INVOICE_SAVE.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
 
@@ -868,8 +868,8 @@ public class SellController {
             Invoice savedInvoice = invoiceRepository.save(currentInvoice);
             if (savedInvoice == null) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.INVOICE_SAVE_ERROR,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVOICE_SAVE_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
@@ -892,8 +892,8 @@ public class SellController {
 
             if (!detailsSaved) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.INVOICE_DETAIL_SAVE_ERROR,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVOICE_DETAIL_SAVE_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
@@ -906,8 +906,8 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.UNKNOWN_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -921,8 +921,8 @@ public class SellController {
     public Invoice completeSale(Invoice invoice) {
         if (invoice == null) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.INVALID_INVOICE_COMPLETE,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVALID_INVOICE_COMPLETE.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
 
@@ -935,8 +935,8 @@ public class SellController {
             Invoice savedInvoice = invoiceRepository.save(invoice);
             if (savedInvoice == null) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.INVOICE_COMPLETE_ERROR,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVOICE_COMPLETE_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
@@ -951,8 +951,8 @@ public class SellController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.UNKNOWN_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.UNKNOWN_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -1141,8 +1141,8 @@ public class SellController {
     public void exportInvoiceToPDF(BasePayment payment) {
         if (currentInvoice == null) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.INVALID_INVOICE_COMPLETE,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVALID_INVOICE_COMPLETE.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -1150,14 +1150,14 @@ public class SellController {
             boolean success = ExportInvoice.exportPDF(currentInvoice, payment);
             if (!success) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.EXPORT_INVOICE_FAILED,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.EXPORT_INVOICE_FAILED.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.EXPORT_INVOICE_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_INVOICE_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
 

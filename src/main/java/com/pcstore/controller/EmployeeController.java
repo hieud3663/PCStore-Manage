@@ -92,8 +92,8 @@ public class EmployeeController {
             loadAllEmployees(); 
             refereshForm();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, ErrorMessage.INIT_CONTROLLER_ERROR + e.getMessage(), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ErrorMessage.INIT_CONTROLLER_ERROR.toString() + e.getMessage(), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -215,8 +215,8 @@ public class EmployeeController {
         } catch (Exception e) {
             if (employeeForm != null) {
                 JOptionPane.showMessageDialog(employeeForm, 
-                        ErrorMessage.LOAD_EMPLOYEES_ERROR + e.getMessage(),
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.LOAD_EMPLOYEES_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -308,8 +308,8 @@ public class EmployeeController {
         } catch (Exception e) {
             if (employeeForm != null) {
                 JOptionPane.showMessageDialog(employeeForm, 
-                        ErrorMessage.LOAD_EMPLOYEE_DETAILS_ERROR + e.getMessage(),
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.LOAD_EMPLOYEE_DETAILS_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -368,16 +368,16 @@ public class EmployeeController {
                     dateOfBirth = Date.valueOf(localDate);
                 } catch (DateTimeParseException e) {
                     JOptionPane.showMessageDialog(employeeForm,
-                            ErrorMessage.INVALID_DATE_FORMAT,
-                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.INVALID_DATE_FORMAT.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                             return;
                 }
             }
 
             if (id.isEmpty() || name.isEmpty() || phone.isEmpty() || position.isEmpty() || email.isEmpty()) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.EMPTY_FIELDS_ERROR,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.EMPTY_FIELDS_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -391,8 +391,8 @@ public class EmployeeController {
             
             if (employeePosition == null) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.INVALID_POSITION_ERROR,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVALID_POSITION_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -404,8 +404,8 @@ public class EmployeeController {
                 Optional<Employee> existingEmployee = employeeService.findEmployeeById(id);
                 if (existingEmployee.isPresent()) {
                     JOptionPane.showMessageDialog(employeeForm,
-                            ErrorMessage.DUPLICATE_EMPLOYEE_ID_ERROR,
-                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.DUPLICATE_EMPLOYEE_ID_ERROR.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -422,8 +422,8 @@ public class EmployeeController {
                 newEmployee.setAvatar(currentAvatar); 
                 
                 int checkOption = JOptionPane.showConfirmDialog(employeeForm,
-                        ErrorMessage.CONFIRM_ADD_EMPLOYEE,
-                        ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                        ErrorMessage.CONFIRM_ADD_EMPLOYEE.toString(),
+                        ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
 
                 if(checkOption != JOptionPane.YES_OPTION) {
                     return;
@@ -437,8 +437,8 @@ public class EmployeeController {
                 loadAllEmployees();
                 
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.ADD_EMPLOYEE_SUCCESS,
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.ADD_EMPLOYEE_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 
                 selectEmployeeInTable(savedEmployee.getEmployeeId());
                 
@@ -452,8 +452,8 @@ public class EmployeeController {
 
                 if (selectedEmployee == null) {
                     JOptionPane.showMessageDialog(employeeForm,
-                            ErrorMessage.SELECT_EMPLOYEE_TO_UPDATE,
-                            ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                            ErrorMessage.SELECT_EMPLOYEE_TO_UPDATE.toString(),
+                            ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 
@@ -467,8 +467,8 @@ public class EmployeeController {
                 selectedEmployee.setAvatar(currentAvatar); 
 
                 int checkOption = JOptionPane.showConfirmDialog(employeeForm,
-                        ErrorMessage.CONFIRM_UPDATE_EMPLOYEE,
-                        ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                        ErrorMessage.CONFIRM_UPDATE_EMPLOYEE.toString(),
+                        ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
 
                 if(checkOption != JOptionPane.YES_OPTION) {
                     return;
@@ -478,16 +478,16 @@ public class EmployeeController {
                 
                 loadAllEmployees();
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.UPDATE_EMPLOYEE_SUCCESS,
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.UPDATE_EMPLOYEE_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 
                 selectEmployeeInTable(updatedEmployee.getEmployeeId());
             }
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
-                    ErrorMessage.UPDATE_EMPLOYEE_ERROR + e.getMessage(),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.UPDATE_EMPLOYEE_ERROR.toString() + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -497,14 +497,14 @@ public class EmployeeController {
     public void deleteSelectedEmployee() {
         if (selectedEmployee == null) {
             JOptionPane.showMessageDialog(employeeForm,
-                    ErrorMessage.SELECT_EMPLOYEE_TO_DELETE,
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.SELECT_EMPLOYEE_TO_DELETE.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
         int option = JOptionPane.showConfirmDialog(employeeForm,
-                ErrorMessage.CONFIRM_DELETE_EMPLOYEE + selectedEmployee.getFullName() + "?",
-                ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CONFIRM_DELETE_EMPLOYEE.toString() + selectedEmployee.getFullName() + "?",
+                ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
         
         if (option == JOptionPane.YES_OPTION) {
             try {
@@ -514,13 +514,13 @@ public class EmployeeController {
                 clearForm();
                 
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.DELETE_EMPLOYEE_SUCCESS,
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.DELETE_EMPLOYEE_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.DELETE_EMPLOYEE_ERROR + e.getMessage(),
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DELETE_EMPLOYEE_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -539,8 +539,8 @@ public class EmployeeController {
             TableUtils.applyFilter(employeeTableSorter, keyword, 1, 2, 3, 6, 7);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
-                    ErrorMessage.SEARCH_EMPLOYEE_ERROR + e.getMessage(),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.SEARCH_EMPLOYEE_ERROR.toString() + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -585,8 +585,8 @@ public class EmployeeController {
     public void exportToExcel() {
         if (employeeList == null || employeeList.isEmpty()) {
             JOptionPane.showMessageDialog(employeeForm,
-                    ErrorMessage.NO_DATA_TO_EXPORT,
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.NO_DATA_TO_EXPORT.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -624,17 +624,17 @@ public class EmployeeController {
             
             if (success) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.EXPORT_EXCEL_SUCCESS,
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.EXPORT_EXCEL_FAILURE,
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_FAILURE.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
-                    ErrorMessage.EXPORT_EXCEL_ERROR + e.getMessage(),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.toString() + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -644,8 +644,8 @@ public class EmployeeController {
     private boolean handleEscapeKey() {
         if (isAddingNew) {
             int option = JOptionPane.showConfirmDialog(employeeForm,
-                    ErrorMessage.CONFIRM_CANCEL_ADD_EMPLOYEE,
-                    ErrorMessage.CONFIRM_TITLE, JOptionPane.YES_NO_OPTION);
+                    ErrorMessage.CONFIRM_CANCEL_ADD_EMPLOYEE.toString(),
+                    ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
                     
             if (option == JOptionPane.YES_OPTION) {
                 isAddingNew = false;
@@ -728,7 +728,7 @@ public class EmployeeController {
                 
                 BufferedImage originalImage = ImageIO.read(selectedFile);
                 if (originalImage == null) {
-                    JOptionPane.showMessageDialog(employeeForm, ErrorMessage.INVALID_IMAGE_FILE, ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(employeeForm, ErrorMessage.INVALID_IMAGE_FILE.toString(), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -750,8 +750,8 @@ public class EmployeeController {
                 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.PROCESS_IMAGE_ERROR + e.getMessage(),
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PROCESS_IMAGE_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -798,8 +798,8 @@ public class EmployeeController {
                 }
             } catch (IOException | IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        ErrorMessage.DISPLAY_AVATAR_ERROR + e.getMessage(),
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DISPLAY_AVATAR_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 displayDefaultAvatar();
             }
         } else {
@@ -835,7 +835,7 @@ public class EmployeeController {
                 employeeForm.getPanelAvatar().repaint();
             }
         } catch (Exception e) {
-            System.err.println(ErrorMessage.DISPLAY_DEFAULT_AVATAR_ERROR + e.getMessage());
+            System.err.println(ErrorMessage.DISPLAY_DEFAULT_AVATAR_ERROR.toString() + e.getMessage());
         }
     }
 
@@ -883,14 +883,14 @@ public class EmployeeController {
                 
             } else {
                 JOptionPane.showMessageDialog(employeeForm, 
-                    ErrorMessage.CURRENT_USER_EMPLOYEE_NOT_FOUND, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CURRENT_USER_EMPLOYEE_NOT_FOUND.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(employeeForm, 
-                ErrorMessage.LOAD_CURRENT_USER_EMPLOYEE_ERROR + e.getMessage(), 
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.LOAD_CURRENT_USER_EMPLOYEE_ERROR.toString() + e.getMessage(), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
 

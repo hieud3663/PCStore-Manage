@@ -713,7 +713,7 @@ public class DetailInventoryCheckController {
             return;
         }
 
-        int totalProducts = inventoryCheckDetails.size();
+        int totalActual = 0;
         int totalIncrease = 0;
         int totalDecrease = 0;
         int totalDifference = 0;
@@ -728,9 +728,10 @@ public class DetailInventoryCheckController {
             }
 
             totalDifference += Math.abs(discrepancy);
+            totalActual += (detail.getActualQuantity() != null ? detail.getActualQuantity() : 0);
         }
 
-        view.getLbTotalValue().setText(String.valueOf(totalProducts));
+        view.getLbTotalValue().setText(String.valueOf(totalActual));
         view.getLbTotalIncreaseValue().setText(String.valueOf(totalIncrease));
         view.getLbTotalDecreaseValue().setText(String.valueOf(totalDecrease));
         view.getLbTotalDifferenceValue().setText(String.valueOf(totalDifference));
@@ -1159,7 +1160,7 @@ public class DetailInventoryCheckController {
 
         // Thống kê
         Map<String, Integer> summary = calculateSummary();
-        data.put("totalProducts", summary.get("totalProducts"));
+        data.put("totalActual", summary.get("totalActual"));
         data.put("totalIncrease", summary.get("totalIncrease"));
         data.put("totalDecrease", summary.get("totalDecrease"));
         data.put("totalDifference", summary.get("totalDifference"));
@@ -1183,7 +1184,7 @@ public class DetailInventoryCheckController {
             item.put("actualQuantity", currentInventoryCheck.getStatus().equals(status) ? detail.getActualQuantity() : "");
 
             item.put("barcode", detail.getProduct().getBarcode() != null ? detail.getProduct().getBarcode() : "test");
-            item.put("discrepancy", currentInventoryCheck.getStatus().equals(status) ? detail.getActualQuantity() : ""); 
+            item.put("discrepancy", currentInventoryCheck.getStatus().equals(status) ? detail.getDiscrepancy() : ""); 
             item.put("notes", detail.getReason() != null ? detail.getReason() : "");
             items.add(item);
         }
@@ -1192,7 +1193,7 @@ public class DetailInventoryCheckController {
 
     private Map<String, Integer> calculateSummary() {
         Map<String, Integer> summary = new HashMap<>();
-        summary.put("totalProducts", 0);
+        summary.put("totalActual", 0);
         summary.put("totalIncrease", 0);
         summary.put("totalDecrease", 0);
         summary.put("totalDifference", 0);
@@ -1205,7 +1206,7 @@ public class DetailInventoryCheckController {
             int actualQuantity = detail.getActualQuantity() != null ? detail.getActualQuantity() : 0;
             int systemQuantity = detail.getSystemQuantity();
 
-            summary.put("totalProducts", summary.get("totalProducts") + 1);
+            summary.put("totalActual", summary.get("totalActual") + actualQuantity);
 
             if (actualQuantity > systemQuantity) {
                 summary.put("totalIncrease", summary.get("totalIncrease") + (actualQuantity - systemQuantity));
@@ -1225,10 +1226,10 @@ public class DetailInventoryCheckController {
     private void performSearch() {
         String searchText = view.getTextFieldSearch().getText().trim().toLowerCase();
 
-        if (searchText.isEmpty() || inventoryCheckDetails == null) {
-            populateInventoryDetailTable();
-            return;
-        }
+        // if (searchText.isEmpty() || inventoryCheckDetails == null) {
+        //     populateInventoryDetailTable();
+        //     return;
+        // }
 
         TableUtils.applyFilter(tableRowSorter, searchText, 1, 2, 3);
 

@@ -50,7 +50,7 @@ public class UserService {
 
     public User saveUser(User user) {
         if (userRepository.exists(user.getUsername())) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.USERNAME_EXISTS_EN, user.getUsername()));
+            throw new IllegalArgumentException(String.format(ErrorMessage.USERNAME_EXISTS_EN.toString(), user.getUsername()));
         }
         
         validateUserBasicInfo(user);
@@ -69,7 +69,7 @@ public class UserService {
     public User addUser(User user) {
         // Kiểm tra tồn tại
         if (userRepository.exists(user.getUsername())) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.USERNAME_EXISTS, user.getUsername()));
+            throw new IllegalArgumentException(String.format(ErrorMessage.USERNAME_EXISTS.toString(), user.getUsername()));
         }
         
         validateUserBasicInfo(user);
@@ -84,7 +84,7 @@ public class UserService {
      */
     public User updateUser(User user) {
         if (!userRepository.exists(user.getUsername())) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS, user.getUsername()));
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), user.getUsername()));
         }
         
         validateUserBasicInfo(user);
@@ -100,14 +100,14 @@ public class UserService {
      */
     public boolean updatePassword(String username, String newPassword) {
         if (!userRepository.exists(username)) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS, username));
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), username));
         }
         
         if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY.toString());
         }
         if (newPassword.length() < 6) {
-            throw new IllegalArgumentException(ErrorMessage.PASSWORD_TOO_SHORT);
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_TOO_SHORT.toString());
         }
         
         return userRepository.updatePassword(username, newPassword);
@@ -186,7 +186,7 @@ public class UserService {
     public boolean activateUser(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
         if (!optionalUser.isPresent()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS, username));
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), username));
         }
         
         User user = optionalUser.get();
@@ -204,7 +204,7 @@ public class UserService {
     public boolean deactivateUser(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
         if (!optionalUser.isPresent()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS, username));
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), username));
         }
         
         User user = optionalUser.get();
@@ -220,10 +220,10 @@ public class UserService {
      */
     private void validateUserBasicInfo(User user) {
         if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.USERNAME_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_EMPTY.toString());
         }
         if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY.toString());
         }
     }
 

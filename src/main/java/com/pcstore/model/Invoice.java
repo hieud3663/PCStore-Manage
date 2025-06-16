@@ -74,7 +74,7 @@ public class Invoice extends BaseTimeEntity {
 
     public void setCustomer(Customer customer) {
 //        if (customer == null) {
-//            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
+//            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL.toString());
 //        }
         this.customer = customer;
     }
@@ -89,7 +89,7 @@ public class Invoice extends BaseTimeEntity {
 
     public void setEmployee(Employee employee) {
         if (employee == null) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL.toString());
         }
         this.employee = employee;
     }
@@ -101,10 +101,10 @@ public class Invoice extends BaseTimeEntity {
 
     public void setTotalAmount(BigDecimal totalAmount) {
         if (totalAmount == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Tổng tiền"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Tổng tiền"));
         }
         if (totalAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_TOTAL_NEGATIVE);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_TOTAL_NEGATIVE.toString());
         }
         this.totalAmount = totalAmount;
     }
@@ -115,7 +115,7 @@ public class Invoice extends BaseTimeEntity {
 
     public void setInvoiceDate(LocalDateTime invoiceDate) {
         if (invoiceDate == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Ngày lập hóa đơn"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Ngày lập hóa đơn"));
         }
         this.invoiceDate = invoiceDate;
     }
@@ -126,7 +126,7 @@ public class Invoice extends BaseTimeEntity {
 
     public void setStatus(InvoiceStatusEnum status) {
         if (status == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Trạng thái hóa đơn"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Trạng thái hóa đơn"));
         }
         // if (!canChangeStatus(status)) {
         //     throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
@@ -140,7 +140,7 @@ public class Invoice extends BaseTimeEntity {
 
     public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
         if (paymentMethod == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Phương thức thanh toán"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Phương thức thanh toán"));
         }
         this.paymentMethod = paymentMethod;
     }
@@ -155,7 +155,7 @@ public class Invoice extends BaseTimeEntity {
 
     public void addInvoiceDetail(InvoiceDetail invoiceDetail) {
         if (invoiceDetail == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chi tiết hóa đơn"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Chi tiết hóa đơn"));
         }
         if (!canUpdate()) {
             throw new IllegalStateException("Không thể thêm chi tiết cho hóa đơn đã hoàn thành hoặc đã hủy");
@@ -204,16 +204,16 @@ public class Invoice extends BaseTimeEntity {
     // Kiểm tra chi tiết hóa đơn hợp lệ
     private boolean isValidDetail(InvoiceDetail detail) {
         if (detail.getProduct() == null) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL.toString());
         }
         if (detail.getQuantity() <= 0) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_NEGATIVE, "Số lượng"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_NEGATIVE.toString(), "Số lượng"));
         }
         if (!detail.getProduct().hasEnoughStock(detail.getQuantity())) {
             throw new IllegalArgumentException("Số lượng tồn kho không đủ");
         }
         if (detail.getUnitPrice() == null || detail.getUnitPrice().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_NEGATIVE, "Đơn giá"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_NEGATIVE.toString(), "Đơn giá"));
         }
         return true;
     }
@@ -256,7 +256,7 @@ public class Invoice extends BaseTimeEntity {
     // Phương thức xử lý hoàn thành hóa đơn
     public void complete() {
         if (invoiceDetails.isEmpty()) {
-            throw new IllegalStateException(ErrorMessage.INVOICE_DETAILS_EMPTY);
+            throw new IllegalStateException(ErrorMessage.INVOICE_DETAILS_EMPTY.toString());
         }
         if (status != InvoiceStatusEnum.PROCESSING) {
             throw new IllegalStateException("Chỉ có thể hoàn thành hóa đơn đang xử lý");
@@ -308,10 +308,10 @@ public class Invoice extends BaseTimeEntity {
     // Factory method để tạo hóa đơn mới
     public static Invoice createNew(Customer customer, Employee employee) {
         if (customer == null) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL.toString());
         }
         if (employee == null) {
-            throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL);
+            throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL.toString());
         }
 
         Invoice invoice = new Invoice();

@@ -49,8 +49,8 @@ public class JExcel {
             // Kiểm tra nếu file đã tồn tại
             if (selectedFile.exists()) {
                 int result = JOptionPane.showConfirmDialog(null,
-                        ErrorMessage.FILE_EXISTS_OVERWRITE,
-                        ErrorMessage.CONFIRM_TITLE,
+                        ErrorMessage.FILE_EXISTS_OVERWRITE.toString(),
+                        ErrorMessage.CONFIRM_TITLE.toString(),
                         JOptionPane.YES_NO_OPTION);
                 
                 if (result != JOptionPane.YES_OPTION) {
@@ -136,10 +136,9 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS.toString() + "\n" + ErrorMessage.FILE_PATH.toString() + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
-                // Mở file sau khi xuất
                 try {
                     if (Desktop.isDesktopSupported()) {
                         Desktop desktop = Desktop.getDesktop();
@@ -149,8 +148,8 @@ public class JExcel {
                     }
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null,
-                            ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()),
-                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.CANNOT_OPEN_FILE.toString().formatted(ex.getMessage()),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
 
                 return true;
@@ -158,8 +157,8 @@ public class JExcel {
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -175,31 +174,26 @@ public class JExcel {
             return false;
         }
         
-        // Hiển thị hộp thoại chọn nơi lưu file
         File selectedFile = showSaveFileDialog(suggestedFilename);
         if (selectedFile == null) {
-            return false; // Người dùng đã hủy
+            return false; 
         }
         
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet1");
 
-            // Tạo font in đậm cho header
             Font boldFont = workbook.createFont();
             boldFont.setBold(true);
 
-            // Style cho tiêu đề
             CellStyle titleStyle = workbook.createCellStyle();
             titleStyle.setFont(boldFont);
             titleStyle.setAlignment(HorizontalAlignment.CENTER);
 
-            // Style cho header
             CellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFont(boldFont);
             headerStyle.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-            // Ghi dữ liệu vào sheet
             for (int rowIndex = 0; rowIndex < data.size(); rowIndex++) {
                 Row row = sheet.createRow(rowIndex);
                 List<String> rowData = data.get(rowIndex);
@@ -209,9 +203,9 @@ public class JExcel {
                     cell.setCellValue(rowData.get(colIndex));
                     
                     if (rowIndex == 0) {
-                        cell.setCellStyle(titleStyle); // Áp dụng style cho dòng tiêu đề
+                        cell.setCellStyle(titleStyle); 
                     } else if (rowIndex == 1) {
-                        cell.setCellStyle(headerStyle); // Áp dụng style cho dòng header
+                        cell.setCellStyle(headerStyle); 
                     }
                 }
             }
@@ -220,13 +214,11 @@ public class JExcel {
             if (!data.isEmpty() && !data.get(0).isEmpty() && data.get(0).size() > 1) {
                 sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, data.get(0).size() - 1));
                 
-                // Đảm bảo tiêu đề được căn giữa sau khi gộp ô
                 Row titleRow = sheet.getRow(0);
                 Cell titleCell = titleRow.getCell(0);
                 titleCell.setCellStyle(titleStyle);
             }
 
-            // Tự động điều chỉnh kích thước cột
             for (int i = 0; i < data.get(0).size(); i++) {
                 sheet.autoSizeColumn(i);
             }
@@ -236,8 +228,8 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS.toString() + "\n" + ErrorMessage.FILE_PATH.toString() + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
                 // Mở file sau khi xuất
                 try {
@@ -248,7 +240,7 @@ public class JExcel {
                         }
                     }
                 } catch (Exception ex) {
-                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()));
+                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.toString().formatted(ex.getMessage()));
                 }
 
                 return true;
@@ -256,8 +248,8 @@ public class JExcel {
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -353,8 +345,8 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS.toString() + "\n" + ErrorMessage.FILE_PATH.toString() + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
                 //Mở file sau khi xuất
                 try {
@@ -365,7 +357,7 @@ public class JExcel {
                         }
                     }
                 } catch (Exception ex) {
-                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()));
+                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.toString().formatted(ex.getMessage()));
                 }
 
                 return true;
@@ -374,8 +366,8 @@ public class JExcel {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -522,8 +514,8 @@ public class JExcel {
                 workbook.write(fileOut);
                 
                 JOptionPane.showMessageDialog(null, 
-                        ErrorMessage.EXPORT_EXCEL_SUCCESS + "\n" + ErrorMessage.FILE_PATH + selectedFile.getAbsolutePath(), 
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS.toString() + "\n" + ErrorMessage.FILE_PATH.toString() + selectedFile.getAbsolutePath(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
                 // Mở file sau khi xuất
                 try {
@@ -534,7 +526,7 @@ public class JExcel {
                         }
                     }
                 } catch (Exception ex) {
-                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.formatted(ex.getMessage()));
+                    System.out.println(ErrorMessage.CANNOT_OPEN_FILE.toString().formatted(ex.getMessage()));
                 }
 
                 return selectedFile.getAbsolutePath();
@@ -543,8 +535,8 @@ public class JExcel {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.EXPORT_EXCEL_ERROR.formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.toString().formatted(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }
@@ -559,7 +551,7 @@ public class JExcel {
         if (filePath == null || filePath.isEmpty()) {
             JOptionPane.showMessageDialog(null,
                     "Đường dẫn file không hợp lệ.",
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     
@@ -567,7 +559,7 @@ public class JExcel {
         if (!file.exists() || !file.isFile()) {
             JOptionPane.showMessageDialog(null,
                     "File không tồn tại: " + filePath,
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     
@@ -576,7 +568,7 @@ public class JExcel {
             if (sheet == null) {
                 JOptionPane.showMessageDialog(null,
                         "File Excel không có sheet nào.",
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
     
@@ -611,7 +603,7 @@ public class JExcel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null,
                     "Lỗi khi đọc file Excel: " + e.getMessage(),
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }

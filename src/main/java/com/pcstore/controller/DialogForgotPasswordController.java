@@ -40,8 +40,8 @@ public class DialogForgotPasswordController {
             setupEventListeners();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(dialog, 
-                String.format(ErrorMessage.DATABASE_CONNECTION_ERROR, e.getMessage()),
-                ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                String.format(ErrorMessage.DATABASE_CONNECTION_ERROR.toString(), e.getMessage()),
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -78,14 +78,14 @@ public class DialogForgotPasswordController {
         String email = dialog.getTxtEmail().getText().trim();
         
         if (email.isEmpty()) {
-            JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_EMPTY, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_EMPTY.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!isValidEmail(email)) {
-            JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_INVALID, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_INVALID.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -95,8 +95,8 @@ public class DialogForgotPasswordController {
             currentUser = userOptional.orElse(null);
             
             if (currentUser == null) {
-                JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_NOT_FOUND, 
-                        ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.EMAIL_NOT_FOUND.toString(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
                 return;
             }
             
@@ -112,17 +112,17 @@ public class DialogForgotPasswordController {
                 
                 dialog.getTxtEmail().setEnabled(false);
                 
-                JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_SENT_SUCCESS, 
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_SENT_SUCCESS.toString(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_SENT_FAILED, 
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_SENT_FAILED.toString(), 
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
             
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(dialog, 
-                    String.format(ErrorMessage.SYSTEM_ERROR, ex.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.SYSTEM_ERROR.toString(), ex.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }
@@ -168,26 +168,26 @@ public class DialogForgotPasswordController {
         String confirmPassword = new String(dialog.getTxtConfirmPassword().getPassword());
         
         if (otp.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
-            JOptionPane.showMessageDialog(dialog, ErrorMessage.FIELDS_REQUIRED, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.FIELDS_REQUIRED.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (generatedOTP == null || !generatedOTP.equals(otp)) {
-            JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_INVALID, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.OTP_INVALID.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!newPassword.equals(confirmPassword)) {
-            JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_MISMATCH, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_MISMATCH.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (!isStrongPassword(newPassword)) {
-            JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_REQUIREMENT, 
-                    ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_REQUIREMENT.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -201,18 +201,18 @@ public class DialogForgotPasswordController {
                     otpTimer.cancel();
                 }
                 
-                JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_RESET_SUCCESS, 
-                        ErrorMessage.INFO_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_RESET_SUCCESS.toString(), 
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 dialog.dispose();
             } else {
-                JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_RESET_FAILED, 
-                        ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, ErrorMessage.PASSWORD_RESET_FAILED.toString(), 
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
             
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(dialog, 
-                    String.format(ErrorMessage.SYSTEM_ERROR, ex.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.SYSTEM_ERROR.toString(), ex.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }

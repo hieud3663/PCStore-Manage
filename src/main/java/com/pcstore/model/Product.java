@@ -54,7 +54,7 @@ public class Product extends BaseTimeEntity {
 
     public void setProductId(String productId) {
         if (productId == null || productId.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Mã sản phẩm"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Mã sản phẩm"));
         }
         this.productId = productId;
     }
@@ -73,7 +73,7 @@ public class Product extends BaseTimeEntity {
 
     public void setProductName(String productName) {
         if (productName == null || productName.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NAME_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NAME_EMPTY.toString());
         }
         this.productName = productName;
     }
@@ -84,10 +84,10 @@ public class Product extends BaseTimeEntity {
 
     public void setPrice(BigDecimal price) {
         if (price == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Giá sản phẩm"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Giá sản phẩm"));
         }
         if (price.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_PRICE_NEGATIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_PRICE_NEGATIVE.toString());
         }
         this.price = price;
         setUpdatedAt(java.time.LocalDateTime.now());
@@ -99,7 +99,7 @@ public class Product extends BaseTimeEntity {
 
     public void setStockQuantity(int stockQuantity) {
         if (stockQuantity < 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NEGATIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NEGATIVE.toString());
         }
         this.stockQuantity = stockQuantity;
         setUpdatedAt(java.time.LocalDateTime.now());
@@ -127,7 +127,7 @@ public class Product extends BaseTimeEntity {
 
     public void setCategory(Category category) {
         if (category == null) {
-            throw new IllegalArgumentException(ErrorMessage.CATEGORY_NULL);
+            throw new IllegalArgumentException(ErrorMessage.CATEGORY_NULL.toString());
         }
         this.category = category;
     }
@@ -138,7 +138,7 @@ public class Product extends BaseTimeEntity {
 
     public void setSupplier(Supplier supplier) {
         if (supplier == null) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_SUPPLIER_NULL);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_SUPPLIER_NULL.toString());
         }
         this.supplier = supplier;
     }
@@ -150,14 +150,14 @@ public class Product extends BaseTimeEntity {
     public void decreaseStock(int quantity) {
         if (!hasEnoughStock(quantity)) {
             throw new IllegalArgumentException(
-                String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK, quantity, this.stockQuantity));
+                String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK.toString(), quantity, this.stockQuantity));
         }
         setStockQuantity(this.stockQuantity - quantity);
     }
     
     public void increaseStock(int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
         }
         setStockQuantity(this.stockQuantity + quantity);
     }

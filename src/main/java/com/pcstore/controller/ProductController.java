@@ -320,7 +320,7 @@ public class ProductController {
             if (!costPriceStr.isEmpty()) {
                 costPrice = new BigDecimal(costPriceStr);
                 if (costPrice.compareTo(BigDecimal.ZERO) <= 0) {
-                    throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                    throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
                 }
             }
             
@@ -644,9 +644,9 @@ public class ProductController {
             try {
                 if (!priceStr.isEmpty()) {
                     price = new BigDecimal(priceStr);
-                    if (price.compareTo(BigDecimal.ZERO) <= 0) throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                    if (price.compareTo(BigDecimal.ZERO) <= 0) throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
                 } else {
-                    throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.formatted("Giá"));
+                    throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Giá"));
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(productForm,
@@ -666,7 +666,7 @@ public class ProductController {
             if (!costPriceStr.isEmpty()) {
                 costPrice = new BigDecimal(costPriceStr);
                 if (costPrice.compareTo(BigDecimal.ZERO) <= 0) {
-                    throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE);
+                    throw new NumberFormatException(ErrorMessage.VALUE_MUST_BE_POSITIVE.toString());
                 }
             }
             

@@ -33,8 +33,8 @@ public class LoginController {
             this.userService = ServiceFactory.getUserService();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    String.format(ErrorMessage.LOGIN_SERVICE_ERROR, e.getMessage()),
-                    ErrorMessage.LOGIN_ERROR,
+                    String.format(ErrorMessage.LOGIN_SERVICE_ERROR.toString(), e.getMessage()),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -54,8 +54,8 @@ public class LoginController {
             this.userService = ServiceFactory.getUserService();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null,
-                    String.format(ErrorMessage.USER_SERVICE_ERROR, e.getMessage()),
-                    ErrorMessage.LOGIN_ERROR,
+                    String.format(ErrorMessage.USER_SERVICE_ERROR.toString(), e.getMessage()),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } finally {
@@ -75,16 +75,16 @@ public class LoginController {
             // Validate input
             if (username == null || username.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.USERNAME_EMPTY,
-                        ErrorMessage.LOGIN_ERROR,
+                        ErrorMessage.USERNAME_EMPTY.toString(),
+                        ErrorMessage.LOGIN_ERROR.toString(),
                         JOptionPane.ERROR_MESSAGE);
                 return null;
             }
 
             if (password == null || password.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null,
-                        ErrorMessage.PASSWORD_EMPTY,
-                        ErrorMessage.LOGIN_ERROR,
+                        ErrorMessage.PASSWORD_EMPTY.toString(),
+                        ErrorMessage.LOGIN_ERROR.toString(),
                         JOptionPane.ERROR_MESSAGE);
                 return null;
             }
@@ -106,8 +106,8 @@ public class LoginController {
             return user;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    String.format(ErrorMessage.AUTHENTICATION_ERROR, e.getMessage()),
-                    ErrorMessage.LOGIN_ERROR,
+                    String.format(ErrorMessage.AUTHENTICATION_ERROR.toString(), e.getMessage()),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return null;
@@ -116,8 +116,8 @@ public class LoginController {
                 // ServiceFactory.closeConnection();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null,
-                        String.format(ErrorMessage.DB_CONNECTION_ERROR, e.getMessage()),
-                        ErrorMessage.LOGIN_ERROR,
+                        String.format(ErrorMessage.DB_CONNECTION_ERROR.toString(), e.getMessage()),
+                        ErrorMessage.LOGIN_ERROR.toString(),
                         JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
@@ -132,8 +132,8 @@ public class LoginController {
             ServiceFactory.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    String.format(ErrorMessage.DB_CONNECTION_CLOSE_ERROR, e.getMessage()),
-                    ErrorMessage.LOGIN_ERROR,
+                    String.format(ErrorMessage.DB_CONNECTION_CLOSE_ERROR.toString(), e.getMessage()),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -148,16 +148,16 @@ public class LoginController {
     public boolean validateLoginInfo(String username, String password) {
         if (username == null || username.trim().isEmpty()) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.USERNAME_EMPTY,
-                    ErrorMessage.LOGIN_ERROR,
+                    ErrorMessage.USERNAME_EMPTY.toString(),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         if (password == null || password.trim().isEmpty()) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.PASSWORD_EMPTY,
-                    ErrorMessage.LOGIN_ERROR,
+                    ErrorMessage.PASSWORD_EMPTY.toString(),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -176,16 +176,16 @@ public class LoginController {
         // Kiểm tra input
         if (username == null || username.trim().isEmpty()) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.USERNAME_EMPTY,
-                    ErrorMessage.LOGIN_ERROR,
+                    ErrorMessage.USERNAME_EMPTY.toString(),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         if (password == null || password.trim().isEmpty()) {
             JOptionPane.showMessageDialog(null,
-                    ErrorMessage.PASSWORD_EMPTY,
-                    ErrorMessage.LOGIN_ERROR,
+                    ErrorMessage.PASSWORD_EMPTY.toString(),
+                    ErrorMessage.LOGIN_ERROR.toString(),
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }

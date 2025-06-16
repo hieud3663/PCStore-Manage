@@ -86,8 +86,8 @@ public class DialogChooseEmployeeController {
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error loading employees", e);
             JOptionPane.showMessageDialog(dialog, 
-                    String.format(ErrorMessage.EMPLOYEE_LOAD_ERROR, e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.EMPLOYEE_LOAD_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -173,14 +173,14 @@ public class DialogChooseEmployeeController {
                     return;
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(dialog, 
-                            String.format(ErrorMessage.EMPLOYEE_GET_INFO_ERROR, e.getMessage()),
-                            ErrorMessage.ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+                            String.format(ErrorMessage.EMPLOYEE_GET_INFO_ERROR.toString(), e.getMessage()),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
         
-        JOptionPane.showMessageDialog(dialog, ErrorMessage.EMPLOYEE_SELECTION_REQUIRED, 
-                ErrorMessage.INFO_TITLE, JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(dialog, ErrorMessage.EMPLOYEE_SELECTION_REQUIRED.toString(), 
+                ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
     }
     
 

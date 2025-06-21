@@ -246,7 +246,11 @@ public class DashboardForm extends JFrame {
             case 1:
                 showForm(new WareHouseForm());
                 break;
+            
             case 2:
+                showForm(new SupplierForm());
+                break;
+            case 3:
                 showForm(new InventoryCheckForm());
                 break;
             default:

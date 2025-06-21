@@ -144,10 +144,10 @@ public class DashboardController {
                 menuItemsStr.add(new String[]{
                         bundle.getProperty("menu.warehouse"),
                         bundle.getProperty("menu.warehouse.stock"),
-                        // bundle.getProperty("menu.warehouse.import"),
+                        bundle.getProperty("menu.warehouse.supplier"),
                         bundle.getProperty("menu.warehouse.inventory")
                 });
-                menuItemsKey.add(new String[]{"menu.warehouse", "menu.warehouse.stock", "menu.warehouse.inventory"});
+                menuItemsKey.add(new String[]{"menu.warehouse", "menu.warehouse.stock", "menu.warehouse.supplier", "menu.warehouse.inventory"});
             }
 
             if (roleManager.hasFeaturePermission(RoleManager.FEATURE_EMPLOYEE)) {
@@ -349,8 +349,6 @@ public class DashboardController {
         // Nếu menu đang ở trạng thái mở rộng, cập nhật lại text
         if (isMenuExpanded) {
             bundle = LocaleManager.getInstance().getProperties();
-
-
         }
     }
 

@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "SupplierForm",
+            "request": "launch",
+            "mainClass": "com.pcstore.view.SupplierForm",
+            "projectName": "PCStore-Manage"
+        },
+        {
+            "type": "java",
             "name": "DetailInventoryCheckForm",
             "request": "launch",
             "mainClass": "com.pcstore.view.DetailInventoryCheckForm",

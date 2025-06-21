@@ -115,7 +115,7 @@ public class RepairController {
             // Get employee
             Optional<Employee> employeeOpt = employeeService.findEmployeeById(employeeId);
             if (!employeeOpt.isPresent()) {
-                throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NOT_FOUND);
+                throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NOT_FOUND.toString());
             }
             Employee employee = employeeOpt.get();
             
@@ -196,7 +196,7 @@ public class RepairController {
         try {
             Optional<Repair> repairOpt = repairService.findRepairServiceWithFullInfo(repairId);
             if (!repairOpt.isPresent()) {
-                throw new IllegalArgumentException(ErrorMessage.REPAIR_NOT_FOUND);
+                throw new IllegalArgumentException(ErrorMessage.REPAIR_NOT_FOUND.toString());
             }
             
             Repair repair = repairOpt.get();
@@ -243,12 +243,12 @@ public class RepairController {
         try {
             Optional<Repair> repairOpt = repairService.findRepairServiceWithFullInfo(repairId);
             if (!repairOpt.isPresent()) {
-                throw new IllegalArgumentException(ErrorMessage.REPAIR_NOT_FOUND);
+                throw new IllegalArgumentException(ErrorMessage.REPAIR_NOT_FOUND.toString());
             }
             
             Optional<Employee> employeeOpt = employeeService.findEmployeeById(employeeId);
             if (!employeeOpt.isPresent()) {
-                throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NOT_FOUND);
+                throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NOT_FOUND.toString());
             }
             
             return repairService.assignEmployee(repairId, employeeOpt.get());

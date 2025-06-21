@@ -200,112 +200,485 @@ public enum ErrorMessage {
     PURCHASE_ORDER_EMPLOYEE_NULL("PURCHASE_ORDER_EMPLOYEE_NULL"),  //"Nhân viên không được để trống"
     PURCHASE_ORDER_TOTAL_NEGATIVE("PURCHASE_ORDER_TOTAL_NEGATIVE"), //"Tổng tiền đơn hàng không được âm"
     PURCHASE_ORDER_DETAILS_EMPTY("PURCHASE_ORDER_DETAILS_EMPTY"),  //"Đơn đặt hàng phải có ít nhất một chi tiết"
-
+    
     // Return error messages
-    public static final String RETURN_NOT_FOUND = "Đơn trả hàng không tồn tại";
-    public static final String RETURN_NOT_FOUND_WITH_ID = "Không tìm thấy thông tin đơn trả hàng với ID: %s";
-    public static final String RETURN_NOT_FOUND_WITH_KEYWORD = "Không tìm thấy đơn trả hàng nào phù hợp với từ khóa: %s";
-    public static final String RETURN_CANNOT_UPDATE = "Không thể cập nhật đơn trả hàng ở trạng thái hiện tại";
-    public static final String RETURN_QUANTITY_EXCEED = "Số lượng trả không thể lớn hơn số lượng trong hóa đơn";
-    public static final String RETURN_UPDATE_ERROR = "Lỗi khi cập nhật đơn trả hàng";
-    public static final String RETURN_CANNOT_EXCHANGE = "Không thể đổi sản phẩm với đơn trả hàng ở trạng thái hiện tại";
-    public static final String PRODUCT_NOT_FOUND = "Sản phẩm mới không tồn tại";
-    public static final String RETURN_EXCHANGE_ERROR = "Lỗi khi đổi sản phẩm";
-    public static final String RETURN_STATUS_INVALID = "Không thể chuyển từ trạng thái 'Đã từ chối' về 'Đang chờ xử lý'";
-    public static final String RETURN_LOAD_ERROR = "Lỗi khi tải dữ liệu đơn trả hàng";
-    public static final String RETURN_SEARCH_ERROR = "Lỗi khi tìm kiếm đơn trả hàng";
-    public static final String RETURN_DETAIL_LOAD_ERROR = "Lỗi khi tải chi tiết đơn trả hàng";
-    public static final String RETURN_SELECT_ONE = "Vui lòng chọn một đơn trả hàng để thực hiện thao tác";
-    public static final String RETURN_DELETE_ONLY_PENDING = "Chỉ có thể xóa đơn trả hàng ở trạng thái 'Đang chờ xử lý'.";
-    public static final String RETURN_CURRENT_STATUS = "Đơn trả hàng này đang ở trạng thái: ";
-    public static final String RETURN_DELETE_CONFIRM = "Bạn có chắc chắn muốn xóa đơn trả hàng này?\n- Mã đơn: %s\n- Sản phẩm: %s";
-    public static final String RETURN_DELETE_SUCCESS = "Đã xóa đơn trả hàng thành công!";
-    public static final String RETURN_DELETE_FAIL = "Không thể xóa đơn trả hàng. Vui lòng thử lại sau!";
-    public static final String RETURN_DELETE_ERROR = "Lỗi khi xóa đơn trả hàng";
-    public static final String RETURN_STATUS_CONVERT_ERROR = "Lỗi chuyển đổi trạng thái";
-    public static final String RETURN_STATUS_UPDATE_SUCCESS = "Cập nhật trạng thái thành công!";
-    public static final String RETURN_STATUS_UPDATE_FAIL = "Không thể cập nhật trạng thái. Vui lòng thử lại sau!";
-    public static final String RETURN_STATUS_UPDATE_ERROR = "Lỗi khi cập nhật trạng thái";
-    public static final String DB_CONNECTION_ERROR = "Không thể kết nối đến cơ sở dữ liệu";
-
-    // Invoice
-    public static final String INVOICE_SEARCH_ERROR = "Lỗi khi tìm kiếm hóa đơn";
-    public static final String INVOICE_LIST_EMPTY = "Không tìm thấy hóa đơn nào trong hệ thống.";
-    public static final String INVOICE_LOAD_ERROR = "Lỗi khi tải dữ liệu hóa đơn";
-
-    // Return
-//    public static final String RETURN_SELECT_ONE = "Vui lòng chọn sản phẩm để trả hàng";
-    public static final String RETURN_NO_QUANTITY = "Sản phẩm này đã trả hết";
-    public static final String RETURN_OVER_30_DAYS = "Sản phẩm này đã quá 30 ngày kể từ ngày mua (%d ngày).\nViệc trả hàng có thể bị từ chối hoặc áp dụng điều kiện đặc biệt.\nBạn vẫn muốn tiếp tục?";
-    public static final String RETURN_INPUT_REASON = "Nhập lý do trả hàng:";
-    public static final String RETURN_REASON_EMPTY = "Vui lòng nhập lý do trả hàng";
-    public static final String RETURN_CREATE_SUCCESS = "Đã tạo đơn trả hàng thành công!";
-    public static final String RETURN_CREATE_FAIL = "Không thể tạo đơn trả hàng";
-    public static final String RETURN_CREATE_ERROR = "Lỗi khi tạo đơn trả hàng";
-
+    RETURN_INVOICE_NULL("RETURN_INVOICE_NULL"),                    //"Hóa đơn trả hàng không được để trống"
+    RETURN_REASON_EMPTY("RETURN_REASON_EMPTY"),                    //"Lý do trả hàng không được để trống"
+    RETURN_DATE_INVALID("RETURN_DATE_INVALID"),                    //"Ngày trả hàng không hợp lệ"
+    RETURN_APPROVE_PENDING_ONLY("RETURN_APPROVE_PENDING_ONLY"),    //"Chỉ có thể chấp nhận đơn trả hàng đang chờ xử lý"
+    RETURN_REJECT_PENDING_ONLY("RETURN_REJECT_PENDING_ONLY"),      //"Chỉ có thể từ chối đơn trả hàng đang chờ xử lý"
+    RETURN_COMPLETE_APPROVED_ONLY("RETURN_COMPLETE_APPROVED_ONLY"), //"Chỉ có thể hoàn thành đơn trả hàng đã được chấp nhận"
+    RETURN_QUANTITY_POSITIVE("RETURN_QUANTITY_POSITIVE"),          //"Số lượng trả phải lớn hơn 0"
+    RETURN_CANNOT_TRANSITION("RETURN_CANNOT_TRANSITION"),          //"Không thể chuyển sang trạng thái %s"
+    
     // RepairService error messages
-    public static final String REPAIR_CUSTOMER_NULL = "Khách hàng không được để trống";
-    public static final String REPAIR_PRODUCT_NULL = "Sản phẩm cần sửa chữa không được để trống";
-    public static final String REPAIR_DESCRIPTION_EMPTY = "Mô tả lỗi không được để trống";
-    public static final String REPAIR_STATUS_INVALID = "Trạng thái sửa chữa không hợp lệ";
-    public static final String REPAIR_COST_NEGATIVE = "Chi phí sửa chữa không được âm";
+    REPAIR_CUSTOMER_NULL("REPAIR_CUSTOMER_NULL"),                  //"Khách hàng không được để trống"
+    REPAIR_PRODUCT_NULL("REPAIR_PRODUCT_NULL"),                    //"Sản phẩm cần sửa chữa không được để trống"
+    REPAIR_DESCRIPTION_EMPTY("REPAIR_DESCRIPTION_EMPTY"),          //"Mô tả lỗi không được để trống"
+    REPAIR_STATUS_INVALID("REPAIR_STATUS_INVALID"),                //"Trạng thái sửa chữa không hợp lệ"
+    REPAIR_COST_NEGATIVE("REPAIR_COST_NEGATIVE"),                  //"Chi phí sửa chữa không được âm"
+    
+    // Validation messages
+    INVALID_PHONE_NUMBER("INVALID_PHONE_NUMBER"),                  //"Số điện thoại không hợp lệ"
+    INVALID_EMAIL("INVALID_EMAIL"),                                //"Email không hợp lệ"
+    
+    // Login related errors
+    LOGIN_ERROR("LOGIN_ERROR"),                                    //"Lỗi đăng nhập"
+    AUTHENTICATION_FAILED("AUTHENTICATION_FAILED"),               //"Tên đăng nhập hoặc mật khẩu không đúng"
+    LOGIN_SERVICE_ERROR("LOGIN_SERVICE_ERROR"),                    //"Lỗi khởi tạo dịch vụ đăng nhập: %s"
+    USER_SERVICE_ERROR("USER_SERVICE_ERROR"),                      //"Lỗi dịch vụ người dùng: %s"
+    
+    // Forgot password related messages
+    EMAIL_EMPTY("EMAIL_EMPTY"),                                    //"Vui lòng nhập địa chỉ email!"
+    EMAIL_INVALID("EMAIL_INVALID"),                                //"Địa chỉ email không hợp lệ!"
+    EMAIL_NOT_FOUND("EMAIL_NOT_FOUND"),                            //"Email không tồn tại trong hệ thống!"
+    OTP_SENT_SUCCESS("OTP_SENT_SUCCESS"),                          //"Mã OTP đã được gửi đến email của bạn!"
+    OTP_SENT_FAILED("OTP_SENT_FAILED"),                            //"Không thể gửi mã OTP. Vui lòng thử lại sau!"
+    FIELDS_REQUIRED("FIELDS_REQUIRED"),                            //"Vui lòng nhập đầy đủ thông tin!"
+    OTP_INVALID("OTP_INVALID"),                                    //"Mã OTP không chính xác!"
+    PASSWORD_MISMATCH("PASSWORD_MISMATCH"),                        //"Mật khẩu xác nhận không khớp với mật khẩu mới!"
+    PASSWORD_REQUIREMENT("PASSWORD_REQUIREMENT"),                  //"Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!"
+    PASSWORD_RESET_SUCCESS("PASSWORD_RESET_SUCCESS"),              //"Đặt lại mật khẩu thành công!"
+    PASSWORD_RESET_FAILED("PASSWORD_RESET_FAILED"),                //"Không thể cập nhật mật khẩu. Vui lòng thử lại sau!"
+    DATABASE_CONNECTION_ERROR("DATABASE_CONNECTION_ERROR"),        //"Lỗi kết nối đến cơ sở dữ liệu: %s"
+    SYSTEM_ERROR("SYSTEM_ERROR"),                                  //"Lỗi hệ thống: %s"
+    
+    // Database error messages
+    DB_CONNECTION_ERROR("DB_CONNECTION_ERROR"),                    //"Không thể kết nối đến database"
+    DB_DRIVER_ERROR("DB_DRIVER_ERROR"),                            //"Không tìm thấy JDBC driver"
+    
+    // Database specific errors
+    DB_CONNECTION_INIT_ERROR("DB_CONNECTION_INIT_ERROR"),          //"Lỗi khởi tạo DatabaseConnection: %s"
+    DB_CONNECTION_CHECK_ERROR("DB_CONNECTION_CHECK_ERROR"),        //"Lỗi khi kiểm tra kết nối: %s"
+    DB_CONNECTION_RECREATE_ERROR("DB_CONNECTION_RECREATE_ERROR"),  //"Không thể tạo lại kết nối: %s"
+    DB_CONNECTION_CLOSE_ERROR("DB_CONNECTION_CLOSE_ERROR"),        //"Lỗi khi đóng kết nối: %s"
+    DB_CONNECTION_INVALID("DB_CONNECTION_INVALID"),                //"Kết nối không hợp lệ, tạo mới..."
+    DB_CONNECTION_NULL_OR_CLOSED("DB_CONNECTION_NULL_OR_CLOSED"),  //"Kết nối null hoặc đã đóng, tạo mới..."
+    DB_CONNECTION_SUCCESSFUL("DB_CONNECTION_SUCCESSFUL"),          //"Tạo kết nối database thành công"
+    DB_CONNECTION_CLOSED("DB_CONNECTION_CLOSED"),                  //"Đã đóng kết nối database"
+    
+    // Encryption errors
+    PASSWORD_HASH_ERROR("PASSWORD_HASH_ERROR"),                    //"Lỗi khi mã hóa mật khẩu: %s"
+    PASSWORD_VERIFY_ERROR("PASSWORD_VERIFY_ERROR"),                //"Lỗi khi xác thực mật khẩu: %s"
+    AUTHENTICATION_ERROR("AUTHENTICATION_ERROR"),                  //"Đã xảy ra lỗi khi xác thực người dùng: %s"
+    
+    // Dashboard related messages
+    LOGOUT_CONFIRM("LOGOUT_CONFIRM"),                              //"Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?"
+    LOGOUT_TITLE("LOGOUT_TITLE"),                                  //"Xác nhận đăng xuất"
+    LOGIN_REQUIRED("LOGIN_REQUIRED"),                              //"Bạn cần đăng nhập để sử dụng hệ thống"
+    LOGIN_REQUIRED_TITLE("LOGIN_REQUIRED_TITLE"),                  //"Yêu cầu đăng nhập"
+    LOGIN_REDIRECT_ERROR("LOGIN_REDIRECT_ERROR"),                  //"Đã xảy ra lỗi khi mở trang đăng nhập: %s"
+    
+    // Language change messages
+    LANGUAGE_CHANGE_CONFIRM_VI("LANGUAGE_CHANGE_CONFIRM_VI"),      //"Cần khởi động lại ứng dụng để áp dụng thay đổi ngôn ngữ. Bạn có muốn tiếp tục không?"
+    LANGUAGE_CHANGE_CONFIRM_EN("LANGUAGE_CHANGE_CONFIRM_EN"),      //"The application needs to restart to apply language changes. Do you want to continue?"
+    LANGUAGE_CHANGE_TITLE_VI("LANGUAGE_CHANGE_TITLE_VI"),          //"Thay đổi ngôn ngữ"
+    LANGUAGE_CHANGE_TITLE_EN("LANGUAGE_CHANGE_TITLE_EN"),          //"Language Change"
+    RESTART_ERROR_VI("RESTART_ERROR_VI"),                          //"Lỗi khởi động lại ứng dụng: "
+    RESTART_ERROR_EN("RESTART_ERROR_EN"),                          //"Error restarting application:"
+    
+    // Customer controller specific messages
+    CUSTOMER_CONTROLLER_INIT_ERROR("CUSTOMER_CONTROLLER_INIT_ERROR"), //"Lỗi khởi tạo controller: %s"
+    CUSTOMER_LOAD_ERROR("CUSTOMER_LOAD_ERROR"),                    //"Lỗi khi tải danh sách khách hàng: %s"
+    CUSTOMER_DETAILS_LOAD_ERROR("CUSTOMER_DETAILS_LOAD_ERROR"),    //"Lỗi khi tải thông tin khách hàng: %s"
+    CUSTOMER_REQUIRED_FIELDS("CUSTOMER_REQUIRED_FIELDS"),          //"Mã khách hàng, họ tên và số điện thoại không được để trống"
+    CUSTOMER_POINTS_NEGATIVE("CUSTOMER_POINTS_NEGATIVE"),          //"Điểm tích lũy không được âm"
+    CUSTOMER_POINTS_INTEGER("CUSTOMER_POINTS_INTEGER"),            //"Điểm tích lũy phải là số nguyên"
+    CUSTOMER_ID_EXISTS("CUSTOMER_ID_EXISTS"),                      //"Mã khách hàng đã tồn tại"
+    CUSTOMER_ADD_CONFIRM("CUSTOMER_ADD_CONFIRM"),                  //"Xác nhận thêm mới khách hàng?"
+    CUSTOMER_ADD_SUCCESS("CUSTOMER_ADD_SUCCESS"),                  //"Thêm khách hàng mới thành công"
+    CUSTOMER_UPDATE_SUCCESS("CUSTOMER_UPDATE_SUCCESS"),            //"Cập nhật thông tin khách hàng thành công"
+    CUSTOMER_ADD_ERROR("CUSTOMER_ADD_ERROR"),                      //"Lỗi khi thêm khách hàng: %s"
+    CUSTOMER_UPDATE_ERROR("CUSTOMER_UPDATE_ERROR"),                //"Lỗi khi cập nhật khách hàng: %s"
+    CUSTOMER_SELECT_UPDATE("CUSTOMER_SELECT_UPDATE"),              //"Vui lòng chọn khách hàng cần cập nhật"
+    CUSTOMER_SELECT_DELETE("CUSTOMER_SELECT_DELETE"),              //"Vui lòng chọn khách hàng cần xóa"
+    CUSTOMER_DELETE_CONFIRM("CUSTOMER_DELETE_CONFIRM"),            //"Bạn có chắc chắn muốn xóa khách hàng %s?"
+    CUSTOMER_DELETE_TITLE("CUSTOMER_DELETE_TITLE"),                //"Xác nhận xóa"
+    CUSTOMER_DELETE_SUCCESS("CUSTOMER_DELETE_SUCCESS"),            //"Xóa khách hàng thành công"
+    CUSTOMER_DELETE_ERROR("CUSTOMER_DELETE_ERROR"),                //"Lỗi khi xóa khách hàng: %s"
+    CUSTOMER_DELETE_CONSTRAINT("CUSTOMER_DELETE_CONSTRAINT"),      //"Không thể xóa khách hàng. Khách hàng có thể đã có giao dịch trong hệ thống."
+    CUSTOMER_SEARCH_ERROR("CUSTOMER_SEARCH_ERROR"),                //"Lỗi khi tìm kiếm khách hàng: %s"
+    CUSTOMER_EXPORT_NO_DATA("CUSTOMER_EXPORT_NO_DATA"),            //"Không có dữ liệu để xuất"
+    CUSTOMER_EXPORT_SUCCESS("CUSTOMER_EXPORT_SUCCESS"),            //"Xuất Excel thành công!"
+    CUSTOMER_EXPORT_FAILED("CUSTOMER_EXPORT_FAILED"),              //"Xuất Excel không thành công!"
+    CUSTOMER_EXPORT_ERROR("CUSTOMER_EXPORT_ERROR"),                //"Lỗi khi xuất Excel: %s"
+    CUSTOMER_ADD_CONTINUE("CUSTOMER_ADD_CONTINUE"),                //"Bạn có muốn tiếp tục thêm khách hàng không?"
+    CUSTOMER_ADD_CANCEL("CUSTOMER_ADD_CANCEL"),                    //"Bạn có muốn hủy thao tác thêm khách hàng mới không?"
+    INFO_TITLE("INFO_TITLE"),                                      //"Thông báo"
+    INSUFFICIENT_POINTS("INSUFFICIENT_POINTS"),                    //"Số điểm tích lũy không đủ để trừ"
+    CUSTOMER_FIND_BY_ID_ERROR("CUSTOMER_FIND_BY_ID_ERROR"),        //"Lỗi khi tìm khách hàng theo ID: %s"
+    CUSTOMER_FIND_BY_PHONE_ERROR("CUSTOMER_FIND_BY_PHONE_ERROR"),  //"Lỗi khi tìm khách hàng theo số điện thoại: %s"
+    CUSTOMER_POINTS_UPDATE_ERROR("CUSTOMER_POINTS_UPDATE_ERROR"),  //"Lỗi khi cập nhật điểm tích lũy: %s"
+    CUSTOMER_POINTS_ADD_ERROR("CUSTOMER_POINTS_ADD_ERROR"),        //"Lỗi khi cộng điểm tích lũy: %s"
+    CUSTOMER_POINTS_DEDUCT_ERROR("CUSTOMER_POINTS_DEDUCT_ERROR"),  //"Lỗi khi trừ điểm tích lũy: %s"
+    
+    // Home controller messages
+    HOME_CONTROLLER_INIT_ERROR("HOME_CONTROLLER_INIT_ERROR"),      //"Lỗi khi khởi tạo controller: %s"
+    USER_INFO_LOAD_ERROR("USER_INFO_LOAD_ERROR"),                  //"Lỗi khi tải thông tin người dùng: %s"
+    TODAY_STATS_LOAD_ERROR("TODAY_STATS_LOAD_ERROR"),              //"Lỗi khi tải thống kê hôm nay: %s"
+    MONTH_STATS_LOAD_ERROR("MONTH_STATS_LOAD_ERROR"),              //"Lỗi khi tải thống kê tháng: %s"
+    WEEKLY_CHART_LOAD_ERROR("WEEKLY_CHART_LOAD_ERROR"),            //"Lỗi khi tải biểu đồ doanh thu theo tuần: %s"
+    DAILY_REVENUE_DATA_ERROR("DAILY_REVENUE_DATA_ERROR"),          //"Lỗi khi lấy dữ liệu doanh thu theo ngày: %s"
+    TOTAL_REVENUE_ERROR("TOTAL_REVENUE_ERROR"),                    //"Lỗi khi lấy tổng doanh thu: %s"
+    
+    // User controller specific messages
+    USER_CONTROLLER_INIT_ERROR("USER_CONTROLLER_INIT_ERROR"),      //"Lỗi khởi tạo controller: %s"
+    USER_LOAD_ERROR("USER_LOAD_ERROR"),                            //"Lỗi khi tải danh sách người dùng: %s"
+    USER_FILTER_ERROR("USER_FILTER_ERROR"),                        //"Lỗi khi lọc danh sách người dùng: %s"
+    USER_DETAILS_LOAD_ERROR("USER_DETAILS_LOAD_ERROR"),            //"Lỗi khi tải thông tin người dùng: %s"
+    USER_SELECT_EMPLOYEE("USER_SELECT_EMPLOYEE"),                  //"Vui lòng chọn nhân viên"
+    USER_COMPLETE_INFORMATION("USER_COMPLETE_INFORMATION"),        //"Vui lòng điền đầy đủ thông tin tài khoản"
+    USERNAME_ALREADY_EXISTS("USERNAME_ALREADY_EXISTS"),            //"Tên đăng nhập đã tồn tại"
+    USER_ADD_CONFIRM("USER_ADD_CONFIRM"),                          //"Xác nhận thêm mới người dùng?"
+    USER_ADD_CONFIRM_TITLE("USER_ADD_CONFIRM_TITLE"),              //"Xác nhận thêm"
+    USER_ADD_SUCCESS("USER_ADD_SUCCESS"),                          //"Thêm người dùng thành công"
+    USER_ADD_ERROR("USER_ADD_ERROR"),                              //"Lỗi khi thêm người dùng: %s"
+    USER_SELECT_TO_UPDATE("USER_SELECT_TO_UPDATE"),                //"Vui lòng chọn người dùng cần cập nhật"
+    USER_UPDATE_OWN_INFO_ONLY("USER_UPDATE_OWN_INFO_ONLY"),        //"Bạn chỉ có thể cập nhật thông tin của mình"
+    USER_COMPLETE_INFO("USER_COMPLETE_INFO"),                      //"Vui lòng điền đầy đủ thông tin"
+    USER_UPDATE_CONFIRM("USER_UPDATE_CONFIRM"),                    //"Xác nhận cập nhật thông tin?"
+    USER_UPDATE_CONFIRM_TITLE("USER_UPDATE_CONFIRM_TITLE"),        //"Xác nhận cập nhật"
+    USER_UPDATE_SUCCESS("USER_UPDATE_SUCCESS"),                    //"Cập nhật người dùng thành công"
+    USER_UPDATE_ERROR("USER_UPDATE_ERROR"),                        //"Lỗi khi cập nhật người dùng: %s"
+    USER_SELECT_TO_DELETE("USER_SELECT_TO_DELETE"),                //"Vui lòng chọn người dùng cần xóa"
+    USER_DELETE_CONFIRM("USER_DELETE_CONFIRM"),                    //"Bạn có chắc chắn muốn xóa người dùng này?"
+    USER_DELETE_CONFIRM_TITLE("USER_DELETE_CONFIRM_TITLE"),        //"Xác nhận xóa"
+    USER_DELETE_SUCCESS("USER_DELETE_SUCCESS"),                    //"Xóa người dùng thành công"
+    USER_DELETE_ERROR("USER_DELETE_ERROR"),                        //"Lỗi khi xóa người dùng: %s"
+    USER_SELECT_TO_RESET_PASSWORD("USER_SELECT_TO_RESET_PASSWORD"), //"Vui lòng chọn người dùng cần đặt lại mật khẩu"
+    USER_RESET_PASSWORD_CONFIRM("USER_RESET_PASSWORD_CONFIRM"),    //"Bạn có chắc chắn muốn đặt lại mật khẩu cho User: %s?"
+    USER_RESET_PASSWORD_CONFIRM_TITLE("USER_RESET_PASSWORD_CONFIRM_TITLE"), //"Xác nhận đặt lại mật khẩu"
+    USER_RESET_PASSWORD_SUCCESS("USER_RESET_PASSWORD_SUCCESS"),    //"Đặt lại mật khẩu thành công"
+    USER_RESET_PASSWORD_NEW("USER_RESET_PASSWORD_NEW"),            //"Mật khẩu mới: %s"
+    USER_RESET_PASSWORD_ERROR("USER_RESET_PASSWORD_ERROR"),        //"Lỗi khi đặt lại mật khẩu: %s"
+    USER_CHANGE_PASSWORD_ERROR("USER_CHANGE_PASSWORD_ERROR"),      //"Lỗi khi mở hộp thoại đổi mật khẩu: %s"
+    USER_LOAD_CURRENT_ERROR("USER_LOAD_CURRENT_ERROR"),            //"Lỗi khi tải thông tin người dùng"
+    PASSWORD_CHANGE_REQUIRED_FIELDS("PASSWORD_CHANGE_REQUIRED_FIELDS"), //"Vui lòng nhập đầy đủ thông tin"
+    PASSWORD_NEW_MISMATCH("PASSWORD_NEW_MISMATCH"),                //"Mật khẩu mới không khớp với xác nhận mật khẩu"
+    PASSWORD_MIN_LENGTH("PASSWORD_MIN_LENGTH"),                    //"Mật khẩu mới phải có ít nhất 6 ký tự"
+    PASSWORD_CURRENT_INCORRECT("PASSWORD_CURRENT_INCORRECT"),      //"Mật khẩu hiện tại không đúng"
+    PASSWORD_CHANGE_SUCCESS("PASSWORD_CHANGE_SUCCESS"),            //"Đổi mật khẩu thành công"
+    PASSWORD_CHANGE_FAILED("PASSWORD_CHANGE_FAILED"),              //"Đổi mật khẩu thất bại"
+    PASSWORD_CHANGE_ERROR("PASSWORD_CHANGE_ERROR"),                //"Lỗi khi đổi mật khẩu: %s"
+    
+    // Payment controller specific messages
+    PAYMENT_PROCESSING_ERROR("PAYMENT_PROCESSING_ERROR"),          //"Lỗi khi xử lý thanh toán: %s"
+    PAYMENT_SUCCESS_CHANGE("PAYMENT_SUCCESS_CHANGE"),              //"Thanh toán thành công! Số tiền thối lại: %s đ"
+    PAYMENT_METHOD_MAINTENANCE("PAYMENT_METHOD_MAINTENANCE"),      //"Chức năng này đang bảo trì! Vui lòng chọn phương thức thanh toán khác"
+    PAYMENT_CONFIRM("PAYMENT_CONFIRM"),                            //"Xác nhận đã thanh toán thành công?"
+    PAYMENT_CONFIRM_TITLE("PAYMENT_CONFIRM_TITLE"),                //"Xác nhận thanh toán"
 
+    // File related messages
+    FILE_EXISTS_OVERWRITE("FILE_EXISTS_OVERWRITE"),                //"File đã tồn tại. Bạn có muốn ghi đè không?"
+    FILE_PATH("FILE_PATH"),                                        //"Đường dẫn: "
+    CANNOT_OPEN_FILE("CANNOT_OPEN_FILE"),                          //"Không thể tự động mở file: %s"
+
+    // Sell controller messages
+    DEFAULT_CUSTOMER_NOT_FOUND("DEFAULT_CUSTOMER_NOT_FOUND"),      //"Không tìm thấy khách hàng mặc định. Vui lòng kiểm tra lại."
+    CART_UPDATE_ERROR("CART_UPDATE_ERROR"),                        //"Lỗi khi cập nhật bảng giỏ hàng: %s"
+    INSUFFICIENT_STOCK("INSUFFICIENT_STOCK"),                      //"Không đủ số lượng tồn kho. Chỉ còn %d sản phẩm."
+    INVALID_INVOICE_SAVE("INVALID_INVOICE_SAVE"),                  //"Không thể lưu hóa đơn. Giỏ hàng trống hoặc thông tin hóa đơn không hợp lệ."
+    INVOICE_SAVE_ERROR("INVOICE_SAVE_ERROR"),                      //"Lỗi khi lưu hóa đơn. Vui lòng thử lại."
+    INVOICE_DETAIL_SAVE_ERROR("INVOICE_DETAIL_SAVE_ERROR"),        //"Lỗi khi lưu chi tiết hóa đơn. Vui lòng thử lại."
+    UNKNOWN_ERROR("UNKNOWN_ERROR"),                                //"Lỗi không xác định: %s"
+    INVALID_INVOICE_COMPLETE("INVALID_INVOICE_COMPLETE"),          //"Không thể hoàn thành giao dịch. Hóa đơn không hợp lệ."
+    EXPORT_INVOICE_ERROR("EXPORT_INVOICE_ERROR"),                  //"Lỗi khi xuất hóa đơn: %s"
+    EXPORT_INVOICE_FAILED("EXPORT_INVOICE_FAILED"),                //"Xuất hóa đơn thất bại. Vui lòng thử lại."
+    POINTS_ALREADY_USED("POINTS_ALREADY_USED"),                    //"Hóa đơn đã sử dụng điểm."
+
+    // SellForm specific messages
+    FORM_INIT_ERROR("FORM_INIT_ERROR"),                            //"Lỗi khởi tạo form bán hàng: %s"
+    SELECT_PRODUCT_TO_DELETE("SELECT_PRODUCT_TO_DELETE"),          //"Vui lòng chọn sản phẩm để xóa khỏi giỏ hàng."
+    CONFIRM_DELETE_PRODUCT("CONFIRM_DELETE_PRODUCT"),              //"Bạn có chắc chắn muốn xóa sản phẩm đã chọn khỏi giỏ hàng không?"
+    CUSTOMER_POINTS_INSUFFICIENT("CUSTOMER_POINTS_INSUFFICIENT"),  //"Khách hàng chưa đủ điểm để áp dụng ưu đãi. Cần ít nhất 10,000 điểm."
+    CONFIRM_USE_POINTS("CONFIRM_USE_POINTS"),                      //"Khách hàng có %d điểm tích lũy.\nBạn có muốn sử dụng điểm để giảm giá không?"
+    CUSTOMER_SELECT_REQUIRED("CUSTOMER_SELECT_REQUIRED"),          //"Vui lòng chọn khách hàng trước khi áp dụng ưu đãi điểm."
+    EMPTY_CART("EMPTY_CART"),                                      //"Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán."
+    INVALID_QUANTITY("INVALID_QUANTITY"),                          //"Số lượng không hợp lệ"
+    QUANTITY_MUST_BE_POSITIVE("QUANTITY_MUST_BE_POSITIVE"),        //"Số lượng phải lớn hơn 0"
+    SELECT_PRODUCT_TO_ADD("SELECT_PRODUCT_TO_ADD"),                //"Vui lòng chọn sản phẩm để thêm vào giỏ hàng"
+    QUANTITY_UPDATE_ERROR("QUANTITY_UPDATE_ERROR"),                //"Không thể cập nhật số lượng. Số lượng vượt quá tồn kho hoặc có lỗi khác."
+    CONFIRM_SAVE_INVOICE("CONFIRM_SAVE_INVOICE"),                  //"Bạn có chắc chắn muốn thanh toán hóa đơn không?"
+    SAVE_INVOICE_ERROR("SAVE_INVOICE_ERROR"),                      //"Lỗi khi lưu hóa đơn. Vui lòng thử lại."
+    SAVE_INVOICE_SUCCESS("SAVE_INVOICE_SUCCESS"),                  //"Lưu hóa đơn thành công! ID: %s"
+    PAYMENT_SUCCESS("PAYMENT_SUCCESS"),                            //"Thanh toán thành công!"
+    PAYMENT_FAILED("PAYMENT_FAILED"),                              //"Thanh toán không thành công!"
+    CONFIRM_RESET_CART("CONFIRM_RESET_CART"),                      //"Bạn có chắc chắn muốn làm mới giỏ hàng không?"
+    CUSTOMER_NAME_REQUIRED("CUSTOMER_NAME_REQUIRED"),              //"Vui lòng nhập tên khách hàng"
+
+    // Bank payment related messages
+    BROWSER_OPEN_ERROR("BROWSER_OPEN_ERROR"),                      //"Không thể mở trình duyệt để thanh toán"
+    PAYMENT_WAITING_MESSAGE("PAYMENT_WAITING_MESSAGE"),            //"Vui lòng hoàn tất thanh toán trong trình duyệt.\nBấm OK khi đã thanh toán xong hoặc Cancel để hủy."
+    PAYMENT_VERIFICATION_FAILED("PAYMENT_VERIFICATION_FAILED"),    //"Không thể xác nhận thanh toán. Vui lòng kiểm tra lại sau."
+    WARNING_TITLE("WARNING_TITLE"),                                //"Cảnh báo"
+    PAYMENT_LINK_CREATE_ERROR("PAYMENT_LINK_CREATE_ERROR"),      //"Không thể tạo link thanh toán"
+
+    // Inventory Check Controller messages
+    INVENTORY_CHECK_CONTROLLER_INIT_ERROR("INVENTORY_CHECK_CONTROLLER_INIT_ERROR"), //"Lỗi kết nối cơ sở dữ liệu: %s"
+    INVENTORY_CHECK_LOAD_DATA_ERROR("INVENTORY_CHECK_LOAD_DATA_ERROR"),//"Lỗi tải dữ liệu: %s"
+    INVENTORY_CHECK_NOT_FOUND("INVENTORY_CHECK_NOT_FOUND"),//"Không tìm thấy phiếu kiểm kê với mã: %s"
+    INVENTORY_CHECK_OPEN_ADD_FORM_ERROR("INVENTORY_CHECK_OPEN_ADD_FORM_ERROR"),//"Lỗi mở form thêm: %s"
+    INVENTORY_CHECK_OPEN_DETAIL_FORM_ERROR("INVENTORY_CHECK_OPEN_DETAIL_FORM_ERROR"), //"Lỗi mở form chi tiết: %s"
+    INVENTORY_CHECK_NOT_EXISTS("INVENTORY_CHECK_NOT_EXISTS"),//"Phiếu kiểm kê không tồn tại!"
+    INVENTORY_CHECK_CANNOT_DELETE_STATUS("INVENTORY_CHECK_CANNOT_DELETE_STATUS"),//"Không thể xóa phiếu kiểm kê với trạng thái: %s"
+    INVENTORY_CHECK_DELETE_CONFIRM("INVENTORY_CHECK_DELETE_CONFIRM"),//"Bạn có chắc chắn muốn xóa phiếu kiểm kê '%s' (Mã: %s)?\n\nHành động này không thể hoàn tác!"
+    INVENTORY_CHECK_DELETE_CONFIRM_TITLE("INVENTORY_CHECK_DELETE_CONFIRM_TITLE"),//"Xác nhận xóa"
+    INVENTORY_CHECK_DELETE_SUCCESS("INVENTORY_CHECK_DELETE_SUCCESS"),//"Xóa phiếu kiểm kê thành công!"
+    INVENTORY_CHECK_DELETE_FAILED("INVENTORY_CHECK_DELETE_FAILED"),  //"Xóa phiếu kiểm kê thất bại!"
+    INVENTORY_CHECK_DELETE_ERROR("INVENTORY_CHECK_DELETE_ERROR"),    //"Lỗi xóa phiếu kiểm kê: %s"
+    INVENTORY_CHECK_FILTER_ERROR("INVENTORY_CHECK_FILTER_ERROR"),    //"Lỗi lọc dữ liệu: %s"
+    INVENTORY_CHECK_STATISTICS_ERROR("INVENTORY_CHECK_STATISTICS_ERROR"),//"Lỗi lấy thống kê: %s"
+    INVENTORY_CHECK_EXPORT_DEVELOPING("INVENTORY_CHECK_EXPORT_DEVELOPING"),//"Chức năng xuất Excel đang được phát triển"
+    INVENTORY_CHECK_STATISTICS_TITLE("INVENTORY_CHECK_STATISTICS_TITLE"),//"Thống kê"
+    INVENTORY_CHECK_STATISTICS_MESSAGE("INVENTORY_CHECK_STATISTICS_MESSAGE"),//"Thống kê phiếu kiểm kê:\n\n• %s: %d\n• %s: %d\n• %s: %d\n• %s: %d\n\nTổng cộng: %d"
+
+    // Add Inventory Check Controller messages
+    ADD_INVENTORY_CHECK_INIT_ERROR("ADD_INVENTORY_CHECK_INIT_ERROR"),                       //"Lỗi khởi tạo dịch vụ: %s"
+    ADD_INVENTORY_CHECK_DB_ERROR("ADD_INVENTORY_CHECK_DB_ERROR"),                           //"Lỗi kết nối cơ sở dữ liệu: %s"
+    ADD_INVENTORY_CHECK_LOAD_CATEGORIES_ERROR("ADD_INVENTORY_CHECK_LOAD_CATEGORIES_ERROR"), //"Lỗi tải danh mục: %s"
+    ADD_INVENTORY_CHECK_LOAD_EMPLOYEES_ERROR("ADD_INVENTORY_CHECK_LOAD_EMPLOYEES_ERROR"),   //"Lỗi tải nhân viên: %s"
+    ADD_INVENTORY_CHECK_LOAD_PRODUCTS_ERROR("ADD_INVENTORY_CHECK_LOAD_PRODUCTS_ERROR"),     //"Lỗi tải sản phẩm: %s"
+    ADD_INVENTORY_CHECK_LOAD_PRODUCTS_BY_CATEGORY_ERROR("ADD_INVENTORY_CHECK_LOAD_PRODUCTS_BY_CATEGORY_ERROR"), //"Lỗi tải sản phẩm theo danh mục: %s"
+    ADD_INVENTORY_CHECK_ADD_PRODUCT_ERROR("ADD_INVENTORY_CHECK_ADD_PRODUCT_ERROR"),         //"Lỗi thêm sản phẩm: %s"
+    ADD_INVENTORY_CHECK_PRODUCT_ALREADY_ADDED("ADD_INVENTORY_CHECK_PRODUCT_ALREADY_ADDED"), //"Sản phẩm '%s' đã được thêm vào danh sách kiểm kê"
+    ADD_INVENTORY_CHECK_REMOVE_PRODUCT_CONFIRM("ADD_INVENTORY_CHECK_REMOVE_PRODUCT_CONFIRM"), //"Bạn có chắc chắn muốn xóa sản phẩm '%s' khỏi danh sách kiểm kê?"
+    ADD_INVENTORY_CHECK_REMOVE_PRODUCT_TITLE("ADD_INVENTORY_CHECK_REMOVE_PRODUCT_TITLE"),   //"Xác nhận xóa"
+    ADD_INVENTORY_CHECK_SELECT_ALL_ERROR("ADD_INVENTORY_CHECK_SELECT_ALL_ERROR"),           //"Lỗi tải tất cả sản phẩm: %s"
+    ADD_INVENTORY_CHECK_SELECT_ALL_SUCCESS("ADD_INVENTORY_CHECK_SELECT_ALL_SUCCESS"),       //"Đã thêm tất cả %d sản phẩm vào danh sách kiểm kê"
+    ADD_INVENTORY_CHECK_NAME_EMPTY("ADD_INVENTORY_CHECK_NAME_EMPTY"),                       //"Vui lòng nhập tên phiếu kiểm kê!"
+    ADD_INVENTORY_CHECK_EMPLOYEE_EMPTY("ADD_INVENTORY_CHECK_EMPLOYEE_EMPTY"),               //"Vui lòng chọn nhân viên thực hiện kiểm kê!"
+    ADD_INVENTORY_CHECK_PRODUCTS_EMPTY("ADD_INVENTORY_CHECK_PRODUCTS_EMPTY"),               //"Vui lòng chọn ít nhất một sản phẩm để kiểm kê!"
+    ADD_INVENTORY_CHECK_EMPLOYEE_NOT_FOUND("ADD_INVENTORY_CHECK_EMPLOYEE_NOT_FOUND"),       //"Không tìm thấy nhân viên được chọn!"
+    ADD_INVENTORY_CHECK_CREATE_CONFIRM("ADD_INVENTORY_CHECK_CREATE_CONFIRM"),               //"Bạn có chắc chắn muốn tạo phiếu kiểm kê với %d sản phẩm?"
+    ADD_INVENTORY_CHECK_CREATE_CONFIRM_TITLE("ADD_INVENTORY_CHECK_CREATE_CONFIRM_TITLE"),   //"Xác nhận tạo phiếu"
+    ADD_INVENTORY_CHECK_CREATE_ERROR("ADD_INVENTORY_CHECK_CREATE_ERROR"),                   //"Lỗi tạo phiếu kiểm kê: %s"
+    ADD_INVENTORY_CHECK_CREATE_SUCCESS("ADD_INVENTORY_CHECK_CREATE_SUCCESS"),               //"Tạo phiếu kiểm kê thành công!\nMã phiếu: %s\nSố sản phẩm: %d"
+    ADD_INVENTORY_CHECK_CANCEL_CONFIRM("ADD_INVENTORY_CHECK_CANCEL_CONFIRM"),               //"Bạn có chắc chắn muốn hủy? Tất cả dữ liệu sẽ bị mất!"
+    ADD_INVENTORY_CHECK_CANCEL_CONFIRM_TITLE("ADD_INVENTORY_CHECK_CANCEL_CONFIRM_TITLE"),   //"Xác nhận hủy"
+    ADD_INVENTORY_CHECK_EXPORT_NO_DATA("ADD_INVENTORY_CHECK_EXPORT_NO_DATA"),               //"Không có dữ liệu để xuất!"
+    ADD_INVENTORY_CHECK_EXPORT_DEVELOPING("ADD_INVENTORY_CHECK_EXPORT_DEVELOPING"),         //"Chức năng xuất Excel đang được phát triển"
+
+    // Detail Inventory Check Controller messages
+    DETAIL_INVENTORY_CHECK_INIT_ERROR("DETAIL_INVENTORY_CHECK_INIT_ERROR"),                       //"Lỗi khởi tạo services: %s"
+    DETAIL_INVENTORY_CHECK_NOT_FOUND("DETAIL_INVENTORY_CHECK_NOT_FOUND"),                         //"Không tìm thấy phiếu kiểm kê!"
+    DETAIL_INVENTORY_CHECK_LOAD_ERROR("DETAIL_INVENTORY_CHECK_LOAD_ERROR"),                       //"Lỗi tải phiếu kiểm kê: %s"
+    DETAIL_INVENTORY_CHECK_LOAD_DETAILS_ERROR("DETAIL_INVENTORY_CHECK_LOAD_DETAILS_ERROR"),       //"Lỗi tải chi tiết kiểm kê: %s"
+    DETAIL_INVENTORY_CHECK_LOAD_EMPLOYEES_ERROR("DETAIL_INVENTORY_CHECK_LOAD_EMPLOYEES_ERROR"),   //"Lỗi tải danh sách nhân viên: %s"
+    DETAIL_INVENTORY_CHECK_QUANTITY_EMPTY("DETAIL_INVENTORY_CHECK_QUANTITY_EMPTY"),               //"Số lượng thực tế không được để trống!"
+    DETAIL_INVENTORY_CHECK_QUANTITY_INVALID("DETAIL_INVENTORY_CHECK_QUANTITY_INVALID"),           //"Số lượng phải là một số nguyên hợp lệ!"
+    DETAIL_INVENTORY_CHECK_QUANTITY_NEGATIVE("DETAIL_INVENTORY_CHECK_QUANTITY_NEGATIVE"),         //"Số lượng thực tế không được âm!"
+    DETAIL_INVENTORY_CHECK_QUANTITY_TOO_LARGE("DETAIL_INVENTORY_CHECK_QUANTITY_TOO_LARGE"),       //"Số lượng thực tế quá lớn (tối đa 999,999)!"
+    DETAIL_INVENTORY_CHECK_UPDATE_QUANTITY_ERROR("DETAIL_INVENTORY_CHECK_UPDATE_QUANTITY_ERROR"), //"Lỗi cập nhật số lượng: %s"
+    DETAIL_INVENTORY_CHECK_VALIDATION_NO_DATA("DETAIL_INVENTORY_CHECK_VALIDATION_NO_DATA"),       //"Chưa có dữ liệu kiểm kê!"
+    DETAIL_INVENTORY_CHECK_VALIDATION_CONFIRM("DETAIL_INVENTORY_CHECK_VALIDATION_CONFIRM"),       //"Còn %d sản phẩm chưa nhập số lượng thực tế.\nBạn có muốn tiếp tục hoàn thành kiểm kê?\n(Các sản phẩm chưa nhập sẽ được tính bằng 0)"
+    DETAIL_INVENTORY_CHECK_UPDATE_CONFIRM("DETAIL_INVENTORY_CHECK_UPDATE_CONFIRM"),               //"Bạn có chắc chắn muốn cập nhật phiếu kiểm kê?"
+    DETAIL_INVENTORY_CHECK_UPDATE_CONFIRM_TITLE("DETAIL_INVENTORY_CHECK_UPDATE_CONFIRM_TITLE"),   //"Xác nhận cập nhật"
+    DETAIL_INVENTORY_CHECK_UPDATE_SUCCESS("DETAIL_INVENTORY_CHECK_UPDATE_SUCCESS"),               //"Cập nhật phiếu kiểm kê thành công!"
+    DETAIL_INVENTORY_CHECK_UPDATE_ERROR("DETAIL_INVENTORY_CHECK_UPDATE_ERROR"),                   //"Lỗi cập nhật phiếu kiểm kê: %s"
+    DETAIL_INVENTORY_CHECK_UPDATE_DETAILS_WARNING("DETAIL_INVENTORY_CHECK_UPDATE_DETAILS_WARNING"), //"Cập nhật thành công phiếu kiểm kê, nhưng có lỗi khi lưu chi tiết!"
+    DETAIL_INVENTORY_CHECK_COMPLETE_NO_DATA("DETAIL_INVENTORY_CHECK_COMPLETE_NO_DATA"),           //"Phiếu kiểm kê chưa có chi tiết. Vui lòng thêm sản phẩm kiểm kê!"
+    DETAIL_INVENTORY_CHECK_COMPLETE_SUMMARY("DETAIL_INVENTORY_CHECK_COMPLETE_SUMMARY"),           //"Thông tin tổng kết:\n- Tổng số sản phẩm: %d\n- Số lượng tăng: %s\n- Số lượng giảm: %s\n- Tổng chênh lệch: %s\n\nBạn có chắc chắn muốn hoàn thành kiểm kê?\nSau khi hoàn thành, tồn kho sẽ được cập nhật theo số liệu thực tế."
+    DETAIL_INVENTORY_CHECK_COMPLETE_CONFIRM_TITLE("DETAIL_INVENTORY_CHECK_COMPLETE_CONFIRM_TITLE"), //"Xác nhận hoàn thành kiểm kê"
+    DETAIL_INVENTORY_CHECK_COMPLETE_SAVE_ERROR("DETAIL_INVENTORY_CHECK_COMPLETE_SAVE_ERROR"),     //"Có lỗi khi lưu chi tiết kiểm kê. Vui lòng thử lại!"
+    DETAIL_INVENTORY_CHECK_COMPLETE_SUCCESS("DETAIL_INVENTORY_CHECK_COMPLETE_SUCCESS"),           //"Hoàn thành kiểm kê thành công!\nTồn kho đã được cập nhật theo số liệu thực tế."
+    DETAIL_INVENTORY_CHECK_COMPLETE_ERROR("DETAIL_INVENTORY_CHECK_COMPLETE_ERROR"),               //"Lỗi hoàn thành kiểm kê. Vui lòng thử lại!"
+    DETAIL_INVENTORY_CHECK_COMPLETE_EXCEPTION("DETAIL_INVENTORY_CHECK_COMPLETE_EXCEPTION"),       //"Lỗi hoàn thành kiểm kê: %s"
+    DETAIL_INVENTORY_CHECK_IMPORT_NO_CURRENT("DETAIL_INVENTORY_CHECK_IMPORT_NO_CURRENT"),         //"Không có phiếu kiểm kê hiện tại!"
+    DETAIL_INVENTORY_CHECK_IMPORT_STATUS_INVALID("DETAIL_INVENTORY_CHECK_IMPORT_STATUS_INVALID"), //"Chỉ có thể import dữ liệu trong trạng thái nháp hoặc đang kiểm kê!"
+    DETAIL_INVENTORY_CHECK_IMPORT_FILE_TITLE("DETAIL_INVENTORY_CHECK_IMPORT_FILE_TITLE"),         //"Chọn file Excel chứa dữ liệu kiểm kê"
+    DETAIL_INVENTORY_CHECK_IMPORT_FILE_INVALID("DETAIL_INVENTORY_CHECK_IMPORT_FILE_INVALID"),     //"File không có dữ liệu hoặc không đúng định dạng!"
+    DETAIL_INVENTORY_CHECK_IMPORT_RESULT("DETAIL_INVENTORY_CHECK_IMPORT_RESULT"),                 //"Import hoàn tất!\n- Số lượng sản phẩm đã cập nhật: %d\n- Số lượng dòng không hợp lệ: %d"
+    DETAIL_INVENTORY_CHECK_IMPORT_RESULT_TITLE("DETAIL_INVENTORY_CHECK_IMPORT_RESULT_TITLE"),     //"Kết quả import"
+    DETAIL_INVENTORY_CHECK_IMPORT_ERROR("DETAIL_INVENTORY_CHECK_IMPORT_ERROR"),                   //"Lỗi khi import file Excel: %s"
+    DETAIL_INVENTORY_CHECK_EXPORT_NO_DATA("DETAIL_INVENTORY_CHECK_EXPORT_NO_DATA"),               //"Không có dữ liệu để xuất!"
+    DETAIL_INVENTORY_CHECK_EXPORT_SUCCESS("DETAIL_INVENTORY_CHECK_EXPORT_SUCCESS"),               //"Xuất Excel thành công!\nFile đã được lưu tại: %s"
+    DETAIL_INVENTORY_CHECK_EXPORT_ERROR("DETAIL_INVENTORY_CHECK_EXPORT_ERROR"),                   //"Xuất Excel không thành công!"
+    DETAIL_INVENTORY_CHECK_EXPORT_EXCEPTION("DETAIL_INVENTORY_CHECK_EXPORT_EXCEPTION"),           //"Lỗi khi Xuất Excel: %s"
+    DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_CONFIRM("DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_CONFIRM"), //"Xác nhận xóa sản phẩm có mã: \"%s\" khỏi phiếu kiểm kê?"
+    DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_CONFIRM_TITLE("DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_CONFIRM_TITLE"), //"Xác nhận xóa"
+    DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_STATUS_INVALID("DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_STATUS_INVALID"), //"Không thể xóa sản phẩm khỏi phiếu kiểm kê với trạng thái: %s"
+    DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_SUCCESS("DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_SUCCESS"), //"Xóa sản phẩm khỏi phiếu kiểm kê thành công!"
+    DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_FAILED("DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_FAILED"), //"Xóa sản phẩm khỏi phiếu kiểm kê thất bại!"
+    DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_ERROR("DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_ERROR"),   //"Lỗi xóa sản phẩm khỏi phiếu kiểm kê: %s"
+    DETAIL_INVENTORY_CHECK_NAME_EMPTY("DETAIL_INVENTORY_CHECK_NAME_EMPTY"),                       //"Tên phiếu kiểm kê không được để trống!"
+    DETAIL_INVENTORY_CHECK_EMPLOYEE_EMPTY("DETAIL_INVENTORY_CHECK_EMPLOYEE_EMPTY"),               //"Vui lòng chọn nhân viên thực hiện kiểm kê!"
+    DETAIL_INVENTORY_CHECK_START_ERROR("DETAIL_INVENTORY_CHECK_START_ERROR"),                     //"Lỗi bắt đầu kiểm kê: %s"
+    DETAIL_INVENTORY_CHECK_CANCEL_CONFIRM("DETAIL_INVENTORY_CHECK_CANCEL_CONFIRM"),               //"Bạn có chắc chắn muốn hủy phiếu kiểm kê?\nThao tác này không thể hoàn tác!"
+    DETAIL_INVENTORY_CHECK_CANCEL_CONFIRM_TITLE("DETAIL_INVENTORY_CHECK_CANCEL_CONFIRM_TITLE"),   //"Xác nhận hủy"
+    DETAIL_INVENTORY_CHECK_CANCEL_ERROR("DETAIL_INVENTORY_CHECK_CANCEL_ERROR"),                   //"Lỗi hủy phiếu kiểm kê: %s"
+
+        // Invoice Controller specific messages
+    INVOICE_LOAD_ALL_ERROR("INVOICE_LOAD_ALL_ERROR"),                       //"Lỗi khi tải danh sách hóa đơn: %s"
+    INVOICE_SEARCH_ERROR("INVOICE_SEARCH_ERROR"),                           //"Lỗi khi tìm kiếm hóa đơn: %s"
+    INVOICE_DELETE_SELECTED_NO_SELECTION("INVOICE_DELETE_SELECTED_NO_SELECTION"), //"Vui lòng tích chọn ít nhất một hóa đơn để xóa!"
+    INVOICE_DELETE_SELECTED_CONFIRM("INVOICE_DELETE_SELECTED_CONFIRM"),     //"Bạn có chắc chắn muốn xóa %d hóa đơn đã chọn?"
+    INVOICE_DELETE_SELECTED_TITLE("INVOICE_DELETE_SELECTED_TITLE"),         //"Xác nhận xóa"
+    INVOICE_DELETE_SELECTED_SUCCESS("INVOICE_DELETE_SELECTED_SUCCESS"),     //"Đã xóa thành công %d hóa đơn.\n"
+    INVOICE_DELETE_SELECTED_FAILED("INVOICE_DELETE_SELECTED_FAILED"),       //"Không thể xóa %d hóa đơn.\n\n"
+    INVOICE_DELETE_SELECTED_DETAILS("INVOICE_DELETE_SELECTED_DETAILS"),     //"Chi tiết lỗi:\n"
+    INVOICE_DELETE_SELECTED_PAID_OR_DELIVERED("INVOICE_DELETE_SELECTED_PAID_OR_DELIVERED"), //"Hóa đơn #%d: Không thể xóa hóa đơn đã thanh toán hoặc đã giao hàng!"
+    INVOICE_DELETE_SELECTED_FAIL_DETAIL("INVOICE_DELETE_SELECTED_FAIL_DETAIL"), //"Hóa đơn #%d: Xóa thất bại!"
+    INVOICE_DELETE_SELECTED_RESULT_TITLE("INVOICE_DELETE_SELECTED_RESULT_TITLE"), //"Kết quả xóa hóa đơn"
+    INVOICE_PAYMENT_NO_SELECTION("INVOICE_PAYMENT_NO_SELECTION"),           //"Vui lòng chọn hóa đơn cần thanh toán!"
+    INVOICE_PAYMENT_ALREADY_PAID("INVOICE_PAYMENT_ALREADY_PAID"),           //"Hóa đơn đã được thanh toán!"
+    INVOICE_UPDATE_STATUS_ERROR("INVOICE_UPDATE_STATUS_ERROR"),             //"Lỗi cập nhật trạng thái hóa đơn: %s"
+    INVOICE_PROCESS_PAYMENT_ERROR("INVOICE_PROCESS_PAYMENT_ERROR"),         //"Lỗi xử lý thanh toán: %s"
+    INVOICE_EXPORT_EXCEL_NO_DATA("INVOICE_EXPORT_EXCEL_NO_DATA"),           //"Không có dữ liệu hóa đơn để xuất"
+    INVOICE_RETURNABLE_DETAILS_ERROR("INVOICE_RETURNABLE_DETAILS_ERROR"),   //"Lỗi khi lấy chi tiết hóa đơn có thể trả: %s"
+    INVOICE_WARRANTY_DETAILS_ERROR("INVOICE_WARRANTY_DETAILS_ERROR"),       //"Lỗi khi lấy chi tiết hóa đơn cho bảo hành: %s"
+    INVOICE_INVOICES_FOR_WARRANTY_ERROR("INVOICE_INVOICES_FOR_WARRANTY_ERROR"), //"Lỗi khi lấy danh sách hóa đơn cho bảo hành: %s"
+    INVOICE_INVOICES_FOR_RETURN_ERROR("INVOICE_INVOICES_FOR_RETURN_ERROR"),     //"Lỗi khi lấy hóa đơn cho trả hàng: %s"
+    INVOICE_INVOICES_SIMPLE_ERROR("INVOICE_INVOICES_SIMPLE_ERROR"),             //"Lỗi khi lấy danh sách hóa đơn đơn giản: %s"
+    INVOICE_CALCULATE_REVENUE_ERROR("INVOICE_CALCULATE_REVENUE_ERROR"),         //"Lỗi khi tính doanh thu: %s"
+    INVOICE_SEARCH_BY_CUSTOMER_ERROR("INVOICE_SEARCH_BY_CUSTOMER_ERROR"),       //"Lỗi khi tìm hóa đơn theo khách hàng: %s"
+    INVOICE_SEARCH_BY_CUSTOMER_PHONE_ERROR("INVOICE_SEARCH_BY_CUSTOMER_PHONE_ERROR"), //"Lỗi khi lấy hóa đơn theo số điện thoại: %s"
+    INVOICE_SEARCH_BY_EMPLOYEE_ERROR("INVOICE_SEARCH_BY_EMPLOYEE_ERROR"),       //"Lỗi khi tìm hóa đơn theo nhân viên: %s"
+    INVOICE_SEARCH_BY_DATE_RANGE_ERROR("INVOICE_SEARCH_BY_DATE_RANGE_ERROR"),   //"Lỗi khi tìm hóa đơn theo khoảng thời gian: %s"
+    INVOICE_CREATE_MAIN_ERROR("INVOICE_CREATE_MAIN_ERROR"),                     //"Lỗi khi tạo hóa đơn mới: %s"
+    INVOICE_ADD_PRODUCT_STOCK_ERROR("INVOICE_ADD_PRODUCT_STOCK_ERROR"),         //"Số lượng sản phẩm không đủ. Hiện chỉ còn %d"
+    INVOICE_ADD_PRODUCT_MAIN_ERROR("INVOICE_ADD_PRODUCT_MAIN_ERROR"),           //"Lỗi khi thêm sản phẩm vào hóa đơn: %s"
+    INVOICE_UPDATE_QUANTITY_INSUFFICIENT("INVOICE_UPDATE_QUANTITY_INSUFFICIENT"), //"Số lượng sản phẩm không đủ. Hiện chỉ còn %d"
+    INVOICE_UPDATE_QUANTITY_MAIN_ERROR("INVOICE_UPDATE_QUANTITY_MAIN_ERROR"),   //"Lỗi khi cập nhật số lượng sản phẩm: %s"
+    INVOICE_REMOVE_PRODUCT_MAIN_ERROR("INVOICE_REMOVE_PRODUCT_MAIN_ERROR"),     //"Lỗi khi xóa sản phẩm khỏi hóa đơn: %s"
+    INVOICE_COMPLETE_NO_DETAILS("INVOICE_COMPLETE_NO_DETAILS"),                 //"Hóa đơn không có sản phẩm nào"
+    INVOICE_COMPLETE_MAIN_ERROR("INVOICE_COMPLETE_MAIN_ERROR"),                 //"Lỗi khi hoàn thành hóa đơn: %s"
+    INVOICE_CANCEL_INVALID_STATUS("INVOICE_CANCEL_INVALID_STATUS"),             //"Không thể hủy hóa đơn ở trạng thái %s"
+    INVOICE_CANCEL_MAIN_ERROR("INVOICE_CANCEL_MAIN_ERROR"),                     //"Lỗi khi hủy hóa đơn: %s"
+    INVOICE_DELETE_INVALID_STATUS("INVOICE_DELETE_INVALID_STATUS"),             //"Không thể xóa hóa đơn đã thanh toán hoặc đã giao"
+    INVOICE_DELETE_MAIN_ERROR("INVOICE_DELETE_MAIN_ERROR"),                     //"Lỗi khi xóa hóa đơn: %s"
+    INVOICE_SEARCH_INVOICES_ERROR("INVOICE_SEARCH_INVOICES_ERROR"),             //"Lỗi khi tìm kiếm hóa đơn: %s"
+    INVOICE_DELETE_SINGLE_ERROR("INVOICE_DELETE_SINGLE_ERROR"),                 //"Lỗi khi xóa hóa đơn: %s"
+    INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR("INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR"), //"Lỗi khi xử lý chi tiết hóa đơn %d: %s"
+
+    RETURN_NOT_FOUND("RETURN_NOT_FOUND"),                                //"Đơn trả hàng không tồn tại"
+    RETURN_NOT_FOUND_WITH_ID("RETURN_NOT_FOUND_WITH_ID"),                //"Không tìm thấy thông tin đơn trả hàng với ID: %s"
+    RETURN_NOT_FOUND_WITH_KEYWORD("RETURN_NOT_FOUND_WITH_KEYWORD"),      //"Không tìm thấy đơn trả hàng nào phù hợp với từ khóa: %s"
+    RETURN_CANNOT_UPDATE("RETURN_CANNOT_UPDATE"),                        //"Không thể cập nhật đơn trả hàng ở trạng thái hiện tại"
+    RETURN_QUANTITY_EXCEED("RETURN_QUANTITY_EXCEED"),                    //"Số lượng trả không thể lớn hơn số lượng trong hóa đơn"
+    RETURN_UPDATE_ERROR("RETURN_UPDATE_ERROR"),                          //"Lỗi khi cập nhật đơn trả hàng"
+    RETURN_CANNOT_EXCHANGE("RETURN_CANNOT_EXCHANGE"),                    //"Không thể đổi sản phẩm với đơn trả hàng ở trạng thái hiện tại"
+    RETURN_EXCHANGE_ERROR("RETURN_EXCHANGE_ERROR"),                      //"Lỗi khi đổi sản phẩm"
+    RETURN_STATUS_INVALID("RETURN_STATUS_INVALID"),                      //"Không thể chuyển từ trạng thái 'Đã từ chối' về 'Đang chờ xử lý'"
+    RETURN_LOAD_ERROR("RETURN_LOAD_ERROR"),                              //"Lỗi khi tải dữ liệu đơn trả hàng"
+    RETURN_SEARCH_ERROR("RETURN_SEARCH_ERROR"),                          //"Lỗi khi tìm kiếm đơn trả hàng"
+    RETURN_DETAIL_LOAD_ERROR("RETURN_DETAIL_LOAD_ERROR"),                //"Lỗi khi tải chi tiết đơn trả hàng"
+    RETURN_SELECT_ONE("RETURN_SELECT_ONE"),                              //"Vui lòng chọn một đơn trả hàng để thực hiện thao tác"
+    RETURN_DELETE_ONLY_PENDING("RETURN_DELETE_ONLY_PENDING"),            //"Chỉ có thể xóa đơn trả hàng ở trạng thái 'Đang chờ xử lý'"
+    RETURN_CURRENT_STATUS("RETURN_CURRENT_STATUS"),                      //"Đơn trả hàng này đang ở trạng thái: "
+    RETURN_DELETE_CONFIRM("RETURN_DELETE_CONFIRM"),                      //"Bạn có chắc chắn muốn xóa đơn trả hàng này?\n- Mã đơn: %s\n- Sản phẩm: %s"
+    RETURN_DELETE_SUCCESS("RETURN_DELETE_SUCCESS"),                      //"Đã xóa đơn trả hàng thành công!"
+    RETURN_DELETE_FAIL("RETURN_DELETE_FAIL"),                            //"Không thể xóa đơn trả hàng. Vui lòng thử lại sau!"
+    RETURN_DELETE_ERROR("RETURN_DELETE_ERROR"),                          //"Lỗi khi xóa đơn trả hàng"
+    RETURN_STATUS_CONVERT_ERROR("RETURN_STATUS_CONVERT_ERROR"),          //"Lỗi chuyển đổi trạng thái"
+    RETURN_STATUS_UPDATE_SUCCESS("RETURN_STATUS_UPDATE_SUCCESS"),        //"Cập nhật trạng thái thành công!"
+    RETURN_STATUS_UPDATE_FAIL("RETURN_STATUS_UPDATE_FAIL"),              //"Không thể cập nhật trạng thái. Vui lòng thử lại sau!"
+    RETURN_STATUS_UPDATE_ERROR("RETURN_STATUS_UPDATE_ERROR"),            //"Lỗi khi cập nhật trạng thái"
+
+    // Invoice additional messages
+    INVOICE_LIST_EMPTY("INVOICE_LIST_EMPTY"),                            //"Không tìm thấy hóa đơn nào trong hệ thống."
+    
+    // Return additional messages
+    RETURN_NO_QUANTITY("RETURN_NO_QUANTITY"),                            //"Sản phẩm này đã trả hết"
+    RETURN_OVER_30_DAYS("RETURN_OVER_30_DAYS"),                          //"Sản phẩm này đã quá 30 ngày kể từ ngày mua (%d ngày).\nViệc trả hàng có thể bị từ chối hoặc áp dụng điều kiện đặc biệt.\nBạn vẫn muốn tiếp tục?"
+    RETURN_INPUT_REASON("RETURN_INPUT_REASON"),                          //"Nhập lý do trả hàng:"
+    RETURN_CREATE_SUCCESS("RETURN_CREATE_SUCCESS"),                      //"Đã tạo đơn trả hàng thành công!"
+    RETURN_CREATE_FAIL("RETURN_CREATE_FAIL"),                            //"Không thể tạo đơn trả hàng"
+    RETURN_CREATE_ERROR("RETURN_CREATE_ERROR"),                          //"Lỗi khi tạo đơn trả hàng"
+    
     // Repair error messages
-    public static final String REPAIR_NOT_FOUND = "Dịch vụ sửa chữa không tồn tại";
-    public static final String REPAIR_NOT_FOUND_WITH_ID = "Không tìm thấy dịch vụ sửa chữa với ID: %s";
-    public static final String REPAIR_ID_INVALID = "ID dịch vụ sửa chữa không hợp lệ";
-    public static final String REPAIR_CONTROLLER_NOT_SET = "Controller chưa được thiết lập. Thao tác không thể thực hiện.";
-    public static final String REPAIR_FORM_INIT_ERROR = "Lỗi khi khởi tạo form dịch vụ sửa chữa";
-    public static final String REPAIR_FORM_ADD_ERROR = "Lỗi khi mở form thêm mới dịch vụ sửa chữa";
-    public static final String REPAIR_FORM_DETAIL_ERROR = "Lỗi khi hiển thị chi tiết dịch vụ sửa chữa";
-    public static final String REPAIR_SELECT_ONE = "Vui lòng chọn một dịch vụ sửa chữa để xem chi tiết.";
-    public static final String REPAIR_SELECT_ONE_DELETE = "Vui lòng chọn một dịch vụ sửa chữa để xóa.";
-    public static final String REPAIR_SELECT_ONE_UPDATE_STATUS = "Vui lòng chọn một dịch vụ sửa chữa để cập nhật trạng thái";
-    public static final String REPAIR_DELETE_CONFIRM = "Bạn có chắc chắn muốn xóa dịch vụ sửa chữa này không?";
-    public static final String REPAIR_DELETE_SUCCESS = "Đã xóa dịch vụ sửa chữa thành công!";
-    public static final String REPAIR_DELETE_FAIL = "Không thể xóa dịch vụ sửa chữa. Vui lòng thử lại sau.";
-    public static final String REPAIR_DELETE_ERROR = "Lỗi khi xóa dịch vụ sửa chữa";
-    public static final String REPAIR_STATUS_CONVERT_ERROR = "Lỗi chuyển đổi trạng thái";
-    public static final String REPAIR_STATUS_UPDATE_SUCCESS = "Cập nhật trạng thái thành công!";
-    public static final String REPAIR_STATUS_UPDATE_FAIL = "Không thể cập nhật trạng thái. Vui lòng thử lại sau!";
-    public static final String REPAIR_STATUS_UPDATE_ERROR = "Lỗi khi cập nhật trạng thái";
-    public static final String REPAIR_CREATE_ERROR = "Lỗi khi tạo dịch vụ sửa chữa";
-    public static final String REPAIR_LIST_ERROR = "Lỗi khi lấy danh sách dịch vụ sửa chữa";
-    public static final String REPAIR_FIND_ERROR = "Lỗi khi tìm dịch vụ sửa chữa";
-    public static final String REPAIR_UPDATE_ERROR = "Lỗi khi cập nhật dịch vụ sửa chữa";
-    public static final String REPAIR_ASSIGN_EMPLOYEE_ERROR = "Lỗi khi phân công nhân viên";
-    public static final String REPAIR_UPDATE_FEE_ERROR = "Lỗi khi cập nhật phí dịch vụ";
-    public static final String EMPLOYEE_NOT_FOUND = "Nhân viên không tồn tại";
-    public static final String CUSTOMER_NOT_FOUND = "Khách hàng không tồn tại";
-
-    //Validation messages
-    public static final String INVALID_PHONE_NUMBER = "Số điện thoại không hợp lệ";
-    public static final String INVALID_EMAIL = "Email không hợp lệ";
-
+    REPAIR_NOT_FOUND("REPAIR_NOT_FOUND"),                                //"Dịch vụ sửa chữa không tồn tại"
+    REPAIR_NOT_FOUND_WITH_ID("REPAIR_NOT_FOUND_WITH_ID"),                //"Không tìm thấy dịch vụ sửa chữa với ID: %s"
+    REPAIR_ID_INVALID("REPAIR_ID_INVALID"),                              //"ID dịch vụ sửa chữa không hợp lệ"
+    REPAIR_CONTROLLER_NOT_SET("REPAIR_CONTROLLER_NOT_SET"),              //"Controller chưa được thiết lập. Thao tác không thể thực hiện."
+    REPAIR_FORM_INIT_ERROR("REPAIR_FORM_INIT_ERROR"),                    //"Lỗi khi khởi tạo form dịch vụ sửa chữa"
+    REPAIR_FORM_ADD_ERROR("REPAIR_FORM_ADD_ERROR"),                      //"Lỗi khi mở form thêm mới dịch vụ sửa chữa"
+    REPAIR_FORM_DETAIL_ERROR("REPAIR_FORM_DETAIL_ERROR"),                //"Lỗi khi hiển thị chi tiết dịch vụ sửa chữa"
+    REPAIR_SELECT_ONE("REPAIR_SELECT_ONE"),                              //"Vui lòng chọn một dịch vụ sửa chữa để xem chi tiết."
+    REPAIR_SELECT_ONE_DELETE("REPAIR_SELECT_ONE_DELETE"),                //"Vui lòng chọn một dịch vụ sửa chữa để xóa."
+    REPAIR_SELECT_ONE_UPDATE_STATUS("REPAIR_SELECT_ONE_UPDATE_STATUS"),  //"Vui lòng chọn một dịch vụ sửa chữa để cập nhật trạng thái"
+    REPAIR_DELETE_CONFIRM("REPAIR_DELETE_CONFIRM"),                      //"Bạn có chắc chắn muốn xóa dịch vụ sửa chữa này không?"
+    REPAIR_DELETE_SUCCESS("REPAIR_DELETE_SUCCESS"),                      //"Đã xóa dịch vụ sửa chữa thành công!"
+    REPAIR_DELETE_FAIL("REPAIR_DELETE_FAIL"),                            //"Không thể xóa dịch vụ sửa chữa. Vui lòng thử lại sau."
+    REPAIR_DELETE_ERROR("REPAIR_DELETE_ERROR"),                          //"Lỗi khi xóa dịch vụ sửa chữa"
+    REPAIR_STATUS_CONVERT_ERROR("REPAIR_STATUS_CONVERT_ERROR"),          //"Lỗi chuyển đổi trạng thái"
+    REPAIR_STATUS_UPDATE_SUCCESS("REPAIR_STATUS_UPDATE_SUCCESS"),        //"Cập nhật trạng thái thành công!"
+    REPAIR_STATUS_UPDATE_FAIL("REPAIR_STATUS_UPDATE_FAIL"),              //"Không thể cập nhật trạng thái. Vui lòng thử lại sau!"
+    REPAIR_STATUS_UPDATE_ERROR("REPAIR_STATUS_UPDATE_ERROR"),            //"Lỗi khi cập nhật trạng thái"
+    REPAIR_CREATE_ERROR("REPAIR_CREATE_ERROR"),                          //"Lỗi khi tạo dịch vụ sửa chữa"
+    REPAIR_LIST_ERROR("REPAIR_LIST_ERROR"),                              //"Lỗi khi lấy danh sách dịch vụ sửa chữa"
+    REPAIR_FIND_ERROR("REPAIR_FIND_ERROR"),                              //"Lỗi khi tìm dịch vụ sửa chữa"
+    REPAIR_UPDATE_ERROR("REPAIR_UPDATE_ERROR"),                          //"Lỗi khi cập nhật dịch vụ sửa chữa"
+    REPAIR_ASSIGN_EMPLOYEE_ERROR("REPAIR_ASSIGN_EMPLOYEE_ERROR"),        //"Lỗi khi phân công nhân viên"
+    REPAIR_UPDATE_FEE_ERROR("REPAIR_UPDATE_FEE_ERROR"),                  //"Lỗi khi cập nhật phí dịch vụ"
+    EMPLOYEE_NOT_FOUND("EMPLOYEE_NOT_FOUND"),                           //"Nhân viên không tồn tại"
+    CUSTOMER_NOT_FOUND("CUSTOMER_NOT_FOUND"),                           //"Khách hàng không tồn tại"
+    
     // Warranty error messages
-    public static final String WARRANTY_LOAD_ERROR = "Lỗi khi tải danh sách bảo hành";
-    public static final String WARRANTY_SEARCH_ERROR = "Lỗi khi tìm kiếm bảo hành";
-    public static final String WARRANTY_NOT_FOUND_WITH_ID = "Không tìm thấy bảo hành có mã %s";
-    public static final String WARRANTY_DETAIL_ERROR = "Lỗi khi hiển thị chi tiết bảo hành";
-    public static final String WARRANTY_CREATE_ERROR = "Lỗi khi tạo bảo hành";
-    public static final String WARRANTY_ID_NULL = "Không thể xóa bảo hành với ID null";
-    public static final String WARRANTY_DELETE_ERROR = "Lỗi khi xóa bảo hành";
-    public static final String WARRANTY_FORM_INIT_ERROR = "Lỗi khởi tạo form bảo hành";
-    public static final String WARRANTY_FORM_ADD_ERROR = "Lỗi khi mở form đăng ký bảo hành";
-    public static final String WARRANTY_CONTROLLER_NOT_SET = "Controller chưa được khởi tạo.";
-    public static final String WARRANTY_SELECT_ONE = "Vui lòng chọn sản phẩm để đăng ký bảo hành";
-    public static final String WARRANTY_EXPIRED = "Sản phẩm này đã hết hạn bảo hành vào ngày %s.\nVui lòng liên hệ nhân viên để được hỗ trợ thêm!";
-    public static final String WARRANTY_ALREADY_REGISTERED = "Sản phẩm này đã được đăng ký bảo hành trước đó!";
-    public static final String WARRANTY_DETAIL_NOT_FOUND = "Không thể tìm thấy thông tin chi tiết của sản phẩm đã chọn";
-    public static final String WARRANTY_REGISTER_SUCCESS = "Đã đăng ký bảo hành thành công với mã: %s";
-    public static final String WARRANTY_REGISTER_ERROR = "Lỗi khi đăng ký bảo hành";
-    public static final String WARRANTY_NOT_FOUND_BY_PHONE = "Không tìm thấy sản phẩm nào theo số điện thoại này";
-    public static final String WARRANTY_SELECT_ONE_DELETE = "Vui lòng chọn một bảo hành để xóa.";
-    public static final String WARRANTY_ID_INVALID = "Bảo hành không có ID hợp lệ.";
-    public static final String WARRANTY_DELETE_CONFIRM = "Bạn có chắc chắn muốn xóa bảo hành này không?";
-    public static final String WARRANTY_DELETE_SUCCESS = "Đã xóa bảo hành thành công!";
-    public static final String WARRANTY_DELETE_FAIL = "Không thể xóa bảo hành. Vui lòng thử lại sau.";
-    public static final String WARRANTY_SELECT_ONE_DETAIL = "Vui lòng chọn một bảo hành để xem chi tiết";
-    public static final String INVOICE_DETAIL_NULL = "Chi tiết hóa đơn không được null";
-    public static final String INVOICE_NULL = "Thông tin hóa đơn không được null";
+    WARRANTY_LOAD_ERROR("WARRANTY_LOAD_ERROR"),                           //"Lỗi khi tải danh sách bảo hành"
+    WARRANTY_SEARCH_ERROR("WARRANTY_SEARCH_ERROR"),                       //"Lỗi khi tìm kiếm bảo hành"
+    WARRANTY_NOT_FOUND_WITH_ID("WARRANTY_NOT_FOUND_WITH_ID"),             //"Không tìm thấy bảo hành có mã %s"
+    WARRANTY_DETAIL_ERROR("WARRANTY_DETAIL_ERROR"),                       //"Lỗi khi hiển thị chi tiết bảo hành"
+    WARRANTY_CREATE_ERROR("WARRANTY_CREATE_ERROR"),                       //"Lỗi khi tạo bảo hành"
+    WARRANTY_ID_NULL("WARRANTY_ID_NULL"),                                //"Không thể xóa bảo hành với ID null"
+    WARRANTY_DELETE_ERROR("WARRANTY_DELETE_ERROR"),                       //"Lỗi khi xóa bảo hành"
+    WARRANTY_FORM_INIT_ERROR("WARRANTY_FORM_INIT_ERROR"),                 //"Lỗi khởi tạo form bảo hành"
+    WARRANTY_FORM_ADD_ERROR("WARRANTY_FORM_ADD_ERROR"),                   //"Lỗi khi mở form đăng ký bảo hành"
+    WARRANTY_CONTROLLER_NOT_SET("WARRANTY_CONTROLLER_NOT_SET"),           //"Controller chưa được khởi tạo."
+    WARRANTY_SELECT_ONE("WARRANTY_SELECT_ONE"),                          //"Vui lòng chọn sản phẩm để đăng ký bảo hành"
+    WARRANTY_EXPIRED("WARRANTY_EXPIRED"),                                //"Sản phẩm này đã hết hạn bảo hành vào ngày %s.\nVui lòng liên hệ nhân viên để được hỗ trợ thêm!"
+    WARRANTY_ALREADY_REGISTERED("WARRANTY_ALREADY_REGISTERED"),           //"Sản phẩm này đã được đăng ký bảo hành trước đó!"
+    WARRANTY_DETAIL_NOT_FOUND("WARRANTY_DETAIL_NOT_FOUND"),               //"Không thể tìm thấy thông tin chi tiết của sản phẩm đã chọn"
+    WARRANTY_REGISTER_SUCCESS("WARRANTY_REGISTER_SUCCESS"),               //"Đã đăng ký bảo hành thành công với mã: %s"
+    WARRANTY_REGISTER_ERROR("WARRANTY_REGISTER_ERROR"),                   //"Lỗi khi đăng ký bảo hành"
+    WARRANTY_NOT_FOUND_BY_PHONE("WARRANTY_NOT_FOUND_BY_PHONE"),           //"Không tìm thấy sản phẩm nào theo số điện thoại này"
+    WARRANTY_SELECT_ONE_DELETE("WARRANTY_SELECT_ONE_DELETE"),             //"Vui lòng chọn một bảo hành để xóa."
+    WARRANTY_ID_INVALID("WARRANTY_ID_INVALID"),                          //"Bảo hành không có ID hợp lệ."
+    WARRANTY_DELETE_CONFIRM("WARRANTY_DELETE_CONFIRM"),                  //"Bạn có chắc chắn muốn xóa bảo hành này không?"
+    WARRANTY_DELETE_SUCCESS("WARRANTY_DELETE_SUCCESS"),                  //"Đã xóa bảo hành thành công!"
+    WARRANTY_DELETE_FAIL("WARRANTY_DELETE_FAIL"),                        //"Không thể xóa bảo hành. Vui lòng thử lại sau."
+    WARRANTY_SELECT_ONE_DETAIL("WARRANTY_SELECT_ONE_DETAIL"),             //"Vui lòng chọn một bảo hành để xem chi tiết"
+    INVOICE_DETAIL_NULL("INVOICE_DETAIL_NULL"),                          //"Chi tiết hóa đơn không được null"
+    INVOICE_NULL("INVOICE_NULL");                                       //"Thông tin hóa đơn không được null"
+    
+    // Original code continues
+    // ...
+    ;
+    private final String key;
+    private static LocaleManager LM = LocaleManager.getInstance();
+    private static Map<String, String> cache = new ConcurrentHashMap<>();
+    
+    ErrorMessage(String key) {
+        this.key = key;
+    }
+    
+    @Override
+    public String toString() {
+        // Cache key với current locale
+        String cacheKey = key + "_" + LM.getCurrentLocale().toString();
+        return cache.computeIfAbsent(cacheKey, k -> 
+            LM.getMessageResourceBundle().getString(key)
+        );
+    }
+    
+    /**
+     * Get method (alias cho toString)
+     */
+    public String get() {
+        return toString();
+    }
+    
+    /**
+     * Format message với parameters
+     */
+    public String format(Object... args) {
+        return String.format(toString(), args);
+    }
+    
+    /**
+     * Refresh khi đổi ngôn ngữ - xóa cache và cập nhật LocaleManager
+     */
+    public static void refresh() {
+        LM = LocaleManager.getInstance();
+        cache.clear(); // Xóa cache để load message mới
+    }
 }

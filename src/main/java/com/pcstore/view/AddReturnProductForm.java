@@ -283,7 +283,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             long daysBetween = ChronoUnit.DAYS.between(invoiceDate.toLocalDate(), now.toLocalDate());
             if (daysBetween > 30) {
                 int option = JOptionPane.showConfirmDialog(this, 
-                    String.format(ErrorMessage.RETURN_OVER_30_DAYS, daysBetween),
+                    String.format(ErrorMessage.RETURN_OVER_30_DAYS.toString(), daysBetween),
                     "Cảnh báo", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                 if (option != JOptionPane.YES_OPTION) {
                     return;
@@ -302,7 +302,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             if (returnObj != null) {
                 System.out.println("Tạo đơn trả hàng thành công: ID=" + returnObj.getReturnId());
                 JOptionPane.showMessageDialog(this, 
-                    ErrorMessage.RETURN_CREATE_SUCCESS, 
+                    ErrorMessage.RETURN_CREATE_SUCCESS.toString(), 
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 loadAllInvoices();
                 if (parentForm != null) {
@@ -311,7 +311,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             } else {
                 System.err.println("Không thể tạo đơn trả hàng");
                 JOptionPane.showMessageDialog(this, 
-                    ErrorMessage.RETURN_CREATE_FAIL, 
+                    ErrorMessage.RETURN_CREATE_FAIL.toString(), 
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
@@ -325,15 +325,12 @@ public class AddReturnProductForm extends javax.swing.JPanel {
 
     // Thêm xử lý sự kiện cho các nút trong form
     private void addListeners() {
-        System.out.println("Đăng ký sự kiện cho các nút...");
         
         btnReturnInformationLookup.addActionListener(e -> {
-            System.out.println("Nút tìm kiếm được nhấn");
             searchByPhoneNumber();
         });
         
         btnWarranty.addActionListener(e -> {
-            System.out.println("Nút đổi trả được nhấn");
             createReturn();
         });
 

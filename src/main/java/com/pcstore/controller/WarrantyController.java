@@ -224,13 +224,13 @@ public class WarrantyController {
             } else {
                 JOptionPane.showMessageDialog(
                     serviceForm,
-                    String.format(ErrorMessage.WARRANTY_NOT_FOUND_WITH_ID, warrantyId),
+                    String.format(ErrorMessage.WARRANTY_NOT_FOUND_WITH_ID.toString(), warrantyId),
                     "Không tìm thấy",
                     JOptionPane.WARNING_MESSAGE
                 );
             }
         } catch (Exception e) {
-            showError(ErrorMessage.WARRANTY_DETAIL_ERROR, e.getMessage());
+            showError(ErrorMessage.WARRANTY_DETAIL_ERROR.toString(), e.getMessage());
         }
     }
     
@@ -390,13 +390,13 @@ public class WarrantyController {
     public Warranty createWarrantyFromInvoiceDetail(InvoiceDetail invoiceDetail) {
         try {
             if (invoiceDetail == null) {
-                throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_NULL);
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_NULL.toString());
             }
             if (invoiceDetail.getProduct() == null) {
-                throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL);
+                throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL.toString());
             }
             if (invoiceDetail.getInvoice() == null) {
-                throw new IllegalArgumentException(ErrorMessage.INVOICE_NULL);
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_NULL.toString());
             }
             // Tạo đối tượng bảo hành mới
             Warranty warranty = new Warranty();

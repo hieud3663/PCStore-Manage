@@ -219,7 +219,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             displayReturns(searchResults);
             if (searchResults.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_KEYWORD, keyword),
+                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_KEYWORD.toString(), keyword),
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception ex) {
@@ -266,12 +266,12 @@ public class ReturnServiceForm extends javax.swing.JPanel {
                 showReturnDetailInDialog(returnOpt.get());
             } else {
                 JOptionPane.showMessageDialog(this, 
-                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_ID, returnId), 
+                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_ID.toString(), returnId), 
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                ErrorMessage.RETURN_DETAIL_LOAD_ERROR + ": " + ex.getMessage(),
+                ErrorMessage.RETURN_DETAIL_LOAD_ERROR.toString() + ": " + ex.getMessage(),
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -345,7 +345,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         
         // Hiển thị dialog xác nhận
         int confirm = JOptionPane.showConfirmDialog(this, 
-            String.format(ErrorMessage.RETURN_DELETE_CONFIRM, returnId, productName), 
+            String.format(ErrorMessage.RETURN_DELETE_CONFIRM.toString(), returnId, productName), 
             "Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm != JOptionPane.YES_OPTION) {
             return;
@@ -395,7 +395,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             Optional<Return> returnOptional = returnController.getReturnById(returnId);
             if (returnOptional.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_ID, returnId), 
+                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_ID.toString(), returnId), 
                     "Thông báo", JOptionPane.ERROR_MESSAGE);
                 return;
             }

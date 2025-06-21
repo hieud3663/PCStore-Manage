@@ -509,7 +509,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 String expiryDate = (String) table.getValueAt(selectedRow, 4);
                 JOptionPane.showMessageDialog(
                     this,
-                    String.format(ErrorMessage.WARRANTY_EXPIRED, expiryDate),
+                    String.format(ErrorMessage.WARRANTY_EXPIRED.toString(), expiryDate),
                     "Không thể bảo hành",
                     JOptionPane.ERROR_MESSAGE
                 );
@@ -521,7 +521,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
                 Optional<Warranty> warranty = controller.getWarrantyService()
                     .findWarrantyByInvoiceDetailId(selectedDetailId);
 
-                String message = ErrorMessage.WARRANTY_ALREADY_REGISTERED;
+                String message = ErrorMessage.WARRANTY_ALREADY_REGISTERED.toString();
                 if (warranty.isPresent()) {
                     message += "\nMã bảo hành: " + warranty.get().getWarrantyId() +
                               "\nNgày đăng ký: " + dateFormatter.format(warranty.get().getCreatedAt());
@@ -561,7 +561,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
 
             JOptionPane.showMessageDialog(
                 this,
-                String.format(ErrorMessage.WARRANTY_REGISTER_SUCCESS, warranty.getWarrantyId()),
+                String.format(ErrorMessage.WARRANTY_REGISTER_SUCCESS.toString(), warranty.getWarrantyId()),
                 "Thành công",
                 JOptionPane.INFORMATION_MESSAGE
             );

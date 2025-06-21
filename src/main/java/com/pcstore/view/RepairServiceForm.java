@@ -78,17 +78,17 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
 
-        TableStyleUtil.applyDefaultStyle(tableRepair);
+        TableUtils.applyDefaultStyle(tableRepair);
       
 
-        statusTranslation = new HashMap<>();
-        statusTranslation.put("Received", "Đã tiếp nhận");
-        statusTranslation.put("Diagnosing", "Đang chẩn đoán");
-        statusTranslation.put("Waiting for Parts", "Chờ linh kiện");
-        statusTranslation.put("Repairing", "Đang sửa chữa");
-        statusTranslation.put("Completed", "Đã hoàn thành");
-        statusTranslation.put("Delivered", "Đã giao khách");
-        statusTranslation.put("Cancelled", "Đã hủy");
+        // statusTranslation = new HashMap<>();
+        // statusTranslation.put("Received", "Đã tiếp nhận");
+        // statusTranslation.put("Diagnosing", "Đang chẩn đoán");
+        // statusTranslation.put("Waiting for Parts", "Chờ linh kiện");
+        // statusTranslation.put("Repairing", "Đang sửa chữa");
+        // statusTranslation.put("Completed", "Đã hoàn thành");
+        // statusTranslation.put("Delivered", "Đã giao khách");
+        // statusTranslation.put("Cancelled", "Đã hủy");
     
 //        setupSearchFunctionality();
     }
@@ -473,7 +473,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
             java.util.Optional<com.pcstore.model.Repair> repairOpt = repairController.getRepairServiceById(repairId);
             if (!repairOpt.isPresent()) {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID, repairId),
+                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID.toString(), repairId),
                     "Thông báo",
                     javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 return;
@@ -682,7 +682,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
             java.util.Optional<com.pcstore.model.Repair> repairOpt = repairController.getRepairServiceById(repairId);
             if (repairOpt.isEmpty()) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID, repairId), 
+                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID.toString(), repairId), 
                     "Thông báo", javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
             }

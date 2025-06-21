@@ -406,7 +406,7 @@ public class AddReapairProductForm extends JDialog {
             // Kiểm tra thông tin bắt buộc
             if (customerName.isEmpty() || customerPhone.isEmpty() || deviceName.isEmpty() || problem.isEmpty()) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    ErrorMessage.FIELD_EMPTY.formatted("Tên khách hàng, SĐT, tên thiết bị, vấn đề"), 
+                    ErrorMessage.FIELD_EMPTY.toString().formatted("Tên khách hàng, SĐT, tên thiết bị, vấn đề"), 
                     "Thiếu thông tin", 
                     javax.swing.JOptionPane.WARNING_MESSAGE);
                 return;

@@ -20,5 +20,6 @@
         "css": false,
         "html": true,
         "java": true
-    }
+    },
+    "liveServer.settings.port": 5501
 }

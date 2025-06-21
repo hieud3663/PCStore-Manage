@@ -104,10 +104,10 @@ public class AddReapairProductForm extends JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel3 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
+        panelMain = new javax.swing.JPanel();
+        panelTop = new javax.swing.JPanel();
+        lbTitle = new javax.swing.JLabel();
+        panelBody = new com.k33ptoo.components.KGradientPanel();
         panelRepairID = new javax.swing.JPanel();
         lbNameCustomer = new javax.swing.JLabel();
         TxtNameCustomer = new javax.swing.JTextField();
@@ -135,41 +135,41 @@ public class AddReapairProductForm extends JDialog {
         panelRepairID7 = new javax.swing.JPanel();
         lbEmployee = new javax.swing.JLabel();
         cbEmployee = new javax.swing.JComboBox<>();
-        jPanel1 = new javax.swing.JPanel();
+        panelBottom = new javax.swing.JPanel();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
         btnAddRepairDevice = new com.k33ptoo.components.KButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(500, 32));
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel3.setMaximumSize(new java.awt.Dimension(700, 65534));
-        jPanel3.setPreferredSize(new java.awt.Dimension(700, 660));
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
+        panelMain.setMaximumSize(new java.awt.Dimension(700, 65534));
+        panelMain.setPreferredSize(new java.awt.Dimension(700, 660));
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setMinimumSize(new java.awt.Dimension(1000, 0));
-        jPanel2.setPreferredSize(new java.awt.Dimension(1153, 50));
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 20));
+        panelTop.setBackground(new java.awt.Color(255, 255, 255));
+        panelTop.setMinimumSize(new java.awt.Dimension(1000, 0));
+        panelTop.setPreferredSize(new java.awt.Dimension(1153, 50));
+        panelTop.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 20));
 
-        jLabel1.setBackground(new java.awt.Color(0, 153, 255));
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 153, 255));
+        lbTitle.setBackground(new java.awt.Color(0, 153, 255));
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbTitle.setForeground(new java.awt.Color(0, 153, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel1.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
-        jLabel1.setMaximumSize(new java.awt.Dimension(346, 100));
-        jLabel1.setMinimumSize(new java.awt.Dimension(346, 100));
-        jLabel1.setPreferredSize(new java.awt.Dimension(346, 50));
-        jPanel2.add(jLabel1);
+        lbTitle.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
+        lbTitle.setMaximumSize(new java.awt.Dimension(346, 100));
+        lbTitle.setMinimumSize(new java.awt.Dimension(346, 100));
+        lbTitle.setPreferredSize(new java.awt.Dimension(346, 50));
+        panelTop.add(lbTitle);
 
-        jPanel3.add(jPanel2);
+        panelMain.add(panelTop);
 
-        kGradientPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setkEndColor(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setkStartColor(new java.awt.Color(255, 255, 255));
-        kGradientPanel1.setLayout(new java.awt.GridLayout(4, 2, 30, 50));
+        panelBody.setBackground(new java.awt.Color(255, 255, 255));
+        panelBody.setkEndColor(new java.awt.Color(255, 255, 255));
+        panelBody.setkFillBackground(false);
+        panelBody.setkStartColor(new java.awt.Color(255, 255, 255));
+        panelBody.setLayout(new java.awt.GridLayout(4, 2, 30, 50));
 
+        panelRepairID.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID.setLayout(new java.awt.GridLayout(2, 0));
@@ -182,8 +182,9 @@ public class AddReapairProductForm extends JDialog {
         TxtNameCustomer.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID.add(TxtNameCustomer);
 
-        kGradientPanel1.add(panelRepairID);
+        panelBody.add(panelRepairID);
 
+        panelRepairID1.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID1.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID1.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID1.setLayout(new java.awt.GridLayout(2, 0));
@@ -196,8 +197,9 @@ public class AddReapairProductForm extends JDialog {
         txtSDT.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID1.add(txtSDT);
 
-        kGradientPanel1.add(panelRepairID1);
+        panelBody.add(panelRepairID1);
 
+        panelRepairID2.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID2.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID2.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID2.setLayout(new java.awt.GridLayout(2, 0));
@@ -210,8 +212,9 @@ public class AddReapairProductForm extends JDialog {
         txtNameProduct.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID2.add(txtNameProduct);
 
-        kGradientPanel1.add(panelRepairID2);
+        panelBody.add(panelRepairID2);
 
+        panelRepairID3.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID3.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID3.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID3.setLayout(new java.awt.GridLayout(2, 0));
@@ -224,8 +227,9 @@ public class AddReapairProductForm extends JDialog {
         txtProblem.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID3.add(txtProblem);
 
-        kGradientPanel1.add(panelRepairID3);
+        panelBody.add(panelRepairID3);
 
+        panelRepairID5.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID5.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID5.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID5.setLayout(new java.awt.GridLayout(2, 0));
@@ -238,8 +242,9 @@ public class AddReapairProductForm extends JDialog {
         txtCost.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID5.add(txtCost);
 
-        kGradientPanel1.add(panelRepairID5);
+        panelBody.add(panelRepairID5);
 
+        panelRepairID4.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID4.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID4.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID4.setLayout(new java.awt.GridLayout(2, 0));
@@ -252,12 +257,14 @@ public class AddReapairProductForm extends JDialog {
         txtDiagnose.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID4.add(txtDiagnose);
 
-        kGradientPanel1.add(panelRepairID4);
+        panelBody.add(panelRepairID4);
 
+        panelRepairID6.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID6.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID6.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID6.setLayout(new java.awt.GridLayout(2, 0));
 
+        lbStasus.setBackground(new java.awt.Color(255, 255, 255));
         lbStasus.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbStasus.setText(bundle.getString("lbStatus")); // NOI18N
         lbStasus.setOpaque(true);
@@ -271,8 +278,9 @@ public class AddReapairProductForm extends JDialog {
         });
         panelRepairID6.add(cbStatus);
 
-        kGradientPanel1.add(panelRepairID6);
+        panelBody.add(panelRepairID6);
 
+        panelRepairID8.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID8.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID8.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID8.setLayout(new java.awt.GridLayout(2, 0));
@@ -285,8 +293,9 @@ public class AddReapairProductForm extends JDialog {
         txtNote.setPreferredSize(new java.awt.Dimension(64, 18));
         panelRepairID8.add(txtNote);
 
-        kGradientPanel1.add(panelRepairID8);
+        panelBody.add(panelRepairID8);
 
+        panelRepairID7.setBackground(new java.awt.Color(255, 255, 255));
         panelRepairID7.setMinimumSize(new java.awt.Dimension(200, 100));
         panelRepairID7.setPreferredSize(new java.awt.Dimension(200, 55));
         panelRepairID7.setLayout(new java.awt.GridLayout(2, 0));
@@ -303,12 +312,12 @@ public class AddReapairProductForm extends JDialog {
         });
         panelRepairID7.add(cbEmployee);
 
-        kGradientPanel1.add(panelRepairID7);
+        panelBody.add(panelRepairID7);
 
-        jPanel3.add(kGradientPanel1);
+        panelMain.add(panelBody);
 
-        jPanel1.setPreferredSize(new java.awt.Dimension(870, 70));
-        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 12, 20));
+        panelBottom.setPreferredSize(new java.awt.Dimension(870, 70));
+        panelBottom.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 12, 20));
 
         btnReturnInformationLookup.setText(bundle.getString("btnCancelAddRepairDevice")); // NOI18N
         btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
@@ -317,7 +326,7 @@ public class AddReapairProductForm extends JDialog {
         btnReturnInformationLookup.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnReturnInformationLookup.setkStartColor(new java.awt.Color(255, 51, 102));
         btnReturnInformationLookup.setMargin(new java.awt.Insets(2, 14, 0, 14));
-        jPanel1.add(btnReturnInformationLookup);
+        panelBottom.add(btnReturnInformationLookup);
 
         btnAddRepairDevice.setText(bundle.getString("btnAddRepairDevice")); // NOI18N
         btnAddRepairDevice.setkBackGroundColor(new java.awt.Color(102, 153, 255));
@@ -325,11 +334,11 @@ public class AddReapairProductForm extends JDialog {
         btnAddRepairDevice.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnAddRepairDevice.setkHoverForeGround(new java.awt.Color(255, 255, 255));
         btnAddRepairDevice.setMargin(new java.awt.Insets(2, 14, 0, 14));
-        jPanel1.add(btnAddRepairDevice);
+        panelBottom.add(btnAddRepairDevice);
 
-        jPanel3.add(jPanel1);
+        panelMain.add(panelBottom);
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 10, 770, 630));
+        getContentPane().add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbEmployeeActionPerformed
@@ -612,11 +621,6 @@ public class AddReapairProductForm extends JDialog {
     private com.k33ptoo.components.KButton btnReturnInformationLookup;
     private javax.swing.JComboBox<String> cbEmployee;
     private javax.swing.JComboBox<String> cbStatus;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel lbCost;
     private javax.swing.JLabel lbDiagnose;
     private javax.swing.JLabel lbEmployee;
@@ -626,6 +630,10 @@ public class AddReapairProductForm extends JDialog {
     private javax.swing.JLabel lbProblem;
     private javax.swing.JLabel lbSDT;
     private javax.swing.JLabel lbStasus;
+    private javax.swing.JLabel lbTitle;
+    private com.k33ptoo.components.KGradientPanel panelBody;
+    private javax.swing.JPanel panelBottom;
+    private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelRepairID;
     private javax.swing.JPanel panelRepairID1;
     private javax.swing.JPanel panelRepairID2;
@@ -635,6 +643,7 @@ public class AddReapairProductForm extends JDialog {
     private javax.swing.JPanel panelRepairID6;
     private javax.swing.JPanel panelRepairID7;
     private javax.swing.JPanel panelRepairID8;
+    private javax.swing.JPanel panelTop;
     private javax.swing.JTextField txtCost;
     private javax.swing.JTextField txtDiagnose;
     private javax.swing.JTextField txtNameProduct;

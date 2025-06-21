@@ -36,6 +36,13 @@ public class LoginForm extends JFrame {
         return instance;
     }
 
+    public static void restartInstance() {
+        if (instance != null) {
+            instance.dispose();
+        }
+        instance = new LoginForm();
+    }
+
     public static void resetInstance() {
         instance = null;
     }

@@ -551,20 +551,73 @@ public class DashboardController {
      * @param locale Locale mới
      */
     public void changeLanguage(Locale locale) {
-        // Thay đổi ngôn ngữ trong LocaleManager
-        localeManager.setLocale(locale);
+        // Kiểm tra xem ngôn ngữ có thực sự thay đổi không
+        String currentLanguage = localeManager.getCurrentLanguage();
+        String newLanguage = locale.getLanguage();
         
-        // Cập nhật lại bundle
-        bundle = localeManager.getProperties();
-        
-        // Cập nhật giao diện
-        refreshLanguage();
-        
-        // Cập nhật trạng thái ComboBox
-        updateLanguageComboBox();
-        
-        // Cập nhật các thành phần khác của giao diện
-        updateUITexts();
+        if (!currentLanguage.equals(newLanguage)) {
+            // Hiển thị hộp thoại xác nhận khởi động lại
+            String message = currentLanguage.equals("vi") 
+                ? "Cần khởi động lại ứng dụng để áp dụng thay đổi ngôn ngữ. Bạn có muốn tiếp tục không?" 
+                : "The application needs to restart to apply language changes. Do you want to continue?";
+                
+            String title = currentLanguage.equals("vi") 
+                ? "Thay đổi ngôn ngữ" 
+                : "Language Change";
+                
+            int response = JOptionPane.showConfirmDialog(
+                dashboardForm,
+                message,
+                title,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+            );
+            
+            if (response == JOptionPane.YES_OPTION) {
+                localeManager.setLocale(locale);
+                
+                // Dọn dẹp tài nguyên
+                cleanup();
+                
+                // Đóng cửa sổ hiện tại
+                dashboardForm.dispose();
+                dashboardForm.resetInstance();
+                
+                // Khởi động lại ứng dụng
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        // Bắt đầu lại ứng dụng từ màn hình đăng nhập
+                        LoginForm.restartInstance();
+                        LoginForm.getInstance().setVisible(true);
+                    } catch (Exception ex) {
+                        String errorMsg = currentLanguage.equals("vi") 
+                            ? "Lỗi khởi động lại ứng dụng: " 
+                            : "Error restarting application: ";
+                        
+                        JOptionPane.showMessageDialog(null,
+                            errorMsg + ex.getMessage(),
+                            currentLanguage.equals("vi") ? "Lỗi" : "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+            } else {
+                // Người dùng đã hủy, đặt lại combobox về ngôn ngữ hiện tại
+                updateLanguageComboBox();
+            }
+        } else {
+            // Nếu ngôn ngữ không thay đổi, vẫn cập nhật các thành phần UI
+            // Cập nhật lại bundle
+            bundle = localeManager.getProperties();
+            
+            // Cập nhật giao diện
+            refreshLanguage();
+            
+            // Cập nhật trạng thái ComboBox
+            updateLanguageComboBox();
+            
+            // Cập nhật các thành phần khác của giao diện
+            updateUITexts();
+        }
     }
 
     /**

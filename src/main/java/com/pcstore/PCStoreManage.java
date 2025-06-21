@@ -14,6 +14,8 @@ import com.pcstore.controller.LoginController;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.view.LoginForm;
 
+
+// regex: \/\/\s*(GEN-FIRST|GEN-LAST).*$
 /**
  *
  * @author MSII

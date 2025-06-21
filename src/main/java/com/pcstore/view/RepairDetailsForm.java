@@ -28,7 +28,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        panelInfoDetail1 = new com.k33ptoo.components.KGradientPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
         paneIDCustomer = new javax.swing.JPanel();
         lbIDCustomer = new javax.swing.JLabel();
         txtIDCustomer = new javax.swing.JTextField();
@@ -53,19 +53,21 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         panelNote = new javax.swing.JPanel();
         lbNote = new javax.swing.JLabel();
         txtNote = new javax.swing.JTextField();
-        paneIDCustomer1 = new javax.swing.JPanel();
+        panelCost = new javax.swing.JPanel();
         lbCost = new javax.swing.JLabel();
         txtCost = new javax.swing.JTextField();
 
-        panelInfoDetail1.setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.BorderLayout());
+
+        panelMain.setBackground(new java.awt.Color(255, 255, 255));
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        panelInfoDetail1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 24))); // NOI18N
-        panelInfoDetail1.setkBorderRadius(15);
-        panelInfoDetail1.setkEndColor(new java.awt.Color(0, 0, 0));
-        panelInfoDetail1.setkFillBackground(false);
-        panelInfoDetail1.setkStartColor(new java.awt.Color(0, 0, 0));
-        panelInfoDetail1.setPreferredSize(new java.awt.Dimension(400, 420));
-        panelInfoDetail1.setLayout(new java.awt.GridLayout(6, 2, 50, 15));
+        panelMain.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 24))); // NOI18N
+        panelMain.setkBorderRadius(15);
+        panelMain.setkEndColor(new java.awt.Color(0, 0, 0));
+        panelMain.setkFillBackground(false);
+        panelMain.setkStartColor(new java.awt.Color(0, 0, 0));
+        panelMain.setPreferredSize(new java.awt.Dimension(400, 420));
+        panelMain.setLayout(new java.awt.GridLayout(6, 2, 50, 15));
 
         paneIDCustomer.setOpaque(false);
         paneIDCustomer.setLayout(new java.awt.GridLayout(2, 0));
@@ -80,7 +82,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtIDCustomer.setEnabled(false);
         paneIDCustomer.add(txtIDCustomer);
 
-        panelInfoDetail1.add(paneIDCustomer);
+        panelMain.add(paneIDCustomer);
 
         panelNameCustomer.setOpaque(false);
         panelNameCustomer.setLayout(new java.awt.BorderLayout(0, 1));
@@ -93,7 +95,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtNameCustomer.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelNameCustomer.add(txtNameCustomer, java.awt.BorderLayout.PAGE_END);
 
-        panelInfoDetail1.add(panelNameCustomer);
+        panelMain.add(panelNameCustomer);
 
         panelPhonenumberCustomer.setOpaque(false);
         panelPhonenumberCustomer.setPreferredSize(new java.awt.Dimension(64, 35));
@@ -107,7 +109,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtPhonenumberEmployee1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelPhonenumberCustomer.add(txtPhonenumberEmployee1, java.awt.BorderLayout.CENTER);
 
-        panelInfoDetail1.add(panelPhonenumberCustomer);
+        panelMain.add(panelPhonenumberCustomer);
 
         panelEmailCustome.setOpaque(false);
         panelEmailCustome.setLayout(new java.awt.BorderLayout(0, 1));
@@ -120,7 +122,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtEmailCustomer.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelEmailCustome.add(txtEmailCustomer, java.awt.BorderLayout.CENTER);
 
-        panelInfoDetail1.add(panelEmailCustome);
+        panelMain.add(panelEmailCustome);
 
         panelDeviceName.setOpaque(false);
         panelDeviceName.setLayout(new java.awt.BorderLayout(0, 1));
@@ -133,7 +135,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         lbPosition1.setText(bundle.getString("lbDisplayNameDevice")); // NOI18N
         panelDeviceName.add(lbPosition1, java.awt.BorderLayout.PAGE_START);
 
-        panelInfoDetail1.add(panelDeviceName);
+        panelMain.add(panelDeviceName);
 
         panelRepairProblem.setOpaque(false);
         panelRepairProblem.setLayout(new java.awt.BorderLayout(2, 1));
@@ -149,7 +151,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtRepairProblem.setPreferredSize(new java.awt.Dimension(135, 23));
         panelRepairProblem.add(txtRepairProblem, java.awt.BorderLayout.CENTER);
 
-        panelInfoDetail1.add(panelRepairProblem);
+        panelMain.add(panelRepairProblem);
 
         panelStatus.setOpaque(false);
         panelStatus.setLayout(new java.awt.BorderLayout(0, 1));
@@ -162,7 +164,7 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtStatus.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelStatus.add(txtStatus, java.awt.BorderLayout.PAGE_END);
 
-        panelInfoDetail1.add(panelStatus);
+        panelMain.add(panelStatus);
 
         panelNote.setOpaque(false);
         panelNote.setLayout(new java.awt.BorderLayout(0, 1));
@@ -175,43 +177,24 @@ public class RepairDetailsForm extends javax.swing.JPanel {
         txtNote.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         panelNote.add(txtNote, java.awt.BorderLayout.PAGE_END);
 
-        panelInfoDetail1.add(panelNote);
+        panelMain.add(panelNote);
 
-        paneIDCustomer1.setOpaque(false);
-        paneIDCustomer1.setLayout(new java.awt.GridLayout(2, 0));
+        panelCost.setOpaque(false);
+        panelCost.setLayout(new java.awt.GridLayout(2, 0));
 
         lbCost.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         lbCost.setText(bundle.getString("lbDisplayCost")); // NOI18N
-        paneIDCustomer1.add(lbCost);
+        panelCost.add(lbCost);
 
         txtCost.setFont(new java.awt.Font("Segoe UI", 0, 15)); // NOI18N
         txtCost.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 2, 0, new java.awt.Color(102, 102, 102)));
         txtCost.setDisabledTextColor(new java.awt.Color(51, 51, 51));
         txtCost.setEnabled(false);
-        paneIDCustomer1.add(txtCost);
+        panelCost.add(txtCost);
 
-        panelInfoDetail1.add(paneIDCustomer1);
+        panelMain.add(panelCost);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelInfoDetail1, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 454, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelInfoDetail1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -310,10 +293,10 @@ public class RepairDetailsForm extends javax.swing.JPanel {
     private javax.swing.JLabel lbPosition1;
     private javax.swing.JLabel lbStatus;
     private javax.swing.JPanel paneIDCustomer;
-    private javax.swing.JPanel paneIDCustomer1;
+    private javax.swing.JPanel panelCost;
     private javax.swing.JPanel panelDeviceName;
     private javax.swing.JPanel panelEmailCustome;
-    private com.k33ptoo.components.KGradientPanel panelInfoDetail1;
+    private com.k33ptoo.components.KGradientPanel panelMain;
     private javax.swing.JPanel panelNameCustomer;
     private javax.swing.JPanel panelNote;
     private javax.swing.JPanel panelPhonenumberCustomer;

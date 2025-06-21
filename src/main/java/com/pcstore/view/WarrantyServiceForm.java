@@ -96,9 +96,9 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         btnWarrantyRegistration = new com.k33ptoo.components.KButton();
         btnRemoveRepair = new com.k33ptoo.components.KButton();
         btnDetailWarrantyCard = new com.k33ptoo.components.KButton();
-        jPanel3 = new javax.swing.JPanel();
+        panelSearch = new javax.swing.JPanel();
         btnWarrantyInformationLookup = new com.k33ptoo.components.KButton();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearch = new javax.swing.JTextField();
         panelBody = new javax.swing.JPanel();
         jScrollPaneTable = new javax.swing.JScrollPane();
         tableListWarranty = new javax.swing.JTable();
@@ -178,10 +178,10 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         });
         pnFunctions.add(btnDetailWarrantyCard);
 
-        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
-        jPanel3.setPreferredSize(new java.awt.Dimension(425, 65));
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panelSearch.setBackground(new java.awt.Color(255, 255, 255));
+        panelSearch.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm Kiếm"));
+        panelSearch.setPreferredSize(new java.awt.Dimension(425, 65));
+        panelSearch.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnWarrantyInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
         btnWarrantyInformationLookup.setDisabledSelectedIcon(null);
@@ -200,12 +200,12 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
                 btnWarrantyInformationLookupActionPerformed(evt);
             }
         });
-        jPanel3.add(btnWarrantyInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, 70, 32));
+        panelSearch.add(btnWarrantyInformationLookup, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 20, 70, 32));
 
-        jTextField1.setMargin(new java.awt.Insets(2, 6, 2, 0));
-        jPanel3.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 310, 30));
+        txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
+        panelSearch.add(txtSearch, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 310, 30));
 
-        pnFunctions.add(jPanel3);
+        pnFunctions.add(panelSearch);
 
         pnWarrantyMain.add(pnFunctions);
 
@@ -365,7 +365,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
 
     private void btnWarrantyInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {
         if (controller != null) {
-            String keyword = jTextField1.getText().trim();
+            String keyword = txtSearch.getText().trim();
             controller.searchWarranties(keyword);
         }
     }//GEN-LAST:event_btnWarrantyInformationLookupActionPerformed
@@ -442,7 +442,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
      * @return Trường tìm kiếm
      */
     public JTextField getSearchField() {
-        return jTextField1;
+        return txtSearch;
     }
 
 
@@ -451,12 +451,12 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnRemoveRepair;
     private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
     private com.k33ptoo.components.KButton btnWarrantyRegistration;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPaneTable;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelSearch;
     private javax.swing.JPanel pnFunctions;
     private javax.swing.JPanel pnWarrantyMain;
     private javax.swing.JTable tableListWarranty;
+    private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

@@ -177,6 +177,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         btnRemoveRepair = new com.k33ptoo.components.KButton();
         btnDetail = new com.k33ptoo.components.KButton();
         btnUpdateStatus = new com.k33ptoo.components.KButton();
+        textFieldSearch = new com.pcstore.utils.TextFieldSearch();
         panelBody = new javax.swing.JPanel();
         jScrollPaneTable = new javax.swing.JScrollPane();
         tableRepair = new javax.swing.JTable();
@@ -267,6 +268,9 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
         });
         pnRepairFunctions.add(btnUpdateStatus);
+
+        textFieldSearch.setPreferredSize(new java.awt.Dimension(450, 31));
+        pnRepairFunctions.add(textFieldSearch);
 
         pnMainRepair.add(pnRepairFunctions);
 
@@ -896,5 +900,6 @@ public class RepairServiceForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KGradientPanel pnMainRepair;
     private javax.swing.JPanel pnRepairFunctions;
     private javax.swing.JTable tableRepair;
+    private com.pcstore.utils.TextFieldSearch textFieldSearch;
     // End of variables declaration//GEN-END:variables
 }

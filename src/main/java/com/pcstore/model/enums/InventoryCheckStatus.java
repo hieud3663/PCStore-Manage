@@ -59,6 +59,9 @@ public enum InventoryCheckStatus {
         return this == DRAFT || this == CANCELLED;
     }
 
+    public boolean canDeleteDetail() {
+        return this == DRAFT || this == IN_PROGRESS || this == CANCELLED;
+    }
 
     public boolean canEdit() {
         return this == DRAFT || this == IN_PROGRESS;

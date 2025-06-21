@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 import com.k33ptoo.components.KButton;
 import com.k33ptoo.components.KGradientPanel;
 import com.pcstore.controller.StockInHistoryController;
+import com.pcstore.utils.ButtonUtils;
 import com.pcstore.utils.LocaleManager;
 
 /**
@@ -40,7 +41,7 @@ public class StockInHistoryForm extends JDialog {
     private KButton btnClose;
     private KButton btnRefresh;
     private KButton btnUpdateStatus; // Nút cập nhật trạng thái
-
+    private KButton btnPrintOrder; 
     private JScrollPane jScrollPaneOrders;
     private JScrollPane jScrollPaneDetails;
     private KGradientPanel panelMain;
@@ -62,6 +63,7 @@ public class StockInHistoryForm extends JDialog {
 
         // Khởi tạo controller
         controller = new StockInHistoryController(this);
+        enableOrderButtons(false); 
     }
 
     /**
@@ -79,6 +81,7 @@ public class StockInHistoryForm extends JDialog {
         btnClose = new KButton();
         btnRefresh = new KButton();
         btnUpdateStatus = new KButton();
+        btnPrintOrder = new KButton();
         lblOrderDetail = new JLabel(bundle.getString("txtOrderDetail"));
 
         // Thiết lập cơ bản cho form
@@ -108,14 +111,14 @@ public class StockInHistoryForm extends JDialog {
         panelButtons.setOpaque(false);
 
         // Thiết lập nút làm mới
+        btnUpdateStatus.setkAllowGradient(false);
         btnRefresh.setText(bundle.getString("btnRefresh"));
         btnRefresh.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/refresh.png")));
         btnRefresh.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnRefresh.setkBorderRadius(30);
         btnRefresh.setkEndColor(new Color(0, 153, 255));
-        btnRefresh.setkHoverEndColor(new Color(51, 153, 255));
+        btnRefresh.setkHoverColor(new Color(51, 153, 255));
         btnRefresh.setkHoverForeGround(new Color(255, 255, 255));
-        btnRefresh.setkHoverStartColor(new Color(102, 204, 255));
         btnRefresh.setPreferredSize(new Dimension(120, 40));
         btnRefresh.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -124,23 +127,38 @@ public class StockInHistoryForm extends JDialog {
         });
 
         // Thiết lập nút cập nhật trạng thái
+        btnUpdateStatus.setkAllowGradient(false);
         btnUpdateStatus.setText(bundle.getString("btnUpdateStatus"));
         btnUpdateStatus.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnUpdateStatus.setkBorderRadius(30);
-        btnUpdateStatus.setkEndColor(new Color(51, 153, 102));
-        btnUpdateStatus.setkHoverEndColor(new Color(51, 204, 102));
+        btnUpdateStatus.setkBackGroundColor(new Color(51, 153, 102));
+        btnUpdateStatus.setkHoverColor(new Color(51, 204, 102));
         btnUpdateStatus.setkHoverForeGround(new Color(255, 255, 255));
-        btnUpdateStatus.setkHoverStartColor(new Color(102, 204, 102));
         btnUpdateStatus.setPreferredSize(new Dimension(180, 40));
-        btnUpdateStatus.setEnabled(false);
         btnUpdateStatus.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 btnUpdateStatusMouseClicked(evt);
             }
         });
 
+        // Thiết lập nút In phiếu
+        btnPrintOrder.setText(bundle.getString("btnPrintOrder"));
+        btnPrintOrder.setIcon(new ImageIcon(getClass().getResource("/com/pcstore/resources/icon/printer.png")));
+        btnPrintOrder.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnPrintOrder.setkBorderRadius(30);
+        btnPrintOrder.setkBackGroundColor(new Color(0, 102, 204));
+        btnPrintOrder.setkHoverForeGround(new Color(255, 255, 255));
+        btnPrintOrder.setkHoverColor(new Color(102, 204, 255));
+        btnPrintOrder.setPreferredSize(new Dimension(150, 40));
+        btnPrintOrder.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                btnPrintOrderMouseClicked(evt);
+            }
+        });
+
         // Thêm nút vào panel
         panelButtons.add(btnUpdateStatus);
+        panelButtons.add(btnPrintOrder); 
         panelButtons.add(btnRefresh);
         panelTop.add(panelButtons, BorderLayout.CENTER);
 
@@ -260,7 +278,6 @@ public class StockInHistoryForm extends JDialog {
             System.out.println("Refreshing purchase order history...");
             controller.loadPurchaseOrderHistory();
 
-            // Vô hiệu hóa nút cập nhật trạng thái khi làm mới
             enableUpdateStatusButton(false);
         }
     }
@@ -283,6 +300,26 @@ public class StockInHistoryForm extends JDialog {
         } else {
             JOptionPane.showMessageDialog(this,
                     bundle.getString("txtSelectPurchaseOrderToUpdate"),
+                    bundle.getString("txtNotification"),
+                    JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void btnPrintOrderMouseClicked(MouseEvent evt) {
+        if (!btnPrintOrder.isEnabled()) {
+            return;
+        }
+
+        int selectedRow = tablePurchaseOrders.getSelectedRow();
+        if (selectedRow >= 0) {
+            String purchaseOrderId = tablePurchaseOrders.getValueAt(selectedRow, 1).toString(); 
+
+            if (controller != null) {
+                controller.printPurchaseOrder(purchaseOrderId);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    bundle.getString("txtSelectPurchaseOrderToPrint"),
                     bundle.getString("txtNotification"),
                     JOptionPane.INFORMATION_MESSAGE);
         }
@@ -324,11 +361,28 @@ public class StockInHistoryForm extends JDialog {
     }
 
     /**
+     * Getter cho nút in phiếu
+     */
+    public KButton getBtnPrintOrder() {
+        return btnPrintOrder;
+    }
+
+    /**
      * Kích hoạt hoặc vô hiệu hóa nút cập nhật trạng thái
      * 
      * @param enable true để kích hoạt, false để vô hiệu hóa
      */
     public void enableUpdateStatusButton(boolean enable) {
-        btnUpdateStatus.setEnabled(enable);
+        ButtonUtils.setKButtonEnabled(btnUpdateStatus, enable);
+    }
+
+    /**
+     * Kích hoạt hoặc vô hiệu hóa các nút khi chọn phiếu
+     * 
+     * @param enable true để kích hoạt, false để vô hiệu hóa
+     */
+    public void enableOrderButtons(boolean enable) {
+        ButtonUtils.setKButtonEnabled(btnUpdateStatus, enable);
+        ButtonUtils.setKButtonEnabled(btnPrintOrder, enable);
     }
 }

@@ -578,23 +578,26 @@ public class TableUtils {
         void onDeleteClicked(JTable table, int modelRow, int column, Object firstColumnValue);
     }
     
+
+    public static void addDeleteButton(JTable table, int columnIndex, DeleteButtonActionListener deleteListener){
+        addDeleteButton(table, columnIndex, deleteListener, 0);
+    }
+
     /**
      * Thêm nút xóa dạng Label vào cột chỉ định với hover tự động
      * @param table Bảng cần thêm nút xóa
      * @param columnIndex Chỉ số cột cần thêm nút xóa
      * @param deleteListener Action listener khi nút xóa được click
      */
-    public static void addDeleteButton(JTable table, int columnIndex, DeleteButtonActionListener deleteListener) {
+    public static void addDeleteButton(JTable table, int columnIndex, DeleteButtonActionListener deleteListener, int columnValue) {
         if (columnIndex < 0 || columnIndex >= table.getColumnCount()) {
             return;
         }
 
         FlatSVGIcon deleteIcon = new FlatSVGIcon("com/pcstore/resources/icon/delete-2.svg", 16, 16);
 
-        // Biến để theo dõi vị trí hover
         final int[] hoverPosition = {-1, -1}; // [row, column]
         
-        // Tạo renderer cho nút xóa
         TableCellRenderer deleteRenderer = new TableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
@@ -630,7 +633,6 @@ public class TableUtils {
             }
         };
         
-        // Tạo editor cho nút xóa với xử lý click ngay lập tức
         DefaultCellEditor deleteEditor = new DefaultCellEditor(new JCheckBox()) {
             private JLabel deleteLabel;
             
@@ -650,7 +652,7 @@ public class TableUtils {
                 // Xử lý click ngay lập tức
                 SwingUtilities.invokeLater(() -> {
                     int modelRow = table.convertRowIndexToModel(row);
-                    Object firstColumnValue = table.getModel().getValueAt(modelRow, 1);
+                    Object firstColumnValue = table.getModel().getValueAt(modelRow, columnValue);
                     
                     if (deleteListener != null) {
                         deleteListener.onDeleteClicked(table, modelRow, column, firstColumnValue);
@@ -683,14 +685,12 @@ public class TableUtils {
             }
         };
         
-        // Thêm MouseMotionListener để theo dõi hover
         table.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             @Override
             public void mouseMoved(java.awt.event.MouseEvent e) {
                 int row = table.rowAtPoint(e.getPoint());
                 int column = table.columnAtPoint(e.getPoint());
                 
-                // Chỉ xử lý hover cho cột delete button
                 if (column == columnIndex && row >= 0) {
                     if (hoverPosition[0] != row || hoverPosition[1] != column) {
                         hoverPosition[0] = row;
@@ -709,22 +709,19 @@ public class TableUtils {
             }
         });
         
-        // Thêm MouseListener để xử lý click trực tiếp (backup method)
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
                 int row = table.rowAtPoint(e.getPoint());
                 int column = table.columnAtPoint(e.getPoint());
                 
-                // Nếu click vào cột delete button
                 if (column == columnIndex && row >= 0) {
-                    // Nếu editor đang không hoạt động, xử lý click trực tiếp
                     if (!table.isEditing()) {
                         int modelRow = table.convertRowIndexToModel(row);
-                        Object firstColumnValue = table.getModel().getValueAt(modelRow, 0);
+                        Object firstColumnValue = table.getModel().getValueAt(modelRow, columnValue);
                         
                         if (deleteListener != null) {
-                            deleteListener.onDeleteClicked(table, modelRow, column, firstColumnValue);
+                            // deleteListener.onDeleteClicked(table, modelRow, column, firstColumnValue);
                         }
                     }
                 }
@@ -732,7 +729,6 @@ public class TableUtils {
             
             @Override
             public void mouseExited(java.awt.event.MouseEvent e) {
-                // Xóa hover effect khi chuột rời khỏi bảng
                 if (hoverPosition[0] != -1 || hoverPosition[1] != -1) {
                     hoverPosition[0] = -1;
                     hoverPosition[1] = -1;
@@ -746,12 +742,10 @@ public class TableUtils {
         table.getColumnModel().getColumn(columnIndex).setCellRenderer(deleteRenderer);
         table.getColumnModel().getColumn(columnIndex).setCellEditor(deleteEditor);
         
-        // Thiết lập kích thước cột phù hợp
         table.getColumnModel().getColumn(columnIndex).setPreferredWidth(60);
         table.getColumnModel().getColumn(columnIndex).setMaxWidth(60);
         table.getColumnModel().getColumn(columnIndex).setMinWidth(60);
         
-        // Vô hiệu hóa sắp xếp cho cột nút xóa
         if (table.getRowSorter() instanceof TableRowSorter) {
             TableRowSorter<?> sorter = (TableRowSorter<?>) table.getRowSorter();
             sorter.setSortable(columnIndex, false);

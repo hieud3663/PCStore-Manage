@@ -63,10 +63,10 @@ public class PDFUtils {
         FontProvider fontProvider = new FontProvider();
         
         try {
-            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman.ttf");
-            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman bold.ttf");
-            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman italic.ttf");
-            fontProvider.addFont("com/pcstore/resources/fonts/SVN-Times New Roman 2 bold italic.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/TIMES.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/TIMESBD.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/TIMESBI.ttf");
+            fontProvider.addFont("com/pcstore/resources/fonts/TIMESI.ttf");
         } catch (Exception e) {
             try {
                 fontProvider.addFont("Times New Roman");

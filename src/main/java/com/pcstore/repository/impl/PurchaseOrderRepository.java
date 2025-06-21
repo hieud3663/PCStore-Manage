@@ -192,7 +192,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
 
     // Dùng id: String
     public Optional<PurchaseOrder> findById(String id) {
-        String sql = "SELECT po.*, s.Name as SupplierName, e.FullName as EmployeeName " +
+        String sql = "SELECT po.*, s.SupplierID, s.Name as SupplierName, e.EmployeeID, e.FullName as EmployeeName " +
                 "FROM PurchaseOrders po " +
                 "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
                 "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
@@ -209,6 +209,7 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
                 purchaseOrder.setPurchaseOrderDetails(
                         RepositoryFactory.getInstance(connection).getPurchaseOrderDetailRepository()
                                 .findByPurchaseOrderId(id));
+
 
                 return Optional.of(purchaseOrder);
             }
@@ -471,18 +472,16 @@ public class PurchaseOrderRepository implements Repository<PurchaseOrder, Intege
         // Tạo và thiết lập thông tin nhà cung cấp
         String supplierId = resultSet.getString("SupplierID");
         if (supplierId != null) {
-            Supplier supplier = new Supplier();
-            supplier.setSupplierId(supplierId);
-            supplier.setName(resultSet.getString("SupplierName"));
+            Supplier supplier = RepositoryFactory.getInstance(connection).getSupplierRepository().findById(supplierId)
+                    .orElseThrow(() -> new RuntimeException("Error finding supplier with ID: " + supplierId));
             purchaseOrder.setSupplier(supplier);
         }
 
         // Tạo và thiết lập thông tin nhân viên
         String employeeId = resultSet.getString("EmployeeID");
         if (employeeId != null) {
-            Employee employee = new Employee();
-            employee.setEmployeeId(employeeId);
-            employee.setFullName(resultSet.getString("EmployeeName"));
+            Employee employee = RepositoryFactory.getInstance(connection).getEmployeeRepository().findById(employeeId)
+                    .orElseThrow(() -> new RuntimeException("Error finding employee with ID: " + employeeId));
             purchaseOrder.setEmployee(employee);
         }
 

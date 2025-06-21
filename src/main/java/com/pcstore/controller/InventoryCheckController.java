@@ -21,6 +21,7 @@ import com.pcstore.model.InventoryCheck;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.InventoryCheckService;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
 import com.pcstore.view.AddInventoryCheckForm;
@@ -56,8 +57,9 @@ public class InventoryCheckController {
             this.employeeService = new EmployeeService(connection);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(inventoryCheckForm,
-                    "Lỗi kết nối cơ sở dữ liệu: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVENTORY_CHECK_CONTROLLER_INIT_ERROR.toString().format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -79,11 +81,12 @@ public class InventoryCheckController {
         TableUtils.addDeleteButton(inventoryCheckForm.getTableListInventory(), 7,
                 (table, modelRow, column, value) -> {
                     handleDeleteInventoryCheck(value);
-                });
+                },
+                1);
 
         TableUtils.disableSortingForColumns(tableSorter, 0, 7);
 
-        TableUtils.setupColumnWidths(inventoryCheckForm.getTableListInventory(), 30, 120, 200, 150, 200, 150, 120, 60);
+        // TableUtils.setupColumnWidths(inventoryCheckForm.getTableListInventory(), 30, 120, 200, 150, 200, 150, 120, 60);
     }
 
     private void setupStatusComboBox() {
@@ -141,8 +144,9 @@ public class InventoryCheckController {
             updateSummary(inventoryChecks.size());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(inventoryCheckForm,
-                    "Lỗi tải dữ liệu: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVENTORY_CHECK_LOAD_DATA_ERROR.toString().format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -202,15 +206,15 @@ public class InventoryCheckController {
             AddInventoryCheckForm addForm = new AddInventoryCheckForm(
                     (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(inventoryCheckForm),
                     true);
-
+    
             addForm.setVisible(true);
-
             loadInventoryChecks();
-
+    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(inventoryCheckForm,
-                    "Lỗi mở form thêm: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVENTORY_CHECK_OPEN_ADD_FORM_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -220,33 +224,32 @@ public class InventoryCheckController {
      */
     private void handleViewDetail() {
         int selectedRow = inventoryCheckForm.getTableListInventory().getSelectedRow();
-
+    
         try {
             int modelRow = inventoryCheckForm.getTableListInventory().convertRowIndexToModel(selectedRow);
             String checkCode = (String) inventoryCheckForm.getTableListInventory().getModel().getValueAt(modelRow, 1);
-
-
+    
             Optional<InventoryCheck> inventoryCheckOpt = inventoryCheckService.findInventoryCheckByCode(checkCode);
-
+    
             if (inventoryCheckOpt.isPresent()) {
-                DetailInventoryCheckForm detailForm = new DetailInventoryCheckForm(
-                        (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(inventoryCheckForm),
-                        true);
-
+                DetailInventoryCheckForm detailForm = new DetailInventoryCheckForm( (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(inventoryCheckForm), true);
+    
                 new DetailInventoryCheckController(detailForm, inventoryCheckOpt.get().getCheckCode());
-
+    
                 detailForm.setVisible(true);
                 loadInventoryChecks();
             } else {
                 JOptionPane.showMessageDialog(inventoryCheckForm,
-                        "Không tìm thấy phiếu kiểm kê với mã: " + checkCode,
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVENTORY_CHECK_NOT_FOUND.format(checkCode),
+                        ErrorMessage.ERROR_TITLE.toString(),
+                        JOptionPane.ERROR_MESSAGE);
             }
-
+    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(inventoryCheckForm,
-                    "Lỗi mở form chi tiết: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVENTORY_CHECK_OPEN_DETAIL_FORM_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -256,66 +259,62 @@ public class InventoryCheckController {
      */
     private void handleDeleteInventoryCheck(Object checkCodeObj) {
         if (checkCodeObj == null) return;
-
+    
         String checkCode = checkCodeObj.toString();
-
+    
         try {
             Optional<InventoryCheck> inventoryCheckOpt = inventoryCheckService.findInventoryCheckByCode(checkCode);
-
+    
             if (!inventoryCheckOpt.isPresent()) {
-                JOptionPane.showMessageDialog(inventoryCheckForm,
-                        "Không tìm thấy phiếu kiểm kê với mã: " + checkCode,
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.ERROR, 
+                        ErrorMessage.INVENTORY_CHECK_NOT_EXISTS.toString());
                 return;
             }
-
+    
             InventoryCheck inventoryCheck = inventoryCheckOpt.get();
             InventoryCheckStatus status = InventoryCheckStatus.fromDbValue(inventoryCheck.getStatus());
-
-            // Sử dụng enum để kiểm tra có thể xóa không
+    
             if (status != null && !status.canDelete()) {
-                JOptionPane.showMessageDialog(inventoryCheckForm,
-                        "Không thể xóa phiếu kiểm kê với trạng thái: " + status.getDisplayText(bundle),
-                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.WARNING,
+                        ErrorMessage.INVENTORY_CHECK_CANNOT_DELETE_STATUS.format(status.getDisplayText(bundle)));
                 return;
             }
-
-            // Xác nhận xóa
+    
             int result = JOptionPane.showConfirmDialog(inventoryCheckForm,
-                    "Bạn có chắc chắn muốn xóa phiếu kiểm kê '" + inventoryCheck.getCheckName() +
-                            "' (Mã: " + checkCode + ")?\n\nHành động này không thể hoàn tác!",
-                    "Xác nhận xóa",
+                    ErrorMessage.INVENTORY_CHECK_DELETE_CONFIRM.format(
+                            inventoryCheck.getCheckName(), checkCode),
+                    ErrorMessage.INVENTORY_CHECK_DELETE_CONFIRM_TITLE.toString(),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
-
+    
             if (result == JOptionPane.YES_OPTION) {
                 boolean success = inventoryCheckService.deleteInventoryCheck(inventoryCheck.getId());
-
+    
                 if (success) {
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, "Xóa phiếu kiểm kê thành công!");
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, 
+                            ErrorMessage.INVENTORY_CHECK_DELETE_SUCCESS.toString());
                     loadInventoryChecks();
                 } else {
-                    JOptionPane.showMessageDialog(inventoryCheckForm,
-                            "Xóa phiếu kiểm kê thất bại!",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    Notifications.getInstance().show(Notifications.Type.ERROR, 
+                            ErrorMessage.INVENTORY_CHECK_DELETE_FAILED.toString());
                 }
             }
-
+    
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(inventoryCheckForm,
-                    "Lỗi xóa phiếu kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            Notifications.getInstance().show(Notifications.Type.ERROR, 
+                    ErrorMessage.INVENTORY_CHECK_DELETE_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
-
+    
+    
     /**
-     * Lọc theo trạng thái
-     */
+    * Lọc theo trạng thái
+    */
     private void filterByStatus() {
         String selectedStatusDisplay = (String) inventoryCheckForm.getCbbStatus().getSelectedItem();
         InventoryCheckStatus selectedStatus = InventoryCheckStatus.fromDisplayText(selectedStatusDisplay, bundle);
-
+    
         if (selectedStatus == InventoryCheckStatus.ALL) {
             loadInventoryChecks();
         } else {
@@ -326,13 +325,14 @@ public class InventoryCheckController {
                 updateSummary(filteredChecks.size());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(inventoryCheckForm,
-                        "Lỗi lọc dữ liệu: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVENTORY_CHECK_FILTER_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.toString(),
+                        JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         }
     }
-
+    
     /**
      * Thực hiện tìm kiếm
      */
@@ -390,40 +390,36 @@ public class InventoryCheckController {
             long inProgressCount = inventoryCheckService.countInventoryChecksByStatus(InventoryCheckStatus.IN_PROGRESS.getDbValue());
             long completedCount = inventoryCheckService.countInventoryChecksByStatus(InventoryCheckStatus.COMPLETED.getDbValue());
             long cancelledCount = inventoryCheckService.countInventoryChecksByStatus(InventoryCheckStatus.CANCELLED.getDbValue());
-
-            String message = String.format(
-                    "Thống kê phiếu kiểm kê:\n\n" +
-                            "• %s: %d\n" +
-                            "• %s: %d\n" +
-                            "• %s: %d\n" +
-                            "• %s: %d\n\n" +
-                            "Tổng cộng: %d",
+    
+            String message = ErrorMessage.INVENTORY_CHECK_STATISTICS_MESSAGE.format(
                     InventoryCheckStatus.DRAFT.getDisplayText(bundle), draftCount,
                     InventoryCheckStatus.IN_PROGRESS.getDisplayText(bundle), inProgressCount,
                     InventoryCheckStatus.COMPLETED.getDisplayText(bundle), completedCount,
                     InventoryCheckStatus.CANCELLED.getDisplayText(bundle), cancelledCount,
                     draftCount + inProgressCount + completedCount + cancelledCount
             );
-
+    
             JOptionPane.showMessageDialog(inventoryCheckForm, message,
-                    "Thống kê", JOptionPane.INFORMATION_MESSAGE);
-
+                    ErrorMessage.INVENTORY_CHECK_STATISTICS_TITLE.toString(), 
+                    JOptionPane.INFORMATION_MESSAGE);
+    
         } catch (Exception e) {
             JOptionPane.showMessageDialog(inventoryCheckForm,
-                    "Lỗi lấy thống kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVENTORY_CHECK_STATISTICS_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Xuất dữ liệu ra Excel
      */
     public void exportToExcel() {
-        // TODO: Implement export functionality
         JOptionPane.showMessageDialog(inventoryCheckForm,
-                "Chức năng xuất Excel đang được phát triển",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                ErrorMessage.INVENTORY_CHECK_EXPORT_DEVELOPING.toString(),
+                ErrorMessage.INFO_TITLE.toString(), 
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

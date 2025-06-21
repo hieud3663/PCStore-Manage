@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Panel;
 import java.util.ResourceBundle;
 
 import javax.swing.DefaultListCellRenderer;
@@ -714,4 +715,7 @@ public class ProductForm extends javax.swing.JPanel {
         return btnRefresh;
     }
     
+    public javax.swing.JPanel getPanelSort(){
+        return panelSort;
+    }
 }

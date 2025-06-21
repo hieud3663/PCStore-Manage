@@ -7,9 +7,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
@@ -32,6 +35,7 @@ import com.pcstore.repository.impl.ProductRepository;
 import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
 import com.pcstore.repository.impl.SupplierRepository;
+import com.pcstore.utils.BillPrintUtils;
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JDialogInputUtils;
@@ -62,6 +66,7 @@ public class PurchaseOrderController {
     private TableRowSorter<TableModel> productTableSorter;
 
     private final NumberFormat currencyFormat = LocaleManager.getInstance().getCurrencyFormatter();
+
     /**
      * Khởi tạo controller với form nhập hàng và kết nối được chia sẻ
      * 
@@ -177,9 +182,8 @@ public class PurchaseOrderController {
             e.printStackTrace();
         }
     }
-    
 
-    private void initTableStyle(){
+    private void initTableStyle() {
         // Khởi tạo sorter cho bảng sản phẩm
         productTableSorter = TableUtils.applyDefaultStyle(purchaseOrderForm.getTableProducts());
         TableUtils.applyDefaultStyle(purchaseOrderForm.getTableSelectedProducts());
@@ -260,7 +264,6 @@ public class PurchaseOrderController {
         }
     }
 
-    
     private void handleProductSelection(java.awt.event.MouseEvent evt) {
         int row = purchaseOrderForm.getTableSelectedProducts().rowAtPoint(evt.getPoint());
         if (row >= 0) {
@@ -314,22 +317,22 @@ public class PurchaseOrderController {
      */
     public void deleteSelectedProducts() {
         List<String> selectedIDs = purchaseOrderForm.getSelectedProductIDs();
-        
+
         if (selectedIDs.isEmpty()) {
-            JOptionPane.showMessageDialog(purchaseOrderForm, 
-                "Vui lòng chọn sản phẩm cần xóa", 
-                "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(purchaseOrderForm,
+                    "Vui lòng chọn sản phẩm cần xóa",
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirm = JOptionPane.showConfirmDialog(purchaseOrderForm, 
-            "Bạn có chắc muốn xóa các sản phẩm đã chọn khỏi phiếu nhập?", 
-            "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-        
+
+        int confirm = JOptionPane.showConfirmDialog(purchaseOrderForm,
+                "Bạn có chắc muốn xóa các sản phẩm đã chọn khỏi phiếu nhập?",
+                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+
         if (confirm == JOptionPane.YES_OPTION) {
             // Cần xóa từ cuối lên đầu để tránh lỗi khi xóa nhiều phần tử
             List<Integer> indexesToRemove = new ArrayList<>();
-            
+
             // Tìm các vị trí cần xóa
             for (int i = 0; i < selectedProducts.size(); i++) {
                 PurchaseOrderDetail detail = selectedProducts.get(i);
@@ -337,18 +340,18 @@ public class PurchaseOrderController {
                     indexesToRemove.add(i);
                 }
             }
-            
+
             // Xóa từ cuối lên đầu
             for (int i = indexesToRemove.size() - 1; i >= 0; i--) {
                 int indexToRemove = indexesToRemove.get(i);
                 PurchaseOrderDetail removedProduct = selectedProducts.remove(indexToRemove);
-                Notifications.getInstance().show(Type.INFO, 
-                    "Đã xóa sản phẩm " + removedProduct.getProduct().getProductName() + " khỏi giỏ hàng");
+                Notifications.getInstance().show(Type.INFO,
+                        "Đã xóa sản phẩm " + removedProduct.getProduct().getProductName() + " khỏi giỏ hàng");
             }
-            
+
             // Xóa danh sách ID đã chọn
             purchaseOrderForm.getSelectedProductIDs().clear();
-            
+
             // Cập nhật giao diện
             updateSelectedProductsTable();
             updateTotalAmount();
@@ -644,7 +647,8 @@ public class PurchaseOrderController {
             }
 
             // Lấy sorter từ bảng sản phẩm
-            TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) purchaseOrderForm.getTableProducts().getRowSorter();
+            TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) purchaseOrderForm.getTableProducts()
+                    .getRowSorter();
             if (sorter == null) {
                 sorter = TableUtils.setupSorting(purchaseOrderForm.getTableProducts());
             }
@@ -710,7 +714,7 @@ public class PurchaseOrderController {
                     return;
                 }
             }
-            
+
             Product product = productRepository.findById(productId).orElse(null);
 
             if (product != null) {
@@ -842,7 +846,8 @@ public class PurchaseOrderController {
             }
             TableUtils.setBooleanColumns(purchaseOrderForm.getTableSelectedProducts(), 0);
 
-            // System.out.println("Đã cập nhật bảng giỏ hàng với " + selectedProducts.size() + " sản phẩm");
+            // System.out.println("Đã cập nhật bảng giỏ hàng với " + selectedProducts.size()
+            // + " sản phẩm");
 
         } catch (Exception e) {
             System.err.println("Lỗi khi cập nhật bảng giỏ hàng: " + e.getMessage());
@@ -874,7 +879,7 @@ public class PurchaseOrderController {
     /**
      * Lưu phiếu nhập hàng
      */
-    private boolean isProcessingSave = false; 
+    private boolean isProcessingSave = false;
 
     public void savePurchaseOrder() {
         // Sử dụng synchronized để đảm bảo thread safety
@@ -934,13 +939,18 @@ public class PurchaseOrderController {
                 System.out.println("Purchase Order prepared: " + currentPurchaseOrder.getPurchaseOrderId());
                 System.out.println("Total amount: " + totalAmount);
 
+                int option = JOptionPane.showConfirmDialog(purchaseOrderForm,
+                        "Bạn có chắc muốn lưu phiếu nhập này không?",
+                        "Xác nhận lưu", JOptionPane.YES_NO_OPTION);
+
+                if (option != JOptionPane.YES_OPTION)
+                    return;
+
                 // 5. Lưu phiếu nhập vào database
-                System.out.println("Saving purchase order to database...");
                 PurchaseOrder savedOrder = purchaseOrderRepository.add(currentPurchaseOrder);
-                System.out.println("Đã lưu phiếu nhập hàng: " + savedOrder.getPurchaseOrderId());
+                System.out.println("Đã tạo phiếu nhập hàng: " + savedOrder.getPurchaseOrderId());
 
                 // 6. Lưu chi tiết phiếu nhập
-                System.out.println("Saving purchase order details...");
                 for (PurchaseOrderDetail detail : selectedProducts) {
                     detail.setPurchaseOrder(savedOrder);
                     purchaseOrderDetailRepository.add(detail);
@@ -956,11 +966,12 @@ public class PurchaseOrderController {
                         "Thành công", JOptionPane.INFORMATION_MESSAGE);
 
                 // 9. Tạo phiếu nhập mới và làm mới form
-
                 clearForm();
                 loadProducts();
 
                 // System.out.println("Form đã được làm mới hoàn toàn");
+
+                exportPDF(savedOrder);
 
             } catch (Exception e) {
                 // 10. Rollback nếu có lỗi
@@ -1084,6 +1095,7 @@ public class PurchaseOrderController {
 
     /**
      * Chỉnh sửa số lượng sản phẩm trong giỏ hàng
+     * 
      * @param row Dòng của sản phẩm cần chỉnh sửa
      */
     public void editProductQuantity(int row) {
@@ -1091,9 +1103,9 @@ public class PurchaseOrderController {
             if (row < 0 || row >= selectedProducts.size()) {
                 return;
             }
-            
+
             PurchaseOrderDetail detail = selectedProducts.get(row);
-            
+
             // Hỏi số lượng
             Integer quantity = JDialogInputUtils.showInputDialogInt(purchaseOrderForm,
                     ErrorMessage.ENTER_PRODUCT_QUANTITY.toString(),
@@ -1109,19 +1121,182 @@ public class PurchaseOrderController {
                 Notifications.getInstance().show(Type.INFO,
                         "Đã cập nhật số lượng sản phẩm " + detail.getProduct().getProductName());
             } else {
-                JOptionPane.showMessageDialog(purchaseOrderForm, 
+                JOptionPane.showMessageDialog(purchaseOrderForm,
                         "Số lượng phải lớn hơn 0",
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(purchaseOrderForm, 
+            JOptionPane.showMessageDialog(purchaseOrderForm,
                     "Số lượng không hợp lệ",
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(purchaseOrderForm, 
+            JOptionPane.showMessageDialog(purchaseOrderForm,
                     "Lỗi khi cập nhật số lượng: " + e.getMessage(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+    }
+
+    private void exportPDF(PurchaseOrder purchaseOrder) {
+        try {
+            // Validate dữ liệu
+            if (purchaseOrder == null) {
+                JOptionPane.showMessageDialog(purchaseOrderForm,
+                        "Không có dữ liệu phiếu nhập để xuất!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            Map<String, Object> printData = createPurchaseOrderPrintData(purchaseOrder);
+
+            String defaultFileName = "PhieuNhapHang_" + purchaseOrder.getPurchaseOrderId();
+
+            BillPrintUtils.printBill(purchaseOrderForm, "bill_purchase_order_template", printData, defaultFileName);
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xuất PDF: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(purchaseOrderForm,
+                    "Lỗi khi xuất PDF: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Tạo dữ liệu cho template phiếu nhập hàng
+     */
+    private Map<String, Object> createPurchaseOrderPrintData(PurchaseOrder purchaseOrder) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+
+        // 2. Thông tin phiếu nhập
+        data.put("purchaseOrderId", purchaseOrder.getPurchaseOrderId());
+        String formattedOrderDate = purchaseOrder.getOrderDate() != null
+                ? purchaseOrder.getOrderDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                : "";
+        data.put("orderDate", formattedOrderDate);
+
+        String formattedCreatedAt = purchaseOrder.getCreatedAt() != null
+                ? purchaseOrder.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                : LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        data.put("createdAt", formattedCreatedAt);
+        data.put("status", purchaseOrder.getStatus());
+
+        // 3. Thông tin nhà cung cấp
+        Supplier supplier = purchaseOrder.getSupplier();
+        if (supplier != null) {
+            data.put("supplierName", supplier.getName());
+            data.put("supplierAddress", supplier.getAddress());
+            data.put("supplierPhone", supplier.getPhoneNumber());
+        } else {
+            data.put("supplierName", "Chưa xác định");
+            data.put("supplierAddress", "");
+            data.put("supplierPhone", "");
+        }
+
+        // 4. Thông tin nhân viên
+        Employee employee = purchaseOrder.getEmployee();
+        if (employee != null) {
+            data.put("employeeName", employee.getFullName());
+            data.put("employeePosition", employee.getPosition() != null ? employee.getPosition() : "Nhân viên");
+        } else {
+            data.put("employeeName", "");
+            data.put("employeePosition", "");
+        }
+
+        // 5. Chi tiết sản phẩm
+        data.put("purchaseOrderDetails", createPurchaseOrderDetailsList(purchaseOrder));
+
+        // 6. Thống kê
+        Map<String, Object> summary = calculatePurchaseOrderSummary(purchaseOrder);
+        data.put("totalItems", summary.get("totalItems"));
+        data.put("totalQuantity", summary.get("totalQuantity"));
+        data.put("totalAmountPurchase", summary.get("totalAmountPurchase"));
+        data.put("totalAmount", summary.get("totalAmount"));
+
+        // 7. Ghi chú
+        data.put("notes", purchaseOrder.getNotes());
+
+        return data;
+    }
+
+    /**
+     * Tạo danh sách chi tiết phiếu nhập cho template
+     */
+    private List<Map<String, Object>> createPurchaseOrderDetailsList(PurchaseOrder purchaseOrder) throws Exception {
+        List<Map<String, Object>> details = new ArrayList<>();
+
+        List<PurchaseOrderDetail> orderDetails;
+
+        if (selectedProducts != null && !selectedProducts.isEmpty()) {
+            orderDetails = selectedProducts;
+        } else {
+            orderDetails = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrder.getPurchaseOrderId());
+        }
+
+        if (orderDetails != null) {
+            for (PurchaseOrderDetail detail : orderDetails) {
+                Map<String, Object> item = new HashMap<>();
+
+                Product product = detail.getProduct();
+                if (product != null) {
+                    item.put("productName", product.getProductName());
+                    item.put("productId", product.getProductId());
+                } else {
+                    item.put("productName", "Không xác định");
+                    item.put("productId", "");
+                }
+
+                item.put("quantity", detail.getQuantity());
+                item.put("unitCostFormatted", currencyFormat.format(detail.getUnitCost()));
+
+                // Tính thành tiền
+                BigDecimal subtotal = detail.getUnitCost().multiply(BigDecimal.valueOf(detail.getQuantity()));
+                item.put("subtotalFormatted", currencyFormat.format(subtotal));
+
+                // Ghi chú
+                // item.put("notes", detail.getNotes() != null ? detail.getNotes() : "");
+                item.put("notes", " ");
+
+                details.add(item);
+            }
+        }
+
+        return details;
+    }
+
+    /**
+     * Tính tổng kết cho phiếu nhập hàng
+     */
+    private Map<String, Object> calculatePurchaseOrderSummary(PurchaseOrder purchaseOrder) throws Exception {
+        Map<String, Object> summary = new HashMap<>();
+
+        List<PurchaseOrderDetail> orderDetails;
+
+        if (selectedProducts != null && !selectedProducts.isEmpty()) {
+            orderDetails = selectedProducts;
+        } else {
+            orderDetails = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrder.getPurchaseOrderId());
+        }
+
+        int totalItems = orderDetails != null ? orderDetails.size() : 0;
+        int totalQuantity = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        if (orderDetails != null) {
+            for (PurchaseOrderDetail detail : orderDetails) {
+                totalQuantity += detail.getQuantity();
+
+                BigDecimal subtotal = detail.getUnitCost().multiply(
+                        BigDecimal.valueOf(detail.getQuantity()));
+                totalAmount = totalAmount.add(subtotal);
+            }
+        }
+
+        summary.put("totalItems", totalItems);
+        summary.put("totalQuantity", totalQuantity);
+        summary.put("totalAmount", totalAmount);
+        summary.put("totalAmountPurchase", totalAmount);
+
+        return summary;
     }
 }

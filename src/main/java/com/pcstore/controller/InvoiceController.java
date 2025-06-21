@@ -37,6 +37,9 @@ import com.pcstore.view.PayForm;
 
 import javax.swing.*;
 import javax.swing.table.*;
+
+import java.awt.event.MouseEvent;
+
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -50,12 +53,12 @@ import java.awt.event.*;
 public class InvoiceController {
     // Singleton instance
     private static InvoiceController instance;
-    
-    private  InvoiceService invoiceService;
-    private  InvoiceDetailService invoiceDetailService;
-    private  ProductService productService;
-    private  CustomerService customerService;
-    
+
+    private InvoiceService invoiceService;
+    private InvoiceDetailService invoiceDetailService;
+    private ProductService productService;
+    private CustomerService customerService;
+
     // UI related fields
     private InvoiceForm invoiceForm;
     private InvoiceDetailController invoiceDetailController;
@@ -67,6 +70,7 @@ public class InvoiceController {
 
     /**
      * Lấy instance duy nhất của controller (Singleton pattern)
+     * 
      * @param invoiceForm Form hiển thị hóa đơn
      * @return InvoiceController instance
      */
@@ -85,6 +89,7 @@ public class InvoiceController {
 
     /**
      * Khởi tạo controller với form (Giao diện người dùng)
+     * 
      * @param invoiceForm Form hiển thị hóa đơn
      */
     private InvoiceController(InvoiceForm invoiceForm) {
@@ -95,38 +100,39 @@ public class InvoiceController {
             this.productService = ServiceFactory.getProductService();
             this.customerService = ServiceFactory.getCustomerService();
             this.invoiceDetailController = new InvoiceDetailController();
-            
+
             // Khởi tạo danh sách hóa đơn
             loadAllInvoices();
-            
+
             // Thiết lập các sự kiện cho form
             setupEventListeners();
-            
+
             // Thiết lập bảng có thể sắp xếp
             setupTableSorter();
-            
+
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+            JOptionPane.showMessageDialog(null,
+                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR.toString(), e.getMessage()),
                     ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
-     * Khởi tạo controller với connection (không liên quan đến UI, sử dụng cho các service khác)
+     * Khởi tạo controller với connection (không liên quan đến UI, sử dụng cho các
+     * service khác)
      * 
      * @param connection Kết nối database
      */
     public InvoiceController(Connection connection) {
         try {
- 
+
             // Khởi tạo các services
             this.invoiceService = ServiceFactory.getInvoiceService();
             this.invoiceDetailService = ServiceFactory.getInvoiceDetailService();
             this.productService = ServiceFactory.getProductService();
             this.customerService = ServiceFactory.getCustomerService();
             this.invoiceDetailController = new InvoiceDetailController();
-            
+
             // UI-related fields remain null as this constructor is used for non-UI contexts
             this.invoiceForm = null;
             this.invoiceDetailController = null;
@@ -134,8 +140,8 @@ public class InvoiceController {
             this.currentInvoice = null;
             this.tableSorter = null;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, 
-                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+            JOptionPane.showMessageDialog(null,
+                    String.format(ErrorMessage.INVOICE_CONTROLLER_INIT_ERROR.toString(), e.getMessage()),
                     ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -145,8 +151,9 @@ public class InvoiceController {
      * Thiết lập các sự kiện cho form
      */
     private void setupEventListeners() {
-        if (invoiceForm == null) return;
-        
+        if (invoiceForm == null)
+            return;
+
         // Thiết lập sự kiện khi chọn hóa đơn
         invoiceForm.getTableInvoice().getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
@@ -156,7 +163,7 @@ public class InvoiceController {
                         // Chuyển đổi chỉ số hàng từ view sang model nếu đang sắp xếp
                         int modelRow = invoiceForm.getTableInvoice().convertRowIndexToModel(selectedRow);
                         Object idValue = invoiceForm.getTableInvoice().getModel().getValueAt(modelRow, 2);
-                        
+
                         if (idValue != null) {
                             int invoiceId = Integer.parseInt(idValue.toString());
                             loadInvoiceDetails(invoiceId);
@@ -168,22 +175,22 @@ public class InvoiceController {
                 }
             }
         });
-        
+
         // Thiết lập sự kiện xuất Excel
         invoiceForm.getBtnExportExcel().addActionListener(e -> {
             exportAllInvoicesToExcel();
         });
-        
+
         // Thiết lập sự kiện xuất hóa đơn (PDF)
         invoiceForm.getBtnExportInvoice().addActionListener(e -> {
             printSelectedInvoice();
         });
-        
+
         // Thiết lập sự kiện xóa hóa đơn
         invoiceForm.getBtnDeleteInvoice().addActionListener(e -> {
             deleteSelectedInvoice();
         });
-        
+
         // Thiết lập sự kiện tìm kiếm
         invoiceForm.getTxtSearchField().addKeyListener(new KeyAdapter() {
             @Override
@@ -206,15 +213,16 @@ public class InvoiceController {
             }
         });
     }
-    
+
     /**
      * Thiết lập bảng có thể sắp xếp
      */
     private void setupTableSorter() {
-        if (invoiceForm == null) return;
-        
+        if (invoiceForm == null)
+            return;
+
         tableSorter = invoiceForm.getInvoiceTableSorter();
-        
+
         // comparator (cột 5 - Tổng tiền)
         tableSorter.setComparator(5, new Comparator<String>() {
             @Override
@@ -229,8 +237,8 @@ public class InvoiceController {
                 return compareAmount(s1, s2);
             }
         });
-       
-        //Comparator cột ngày (cột 3)
+
+        // Comparator cột ngày (cột 3)
         tableSorter.setComparator(3, new Comparator<String>() {
             @Override
             public int compare(String s1, String s2) {
@@ -249,21 +257,21 @@ public class InvoiceController {
         try {
             String v1 = s1.replaceAll("\\.", "").replaceAll("\\,", "");
             String v2 = s2.replaceAll("\\.", "").replaceAll("\\,", "");
-            
+
             double d1 = Double.parseDouble(v1);
             double d2 = Double.parseDouble(v2);
-            
+
             return Double.compare(d1, d2);
         } catch (Exception e) {
             return s1.compareTo(s2);
         }
     }
-    
+
     /**
      * Tạo hóa đơn mới
      * 
-     * @param customer Khách hàng
-     * @param employee Nhân viên
+     * @param customer      Khách hàng
+     * @param employee      Nhân viên
      * @param paymentMethod Phương thức thanh toán
      * @return Hóa đơn mới đã được tạo
      */
@@ -272,22 +280,22 @@ public class InvoiceController {
             // Tạo hóa đơn mới với giá trị mặc định
             Invoice invoice = Invoice.createNew(customer, employee);
             invoice.setPaymentMethod(paymentMethod);
-            
+
             Invoice result = invoiceService.createInvoice(invoice);
-            
+
             // Nếu đang chạy trong context của UI, cập nhật danh sách hóa đơn
             if (invoiceForm != null) {
                 loadAllInvoices();
             }
-            
+
             return result;
         } catch (Exception e) {
             if (invoiceForm != null) {
-                JOptionPane.showMessageDialog(null, 
-                        String.format(ErrorMessage.INVOICE_CREATE_ERROR.toString(), e.getMessage()), 
+                JOptionPane.showMessageDialog(null,
+                        ErrorMessage.INVOICE_CREATE_ERROR.format(e.getMessage()),
                         ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
-            throw new RuntimeException(String.format(ErrorMessage.INVOICE_CREATE_ERROR.toString(), e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_CREATE_ERROR.format(e.getMessage()), e);
         }
     }
 
@@ -305,7 +313,7 @@ public class InvoiceController {
         if (employee == null) {
             throw new IllegalArgumentException(ErrorMessage.INVOICE_EMPLOYEE_NULL.toString());
         }
-        
+
         try {
             Invoice invoice = new Invoice();
             invoice.setCustomer(customer);
@@ -313,31 +321,31 @@ public class InvoiceController {
             invoice.setInvoiceDate(LocalDateTime.now());
             invoice.setStatus(InvoiceStatusEnum.PENDING);
             invoice.setTotalAmount(BigDecimal.ZERO);
-            
+
             // Lưu hóa đơn vào cơ sở dữ liệu
             Invoice savedInvoice = invoiceService.createInvoice(invoice);
-            
+
             // Nếu đang chạy trong context của UI, cập nhật danh sách hóa đơn
             if (invoiceForm != null) {
                 loadAllInvoices();
             }
-            
+
             return savedInvoice;
         } catch (Exception e) {
             if (invoiceForm != null) {
-                JOptionPane.showMessageDialog(null, "Lỗi khi tạo hóa đơn mới: " + e.getMessage(), 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_CREATE_MAIN_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
-            throw new RuntimeException("Lỗi khi tạo hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_CREATE_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Thêm sản phẩm vào hóa đơn
      * 
-     * @param invoice Hóa đơn
-     * @param product Sản phẩm
-     * @param quantity Số lượng
+     * @param invoice   Hóa đơn
+     * @param product   Sản phẩm
+     * @param quantity  Số lượng
      * @param unitPrice Đơn giá (nếu null sẽ sử dụng giá mặc định của sản phẩm)
      * @return Chi tiết hóa đơn đã được thêm
      */
@@ -346,50 +354,51 @@ public class InvoiceController {
             if (invoice == null) {
                 throw new IllegalArgumentException(ErrorMessage.INVOICE_CUSTOMER_NULL.toString());
             }
-            
+
             if (product == null) {
                 throw new IllegalArgumentException(ErrorMessage.PRODUCT_NULL.toString());
             }
-            
+
             if (quantity <= 0) {
                 throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
             }
-            
+
             // Kiểm tra tồn kho
             if (product.getStockQuantity() < quantity) {
-                throw new IllegalArgumentException(String.format("Số lượng sản phẩm không đủ. Hiện chỉ còn %d", product.getStockQuantity()));
+                throw new IllegalArgumentException(
+                        ErrorMessage.INVOICE_ADD_PRODUCT_STOCK_ERROR.format(product.getStockQuantity()));
             }
-            
+
             // Tạo chi tiết hóa đơn
             InvoiceDetail detail = new InvoiceDetail();
             detail.setInvoice(invoice);
             detail.setProduct(product);
             detail.setQuantity(quantity);
             detail.setUnitPrice(unitPrice != null ? unitPrice : product.getPrice());
-            
+
             // Lưu chi tiết hóa đơn
             InvoiceDetail savedDetail = invoiceDetailService.addInvoiceDetail(detail);
-            
+
             // Cập nhật tổng tiền hóa đơn
             invoice = getInvoiceById(invoice.getInvoiceId()).orElse(invoice);
-            
+
             // Refresh UI nếu đang trong context UI
-            if (invoiceForm != null && currentInvoice != null && 
+            if (invoiceForm != null && currentInvoice != null &&
                     currentInvoice.getInvoiceId().equals(invoice.getInvoiceId())) {
                 loadInvoiceDetails(invoice.getInvoiceId());
             }
-            
+
             return savedDetail;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi thêm sản phẩm vào hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_ADD_PRODUCT_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Cập nhật số lượng sản phẩm trong hóa đơn
      * 
      * @param invoiceDetailId ID chi tiết hóa đơn
-     * @param newQuantity Số lượng mới
+     * @param newQuantity     Số lượng mới
      * @return Chi tiết hóa đơn đã được cập nhật
      */
     public InvoiceDetail updateProductQuantity(Integer invoiceDetailId, int newQuantity) {
@@ -397,43 +406,44 @@ public class InvoiceController {
             if (newQuantity <= 0) {
                 throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
             }
-            
+
             Optional<InvoiceDetail> detailOpt = invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
             if (!detailOpt.isPresent()) {
                 throw new IllegalArgumentException(ErrorMessage.INVOICE_DETAIL_PRODUCT_NULL.toString());
             }
-            
+
             InvoiceDetail detail = detailOpt.get();
-            
+
             // Kiểm tra tồn kho nếu số lượng tăng
             int oldQuantity = detail.getQuantity();
             if (newQuantity > oldQuantity) {
                 Product product = detail.getProduct();
                 int additionalQuantity = newQuantity - oldQuantity;
-                
+
                 if (product.getStockQuantity() < additionalQuantity) {
-                    throw new IllegalArgumentException(String.format("Số lượng sản phẩm không đủ. Hiện chỉ còn %d", product.getStockQuantity()));
+                    throw new IllegalArgumentException(
+                            ErrorMessage.INVOICE_UPDATE_QUANTITY_INSUFFICIENT.format(product.getStockQuantity()));
                 }
             }
-            
+
             // Cập nhật số lượng
             detail.setQuantity(newQuantity);
-            
+
             // Lưu chi tiết hóa đơn
             InvoiceDetail updatedDetail = invoiceDetailService.updateInvoiceDetail(detail);
-            
+
             // Refresh UI nếu đang trong context UI
-            if (invoiceForm != null && currentInvoice != null && 
+            if (invoiceForm != null && currentInvoice != null &&
                     currentInvoice.getInvoiceId().equals(detail.getInvoice().getInvoiceId())) {
                 loadInvoiceDetails(detail.getInvoice().getInvoiceId());
             }
-            
+
             return updatedDetail;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi cập nhật số lượng sản phẩm: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_UPDATE_QUANTITY_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Xóa sản phẩm khỏi hóa đơn
      * 
@@ -444,29 +454,28 @@ public class InvoiceController {
         try {
             Optional<InvoiceDetail> detailOpt = invoiceDetailService.findInvoiceDetailById(invoiceDetailId);
             Integer invoiceId = null;
-            
+
             if (detailOpt.isPresent()) {
                 invoiceId = detailOpt.get().getInvoice().getInvoiceId();
             }
-            
+
             boolean result = invoiceDetailService.deleteInvoiceDetail(invoiceDetailId);
-            
-            // Refresh UI nếu đang trong context UI
-            if (result && invoiceForm != null && currentInvoice != null && 
+
+            if (result && invoiceForm != null && currentInvoice != null &&
                     invoiceId != null && currentInvoice.getInvoiceId().equals(invoiceId)) {
                 loadInvoiceDetails(invoiceId);
             }
-            
+
             return result;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi xóa sản phẩm khỏi hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_REMOVE_PRODUCT_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Hoàn thành hóa đơn (thanh toán)
      * 
-     * @param invoiceId ID hóa đơn
+     * @param invoiceId     ID hóa đơn
      * @param paymentMethod Phương thức thanh toán
      * @return Hóa đơn đã được thanh toán
      */
@@ -476,37 +485,36 @@ public class InvoiceController {
             if (!invoiceOpt.isPresent()) {
                 throw new IllegalArgumentException("Hóa đơn không tồn tại");
             }
-            
+
             Invoice invoice = invoiceOpt.get();
-            
+
             // Kiểm tra hóa đơn có chi tiết không
             List<InvoiceDetail> details = invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId);
             if (details.isEmpty()) {
-                throw new IllegalStateException("Hóa đơn không có sản phẩm nào");
+                throw new IllegalStateException(ErrorMessage.INVOICE_COMPLETE_NO_DETAILS.toString());
             }
-            
+
             // Cập nhật trạng thái và phương thức thanh toán
             invoice.setStatus(InvoiceStatusEnum.PAID);
             invoice.setPaymentMethod(paymentMethod);
-            
+
             // Lưu hóa đơn
             Invoice updatedInvoice = invoiceService.updateInvoice(invoice);
-            
-            // Refresh UI nếu đang trong context UI
+
             if (invoiceForm != null) {
                 loadAllInvoices();
-                
+
                 if (currentInvoice != null && currentInvoice.getInvoiceId().equals(invoiceId)) {
                     loadInvoiceDetails(invoiceId);
                 }
             }
-            
+
             return updatedInvoice;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi hoàn thành hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_COMPLETE_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Hủy hóa đơn
      * 
@@ -519,21 +527,21 @@ public class InvoiceController {
             if (!invoiceOpt.isPresent()) {
                 throw new IllegalArgumentException("Hóa đơn không tồn tại");
             }
-            
+
             Invoice invoice = invoiceOpt.get();
-            
+
             // Chỉ hủy được hóa đơn ở trạng thái chờ xử lý hoặc đang xử lý
-            if (invoice.getStatus() != InvoiceStatusEnum.PENDING && 
-                invoice.getStatus() != InvoiceStatusEnum.PROCESSING) {
-                throw new IllegalStateException("Không thể hủy hóa đơn ở trạng thái " + invoice.getStatus());
+            if (invoice.getStatus() != InvoiceStatusEnum.PENDING &&
+                    invoice.getStatus() != InvoiceStatusEnum.PROCESSING) {
+                throw new IllegalStateException(ErrorMessage.INVOICE_CANCEL_INVALID_STATUS.format(invoice.getStatus()));
             }
-            
+
             // Cập nhật trạng thái
             invoice.setStatus(InvoiceStatusEnum.CANCELLED);
-            
+
             // Lưu hóa đơn
             invoiceService.updateInvoice(invoice);
-            
+
             // Hoàn trả số lượng sản phẩm vào tồn kho
             List<InvoiceDetail> details = invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId);
             for (InvoiceDetail detail : details) {
@@ -541,63 +549,70 @@ public class InvoiceController {
                 product.increaseStock(detail.getQuantity());
                 productService.updateProduct(product);
             }
-            
+
             // Refresh UI nếu đang trong context UI
             if (invoiceForm != null) {
                 loadAllInvoices();
-                
+
                 if (currentInvoice != null && currentInvoice.getInvoiceId().equals(invoiceId)) {
                     loadInvoiceDetails(invoiceId);
                 }
             }
-            
+
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi hủy hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_CANCEL_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Lấy danh sách tất cả hóa đơn
+     * 
      * @return Danh sách hóa đơn
      */
     public List<Invoice> getAllInvoices() {
         try {
-            System.out.println("Đang lấy danh sách tất cả hóa đơn...");
+            // System.out.println("Đang lấy danh sách tất cả hóa đơn...");
             List<Invoice> invoices = invoiceService.findAllInvoices();
-            
+
             if (invoices == null) {
-                System.err.println("InvoiceService.findAllInvoices() trả về null");
+                // System.err.println("InvoiceService.findAllInvoices() trả về null");
                 return new ArrayList<>();
             }
-            
-            System.out.println("Lấy được " + invoices.size() + " hóa đơn");
+
+            // System.out.println("Lấy được " + invoices.size() + " hóa đơn");
             return invoices;
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy danh sách hóa đơn: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_LOAD_ALL_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return new ArrayList<>();
         }
     }
-    
+
     /**
      * Lấy danh sách tất cả hóa đơn có thể trả hàng
+     * 
      * @return Danh sách hóa đơn có thể trả hàng
      */
     public List<Invoice> getAllInvoicesForReturn() {
         try {
-            System.out.println("Đang lấy danh sách hóa đơn có thể trả hàng...");
+            // System.out.println("Đang lấy danh sách hóa đơn có thể trả hàng...");
             List<Invoice> invoices = invoiceService.findAllInvoicesForReturn();
-            
+
             if (invoices == null) {
-                System.out.println("Không có hóa đơn nào có thể trả hàng.");
+                // System.out.println("Không có hóa đơn nào có thể trả hàng.");
                 return new ArrayList<>();
             }
-            
-            System.out.println("Tìm thấy " + invoices.size() + " hóa đơn có thể trả hàng.");
+
+            // System.out.println("Tìm thấy " + invoices.size() + " hóa đơn có thể trả
+            // hàng.");
             return invoices;
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy hóa đơn cho trả hàng: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_INVOICES_FOR_RETURN_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -605,13 +620,16 @@ public class InvoiceController {
 
     /**
      * Lấy danh sách tất cả hóa đơn cho màn hình bảo hành
+     * 
      * @return Danh sách hóa đơn với chi tiết sản phẩm
      */
     public List<Invoice> getAllInvoicesForWarranty() {
         try {
             return invoiceService.findAllInvoicesForWarranty();
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy danh sách hóa đơn cho bảo hành: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_INVOICES_FOR_WARRANTY_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -619,6 +637,7 @@ public class InvoiceController {
 
     /**
      * Lấy danh sách chi tiết hóa đơn cho màn hình bảo hành
+     * 
      * @param invoiceId ID hóa đơn
      * @return Danh sách chi tiết hóa đơn với thông tin sản phẩm
      */
@@ -632,10 +651,9 @@ public class InvoiceController {
         }
     }
 
-    
-
     /**
      * Lấy danh sách chi tiết hóa đơn có thể trả hàng
+     * 
      * @param invoiceId ID hóa đơn cần lấy chi tiết
      * @return Danh sách chi tiết hóa đơn có thể trả hàng
      */
@@ -644,50 +662,48 @@ public class InvoiceController {
             if (invoiceId == null) {
                 return new ArrayList<>();
             }
-            
+
             List<InvoiceDetail> allDetails = getInvoiceDetails(invoiceId);
             List<InvoiceDetail> returnableDetails = new ArrayList<>();
-            
-            // Lấy thông tin về các đơn trả hàng đã có
+
             ReturnController returnController = new ReturnController(
-                ServiceFactory.getInstance().getConnection(),
-                ServiceFactory.getInvoiceService(), 
-                ServiceFactory.getProductService()
-            );
-            
+                    ServiceFactory.getInstance().getConnection(),
+                    ServiceFactory.getInvoiceService(),
+                    ServiceFactory.getProductService());
+
             for (InvoiceDetail detail : allDetails) {
                 try {
                     // Lấy số lượng đã trả
                     List<Return> returns = returnController.getReturnsByInvoiceDetail(detail.getInvoiceDetailId());
                     int returnedQuantity = 0;
-                    
+
                     if (returns != null) {
                         for (Return ret : returns) {
-                            if (ret != null && ("Approved".equals(ret.getStatus()) || 
-                                               "Completed".equals(ret.getStatus()))) {
+                            if (ret != null && ("Approved".equals(ret.getStatus()) ||
+                                    "Completed".equals(ret.getStatus()))) {
                                 returnedQuantity += ret.getQuantity();
                             }
                         }
                     }
-                    
-                    // Tính số lượng còn lại có thể trả
+
                     int remainingQuantity = detail.getQuantity() - returnedQuantity;
-                    
-                    // Nếu còn có thể trả, thêm vào danh sách
+
                     if (remainingQuantity > 0) {
-                        // Thay vì sử dụng setAvailableQuantity, lưu tạm thời trong một map
                         detail.setExtraData("availableQuantity", remainingQuantity);
-                        // Hoặc nếu không có phương thức setExtraData, chỉ thêm vào danh sách
                         returnableDetails.add(detail);
                     }
                 } catch (Exception e) {
-                    System.err.println("Lỗi khi xử lý chi tiết hóa đơn " + detail.getInvoiceDetailId() + ": " + e.getMessage());
+                    JOptionPane.showMessageDialog(null,
+                            ErrorMessage.INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR.format(e.getMessage()),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
             }
-            
+
             return returnableDetails;
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy chi tiết hóa đơn có thể trả: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_RETURNABLE_DETAILS_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -695,13 +711,16 @@ public class InvoiceController {
 
     /**
      * Lấy danh sách tất cả hóa đơn cho màn hình trả hàng
+     * 
      * @return Danh sách hóa đơn đơn giản
      */
     public List<Invoice> getAllInvoicesSimple() {
         try {
             return invoiceService.findAllInvoicesSimple();
         } catch (Exception e) {
-            System.err.println("Lỗi khi lấy danh sách hóa đơn đơn giản: " + e.getMessage());
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_INVOICES_SIMPLE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return new ArrayList<>();
         }
@@ -720,7 +739,7 @@ public class InvoiceController {
             throw new RuntimeException("Lỗi khi lấy hóa đơn: " + e.getMessage(), e);
         }
     }
-    
+
     /**
      * Lấy chi tiết hóa đơn
      * 
@@ -734,7 +753,7 @@ public class InvoiceController {
             throw new RuntimeException("Lỗi khi lấy chi tiết hóa đơn: " + e.getMessage(), e);
         }
     }
-    
+
     /**
      * Lấy chi tiết hóa đơn theo ID chi tiết hóa đơn
      * 
@@ -748,7 +767,7 @@ public class InvoiceController {
             throw new RuntimeException("Lỗi khi lấy chi tiết hóa đơn: " + e.getMessage(), e);
         }
     }
-    
+
     /**
      * Tìm hóa đơn theo khách hàng
      * 
@@ -759,10 +778,11 @@ public class InvoiceController {
         try {
             return invoiceService.findInvoicesByCustomerID(customerId);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm hóa đơn theo khách hàng: " + e.getMessage(), e);
+
+            throw new RuntimeException(ErrorMessage.INVOICE_SEARCH_BY_CUSTOMER_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Lấy danh sách hóa đơn theo số điện thoại khách hàng
      * 
@@ -773,7 +793,7 @@ public class InvoiceController {
         try {
             // Tìm khách hàng theo số điện thoại
             Optional<Customer> customerOpt = customerService.findCustomerByPhone(phoneNumber);
-            
+
             if (customerOpt.isPresent()) {
                 return invoiceService.findInvoicesByCustomerID(customerOpt.get().getCustomerId());
             } else {
@@ -781,10 +801,10 @@ public class InvoiceController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi khi lấy hóa đơn theo số điện thoại: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_SEARCH_BY_CUSTOMER_PHONE_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Tìm hóa đơn theo nhân viên
      * 
@@ -795,40 +815,40 @@ public class InvoiceController {
         try {
             return invoiceService.findInvoicesByEmployee(employeeId);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm hóa đơn theo nhân viên: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_SEARCH_BY_EMPLOYEE_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Tìm hóa đơn trong khoảng thời gian
      * 
      * @param startDate Thời gian bắt đầu
-     * @param endDate Thời gian kết thúc
+     * @param endDate   Thời gian kết thúc
      * @return Danh sách hóa đơn trong khoảng thời gian
      */
     public List<Invoice> getInvoicesByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
         try {
             return invoiceService.findInvoicesByDateRange(startDate, endDate);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tìm hóa đơn theo khoảng thời gian: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_SEARCH_BY_DATE_RANGE_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Tính tổng doanh thu trong khoảng thời gian
      * 
      * @param startDate Thời gian bắt đầu
-     * @param endDate Thời gian kết thúc
+     * @param endDate   Thời gian kết thúc
      * @return Tổng doanh thu
      */
     public BigDecimal calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
         try {
             return invoiceService.calculateRevenue(startDate, endDate);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi tính doanh thu: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_CALCULATE_REVENUE_ERROR.format(e.getMessage()), e);
         }
     }
-    
+
     /**
      * Tìm kiếm hóa đơn theo từ khóa
      * 
@@ -837,17 +857,15 @@ public class InvoiceController {
      */
     public List<Invoice> searchInvoices(String keyword) {
         try {
-            // Nếu không có form thì dùng phương thức tìm kiếm cũ
             if (invoiceForm == null || tableSorter == null) {
                 return new ArrayList<>();
             }
-            
-            // Xóa bộ lọc nếu từ khóa trống
+
             if (keyword == null || keyword.trim().isEmpty()) {
                 tableSorter.setRowFilter(null);
                 return invoiceList;
             }
-            
+
             // Sử dụng TableStyleUtil để áp dụng bộ lọc
             // Các cột cần tìm kiếm:
             // 2: ID hóa đơn
@@ -859,14 +877,13 @@ public class InvoiceController {
             // 9: SĐT khách hàng
             // 10: Trạng thái
             TableUtils.applyFilter(tableSorter, keyword, 2, 3, 4, 6, 7, 8, 9, 10);
-            
-            // Tạo danh sách kết quả từ các hàng được lọc
+
             List<Invoice> filteredInvoices = new ArrayList<>();
             for (int i = 0; i < tableSorter.getViewRowCount(); i++) {
                 int modelRow = tableSorter.convertRowIndexToModel(i);
-                int invoiceId = Integer.parseInt(invoiceForm.getTableInvoice().getModel().getValueAt(modelRow, 2).toString());
-                
-                // Tìm invoice tương ứng từ danh sách
+                int invoiceId = Integer
+                        .parseInt(invoiceForm.getTableInvoice().getModel().getValueAt(modelRow, 2).toString());
+
                 for (Invoice invoice : invoiceList) {
                     if (invoice.getInvoiceId() == invoiceId) {
                         filteredInvoices.add(invoice);
@@ -874,13 +891,14 @@ public class InvoiceController {
                     }
                 }
             }
-            
+
             return filteredInvoices;
         } catch (Exception e) {
-            System.err.println("Lỗi khi tìm kiếm hóa đơn: " + e.getMessage());
             e.printStackTrace();
-            
-           return new ArrayList<>();
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_SEARCH_INVOICES_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            return new ArrayList<>();
         }
     }
 
@@ -892,7 +910,7 @@ public class InvoiceController {
             tableSorter.setRowFilter(null);
         }
     }
-    
+
     /**
      * Xóa hóa đơn
      * 
@@ -906,47 +924,44 @@ public class InvoiceController {
             if (!invoiceOpt.isPresent()) {
                 throw new IllegalArgumentException("Hóa đơn không tồn tại");
             }
-            
+
             Invoice invoice = invoiceOpt.get();
-            
+
             // Chỉ cho phép xóa hóa đơn ở trạng thái PENDING, PROCESSING hoặc CANCELLED
-            if (invoice.getStatus() != InvoiceStatusEnum.PENDING && 
-                invoice.getStatus() != InvoiceStatusEnum.PROCESSING && 
-                invoice.getStatus() != InvoiceStatusEnum.CANCELLED) {
-                throw new IllegalStateException("Không thể xóa hóa đơn đã thanh toán hoặc đã giao");
+            if (invoice.getStatus() != InvoiceStatusEnum.PENDING &&
+                    invoice.getStatus() != InvoiceStatusEnum.PROCESSING &&
+                    invoice.getStatus() != InvoiceStatusEnum.CANCELLED) {
+                throw new IllegalArgumentException(ErrorMessage.INVOICE_DELETE_INVALID_STATUS.toString());
             }
-            
-            // Hoàn trả số lượng sản phẩm vào tồn kho
+
             List<InvoiceDetail> details = invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId);
             for (InvoiceDetail detail : details) {
                 Product product = detail.getProduct();
                 product.increaseStock(detail.getQuantity());
                 productService.updateProduct(product);
             }
-            
+
             // Xóa hóa đơn
             boolean result = invoiceService.deleteInvoice(invoiceId);
-            
-            // Nếu đang trong context UI, cập nhật danh sách hóa đơn
+
             if (result && invoiceForm != null) {
                 loadAllInvoices();
-                
-                // Nếu hóa đơn đang hiển thị chi tiết bị xóa, xóa dữ liệu chi tiết
+
                 if (currentInvoice != null && currentInvoice.getInvoiceId().equals(invoiceId)) {
                     currentInvoice = null;
                     DefaultTableModel model = (DefaultTableModel) invoiceForm.getTableInvoiceDetail().getModel();
                     model.setRowCount(0);
                 }
             }
-            
+
             return result;
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi xóa hóa đơn: " + e.getMessage(), e);
+            throw new RuntimeException(ErrorMessage.INVOICE_DELETE_MAIN_ERROR.format(e.getMessage()), e);
         }
     }
 
-    //==================== UI Related Methods ====================
-    
+    // ==================== UI Related Methods ====================
+
     /**
      * Tải tất cả hóa đơn và cập nhật UI
      */
@@ -954,31 +969,33 @@ public class InvoiceController {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể tải hóa đơn khi không có form");
         }
-        
+
         try {
             invoiceList = invoiceService.findAllInvoices();
             updateInvoiceTable(invoiceList);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải danh sách hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_LOAD_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * Cập nhật bảng hiển thị hóa đơn
+     * 
      * @param invoices Danh sách hóa đơn cần hiển thị
      */
     private void updateInvoiceTable(List<Invoice> invoices) {
-        if (invoiceForm == null) return;
-        
+        if (invoiceForm == null)
+            return;
+
         DefaultTableModel model = (DefaultTableModel) invoiceForm.getTableInvoice().getModel();
         model.setRowCount(0);
-        
+
         int count = 0;
         for (Invoice invoice : invoices) {
             count++;
             Object[] row = new Object[12]; // Increased array size to accommodate the new column
-            row[0] = false; 
+            row[0] = false;
             row[1] = count;
             row[2] = invoice.getInvoiceId();
             row[3] = invoice.getInvoiceDate() != null ? invoice.getInvoiceDate().format(dateFormatter) : "";
@@ -987,43 +1004,43 @@ public class InvoiceController {
             row[6] = invoice.getTotalAmount() != null ? currencyFormatter.format(invoice.getTotalAmount()) : "";
             row[7] = getPaymentMethodDisplay(invoice.getPaymentMethod());
             row[8] = invoice.getCustomer() != null ? invoice.getCustomer().getFullName() : "";
-            row[9] = invoice.getCustomer() != null ? invoice.getCustomer().getPhoneNumber() : ""; 
+            row[9] = invoice.getCustomer() != null ? invoice.getCustomer().getPhoneNumber() : "";
             row[10] = getStatusDisplay(invoice.getStatus());
-            row[11] = ""; 
-            
+            row[11] = "";
+
             model.addRow(row);
         }
     }
-    
+
     /**
      * Tải chi tiết hóa đơn theo ID
+     * 
      * @param invoiceId ID của hóa đơn cần tải chi tiết
      */
     public void loadInvoiceDetails(int invoiceId) {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể tải chi tiết hóa đơn khi không có form");
         }
-        
+
         try {
             Optional<Invoice> invoiceOpt = invoiceService.findInvoiceById(invoiceId);
-            
+
             if (invoiceOpt.isPresent()) {
                 Invoice invoice = invoiceOpt.get();
                 currentInvoice = invoice;
-                
+
                 List<InvoiceDetail> details = invoiceDetailService.findInvoiceDetailsByInvoiceId(invoiceId);
-                
+
                 invoice.setInvoiceDetails(details);
-                
+
                 // Cập nhật bảng chi tiết
                 if (invoiceDetailController != null) {
-                    invoiceDetailController.updateInvoiceDetailTable(details, 
+                    invoiceDetailController.updateInvoiceDetailTable(details,
                             invoiceForm.getTableInvoiceDetail());
                 } else {
-                    // Cập nhật bảng theo cách thủ công nếu controller là null
                     DefaultTableModel detailModel = (DefaultTableModel) invoiceForm.getTableInvoiceDetail().getModel();
                     detailModel.setRowCount(0);
-                    
+
                     int no = 1;
                     for (InvoiceDetail detail : details) {
                         Object[] row = new Object[6]; // Điều chỉnh số cột nếu cần
@@ -1036,26 +1053,25 @@ public class InvoiceController {
                         detailModel.addRow(row);
                     }
                 }
-                
+
             } else {
-                System.err.println("Không tìm thấy hóa đơn với ID: " + invoiceId);
-                // Nếu không tìm thấy hóa đơn, xóa bảng chi tiết
+                // System.err.println("Không tìm thấy hóa đơn với ID: " + invoiceId);
                 DefaultTableModel model = (DefaultTableModel) invoiceForm.getTableInvoiceDetail().getModel();
                 model.setRowCount(0);
                 currentInvoice = null;
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải chi tiết hóa đơn: " + e.getMessage());
+            System.err.println(ErrorMessage.INVOICE_DETAIL_LOAD_ERROR.format(e.getMessage()));
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải chi tiết hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    
+            JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_DETAIL_LOAD_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+
             // Xóa bảng chi tiết khi có lỗi
             DefaultTableModel model = (DefaultTableModel) invoiceForm.getTableInvoiceDetail().getModel();
             model.setRowCount(0);
         }
     }
-    
+
     /**
      * In hóa đơn được chọn
      */
@@ -1063,53 +1079,55 @@ public class InvoiceController {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể in hóa đơn khi không có form");
         }
-        
+
         int selectedRow = invoiceForm.getTableInvoice().getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn hóa đơn cần in!", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_SELECT_TO_PRINT.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         try {
             // Chuyển đổi chỉ số hàng từ view sang model nếu đang sắp xếp
             int modelRow = invoiceForm.getTableInvoice().convertRowIndexToModel(selectedRow);
-            int invoiceId = Integer.parseInt(invoiceForm.getTableInvoice().getModel().getValueAt(modelRow, 2).toString());
-            
+            int invoiceId = Integer
+                    .parseInt(invoiceForm.getTableInvoice().getModel().getValueAt(modelRow, 2).toString());
+
             Optional<Invoice> invoiceOpt = invoiceService.findInvoiceById(invoiceId);
             if (invoiceOpt.isPresent()) {
                 Invoice invoice = invoiceOpt.get();
-                
-                if (invoice.getStatus() != InvoiceStatusEnum.COMPLETED && 
-                    invoice.getStatus() != InvoiceStatusEnum.PAID) {
-                    JOptionPane.showMessageDialog(null, "Hóa đơn chưa hoàn thành thanh toán!", 
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+                if (invoice.getStatus() != InvoiceStatusEnum.COMPLETED &&
+                        invoice.getStatus() != InvoiceStatusEnum.PAID) {
+                    JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PRINT_INCOMPLETE.toString(),
+                            ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
 
-                int option = JOptionPane.showConfirmDialog(null, 
-                        "Bạn có muốn in hóa đơn này không?", "Xác nhận", 
+                int option = JOptionPane.showConfirmDialog(null,
+                        ErrorMessage.INVOICE_PRINT_CONFIRM.toString(), ErrorMessage.CONFIRM_TITLE.toString(),
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
                 if (option != JOptionPane.YES_OPTION) {
                     return;
                 }
 
-                boolean success = ExportInvoice.exportPDF(invoice, invoice.getPaymentMethod()); // Không cần payment object vì chỉ in lại hóa đơn
-                
+                boolean success = ExportInvoice.exportPDF(invoice, invoice.getPaymentMethod()); // Không cần payment
+
                 if (success) {
-                    JOptionPane.showMessageDialog(null, "In hóa đơn thành công!", 
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PRINT_SUCCESS.toString(),
+                            ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(null, "In hóa đơn thất bại!", 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PRINT_FAILED.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khi in hóa đơn: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(invoiceForm, ErrorMessage.INVOICE_PRINT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * Xử lý thanh toán hóa đơn cho những hóa đơn Đang chờ xử lý
      */
@@ -1117,28 +1135,28 @@ public class InvoiceController {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể thanh toán hóa đơn khi không có form");
         }
-        
+
         int selectedRow = invoiceForm.getTableInvoice().getSelectedRow();
         if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn hóa đơn cần thanh toán!", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PAYMENT_NO_SELECTION.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         // Chuyển đổi chỉ số hàng từ view sang model nếu đang sắp xếp
         int modelRow = invoiceForm.getTableInvoice().convertRowIndexToModel(selectedRow);
         int invoiceId = Integer.parseInt(invoiceForm.getTableInvoice().getModel().getValueAt(modelRow, 2).toString());
-        
+
         Optional<Invoice> invoiceOpt = invoiceService.findInvoiceById(invoiceId);
         if (invoiceOpt.isPresent()) {
             Invoice invoice = invoiceOpt.get();
-            if (invoice.getStatus() == InvoiceStatusEnum.COMPLETED || 
+            if (invoice.getStatus() == InvoiceStatusEnum.COMPLETED ||
                     invoice.getStatus() == InvoiceStatusEnum.PAID) {
-                JOptionPane.showMessageDialog(null, "Hóa đơn đã được thanh toán!", 
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PAYMENT_ALREADY_PAID.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            
+
             // form thanh toán hóa đơn
             DashboardForm dashboardForm = DashboardForm.getInstance();
             PayForm paymentForm = new PayForm(dashboardForm, true);
@@ -1149,34 +1167,34 @@ public class InvoiceController {
                 invoice.setStatus(InvoiceStatusEnum.COMPLETED);
                 invoice.setPaymentMethod(paymentController.getCurrentPayment().getPaymentMethod());
 
-                //Cập nhật chi tiết hóa đơn
+                // Cập nhật chi tiết hóa đơn
                 invoiceService.updateInvoice(invoice);
-                
+
                 loadAllInvoices();
-                JOptionPane.showMessageDialog(null, "Thanh toán hóa đơn thành công!", 
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            
+                JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PAYMENT_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
+
                 boolean success = false;
-                
+
                 try {
                     success = ExportInvoice.exportPDF(invoice, paymentController.getCurrentPayment());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "Lỗi khi in hóa đơn: " + e.getMessage(), 
+                    JOptionPane.showMessageDialog(null, "Lỗi khi in hóa đơn: " + e.getMessage(),
                             "Lỗi", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
-                        
+
                 if (success) {
-                    JOptionPane.showMessageDialog(null, "In hóa đơn thành công!", 
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(invoiceForm, ErrorMessage.INVOICE_PRINT_SUCCESS.toString(),
+                            ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(null, "In hóa đơn thất bại!", 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(invoiceForm, ErrorMessage.INVOICE_PRINT_FAILED.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Không tìm thấy hóa đơn!", 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(invoiceForm, ErrorMessage.INVOICE_NOT_FOUND.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1187,11 +1205,11 @@ public class InvoiceController {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể xóa hóa đơn khi không có form");
         }
-        
+
         DefaultTableModel model = (DefaultTableModel) invoiceForm.getTableInvoice().getModel();
         int rowCount = model.getRowCount();
         List<Integer> invoiceIdsToDelete = new ArrayList<>();
-        
+
         // Thu thập tất cả ID hóa đơn được tích chọn
         for (int i = 0; i < rowCount; i++) {
             Boolean isChecked = (Boolean) model.getValueAt(i, 0);
@@ -1201,112 +1219,111 @@ public class InvoiceController {
                 invoiceIdsToDelete.add(invoiceId);
             }
         }
-        
+
         // Nếu không có hóa đơn nào được tích chọn
         if (invoiceIdsToDelete.isEmpty()) {
-            JOptionPane.showMessageDialog(null, 
-                    "Vui lòng tích chọn ít nhất một hóa đơn để xóa!", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    ErrorMessage.INVOICE_DELETE_SELECTED_NO_SELECTION.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         // Hiển thị hộp thoại xác nhận
-        String message = "Bạn có chắc chắn muốn xóa " + invoiceIdsToDelete.size() + 
-                " hóa đơn đã chọn?";
-        int option = JOptionPane.showConfirmDialog(null, message, 
-                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-        
+        String message = ErrorMessage.INVOICE_DELETE_SELECTED_CONFIRM.format(invoiceIdsToDelete.size());
+        int option = JOptionPane.showConfirmDialog(null, message,
+                ErrorMessage.INVOICE_DELETE_SELECTED_TITLE.toString(), JOptionPane.YES_NO_OPTION);
+
         if (option == JOptionPane.YES_OPTION) {
             int successCount = 0;
             int failCount = 0;
             List<String> errorMessages = new ArrayList<>();
-            
+
             for (Integer invoiceId : invoiceIdsToDelete) {
                 try {
                     // Kiểm tra trạng thái của hóa đơn trước khi xóa
                     Optional<Invoice> invoiceOpt = invoiceService.findInvoiceById(invoiceId);
                     if (invoiceOpt.isPresent()) {
                         Invoice invoice = invoiceOpt.get();
-                        if (invoice.getStatus() == InvoiceStatusEnum.PAID || 
+                        if (invoice.getStatus() == InvoiceStatusEnum.PAID ||
                                 invoice.getStatus() == InvoiceStatusEnum.DELIVERED) {
-                            errorMessages.add("Hóa đơn #" + invoiceId + ": Không thể xóa hóa đơn đã thanh toán hoặc đã giao hàng!");
+                            errorMessages.add(ErrorMessage.INVOICE_DELETE_SELECTED_PAID_OR_DELIVERED.format(invoiceId));
                             failCount++;
                             continue;
                         }
                     }
-                    
+
                     boolean success = invoiceService.deleteInvoice(invoiceId);
                     if (success) {
                         successCount++;
                     } else {
                         failCount++;
-                        errorMessages.add("Hóa đơn #" + invoiceId + ": Xóa thất bại!");
+                        errorMessages.add(ErrorMessage.INVOICE_DELETE_SELECTED_FAIL_DETAIL.format(invoiceId));
+
                     }
                 } catch (Exception e) {
                     failCount++;
-                    errorMessages.add("Hóa đơn #" + invoiceId + ": " + e.getMessage());
+                    errorMessages.add(ErrorMessage.INVOICE_DELETE_SINGLE_ERROR.format(invoiceId, e.getMessage()));
                 }
             }
-            
+
             // Hiển thị kết quả
             StringBuilder resultMessage = new StringBuilder();
             if (successCount > 0) {
-                resultMessage.append("Đã xóa thành công ").append(successCount).append(" hóa đơn.\n");
+                resultMessage.append(ErrorMessage.INVOICE_DELETE_SELECTED_SUCCESS.format(successCount));
             }
-            
+
             if (failCount > 0) {
-                resultMessage.append("Không thể xóa ").append(failCount).append(" hóa đơn.\n\n");
-                resultMessage.append("Chi tiết lỗi:\n");
-                
+                resultMessage.append(ErrorMessage.INVOICE_DELETE_SELECTED_FAILED.format(failCount));
+                resultMessage.append(ErrorMessage.INVOICE_DELETE_SELECTED_DETAILS.toString());
+
                 for (String error : errorMessages) {
                     resultMessage.append("- ").append(error).append("\n");
                 }
             }
-            
-            JOptionPane.showMessageDialog(null, resultMessage.toString(), 
-                    (failCount > 0) ? "Kết quả xóa hóa đơn" : "Thành công", 
+
+            JOptionPane.showMessageDialog(null, resultMessage.toString(),
+                    (failCount > 0) ? ErrorMessage.INVOICE_DELETE_SELECTED_RESULT_TITLE.toString()
+                            : ErrorMessage.INFO_TITLE.toString(),
                     (failCount > 0) ? JOptionPane.WARNING_MESSAGE : JOptionPane.INFORMATION_MESSAGE);
-            
-            // Cập nhật lại danh sách hóa đơn
+
             loadAllInvoices();
         }
     }
-    
+
     /**
      * Xử lý thanh toán hóa đơn
-     * @param invoice Hóa đơn cần thanh toán
+     * 
+     * @param invoice       Hóa đơn cần thanh toán
      * @param paymentMethod Phương thức thanh toán
      * @return true nếu thanh toán thành công, ngược lại là false
      */
     public boolean processPayment(Invoice invoice, PaymentMethodEnum paymentMethod) {
         try {
-            // Cập nhật thông tin thanh toán
             invoice.setStatus(InvoiceStatusEnum.PAID);
             invoice.setPaymentMethod(paymentMethod);
             invoice.setUpdatedAt(LocalDateTime.now());
-            
-            // Cập nhật hóa đơn
+
             Invoice updatedInvoice = invoiceService.updateInvoice(invoice);
-            
-            // Nếu đang trong context UI, cập nhật danh sách hóa đơn
+
             if (invoiceForm != null) {
                 loadAllInvoices();
             }
-            
+
             return updatedInvoice != null;
         } catch (Exception e) {
             if (invoiceForm != null) {
-                JOptionPane.showMessageDialog(null, "Lỗi khi xử lý thanh toán: " + e.getMessage(), 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_PROCESS_PAYMENT_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
             return false;
         }
     }
-    
+
     /**
      * Cập nhật trạng thái hóa đơn
+     * 
      * @param invoiceId ID của hóa đơn
-     * @param status Trạng thái mới
+     * @param status    Trạng thái mới
      * @return true nếu cập nhật thành công, ngược lại là false
      */
     public boolean updateInvoiceStatus(int invoiceId, InvoiceStatusEnum status) {
@@ -1316,29 +1333,30 @@ public class InvoiceController {
                 Invoice invoice = invoiceOpt.get();
                 invoice.setStatus(status);
                 invoice.setUpdatedAt(LocalDateTime.now());
-                
+
                 // Cập nhật hóa đơn
                 Invoice updatedInvoice = invoiceService.updateInvoice(invoice);
-                
+
                 // Nếu đang trong context UI, cập nhật danh sách hóa đơn
                 if (invoiceForm != null) {
                     loadAllInvoices();
                 }
-                
+
                 return updatedInvoice != null;
             }
             return false;
         } catch (Exception e) {
             if (invoiceForm != null) {
-                JOptionPane.showMessageDialog(null, "Lỗi khi cập nhật trạng thái hóa đơn: " + e.getMessage(), 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, ErrorMessage.INVOICE_UPDATE_STATUS_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
             return false;
         }
     }
-    
+
     /**
      * Lấy chuỗi hiển thị cho phương thức thanh toán
+     * 
      * @param paymentMethod Phương thức thanh toán
      * @return Chuỗi hiển thị
      */
@@ -1346,20 +1364,28 @@ public class InvoiceController {
         if (paymentMethod == null) {
             return "Chưa thanh toán";
         }
-        
+
         switch (paymentMethod) {
-            case CASH: return "Tiền mặt";
-            case CREDIT_CARD: return "Thẻ tín dụng";
-            case BANK_TRANSFER: return "Chuyển khoản";
-            case E_WALLET: return "Ví điện tử";
-            case MOMO: return "MoMo";
-            case ZALOPAY: return "ZaloPay";
-            default: return "Khác";
+            case CASH:
+                return "Tiền mặt";
+            case CREDIT_CARD:
+                return "Thẻ tín dụng";
+            case BANK_TRANSFER:
+                return "Chuyển khoản";
+            case E_WALLET:
+                return "Ví điện tử";
+            case MOMO:
+                return "MoMo";
+            case ZALOPAY:
+                return "ZaloPay";
+            default:
+                return "Khác";
         }
     }
-    
+
     /**
      * Lấy chuỗi hiển thị cho trạng thái hóa đơn
+     * 
      * @param status Trạng thái hóa đơn
      * @return Chuỗi hiển thị
      */
@@ -1367,19 +1393,24 @@ public class InvoiceController {
         if (status == null) {
             return "Chưa xác định";
         }
-        
+
         switch (status) {
-            case PENDING: return "Đang xử lý";
-            case PAID: return "Đã thanh toán";
-            case CANCELLED: return "Đã hủy";
-            case DELIVERED: return "Đã giao hàng";
-            case COMPLETED: return "Hoàn thành";
-            case PROCESSING: return "Đang xử lý";
-            default: return "Khác";
+            case PENDING:
+                return "Đang xử lý";
+            case PAID:
+                return "Đã thanh toán";
+            case CANCELLED:
+                return "Đã hủy";
+            case DELIVERED:
+                return "Đã giao hàng";
+            case COMPLETED:
+                return "Hoàn thành";
+            case PROCESSING:
+                return "Đang xử lý";
+            default:
+                return "Khác";
         }
     }
-    
-
 
     /**
      * Xuất danh sách hóa đơn ra file Excel theo dữ liệu hiển thị trên bảng hiện tại
@@ -1388,29 +1419,29 @@ public class InvoiceController {
         if (invoiceForm == null) {
             throw new IllegalStateException("Không thể xuất Excel khi không có form");
         }
-            
+
         JTable table = invoiceForm.getTableInvoice();
         int rowCount = table.getRowCount();
-        
+
         // Kiểm tra xem có dữ liệu để xuất không
         if (rowCount == 0) {
-            JOptionPane.showMessageDialog(invoiceForm, 
-                    "Không có dữ liệu hóa đơn để xuất",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(invoiceForm,
+                    ErrorMessage.INVOICE_EXPORT_EXCEL_NO_DATA.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
+
         try {
             // Tạo dữ liệu xuất ra Excel
-            String[] headers = {"STT", "Mã hóa đơn", "Ngày tạo", "Nhân viên", "Khách hàng", 
-                               "Số điện thoại", "Tổng tiền", "Giảm giá", "Thanh toán", "Trạng thái", "Ghi chú"};
-            
+            String[] headers = { "STT", "Mã hóa đơn", "Ngày tạo", "Nhân viên", "Khách hàng",
+                    "Số điện thoại", "Tổng tiền", "Giảm giá", "Thanh toán", "Trạng thái", "Ghi chú" };
+
             Object[][] data = new Object[rowCount][headers.length];
-            
+
             for (int i = 0; i < rowCount; i++) {
                 // STT theo thứ tự trong bảng
                 data[i][0] = i + 1;
-                
+
                 // Lấy dữ liệu từ bảng
                 int invoiceId = Integer.parseInt(table.getValueAt(i, 2).toString());
                 data[i][1] = invoiceId;
@@ -1418,67 +1449,71 @@ public class InvoiceController {
                 data[i][3] = table.getValueAt(i, 4); // Nhân viên
                 data[i][4] = table.getValueAt(i, 8); // Khách hàng
                 data[i][5] = table.getValueAt(i, 9); // Số điện thoại
-                
+
                 // Xử lý tổng tiền và giảm giá (loại bỏ định dạng tiền tệ)
                 String totalAmount = table.getValueAt(i, 6).toString();
                 String discountAmount = table.getValueAt(i, 5).toString();
-                
+
                 totalAmount = totalAmount.replace(".", "").replace(",", "");
                 discountAmount = discountAmount.replace(".", "").replace(",", "");
-                
+
                 data[i][6] = totalAmount.isEmpty() ? "0" : totalAmount;
                 data[i][7] = discountAmount.isEmpty() ? "0" : discountAmount;
-                
+
                 data[i][8] = table.getValueAt(i, 7); // Phương thức thanh toán
                 data[i][9] = table.getValueAt(i, 10); // Trạng thái
                 data[i][10] = ""; // Ghi chú (không có trong bảng)
             }
-            
-            String fileName = "DANH_SACH_HOA_DON_" + 
+
+            String fileName = "DANH_SACH_HOA_DON_" +
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            
+
             // Nếu đang áp dụng bộ lọc, thêm thông tin vào tên file
             if (tableSorter != null && tableSorter.getRowFilter() != null) {
                 fileName += "_FILTERED";
             }
-            
+
             JExcel jExcel = new JExcel();
             boolean success = jExcel.toExcel(headers, data, "Danh sách hóa đơn", fileName);
-            
+
             if (success) {
                 JOptionPane.showMessageDialog(invoiceForm,
-                        "Xuất Excel thành công!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.INVOICE_EXPORT_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(invoiceForm,
-                        "Xuất Excel không thành công!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVOICE_EXPORT_FAILED.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(invoiceForm,
-                    "Lỗi khi xuất Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.INVOICE_EXPORT_EXCEL_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
+
     /**
      * Lấy InvoiceDetailController
+     * 
      * @return InvoiceDetailController
      */
     public InvoiceDetailController getInvoiceDetailController() {
         return invoiceDetailController;
     }
-    
+
     /**
      * Lấy danh sách hóa đơn hiện tại
+     * 
      * @return Danh sách hóa đơn
      */
     public List<Invoice> getInvoiceList() {
         return invoiceList;
     }
-    
+
     /**
      * Lấy hóa đơn hiện tại đang được xem chi tiết
+     * 
      * @return Hóa đơn hiện tại
      */
     public Invoice getCurrentInvoice() {

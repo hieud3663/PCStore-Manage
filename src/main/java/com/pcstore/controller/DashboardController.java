@@ -387,12 +387,10 @@ public class DashboardController {
      * Xử lý sự kiện logout khi nhấn btnSignOut
      */
     public void handleLogout() {
-        // Xóa tất cả ActionListener cũ để tránh duplicate
         for (ActionListener al : dashboardForm.getBtnSignOut().getActionListeners()) {
             dashboardForm.getBtnSignOut().removeActionListener(al);
         }
 
-        // Thêm listener mới
         dashboardForm.getBtnSignOut().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -416,14 +414,11 @@ public class DashboardController {
             // Dừng timer đồng hồ
             cleanup();
 
-            // Xóa thông tin người dùng khỏi session
             sessionManager.logout();
 
-            // Đóng cửa sổ dashboard
             dashboardForm.dispose();
             dashboardForm.resetInstance();
 
-            // Mở form đăng nhập
             redirectToLogin();
         }
     }
@@ -455,16 +450,13 @@ public class DashboardController {
      * Khởi tạo xử lý sự kiện khi thay đổi ngôn ngữ từ ComboBox
      */
     private void initializeLanguageSelector() {
-        // Thiết lập trạng thái ban đầu của ComboBox dựa trên ngôn ngữ hiện tại
         updateLanguageComboBox();
 
-        // Đăng ký sự kiện thay đổi ngôn ngữ
         dashboardForm.getCbLanguage().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int selectedIndex = dashboardForm.getCbLanguage().getSelectedIndex();
 
-                // Tránh trigger lại khi đang cập nhật UI
                 if (isUpdatingUI) return;
 
                 switch (selectedIndex) {
@@ -564,13 +556,10 @@ public class DashboardController {
      * Cập nhật các text cố định trên giao diện
      */
     private void updateUITexts() {
-        // Cập nhật title của ứng dụng
         dashboardForm.setTitle(bundle.getProperty("titleApp"));
 
-        // Cập nhật nút đăng xuất
         dashboardForm.getBtnSignOut().setText(bundle.getProperty("btnSignOut"));
 
-        // Các text cố định khác...
     }
 
     public List<String[]> getMenuItemsStr() {

@@ -74,7 +74,7 @@ public class BillPrintUtils {
                 if (key.toLowerCase().contains("date") && value instanceof java.time.LocalDateTime) {
                     context.setVariable(key, BillDataUtils.formatDate((java.time.LocalDateTime) value));
                 } else if (key.toLowerCase().contains("amount") || key.toLowerCase().contains("price") ||
-                        key.toLowerCase().contains("total")) {
+                        key.toLowerCase().contains("totalamount")) {
                     context.setVariable(key, BillDataUtils.formatCurrency(value));
                 } else if (key.toLowerCase().contains("quantity") || key.toLowerCase().contains("count")) {
                     context.setVariable(key, BillDataUtils.formatNumber(value));

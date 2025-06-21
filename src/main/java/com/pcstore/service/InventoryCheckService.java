@@ -131,9 +131,7 @@ public class InventoryCheckService {
         
         for (InventoryCheckDetail detail : details) {
             if (detail.getDiscrepancy() != 0) {
-                Product product = detail.getProduct();
-                product.setStockQuantity(detail.getActualQuantity());
-                productRepository.update(product);
+                productRepository.updateStockQuantity(detail.getProduct().getProductId(), detail.getActualQuantity());
             }
         }
 
@@ -389,8 +387,7 @@ public class InventoryCheckService {
         try {
             return inventoryCheckDetailRepository.delete(detailId);
         } catch (Exception e) {
-            System.err.println("Lỗi khi xóa chi tiết kiểm kê: " + e.getMessage());
-            return false;
+            throw new RuntimeException("Không thể xóa chi tiết kiểm kê: " + e.getMessage(), e);
         }
     }
 

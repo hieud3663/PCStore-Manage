@@ -4,7 +4,9 @@
  */
 package com.pcstore.view;
 
+import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dimension;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +26,7 @@ public class InventoryCheckForm extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnAdd;
     private javax.swing.JComboBox<String> cbbStatus;
     private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JLabel lbNote;
     private javax.swing.JLabel lbStatus;
     private javax.swing.JLabel lbSum;
     private javax.swing.JLabel lbTitle;
@@ -76,15 +79,17 @@ public class InventoryCheckForm extends javax.swing.JPanel {
         panelBody = new javax.swing.JPanel();
         jScrollPane = new javax.swing.JScrollPane();
         tableListInventory = new javax.swing.JTable();
+        lbNote = new javax.swing.JLabel();
         panelBottom = new javax.swing.JPanel();
         lbSum = new javax.swing.JLabel();
         txtSum = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
-        setLayout(new java.awt.BorderLayout());
+        setPreferredSize(new java.awt.Dimension(1158, 700));
+        setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.Y_AXIS));
 
         panelTop.setBackground(new java.awt.Color(255, 255, 255));
-        panelTop.setPreferredSize(new java.awt.Dimension(1158, 60));
+        panelTop.setPreferredSize(new java.awt.Dimension(0, 60));
         panelTop.setLayout(new java.awt.BorderLayout());
 
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
@@ -94,14 +99,13 @@ public class InventoryCheckForm extends javax.swing.JPanel {
         lbTitle.setText(bundle.getString("titleInventoryCheck")); // NOI18N
         panelTop.add(lbTitle, java.awt.BorderLayout.CENTER);
 
-        add(panelTop, java.awt.BorderLayout.PAGE_START);
+        add(panelTop);
 
-        panelCenter.setPreferredSize(new java.awt.Dimension(0, 500));
-        panelCenter.setLayout(new javax.swing.BoxLayout(panelCenter, javax.swing.BoxLayout.Y_AXIS));
+        panelCenter.setLayout(new java.awt.BorderLayout());
 
         panelAction.setBackground(new java.awt.Color(255, 255, 255));
         panelAction.setBorder(javax.swing.BorderFactory.createEmptyBorder(4, 20, 4, 20));
-        panelAction.setPreferredSize(new java.awt.Dimension(40, 60));
+        panelAction.setPreferredSize(new java.awt.Dimension(1140, 60));
         panelAction.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 0));
 
         panelFilter.setOpaque(false);
@@ -161,10 +165,10 @@ public class InventoryCheckForm extends javax.swing.JPanel {
         btnAdd.setPreferredSize(new java.awt.Dimension(150, 40));
         panelAction.add(btnAdd);
 
-        panelCenter.add(panelAction);
+        panelCenter.add(panelAction, java.awt.BorderLayout.PAGE_START);
 
         panelBody.setBackground(new java.awt.Color(255, 255, 255));
-        panelBody.setPreferredSize(new java.awt.Dimension(1158, 650));
+        panelBody.setPreferredSize(new java.awt.Dimension(0, 650));
         panelBody.setLayout(new java.awt.BorderLayout());
 
         jScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5), bundle.getString("border.title.InventoryCheckList"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 16), new java.awt.Color(38, 104, 165))); // NOI18N
@@ -178,7 +182,7 @@ public class InventoryCheckForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "", "Mã phiếu", "Tên phiếu kiểm kê", "Ngày tạo", "Người tạo", "Ngày chốt", "Trạng thái", "Xóa"
+                "", "Mã phiếu", "Tên phiếu kiểm kê", "Ngày tạo", "Người tạo", "Ngày chốt", "Trạng thái", ""
             }
         ) {
             Class[] types = new Class [] {
@@ -224,7 +228,12 @@ public class InventoryCheckForm extends javax.swing.JPanel {
 
         panelBody.add(jScrollPane, java.awt.BorderLayout.CENTER);
 
-        panelCenter.add(panelBody);
+        lbNote.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
+        lbNote.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/exclamation.png"))); // NOI18N
+        lbNote.setText(bundle.getString("inventoryCheck.lbNote")); // NOI18N
+        panelBody.add(lbNote, java.awt.BorderLayout.PAGE_START);
+
+        panelCenter.add(panelBody, java.awt.BorderLayout.CENTER);
 
         panelBottom.setBackground(new java.awt.Color(255, 255, 255));
         panelBottom.setPreferredSize(new java.awt.Dimension(1140, 30));
@@ -239,16 +248,26 @@ public class InventoryCheckForm extends javax.swing.JPanel {
         txtSum.setText("...");
         panelBottom.add(txtSum);
 
-        panelCenter.add(panelBottom);
+        panelCenter.add(panelBottom, java.awt.BorderLayout.PAGE_END);
 
-        add(panelCenter, java.awt.BorderLayout.CENTER);
+        add(panelCenter);
     }// </editor-fold>//GEN-END:initComponents
 
     private void initV2() {
         cbbStatus.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        panelTop.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelCenter.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        panelTop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        panelCenter.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        
+        panelBody.setPreferredSize(null);
+        panelAction.setPreferredSize(new java.awt.Dimension(0, 60));
+        panelBottom.setPreferredSize(new java.awt.Dimension(0, 30));
+        panelCenter.setPreferredSize(null);
     }
 
-    // Getter methods cho Controller
     public javax.swing.JTable getTableListInventory() {
         return tableListInventory;
     }

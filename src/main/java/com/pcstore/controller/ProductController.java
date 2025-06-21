@@ -72,6 +72,8 @@ public class ProductController {
     
         // Đăng ký các sự kiện cho form
         registerEvents();
+
+        productForm.getPanelSort().setVisible(false);
         
         // Khởi tạo dữ liệu cho form
         initializeFormData();
@@ -601,8 +603,9 @@ public class ProductController {
             // Lấy ID sản phẩm
             String productId = productForm.getIdField().getText().trim();
             if (productId.isEmpty()) {
-                JOptionPane.showMessageDialog(productForm, "Vui lòng chọn sản phẩm cần cập nhật", 
-                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                
+                Notifications.getInstance().show(Notifications.Type.WARNING, "Vui lòng chọn sản phẩm cần cập nhật");
+
                 return;
             }
 
@@ -620,14 +623,12 @@ public class ProductController {
             
             // Kiểm tra thông tin bắt buộc
             if (productName.isEmpty()) {
-                JOptionPane.showMessageDialog(productForm, "Vui lòng nhập tên sản phẩm", 
-                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.WARNING,"Vui lòng nhập tên sản phẩm");
                 return;
             }
             
             if (category == null) {
-                JOptionPane.showMessageDialog(productForm, "Vui lòng chọn danh mục sản phẩm", 
-                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                Notifications.getInstance().show(Notifications.Type.WARNING,"Vui lòng chọn danh mục sản phẩm");
                 return;
             }
             
@@ -744,11 +745,8 @@ public class ProductController {
                 priceHistoryRepository.save(priceHistory);
             }
             
-            // Hiển thị thông báo thành công
-            JOptionPane.showMessageDialog(productForm,
-                    "Cập nhật sản phẩm thành công!",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Cập nhật sản phẩm thành công!");
+
             resetForm();
             
             loadListProducts();
@@ -781,9 +779,8 @@ public class ProductController {
                     productRepository.delete(productId);
                     loadListProducts();
                     resetForm();
-                    
-                    JOptionPane.showMessageDialog(productForm, "Xóa sản phẩm thành công!", 
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, "Xóa sản phẩm thành công!");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(productForm, "Lỗi khi xóa sản phẩm: " + e.getMessage(), 
                             "Lỗi", JOptionPane.ERROR_MESSAGE);

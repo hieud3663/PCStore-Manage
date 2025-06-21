@@ -34,11 +34,14 @@ import javax.swing.table.TableRowSorter;
 import com.pcstore.model.Employee;
 import com.pcstore.model.InventoryCheck;
 import com.pcstore.model.InventoryCheckDetail;
+import com.pcstore.model.Product;
 import com.pcstore.model.enums.InventoryCheckStatus;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.InventoryCheckService;
+import com.pcstore.service.ProductService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
@@ -56,6 +59,7 @@ public class DetailInventoryCheckController {
     private DetailInventoryCheckForm view;
     private InventoryCheckService inventoryCheckService;
     private EmployeeService employeeService;
+    private ProductService productService;
     private Connection connection;
 
     private InventoryCheck currentInventoryCheck;
@@ -98,13 +102,14 @@ public class DetailInventoryCheckController {
             this.employeeService = ServiceFactory.getInstance().getEmployeeService();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi khởi tạo services: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_INIT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
 
     private void initializeView() {
+        setupTable(0);
         setupInventoryDetailTable();
 
         setupProgressSteps();
@@ -112,6 +117,24 @@ public class DetailInventoryCheckController {
         setFormEditable(false);
     }
 
+    private void setupTable(int type){
+        tableRowSorter = TableUtils.applyDefaultStyle(view.getTableProducts());
+
+        TableUtils.setupColumnWidths(view.getTableProducts(),
+                40, 200, 120, 120, 80, 80, 100, 120);
+
+        TableUtils.setNumberColumns(tableRowSorter, 0, 4, 5, 6, 7);
+        TableUtils.disableSortingForColumns(tableRowSorter, 8);
+
+        if (type == 1){
+            TableUtils.addDeleteButton(view.getTableProducts(), 8,
+                        (table, modelRow, column, value) -> {
+                            handleDeleteDetail(value);
+                        }, 2
+                    );
+        }
+
+    }
 
     private void setupProgressSteps() {
         String[] steps = {
@@ -191,14 +214,14 @@ public class DetailInventoryCheckController {
                 updateButtonStates();
             } else {
                 JOptionPane.showMessageDialog(view,
-                        "Không tìm thấy phiếu kiểm kê!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_NOT_FOUND.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 view.dispose();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi tải phiếu kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_LOAD_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -213,8 +236,8 @@ public class DetailInventoryCheckController {
             updateSummaryData();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi tải chi tiết kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_LOAD_DETAILS_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -263,8 +286,8 @@ public class DetailInventoryCheckController {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi tải danh sách nhân viên: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_LOAD_EMPLOYEES_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -317,11 +340,8 @@ public class DetailInventoryCheckController {
             public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
                 textField = (JTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
 
-                // Thiết lập cursor cho textfield
                 textField.setCursor(new Cursor(Cursor.TEXT_CURSOR));
 
-                // Quan trọng: XÓA TẤT CẢ LISTENERS CŨ trước khi thêm mới
-                // Xóa KeyListeners cũ
                 for (KeyListener listener : textField.getKeyListeners()) {
                     textField.removeKeyListener(listener);
                 }
@@ -330,7 +350,6 @@ public class DetailInventoryCheckController {
                     @Override
                     public void keyTyped(KeyEvent e) {
                         char c = e.getKeyChar();
-                        // Chỉ cho phép số, backspace, delete, không nhập ký tự đặc biệt
                         if (!Character.isDigit(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
                             e.consume();
                         }
@@ -338,7 +357,6 @@ public class DetailInventoryCheckController {
 
                     @Override
                     public void keyPressed(KeyEvent e) {
-                        // Xử lý phím Enter để confirm nhập liệu
                         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                             if (validateAndUpdateActualQuantity(table, row, textField.getText())) {
                                 stopCellEditing();
@@ -372,12 +390,11 @@ public class DetailInventoryCheckController {
                 }
             }
 
-            // Quan trọng: Override phương thức này để chỉ cần 1 click
             @Override
             public boolean isCellEditable(EventObject e) {
                 if (e instanceof MouseEvent) {
                     MouseEvent me = (MouseEvent) e;
-                    return me.getClickCount() == 1; // Chỉ cần 1 click
+                    return me.getClickCount() == 1; 
                 }
                 return super.isCellEditable(e);
             }
@@ -387,13 +404,7 @@ public class DetailInventoryCheckController {
     }
 
     private void setupInventoryDetailTable() {
-        tableRowSorter = TableUtils.applyDefaultStyle(view.getTableProducts());
-
-        TableUtils.setupColumnWidths(view.getTableProducts(),
-                40, 200, 120, 120, 80, 80, 100, 120);
-
-        TableUtils.setNumberColumns(tableRowSorter, 0, 4, 5, 6, 7);
-
+        
         for (int i = 0; i < view.getTableProducts().getColumnCount(); i++) {
             if (i != 5) { // Cột Thực tế
                 view.getTableProducts().getColumnModel().getColumn(i).setCellEditor(null);
@@ -424,7 +435,7 @@ public class DetailInventoryCheckController {
                 }
             }
         }
-
+        setupTable(1);
         setupActualQuantityRenderer();
         highlightIncompleteRows();
 
@@ -436,8 +447,7 @@ public class DetailInventoryCheckController {
     private void setupActualQuantityRenderer() {
         DefaultTableCellRenderer actualQuantityRenderer = new DefaultTableCellRenderer() {
             @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
                 // Thiết lập cursor text cho cột thực tế
@@ -475,8 +485,62 @@ public class DetailInventoryCheckController {
                             c.setForeground(table.getForeground());
                         }
                     }
-                } else {
+                } else if (column != 8) { // KHÔNG áp dụng cho cột nút xóa
                     c.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    c.setBackground(table.getBackground());
+                    c.setForeground(table.getForeground());
+                }
+
+                if (c instanceof JLabel) {
+                    ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
+                }
+                return c;
+        }
+    };
+
+        // Áp dụng renderer cho tất cả các cột
+        for (int i = 0; i < view.getTableProducts().getColumnCount(); i++) {
+            if (i == 8 ) continue; 
+            view.getTableProducts().getColumnModel().getColumn(i).setCellRenderer(actualQuantityRenderer);
+        }
+    }
+
+    /**
+     * Thiết lập highlight cho các ô chưa nhập đầy đủ
+     */
+    private void highlightIncompleteRows() {
+        DefaultTableCellRenderer warningRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                if (column == 5) { 
+                    try {
+                        String productId = table.getValueAt(row, 2).toString();
+
+                        InventoryCheckDetail detail = findDetailByProductId(productId);
+
+                        if (detail != null && column == 5) {
+                            if (detail.getActualQuantity() == null || detail.getActualQuantity() < 0) {
+                                c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
+                                c.setForeground(Color.BLACK);
+                            } else if (detail.getActualQuantity() == 0) {
+                                c.setBackground(new Color(255, 200, 200)); // Màu đỏ nhạt
+                                c.setForeground(Color.BLACK);
+                                 ((JLabel) c).setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+                            } else {
+                                c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
+                                c.setForeground(Color.BLACK);
+                                ((JLabel) c).setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
+                                ((JLabel) c).setToolTipText("Click to edit quantity");
+                                
+                            }
+                        }
+                    } catch (Exception e) {
+                        c.setBackground(table.getBackground());
+                        c.setForeground(table.getForeground());
+                    }
                 }
 
                 ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
@@ -484,10 +548,8 @@ public class DetailInventoryCheckController {
             }
         };
 
-        // Áp dụng renderer cho tất cả các cột
-        for (int i = 0; i < view.getTableProducts().getColumnCount(); i++) {
-            view.getTableProducts().getColumnModel().getColumn(i).setCellRenderer(actualQuantityRenderer);
-        }
+        // Áp dụng renderer cho cột số lượng thực tế
+        view.getTableProducts().getColumnModel().getColumn(5).setCellRenderer(warningRenderer);
     }
 
     /**
@@ -518,7 +580,7 @@ public class DetailInventoryCheckController {
 
             if (inputValue == null || inputValue.trim().isEmpty()) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                        "Số lượng thực tế không được để trống!");
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_QUANTITY_EMPTY.toString());
                 return false;
             }
 
@@ -527,19 +589,19 @@ public class DetailInventoryCheckController {
                 actualQuantity = Integer.parseInt(inputValue.trim());
             } catch (NumberFormatException e) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                        "Số lượng phải là một số nguyên hợp lệ!");
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_QUANTITY_INVALID.toString());
                 return false;
             }
 
             if (actualQuantity < 0) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                        "Số lượng thực tế không được âm!");
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_QUANTITY_NEGATIVE.toString());
                 return false;
             }
 
             if (actualQuantity > 999999) {
                 Notifications.getInstance().show(Notifications.Type.WARNING,
-                        "Số lượng thực tế quá lớn (tối đa 999,999)!");
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_QUANTITY_TOO_LARGE.toString());
                 return false;
             }
 
@@ -562,8 +624,8 @@ public class DetailInventoryCheckController {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(table,
-                    "Lỗi cập nhật số lượng: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_UPDATE_QUANTITY_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return false;
         }
@@ -621,8 +683,8 @@ public class DetailInventoryCheckController {
     private boolean validateAllActualQuantities() {
         if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
             JOptionPane.showMessageDialog(view,
-                    "Chưa có dữ liệu kiểm kê!",
-                    "Lỗi validation", JOptionPane.WARNING_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_VALIDATION_NO_DATA.toString(),
+                    ErrorMessage.WARNING_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             return false;
         }
 
@@ -638,11 +700,8 @@ public class DetailInventoryCheckController {
 
         if (unfinishedCount > 0) {
             int result = JOptionPane.showConfirmDialog(view,
-                    String.format("Còn %d sản phẩm chưa nhập số lượng thực tế.\n" +
-                                    "Bạn có muốn tiếp tục hoàn thành kiểm kê?\n" +
-                                    "(Các sản phẩm chưa nhập sẽ được tính bằng 0)",
-                            unfinishedCount),
-                    "Xác nhận",
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_VALIDATION_CONFIRM.format(unfinishedCount),
+                    ErrorMessage.CONFIRM_TITLE.toString(),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
 
@@ -652,53 +711,6 @@ public class DetailInventoryCheckController {
         return true;
     }
 
-    /**
-     * Thiết lập highlight cho các ô chưa nhập đầy đủ
-     */
-    private void highlightIncompleteRows() {
-        DefaultTableCellRenderer warningRenderer = new DefaultTableCellRenderer() {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                                                           boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                // if (!isSelected && row < table.getRowCount()) {
-                // if (true){
-                    try {
-                        String productId = table.getValueAt(row, 2).toString();
-
-                        InventoryCheckDetail detail = findDetailByProductId(productId);
-
-                        if (detail != null && column == 5) {
-                            if (detail.getActualQuantity() == null || detail.getActualQuantity() < 0) {
-                                c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
-                                c.setForeground(Color.BLACK);
-                            } else if (detail.getActualQuantity() == 0) {
-                                c.setBackground(new Color(255, 200, 200)); // Màu đỏ nhạt
-                                c.setForeground(Color.BLACK);
-                                 ((JLabel) c).setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-                            } else {
-                                c.setBackground(new Color(255, 255, 200)); // Màu vàng nhạt
-                                c.setForeground(Color.BLACK);
-                                ((JLabel) c).setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
-                                ((JLabel) c).setToolTipText("Click to edit quantity");
-                                
-                            }
-                        }
-                    } catch (Exception e) {
-                        c.setBackground(table.getBackground());
-                        c.setForeground(table.getForeground());
-                    }
-                // }
-
-                ((JLabel) c).setHorizontalAlignment(JLabel.CENTER);
-                return c;
-            }
-        };
-
-        // Áp dụng renderer cho cột số lượng thực tế
-        view.getTableProducts().getColumnModel().getColumn(5).setCellRenderer(warningRenderer);
-    }
 
 
     /**
@@ -829,8 +841,8 @@ public class DetailInventoryCheckController {
             }
 
             int result = JOptionPane.showConfirmDialog(view,
-                    "Bạn có chắc chắn muốn cập nhật phiếu kiểm kê?",
-                    "Xác nhận cập nhật",
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_UPDATE_CONFIRM.toString(),
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_UPDATE_CONFIRM_TITLE.toString(),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
 
@@ -848,24 +860,24 @@ public class DetailInventoryCheckController {
             this.currentInventoryCheck = updatedCheck;
 
             JOptionPane.showMessageDialog(view,
-                    "Cập nhật phiếu kiểm kê thành công!",
-                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_UPDATE_SUCCESS.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
 
             populateFormWithData();
 
             boolean detailSaved = saveDetailsToDatabase();
             if (!detailSaved) {
                 JOptionPane.showMessageDialog(view,
-                        "Cập nhật thành công phiếu kiểm kê, nhưng có lỗi khi lưu chi tiết!",
-                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_UPDATE_DETAILS_WARNING.toString(),
+                        ErrorMessage.WARNING_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
             }
 
             refreshForm();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi cập nhật phiếu kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_UPDATE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -941,21 +953,21 @@ public class DetailInventoryCheckController {
     private void handleImportExcel() {
         if (currentInventoryCheck == null) {
             JOptionPane.showMessageDialog(view,
-                    "Không có phiếu kiểm kê hiện tại!",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_NO_CURRENT.toString(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return;
         }
     
         if (!STATUS_DRAFT.equals(currentInventoryCheck.getStatus()) && 
             !STATUS_IN_PROGRESS.equals(currentInventoryCheck.getStatus())) {
             JOptionPane.showMessageDialog(view,
-                    "Chỉ có thể import dữ liệu trong trạng thái nháp hoặc đang kiểm kê!",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_STATUS_INVALID.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
     
         javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
-        fileChooser.setDialogTitle("Chọn file Excel chứa dữ liệu kiểm kê");
+        fileChooser.setDialogTitle(ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_FILE_TITLE.toString());
         
         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                 "Excel files (*.xlsx, *.xls)", "xlsx", "xls"));
@@ -975,8 +987,8 @@ public class DetailInventoryCheckController {
 
                 if (data == null || data.isEmpty()) {
                     JOptionPane.showMessageDialog(view,
-                            "File không có dữ liệu hoặc không đúng định dạng!",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_FILE_INVALID.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -1023,23 +1035,16 @@ public class DetailInventoryCheckController {
                 populateFormWithData();
                 updateSummaryData();
                 
-                StringBuilder message = new StringBuilder();
-                message.append("Import hoàn tất!\n");
-                message.append("- Số lượng sản phẩm đã cập nhật: ").append(updatedRows).append("\n");
-                
-                if (invalidRows > 0) {
-                    message.append("- Số lượng dòng không hợp lệ: ").append(invalidRows).append("\n");
-                }
-                
-                
+                String message = ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_RESULT.format(updatedRows, invalidRows);
+
                 JOptionPane.showMessageDialog(view, 
-                        message.toString(),
-                        "Kết quả import", JOptionPane.INFORMATION_MESSAGE);
-                
+                        message,
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_RESULT_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
+
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(view,
-                        "Lỗi khi import file Excel: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         }
@@ -1051,10 +1056,11 @@ public class DetailInventoryCheckController {
     private void handleExportExcel() {
         if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
             JOptionPane.showMessageDialog(view,
-                    "Không có dữ liệu để xuất!",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_NO_DATA.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
         JTable table = view.getTableProducts();
         int rowCnt = view.getTableProducts().getRowCount();
         String[] header = new String[]{"STT", "Tên sản phẩm", "Mã sản phẩm", "Barcode", "SL Tồn kho", "SL thực tế (*)", "Đơn giá", "Thành tiền"};
@@ -1092,17 +1098,17 @@ public class DetailInventoryCheckController {
 
             if (success != null) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS,
-                        "Xuất Excel thành công!\nFile đã được lưu tại: " + fileName);
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_SUCCESS.format(fileName));
             } else {
                 JOptionPane.showMessageDialog(view,
-                        "Xuất Excel không thành công!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
 
         }catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi khi Xuất Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_EXCEPTION.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return;
         }
@@ -1220,16 +1226,66 @@ public class DetailInventoryCheckController {
         return summary;
     }
 
+
+    private void handleDeleteDetail(Object value){
+        if (value == null) return;
+        String productID = value.toString();
+
+        try {
+
+            InventoryCheckDetail deleteDetail = inventoryCheckDetails.stream()
+                    .filter(detail -> detail.getProduct().getProductId().equals(productID))
+                    .findFirst()
+                    .orElse(null);
+            if (deleteDetail == null) {
+                // Notifications.getInstance().show(Notifications.Type.ERROR,
+                //         "Không tìm thấy sản phẩm có mã: " + productID + " trong phiếu kiểm kê!");
+                return;
+            }
+
+            int result = JOptionPane.showConfirmDialog(view,
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_CONFIRM.format(productID),
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_CONFIRM_TITLE.toString(),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (result != JOptionPane.YES_OPTION) 
+                return;
+
+            InventoryCheckStatus status = InventoryCheckStatus.fromDbValue(currentInventoryCheck.getStatus());
+
+            if (status != null && !status.canDeleteDetail()) {
+                Notifications.getInstance().show(Notifications.Type.WARNING,
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_STATUS_INVALID.format(status.getDisplayText(bundle)));
+                return;
+            }
+
+            boolean success = inventoryCheckService.deleteCheckDetail(deleteDetail.getId());
+
+            if (success) {
+                Notifications.getInstance().show(Notifications.Type.SUCCESS, 
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_SUCCESS.toString());
+                inventoryCheckDetails.remove(deleteDetail);
+                refreshForm();
+            } else {
+                Notifications.getInstance().show(Notifications.Type.ERROR, 
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_FAILED.toString());
+            }
+
+        } catch (Exception e) {
+            Notifications.getInstance().show(Notifications.Type.ERROR,
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_DELETE_PRODUCT_ERROR.format(e.getMessage()));
+            e.printStackTrace();
+        }
+    }
+
+
+
     /**
      * Thực hiện tìm kiếm trong bảng
      */
     private void performSearch() {
         String searchText = view.getTextFieldSearch().getText().trim().toLowerCase();
-
-        // if (searchText.isEmpty() || inventoryCheckDetails == null) {
-        //     populateInventoryDetailTable();
-        //     return;
-        // }
 
         TableUtils.applyFilter(tableRowSorter, searchText, 1, 2, 3);
 
@@ -1265,13 +1321,10 @@ public class DetailInventoryCheckController {
     private boolean validateInput() {
         // Kiểm tra tên phiếu kiểm kê
         if (view.getTxtInventoryName().getText().trim().isEmpty()) {
-            // JOptionPane.showMessageDialog(view,
-            //     "Vui lòng nhập tên phiếu kiểm kê!",
-            //     "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
             view.getTxtInventoryName().requestFocus();
 
             Notifications.getInstance().show(Notifications.Type.ERROR,
-                    "Tên phiếu kiểm kê không được để trống!");
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_NAME_EMPTY.toString());
 
             return false;
         }
@@ -1279,7 +1332,7 @@ public class DetailInventoryCheckController {
         // Kiểm tra nhân viên được chọn
         if (view.getCbbChecker().getSelectedItem() == null) {
             Notifications.getInstance().show(Notifications.Type.ERROR,
-                    "Vui lòng chọn nhân viên thực hiện kiểm kê!");
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_EMPLOYEE_EMPTY.toString());
 
             view.getCbbChecker().requestFocus();
             return false;
@@ -1320,8 +1373,8 @@ public class DetailInventoryCheckController {
             return false;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi bắt đầu kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_START_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -1334,8 +1387,8 @@ public class DetailInventoryCheckController {
             if (currentInventoryCheck == null) return false;
 
             int result = JOptionPane.showConfirmDialog(view,
-                    "Bạn có chắc chắn muốn hủy phiếu kiểm kê?\nThao tác này không thể hoàn tác!",
-                    "Xác nhận hủy",
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_CANCEL_CONFIRM.toString(),
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_CANCEL_CONFIRM_TITLE.toString(),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE);
 
@@ -1349,8 +1402,8 @@ public class DetailInventoryCheckController {
             return false;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi hủy phiếu kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_CANCEL_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }

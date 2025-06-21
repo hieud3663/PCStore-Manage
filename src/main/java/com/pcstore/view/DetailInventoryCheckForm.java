@@ -286,11 +286,11 @@ public class DetailInventoryCheckForm extends javax.swing.JDialog {
 
             },
             new String [] {
-                "STT", "Tên Sản Phẩm", "Mã sản phẩm", "Barcode", "Tồn kho", "Thực tế", "Đơn giá", "Thành tiền"
+                "STT", "Tên Sản Phẩm", "Mã sản phẩm", "Barcode", "Tồn kho", "Thực tế", "Đơn giá", "Thành tiền", ""
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true, false, false
+                false, false, false, false, false, true, false, false, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -320,6 +320,8 @@ public class DetailInventoryCheckForm extends javax.swing.JDialog {
             tableProducts.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("column.inventory.unitprice")); // NOI18N
             tableProducts.getColumnModel().getColumn(7).setPreferredWidth(120);
             tableProducts.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("column.inventory.totalamount")); // NOI18N
+            tableProducts.getColumnModel().getColumn(8).setPreferredWidth(30);
+            tableProducts.getColumnModel().getColumn(8).setMaxWidth(30);
         }
 
         panelTable.add(scrollPaneProducts, java.awt.BorderLayout.CENTER);

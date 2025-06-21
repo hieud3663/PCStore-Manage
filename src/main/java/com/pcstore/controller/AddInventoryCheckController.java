@@ -27,6 +27,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.pcstore.utils.DatabaseConnection;
 import com.pcstore.utils.LocaleManager;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.model.Category;
 import com.pcstore.model.Employee;
 import com.pcstore.model.InventoryCheck;
@@ -53,7 +54,6 @@ public class AddInventoryCheckController {
     private EmployeeService employeeService;
     private Connection connection;
 
-    
     // Danh sách sản phẩm đã chọn để kiểm kê
     private List<Product> selectedProducts;
 
@@ -61,7 +61,7 @@ public class AddInventoryCheckController {
 
     private final NumberFormat currencyFormat = LocaleManager.getInstance().getCurrencyFormatter();
     private final DecimalFormat numberFormat = new DecimalFormat("#,###");
-    
+
     public AddInventoryCheckController(AddInventoryCheckForm view) {
         this.view = view;
         this.selectedProducts = new ArrayList<>();
@@ -70,7 +70,7 @@ public class AddInventoryCheckController {
         setupEventListeners();
         loadInitialData();
     }
-    
+
     private void initializeServices() {
         try {
             this.connection = DatabaseConnection.getInstance().getConnection();
@@ -80,65 +80,65 @@ public class AddInventoryCheckController {
             this.employeeService = ServiceFactory.getInstance().getEmployeeService();
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(view, 
-                "Lỗi khởi tạo dịch vụ: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view,
+                    ErrorMessage.ADD_INVENTORY_CHECK_INIT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return;
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(view, 
-                "Lỗi kết nối cơ sở dữ liệu: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(view,
+                    ErrorMessage.ADD_INVENTORY_CHECK_DB_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     private void initializeView() {
         setupProductTable();
-        
+
         view.getTxtCreateDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
-        
+
         String defaultName = "Kiểm kê ngày " + new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         view.getTxtInventoryName().setText(defaultName);
     }
-    
+
     private void setupProductTable() {
         tableRowSorter = TableUtils.applyDefaultStyle(view.getTableProducts());
-        
-        TableUtils.addDeleteButton(view.getTableProducts(), 7, 
-            (table, modelRow, column, value) -> {
-                handleRemoveProduct(modelRow);
-            });
-        
-        TableUtils.setupColumnWidths(view.getTableProducts(), 
-            40, 200, 120, 120, 80, 100, 120, 20);
+
+        TableUtils.addDeleteButton(view.getTableProducts(), 7,
+                (table, modelRow, column, value) -> {
+                    handleRemoveProduct(modelRow);
+                });
+
+        TableUtils.setupColumnWidths(view.getTableProducts(),
+                40, 200, 120, 120, 80, 100, 120, 20);
     }
-    
+
     private void setupEventListeners() {
-        // Sự kiện nút tạo phiếu kiểm kê
+        // nút tạo phiếu kiểm kê
         view.getBtnCreate().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleCreateInventoryCheck();
             }
         });
-        
-        // Sự kiện nút hủy
+
+        // nút hủy
         view.getBtnCreate1().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleCancel();
             }
         });
-        
-        // Sự kiện checkbox "Kiểm toàn bộ hàng trong kho"
+
+        // checkbox "Kiểm toàn bộ hàng trong kho"
         view.getChkSelectAll().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleSelectAllProducts();
             }
         });
-        
+
         // Sự kiện thay đổi danh mục
         view.getCbbCategory().addItemListener(new ItemListener() {
             @Override
@@ -148,7 +148,7 @@ public class AddInventoryCheckController {
                 }
             }
         });
-        
+
         // Sự kiện thay đổi sản phẩm được chọn
         view.getCbbProduct().addItemListener(new ItemListener() {
             @Override
@@ -158,7 +158,7 @@ public class AddInventoryCheckController {
                 }
             }
         });
-        
+
         // Sự kiện xuất Excel
         view.getBtnExportExcel().addActionListener(new ActionListener() {
             @Override
@@ -166,7 +166,7 @@ public class AddInventoryCheckController {
                 handleExportExcel();
             }
         });
-        
+
         // Sự kiện tìm kiếm sản phẩm
         view.getTextFieldSearch().getTxtSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -174,7 +174,7 @@ public class AddInventoryCheckController {
                 performProductSearch();
             }
         });
-        
+
         // Sự kiện chọn ngày
         view.getBtnChooseDate().addActionListener(new ActionListener() {
             @Override
@@ -183,13 +183,13 @@ public class AddInventoryCheckController {
             }
         });
     }
-    
+
     private void loadInitialData() {
         loadCategories();
         loadEmployees();
         loadProducts();
     }
-    
+
     /**
      * Tải danh sách danh mục
      */
@@ -197,38 +197,38 @@ public class AddInventoryCheckController {
         try {
             view.getCbbCategory().removeAllItems();
             view.getCbbCategory().addItem("Tất cả");
-            
+
             List<Category> categories = categoryService.getAllCategories();
             for (Category category : categories) {
                 view.getCbbCategory().addItem(category.getCategoryName());
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải danh mục: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_LOAD_CATEGORIES_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Tải danh sách nhân viên
      */
     private void loadEmployees() {
         try {
             view.getCbbChecker().removeAllItems();
-            
+
             List<Employee> employees = employeeService.findAllEmployees();
             for (Employee employee : employees) {
                 view.getCbbChecker().addItem(employee.getFullName());
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải nhân viên: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_LOAD_EMPLOYEES_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Tải danh sách sản phẩm
      */
@@ -236,30 +236,29 @@ public class AddInventoryCheckController {
         try {
             view.getCbbProduct().removeAllItems();
             view.getCbbProduct().addItem("Chọn sản phẩm...");
-            
+
             List<Product> products = productService.findAllProducts();
             for (Product product : products) {
-
                 view.getCbbProduct().addItem(product.getId() + " - " + product.getProductName());
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải sản phẩm: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_LOAD_PRODUCTS_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Tải sản phẩm theo danh mục
      */
     private void loadProductsByCategory() {
         try {
             String selectedCategory = (String) view.getCbbCategory().getSelectedItem();
-            
+
             view.getCbbProduct().removeAllItems();
             view.getCbbProduct().addItem("Chọn sản phẩm...");
-            
+
             List<Product> products;
             if ("Tất cả".equals(selectedCategory)) {
                 products = productService.findAllProducts();
@@ -273,25 +272,25 @@ public class AddInventoryCheckController {
                         break;
                     }
                 }
-                
+
                 if (categoryId != null) {
                     products = productService.findProductsByCategory(categoryId);
                 } else {
                     products = new ArrayList<>();
                 }
             }
-            
+
             for (Product product : products) {
                 view.getCbbProduct().addItem(product.getId() + " - " + product.getProductName());
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tải sản phẩm theo danh mục: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_LOAD_PRODUCTS_BY_CATEGORY_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Xử lý chọn sản phẩm
      */
@@ -299,86 +298,82 @@ public class AddInventoryCheckController {
         try {
             String selectedProductName = (String) view.getCbbProduct().getSelectedItem().toString().split(" - ")[0];
 
-            
             if (selectedProductName == null || "Chọn sản phẩm...".equals(selectedProductName)) {
                 return;
             }
-            
-            // Tìm sản phẩm theo id
+
             Product selectedProduct = productService.findProductById(selectedProductName)
-                .orElse(null);
-            
+                    .orElse(null);
+
             if (selectedProduct != null) {
                 addProductToTable(selectedProduct);
                 view.getCbbProduct().setSelectedIndex(0);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi thêm sản phẩm: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_ADD_PRODUCT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Thêm sản phẩm vào bảng
      */
     private void addProductToTable(Product product) {
-        // Kiểm tra sản phẩm đã tồn tại chưa
         for (Product p : selectedProducts) {
             if (p.getProductId().equals(product.getProductId())) {
-                
-                Notifications.getInstance().show(Notifications.Type.ERROR, "Sản phẩm '" + product.getProductName() + "' đã được thêm vào danh sách kiểm kê.");
+                Notifications.getInstance().show(Notifications.Type.ERROR,
+                        ErrorMessage.ADD_INVENTORY_CHECK_PRODUCT_ALREADY_ADDED.format(product.getProductName()));
                 return;
             }
         }
-        
+
         selectedProducts.add(product);
         updateProductTable();
         updateSummary();
     }
-    
+
     /**
      * Cập nhật bảng sản phẩm
      */
     private void updateProductTable() {
         DefaultTableModel model = (DefaultTableModel) view.getTableProducts().getModel();
         model.setRowCount(0);
-        
+
         int index = 1;
         for (Product product : selectedProducts) {
             BigDecimal totalValue = product.getPrice().multiply(new BigDecimal(product.getQuantityInStock()));
-            
-            Object[] row = new Object[]{
-                index++,
-                product.getProductName(),
-                product.getProductId(),
-                // product.getBarcode() != null ? product.getBarcode() : "",
-                "Barcode ...",
-                numberFormat.format(product.getQuantityInStock()),
-                currencyFormat.format(product.getPrice()),
-                currencyFormat.format(totalValue),
-                null // Nút xóa
+
+            Object[] row = new Object[] {
+                    index++,
+                    product.getProductName(),
+                    product.getProductId(),
+                    // product.getBarcode() != null ? product.getBarcode() : "",
+                    "Barcode ...",
+                    numberFormat.format(product.getQuantityInStock()),
+                    currencyFormat.format(product.getPrice()),
+                    currencyFormat.format(totalValue),
+                    null // Nút xóa
             };
             model.addRow(row);
         }
         view.toggleEmptyTableMessage(false);
     }
-    
+
     /**
      * Xử lý xóa sản phẩm khỏi danh sách
      */
     private void handleRemoveProduct(int modelRow) {
         if (modelRow >= 0 && modelRow < selectedProducts.size()) {
             Product removedProduct = selectedProducts.get(modelRow);
-            
+
             int result = JOptionPane.showConfirmDialog(view,
-                "Bạn có chắc chắn muốn xóa sản phẩm '" + removedProduct.getProductName() + 
-                "' khỏi danh sách kiểm kê?",
-                "Xác nhận xóa", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-            
+                    ErrorMessage.ADD_INVENTORY_CHECK_REMOVE_PRODUCT_CONFIRM.format(removedProduct.getProductName()),
+                    ErrorMessage.ADD_INVENTORY_CHECK_REMOVE_PRODUCT_TITLE.toString(),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
             if (result == JOptionPane.YES_OPTION) {
                 selectedProducts.remove(modelRow);
                 updateProductTable();
@@ -386,7 +381,7 @@ public class AddInventoryCheckController {
             }
         }
     }
-    
+
     /**
      * Xử lý chọn tất cả sản phẩm
      */
@@ -396,20 +391,19 @@ public class AddInventoryCheckController {
                 List<Product> allProducts = productService.findAllProducts();
                 selectedProducts.clear();
                 selectedProducts.addAll(allProducts);
-                
+
                 updateProductTable();
                 updateSummary();
-                
-                // Vô hiệu hóa các control chọn sản phẩm
+
                 view.getCbbCategory().setEnabled(false);
                 view.getCbbProduct().setEnabled(false);
-                
-                
-                Notifications.getInstance().show(Notifications.Type.INFO, "Đã thêm tất cả " + allProducts.size() + " sản phẩm vào danh sách kiểm kê");
+
+                Notifications.getInstance().show(Notifications.Type.INFO,
+                        ErrorMessage.ADD_INVENTORY_CHECK_SELECT_ALL_SUCCESS.format(allProducts.size()));
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(view,
-                    "Lỗi tải tất cả sản phẩm: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.ADD_INVENTORY_CHECK_SELECT_ALL_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 view.getChkSelectAll().setSelected(false);
                 e.printStackTrace();
             }
@@ -417,20 +411,20 @@ public class AddInventoryCheckController {
             // Kích hoạt lại các control chọn sản phẩm
             view.getCbbCategory().setEnabled(true);
             view.getCbbProduct().setEnabled(true);
-            
+
             selectedProducts.clear();
             updateProductTable();
             updateSummary();
         }
     }
-    
+
     /**
      * Cập nhật thông tin tổng kết
      */
     private void updateSummary() {
         view.getLbTotalValue().setText(String.valueOf(selectedProducts.size()));
     }
-    
+
     /**
      * Thực hiện tìm kiếm sản phẩm
      */
@@ -439,23 +433,20 @@ public class AddInventoryCheckController {
         String searchText = view.getTextFieldSearch().getText().trim();
         TableUtils.applyFilter(tableRowSorter, searchText, 1, 2, 3, 4, 5, 6);
     }
-    
+
     /**
      * Xử lý tạo phiếu kiểm kê
      */
     private void handleCreateInventoryCheck() {
         try {
-            // Validate dữ liệu đầu vào
             if (!validateInput()) {
                 return;
             }
-            
-            // Lấy thông tin từ form
+
             String checkName = view.getTxtInventoryName().getText().trim();
             String employeeName = (String) view.getCbbChecker().getSelectedItem();
             String notes = view.getTxtNotes().getText().trim();
-            
-            // Tìm nhân viên theo tên
+
             List<Employee> employees = employeeService.findAllEmployees();
             Employee selectedEmployee = null;
             for (Employee emp : employees) {
@@ -464,94 +455,87 @@ public class AddInventoryCheckController {
                     break;
                 }
             }
-            
+
             if (selectedEmployee == null) {
                 JOptionPane.showMessageDialog(view,
-                    "Không tìm thấy nhân viên được chọn!",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.ADD_INVENTORY_CHECK_EMPLOYEE_NOT_FOUND.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
-            // Xác nhận tạo phiếu kiểm kê
+
             int result = JOptionPane.showConfirmDialog(view,
-                "Bạn có chắc chắn muốn tạo phiếu kiểm kê với " + selectedProducts.size() + " sản phẩm?",
-                "Xác nhận tạo phiếu", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-            
+                    ErrorMessage.ADD_INVENTORY_CHECK_CREATE_CONFIRM.format(selectedProducts.size()),
+                    ErrorMessage.ADD_INVENTORY_CHECK_CREATE_CONFIRM_TITLE.toString(),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
             if (result != JOptionPane.YES_OPTION) {
                 return;
             }
-            
-            // Tạo phiếu kiểm kê
+
             InventoryCheck inventoryCheck = inventoryCheckService.createInventoryCheck(
-                checkName, 
-                selectedEmployee.getEmployeeId(), 
-                view.getChkSelectAll().isSelected() ? "FULL" : "PARTIAL",
-                notes
-            );
-            
-            // Thêm chi tiết kiểm kê
+                    checkName,
+                    selectedEmployee.getEmployeeId(),
+                    view.getChkSelectAll().isSelected() ? "FULL" : "PARTIAL",
+                    notes);
+
             for (Product product : selectedProducts) {
                 inventoryCheckService.addCheckDetail(
-                    inventoryCheck.getId(),
-                    product.getProductId(),
-                    product.getQuantityInStock(),
-                    ""
-                );
+                        inventoryCheck.getId(),
+                        product.getProductId(),
+                        product.getQuantityInStock(),
+                        "");
             }
-            
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, 4000, "Tạo phiếu kiểm kê thành công!" +
-                    "\nMã phiếu: " + inventoryCheck.getCheckCode() +
-                    "\nSố sản phẩm: " + selectedProducts.size());
-            
+
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, 4000,
+                    ErrorMessage.ADD_INVENTORY_CHECK_CREATE_SUCCESS.format(
+                            inventoryCheck.getCheckCode(), selectedProducts.size()));
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                "Lỗi tạo phiếu kiểm kê: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_CREATE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Validate dữ liệu đầu vào
      */
     private boolean validateInput() {
-        // Kiểm tra tên phiếu kiểm kê
         if (view.getTxtInventoryName().getText().trim().isEmpty()) {
-            
-            Notifications.getInstance().show(Notifications.Type.ERROR, "Vui lòng nhập tên phiếu kiểm kê!");
-
+            Notifications.getInstance().show(Notifications.Type.ERROR,
+                    ErrorMessage.ADD_INVENTORY_CHECK_NAME_EMPTY.toString());
             view.getTxtInventoryName().requestFocus();
             return false;
         }
-        
-        // Kiểm tra nhân viên được chọn
+
         if (view.getCbbChecker().getSelectedItem() == null) {
-            Notifications.getInstance().show(Notifications.Type.ERROR, "Vui lòng chọn nhân viên thực hiện kiểm kê!");
+            Notifications.getInstance().show(Notifications.Type.ERROR,
+                    ErrorMessage.ADD_INVENTORY_CHECK_EMPLOYEE_EMPTY.toString());
             view.getCbbChecker().requestFocus();
             return false;
         }
 
-        // Kiểm tra danh sách sản phẩm
         if (selectedProducts.isEmpty()) {
-            Notifications.getInstance().show(Notifications.Type.ERROR, "Vui lòng chọn ít nhất một sản phẩm để kiểm kê!");
+            Notifications.getInstance().show(Notifications.Type.ERROR,
+                    ErrorMessage.ADD_INVENTORY_CHECK_PRODUCTS_EMPTY.toString());
             return false;
         }
 
         return true;
     }
-    
+
     /**
      * Xử lý hủy tạo phiếu kiểm kê
      */
     private void handleCancel() {
         if (!selectedProducts.isEmpty()) {
             int result = JOptionPane.showConfirmDialog(view,
-                "Bạn có chắc chắn muốn hủy? Tất cả dữ liệu sẽ bị mất!",
-                "Xác nhận hủy", 
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
+                    ErrorMessage.ADD_INVENTORY_CHECK_CANCEL_CONFIRM.toString(),
+                    ErrorMessage.ADD_INVENTORY_CHECK_CANCEL_CONFIRM_TITLE.toString(), 
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
             
             if (result != JOptionPane.YES_OPTION) {
                 return;
@@ -560,24 +544,23 @@ public class AddInventoryCheckController {
         
         view.dispose();
     }
-    
+
     /**
      * Xử lý xuất Excel
      */
     private void handleExportExcel() {
         if (selectedProducts.isEmpty()) {
             JOptionPane.showMessageDialog(view,
-                "Không có dữ liệu để xuất!",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                ErrorMessage.ADD_INVENTORY_CHECK_EXPORT_NO_DATA.toString(),
+                ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
-        // TODO: Implement Excel export functionality
         JOptionPane.showMessageDialog(view,
-            "Chức năng xuất Excel đang được phát triển",
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            ErrorMessage.ADD_INVENTORY_CHECK_EXPORT_DEVELOPING.toString(),
+            ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     /**
      * Làm mới form
      */
@@ -585,23 +568,23 @@ public class AddInventoryCheckController {
         selectedProducts.clear();
         updateProductTable();
         updateSummary();
-        
+
         view.getChkSelectAll().setSelected(false);
         view.getCbbCategory().setSelectedIndex(0);
         view.getCbbProduct().setSelectedIndex(0);
         view.getTxtInventoryName().setText("Kiểm kê ngày " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
         view.getTxtNotes().setText("");
-        
+
         loadInitialData();
     }
-    
+
     /**
      * Lấy danh sách sản phẩm đã chọn
      */
     public List<Product> getSelectedProducts() {
         return new ArrayList<>(selectedProducts);
     }
-    
+
     /**
      * Thiết lập danh sách sản phẩm đã chọn
      */
@@ -611,7 +594,7 @@ public class AddInventoryCheckController {
         updateProductTable();
         updateSummary();
     }
-    
+
     /**
      * Cleanup resources
      */
@@ -624,20 +607,19 @@ public class AddInventoryCheckController {
             e.printStackTrace();
         }
     }
-    
-    // Getter methods cho các services (nếu cần truy cập từ bên ngoài)
+
     public InventoryCheckService getInventoryCheckService() {
         return inventoryCheckService;
     }
-    
+
     public ProductService getProductService() {
         return productService;
     }
-    
+
     public CategoryService getCategoryService() {
         return categoryService;
     }
-    
+
     public EmployeeService getEmployeeService() {
         return employeeService;
     }

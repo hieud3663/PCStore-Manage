@@ -7,9 +7,13 @@ import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.swing.JOptionPane;
 import javax.swing.JLabel;
@@ -19,15 +23,20 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
+import com.pcstore.model.Employee;
+import com.pcstore.model.Product;
 import com.pcstore.model.PurchaseOrder;
 import com.pcstore.model.PurchaseOrderDetail;
+import com.pcstore.model.Supplier;
 import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
 import com.pcstore.service.PurchaseOrderDetailService;
 import com.pcstore.service.PurchaseOrderService;
 import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.BillPrintUtils;
 import com.pcstore.utils.CurrencyFormatter;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
 import com.pcstore.view.StockInHistoryForm;
 
@@ -41,6 +50,9 @@ public class StockInHistoryController {
 
     private PurchaseOrderService purchaseOrderService;
     private PurchaseOrderDetailService purchaseOrderDetailService;
+
+    private NumberFormat currencyFormat = LocaleManager.getInstance().getCurrencyFormatter();
+
     /**
      * Khởi tạo controller với form lịch sử nhập hàng
      * 
@@ -73,7 +85,7 @@ public class StockInHistoryController {
                     "Lỗi kết nối đến cơ sở dữ liệu: " + e.getMessage(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-        } catch (Exception e ) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(historyForm,
                     "Lỗi khởi tạo form lịch sử nhập kho: " + e.getMessage(),
                     "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -92,17 +104,13 @@ public class StockInHistoryController {
                 public void mouseClicked(MouseEvent e) {
                     int selectedRow = historyForm.getTablePurchaseOrders().getSelectedRow();
                     if (selectedRow >= 0) {
-                        // Lấy mã phiếu nhập
                         String purchaseOrderId = historyForm.getTablePurchaseOrders()
                                 .getValueAt(selectedRow, 1).toString();
-                        // Tải chi tiết phiếu nhập
                         loadPurchaseOrderDetails(purchaseOrderId);
 
-                        // Kích hoạt nút cập nhật trạng thái
-                        historyForm.enableUpdateStatusButton(true);
+                        historyForm.enableOrderButtons(true);
                     } else {
-                        // Vô hiệu hóa nút khi không có dòng nào được chọn
-                        historyForm.enableUpdateStatusButton(false);
+                        historyForm.enableOrderButtons(false);
                     }
                 }
             });
@@ -185,44 +193,46 @@ public class StockInHistoryController {
     }
 
     /**
-     * Cập nhật trạng thái phiếu nhập trong database và xử lý logic khi chuyển trạng thái
+     * Cập nhật trạng thái phiếu nhập trong database và xử lý logic khi chuyển trạng
+     * thái
+     * 
      * @param purchaseOrderId Mã phiếu nhập
-     * @param newStatus Trạng thái mới
+     * @param newStatus       Trạng thái mới
      * @return true nếu thành công, false nếu thất bại
      */
     private boolean updatePurchaseOrderStatus(String purchaseOrderId, String newStatus) {
         try {
             ensureConnection();
-            
+
             // Bắt đầu transaction
             connection.setAutoCommit(false);
-            
-            // 1. Lấy thông tin phiếu nhập hiện tại 
+
+            // 1. Lấy thông tin phiếu nhập hiện tại
             Optional<PurchaseOrder> orderOpt = purchaseOrderService.findPurchaseOrderById(purchaseOrderId);
             if (!orderOpt.isPresent()) {
                 System.err.println("Không tìm thấy phiếu nhập: " + purchaseOrderId);
                 connection.rollback();
                 return false;
             }
-            
+
             PurchaseOrder order = orderOpt.get();
             String currentStatus = order.getStatus();
-            
+
             // 2. Kiểm tra tính hợp lệ khi chuyển đổi trạng thái
             if (!isValidStatusTransition(currentStatus, newStatus)) {
                 String message = "Không thể chuyển trạng thái từ '" + currentStatus + "' sang '" + newStatus + "'";
                 System.err.println(message);
-                JOptionPane.showMessageDialog(historyForm, 
-                    message, 
-                    "Lỗi Cập Nhật Trạng Thái", 
-                    JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(historyForm,
+                        message,
+                        "Lỗi Cập Nhật Trạng Thái",
+                        JOptionPane.ERROR_MESSAGE);
                 connection.rollback();
                 return false;
             }
-            
+
             // 3. Cập nhật trạng thái
             order.setStatus(newStatus);
-            
+
             // Cập nhật vào cơ sở dữ liệu cho tất cả các trường hợp
             PurchaseOrder updatedOrder = purchaseOrderService.updatePurchaseOrder(order);
             if (updatedOrder == null) {
@@ -230,24 +240,25 @@ public class StockInHistoryController {
                 connection.rollback();
                 return false;
             }
-            
+
             // 4. Xử lý logic đặc biệt khi chuyển sang trạng thái Completed
             if ("Completed".equals(newStatus) && !"Completed".equals(currentStatus)) {
                 System.out.println("Đang cập nhật số lượng sản phẩm trong kho cho phiếu nhập: " + purchaseOrderId);
-                
+
                 // Lấy chi tiết phiếu nhập
-                List<PurchaseOrderDetail> details = purchaseOrderDetailService.findPurchaseOrderDetailsByOrderId(purchaseOrderId);
-                
+                List<PurchaseOrderDetail> details = purchaseOrderDetailService
+                        .findPurchaseOrderDetailsByOrderId(purchaseOrderId);
+
                 // Hoàn thành phiếu nhập sẽ cập nhật số lượng sản phẩm
                 purchaseOrderService.completePurchaseOrder(purchaseOrderId);
 
                 System.out.println("Đã cập nhật số lượng cho " + details.size() + " sản phẩm");
             }
-            
+
             // Commit transaction nếu mọi thứ thành công
             connection.commit();
             return true;
-            
+
         } catch (Exception e) {
             // Rollback transaction nếu có lỗi
             try {
@@ -257,7 +268,7 @@ public class StockInHistoryController {
             } catch (SQLException ex) {
                 System.err.println("Lỗi khi rollback: " + ex.getMessage());
             }
-            
+
             System.err.println("Lỗi khi cập nhật trạng thái phiếu nhập: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -275,8 +286,9 @@ public class StockInHistoryController {
 
     /**
      * Kiểm tra xem việc chuyển đổi trạng thái có hợp lệ không
+     * 
      * @param currentStatus Trạng thái hiện tại
-     * @param newStatus Trạng thái mới
+     * @param newStatus     Trạng thái mới
      * @return true nếu chuyển đổi hợp lệ, false nếu không hợp lệ
      */
     private boolean isValidStatusTransition(String currentStatus, String newStatus) {
@@ -284,28 +296,28 @@ public class StockInHistoryController {
         if (currentStatus.equals(newStatus)) {
             return true;
         }
-        
+
         // Định nghĩa quy tắc chuyển đổi trạng thái
         switch (currentStatus) {
             case "Pending":
                 // Từ Pending có thể chuyển sang Delivering, Completed hoặc Cancelled
-                return "Delivering".equals(newStatus) || 
-                       "Completed".equals(newStatus) || 
-                       "Cancelled".equals(newStatus);
-                
+                return "Delivering".equals(newStatus) ||
+                        "Completed".equals(newStatus) ||
+                        "Cancelled".equals(newStatus);
+
             case "Delivering":
                 // Từ Delivering chỉ có thể chuyển sang Completed hoặc Cancelled
-                return "Completed".equals(newStatus) || 
-                       "Cancelled".equals(newStatus);
-                
+                return "Completed".equals(newStatus) ||
+                        "Cancelled".equals(newStatus);
+
             case "Completed":
                 // Từ Completed không thể chuyển sang trạng thái khác
                 return false;
-                
+
             case "Cancelled":
                 // Từ Cancelled không thể chuyển sang trạng thái khác
                 return false;
-                
+
             default:
                 // Trạng thái không xác định - không cho phép chuyển đổi
                 return false;
@@ -371,71 +383,11 @@ public class StockInHistoryController {
         }
     }
 
-
     /**
      * Load lịch sử phiếu nhập hàng từ database
      */
     public void loadPurchaseOrderHistory() {
         try {
-            
-
-            // // SQL đã được sửa để khớp chính xác với tên cột trong database
-            // String directSql = "SELECT po.PurchaseOrderID, po.OrderDate, po.Status, po.TotalAmount, " +
-            //         "po.EmployeeID, e.FullName, " + // FullName chính xác
-            //         "po.SupplierID, s.Name " + // Name chính xác
-            //         "FROM PurchaseOrders po " +
-            //         "LEFT JOIN Suppliers s ON po.SupplierID = s.SupplierID " +
-            //         "LEFT JOIN Employees e ON po.EmployeeID = e.EmployeeID " +
-            //         "ORDER BY po.OrderDate DESC";
-
-            // List<PurchaseOrder> purchaseOrders = new ArrayList<>();
-
-            // try (java.sql.Statement stmt = connection.createStatement();
-            //         java.sql.ResultSet rs = stmt.executeQuery(directSql)) {
-
-            //     while (rs.next()) {
-            //         try {
-            //             PurchaseOrder order = new PurchaseOrder();
-            //             order.setPurchaseOrderId(rs.getString("PurchaseOrderID"));
-
-            //             // Đọc OrderDate
-            //             java.sql.Timestamp timestamp = rs.getTimestamp("OrderDate");
-            //             if (timestamp != null) {
-            //                 order.setOrderDate(timestamp.toLocalDateTime());
-            //             }
-
-            //             // Đọc Status và TotalAmount
-            //             order.setStatus(rs.getString("Status"));
-            //             order.setTotalAmount(rs.getBigDecimal("TotalAmount"));
-
-            //             // Thiết lập Employee - sử dụng đúng tên cột FullName
-            //             String employeeId = rs.getString("EmployeeID");
-            //             if (employeeId != null) {
-            //                 com.pcstore.model.Employee emp = new com.pcstore.model.Employee();
-            //                 emp.setEmployeeId(employeeId);
-            //                 emp.setFullName(rs.getString("FullName"));
-            //                 order.setEmployee(emp);
-            //             }
-
-            //             // Thiết lập Supplier - sử dụng đúng tên cột Name
-            //             String supplierId = rs.getString("SupplierID");
-            //             if (supplierId != null) {
-            //                 com.pcstore.model.Supplier sup = new com.pcstore.model.Supplier();
-            //                 sup.setSupplierId(supplierId);
-            //                 sup.setName(rs.getString("Name")); // Sử dụng Name thay vì SupplierName
-            //                 order.setSupplier(sup);
-            //             }
-
-            //             purchaseOrders.add(order);
-            //             System.out.println("Found order: " + order.getPurchaseOrderId() +
-            //                     " | Date: " + (order.getOrderDate() != null ? order.getOrderDate() : "null") +
-            //                     " | Status: " + order.getStatus());
-            //         } catch (Exception e) {
-            //             System.err.println("Error processing row: " + e.getMessage());
-            //             e.printStackTrace();
-            //         }
-            //     }
-            // }
 
             List<PurchaseOrder> purchaseOrders = purchaseOrderService.findAllPurchaseOrders();
             // Lấy model của bảng
@@ -490,7 +442,8 @@ public class StockInHistoryController {
             ensureConnection();
 
             // Lấy chi tiết phiếu nhập
-            List<PurchaseOrderDetail> details = purchaseOrderDetailService.findPurchaseOrderDetailsByOrderId(purchaseOrderId);
+            List<PurchaseOrderDetail> details = purchaseOrderDetailService
+                    .findPurchaseOrderDetailsByOrderId(purchaseOrderId);
 
             // Lấy model của bảng
             DefaultTableModel model = (DefaultTableModel) historyForm.getTablePurchaseOrderDetails().getModel();
@@ -517,11 +470,188 @@ public class StockInHistoryController {
             }
 
             // System.out.println("StockInHistoryController: Đã tải " + details.size() +
-                    // " chi tiết phiếu nhập cho phiếu " + purchaseOrderId);
+            // " chi tiết phiếu nhập cho phiếu " + purchaseOrderId);
         } catch (Exception e) {
             System.err.println("Lỗi khi tải chi tiết phiếu nhập: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    // Thêm phương thức mới
+    public void printPurchaseOrder(String purchaseOrderId) {
+        try {
+            // Lấy thông tin phiếu nhập từ database
+            PurchaseOrder order = purchaseOrderService.findPurchaseOrderById(purchaseOrderId).orElse(null);
+
+            if (order != null) {
+                exportPDF(order);
+            } else {
+                JOptionPane.showMessageDialog(historyForm,
+                        "Không tìm thấy thông tin phiếu nhập với mã: " + purchaseOrderId,
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(historyForm,
+                    "Lỗi khi in phiếu nhập: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void exportPDF(PurchaseOrder purchaseOrder) {
+        try {
+            // Validate dữ liệu
+            if (purchaseOrder == null) {
+                JOptionPane.showMessageDialog(historyForm,
+                        "Không có dữ liệu phiếu nhập để xuất!",
+                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            Map<String, Object> printData = createPurchaseOrderPrintData(purchaseOrder);
+
+            String defaultFileName = "PhieuNhapHang_" + purchaseOrder.getPurchaseOrderId();
+
+            BillPrintUtils.printBill(historyForm, "bill_purchase_order_template", printData, defaultFileName);
+
+        } catch (Exception e) {
+            System.err.println("Lỗi khi xuất PDF: " + e.getMessage());
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(historyForm,
+                    "Lỗi khi xuất PDF: " + e.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Tạo dữ liệu cho template phiếu nhập hàng
+     */
+    private Map<String, Object> createPurchaseOrderPrintData(PurchaseOrder purchaseOrder) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+
+
+        // 2. Thông tin phiếu nhập
+        data.put("purchaseOrderId", purchaseOrder.getPurchaseOrderId());
+        String formattedOrderDate = purchaseOrder.getOrderDate() != null
+                ? purchaseOrder.getOrderDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                : "";
+        data.put("orderDate", formattedOrderDate);
+
+        String formattedCreatedAt = purchaseOrder.getCreatedAt() != null
+                ? purchaseOrder.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
+                : LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        data.put("createdAt", formattedCreatedAt);
+        data.put("status", purchaseOrder.getStatus());
+
+        // 3. Thông tin nhà cung cấp
+        Supplier supplier = purchaseOrder.getSupplier();
+        if (supplier != null) {
+            data.put("supplierName", supplier.getName());
+            data.put("supplierAddress", supplier.getAddress());
+            data.put("supplierPhone", supplier.getPhoneNumber());
+        } else {
+            data.put("supplierName", "Chưa xác định");
+            data.put("supplierAddress", "");
+            data.put("supplierPhone", "");
+        }
+
+        // 4. Thông tin nhân viên
+        Employee employee = purchaseOrder.getEmployee();
+        if (employee != null) {
+            data.put("employeeName", employee.getFullName());
+            data.put("employeePosition", employee.getPosition() != null ? employee.getPosition() : "Nhân viên");
+        } else {
+            data.put("employeeName", "");
+            data.put("employeePosition", "");
+        }
+
+        // 5. Chi tiết sản phẩm
+        data.put("purchaseOrderDetails", createPurchaseOrderDetailsList(purchaseOrder));
+
+        // 6. Thống kê
+        Map<String, Object> summary = calculatePurchaseOrderSummary(purchaseOrder);
+        data.put("totalItems", summary.get("totalItems"));
+        data.put("totalQuantity", summary.get("totalQuantity"));
+        data.put("totalAmountPurchase", summary.get("totalAmountPurchase"));
+        data.put("totalAmount", summary.get("totalAmount"));
+
+        // 7. Ghi chú
+        data.put("notes", purchaseOrder.getNotes());
+
+        return data;
+    }
+
+    /**
+     * Tạo danh sách chi tiết phiếu nhập cho template
+     */
+    private List<Map<String, Object>> createPurchaseOrderDetailsList(PurchaseOrder purchaseOrder) throws Exception {
+        List<Map<String, Object>> details = new ArrayList<>();
+
+        List<PurchaseOrderDetail> orderDetails;
+
+        orderDetails = purchaseOrderDetailService.findPurchaseOrderDetailsByOrderId(purchaseOrder.getPurchaseOrderId());
+
+        if (orderDetails != null) {
+            for (PurchaseOrderDetail detail : orderDetails) {
+                Map<String, Object> item = new HashMap<>();
+
+                Product product = detail.getProduct();
+                if (product != null) {
+                    item.put("productName", product.getProductName());
+                    item.put("productId", product.getProductId());
+                } else {
+                    item.put("productName", "Không xác định");
+                    item.put("productId", "");
+                }
+
+                item.put("quantity", detail.getQuantity());
+                item.put("unitCostFormatted", currencyFormat.format(detail.getUnitCost()));
+
+                // Tính thành tiền
+                BigDecimal subtotal = detail.getUnitCost().multiply(BigDecimal.valueOf(detail.getQuantity()));
+                item.put("subtotalFormatted", currencyFormat.format(subtotal));
+
+                // Ghi chú
+                // item.put("notes", detail.getNotes() != null ? detail.getNotes() : "");
+                item.put("notes", " ");
+
+                details.add(item);
+            }
+        }
+
+        return details;
+    }
+
+    /**
+     * Tính tổng kết cho phiếu nhập hàng
+     */
+    private Map<String, Object> calculatePurchaseOrderSummary(PurchaseOrder purchaseOrder) throws Exception {
+        Map<String, Object> summary = new HashMap<>();
+
+        List<PurchaseOrderDetail> orderDetails;
+
+        orderDetails = purchaseOrderDetailService.findPurchaseOrderDetailsByOrderId(purchaseOrder.getPurchaseOrderId());
+
+        int totalItems = orderDetails != null ? orderDetails.size() : 0;
+        int totalQuantity = 0;
+        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        if (orderDetails != null) {
+            for (PurchaseOrderDetail detail : orderDetails) {
+                totalQuantity += detail.getQuantity();
+
+                BigDecimal subtotal = detail.getUnitCost().multiply(
+                        BigDecimal.valueOf(detail.getQuantity()));
+                totalAmount = totalAmount.add(subtotal);
+            }
+        }
+
+        summary.put("totalItems", totalItems);
+        summary.put("totalQuantity", totalQuantity);
+        summary.put("totalAmount", totalAmount);
+        summary.put("totalAmountPurchase", totalAmount);
+
+        return summary;
     }
 
     /**

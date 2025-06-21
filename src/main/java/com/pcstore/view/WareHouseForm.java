@@ -58,6 +58,7 @@ public class WareHouseForm extends javax.swing.JPanel {
      * Creates new form PurchaseOder
      */
         public WareHouseForm() {
+        public WareHouseForm() {
         initComponents();
         initQuantityLegendPanel();
         initComponentsV2();
@@ -80,6 +81,10 @@ public class WareHouseForm extends javax.swing.JPanel {
         panelAction = new javax.swing.JPanel();
         btnCreatePurchaseOrder = new com.k33ptoo.components.KButton();
         btnHistoryStockIn = new com.k33ptoo.components.KButton();
+        lbColorNote = new javax.swing.JLabel();
+        colorRed = new javax.swing.JLabel();
+        colorYellow = new javax.swing.JLabel();
+        colorGreen = new javax.swing.JLabel();
         lbColorNote = new javax.swing.JLabel();
         colorRed = new javax.swing.JLabel();
         colorYellow = new javax.swing.JLabel();
@@ -147,6 +152,18 @@ public class WareHouseForm extends javax.swing.JPanel {
             }
         });
         panelAction.add(btnHistoryStockIn);
+
+        lbColorNote.setText(bundle.getString("lbColorNote")); // NOI18N
+        panelAction.add(lbColorNote);
+
+        colorRed.setText(bundle.getString("colorRed")); // NOI18N
+        panelAction.add(colorRed);
+
+        colorYellow.setText(bundle.getString("colorYellow")); // NOI18N
+        panelAction.add(colorYellow);
+
+        colorGreen.setText(bundle.getString("colorGreen")); // NOI18N
+        panelAction.add(colorGreen);
 
         lbColorNote.setText(bundle.getString("lbColorNote")); // NOI18N
         panelAction.add(lbColorNote);

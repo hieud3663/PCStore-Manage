@@ -380,3 +380,82 @@ ALTER COLUMN UnitCost decimal(18,2);
 -- Thay đổi kiểu dữ liệu của các cột giá trong bảng Products nếu cần
 ALTER TABLE Products 
 ALTER COLUMN Price decimal(18,2);
+
+ALTER TABLE Products
+ADD isActive BIT DEFAULT 1; -- Trạng thái sản phẩm (còn bán hay không)
+
+--==========================================
+-- Bổ sung trường giá vốn vào bảng Products
+ALTER TABLE Products ADD CostPrice DECIMAL(18,2);   -- Giá vốn
+ALTER TABLE Products ADD AverageCostPrice DECIMAL(18,2);
+ALTER TABLE Products ADD ProfitMargin DECIMAL(5,2);
+
+ALTER TABLE Products ALTER COLUMN ProfitMargin DECIMAL(18,2);
+
+
+-- Tạo bảng lịch sử giá
+CREATE TABLE PriceHistory (
+    PriceHistoryID INT PRIMARY KEY IDENTITY(1,1),
+    ProductID VARCHAR(10) NOT NULL,
+    OldPrice DECIMAL(18,2),
+    NewPrice DECIMAL(18,2),
+    OldCostPrice DECIMAL(18,2),
+    NewCostPrice DECIMAL(18,2),
+    ChangedDate DATETIME DEFAULT GETDATE(),
+    EmployeeID VARCHAR(10),
+    Note NVARCHAR(255),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+-- Tạo bảng chiến lược giá
+CREATE TABLE PricingStrategies (
+    StrategyID INT PRIMARY KEY IDENTITY(1,1),
+    StrategyName NVARCHAR(100) NOT NULL,
+    CustomerType NVARCHAR(50),
+    DiscountPercent DECIMAL(5,2),
+    IsActive BIT DEFAULT 1
+);
+
+-- Bảng phiếu kiểm kê
+CREATE TABLE InventoryChecks (
+    InventoryCheckID INT PRIMARY KEY IDENTITY(1,1), -- Mã kiểm kê
+    CheckCode VARCHAR(20) UNIQUE NOT NULL, -- Mã kiểm kê duy nhất, VD: KK01, KK02...
+    EmployeeID VARCHAR(10) NOT NULL, -- Mã nhân viên thực hiện kiểm kê (FK)
+    CheckName NVARCHAR(255) NOT NULL, -- Tên kiểm kê
+    CheckDate DATETIME DEFAULT GETDATE(), --Ngày chốt kiểm kê
+    CheckType VARCHAR(20) DEFAULT 'FULL' CHECK (CheckType IN ('FULL', 'PARTIAL', 'CATEGORY')), -- Loại kiểm kê
+    Status VARCHAR(20) DEFAULT 'DRAFT' CHECK (Status IN ('DRAFT', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')), -- Trạng thái kiểm kê
+    Notes NVARCHAR(500), -- Ghi chú
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
+);
+
+-- Bảng chi tiết kiểm kê
+CREATE TABLE InventoryCheckDetails (
+    InventoryCheckDetailID INT PRIMARY KEY IDENTITY(1,1),
+    InventoryCheckID INT NOT NULL,
+    ProductID VARCHAR(10) NOT NULL, -- Mã sản phẩm (FK)
+    SystemQuantity INT NOT NULL DEFAULT 0, -- Số lượng theo hệ thống
+    ActualQuantity INT NOT NULL DEFAULT 0, -- Số lượng thực tế
+    Discrepancy AS (ActualQuantity - SystemQuantity), -- Chênh lệch (computed column)
+    Reason NVARCHAR(255), -- Lý do chênh lệch
+    LossValue DECIMAL(15,2) DEFAULT 0, -- Giá trị mất mát (nếu có)
+    CreatedAt DATETIME DEFAULT GETDATE(), 
+    FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+-- --Bảng lịch sử kiểm kê
+-- CREATE TABLE InventoryCheckHistory (
+--     HistoryID INT PRIMARY KEY IDENTITY(1,1), -- Mã lịch sử kiểm kê
+--     InventoryCheckID INT NOT NULL, -- Mã kiểm kê (FK)
+--     EmployeeID VARCHAR(10) NOT NULL, -- Mã nhân viên thực hiện kiểm kê (FK)
+--     Action NVARCHAR(50) NOT NULL, -- Hành động (VD: 'CREATE', 'UPDATE', 'DELETE')
+--     ActionDate DATETIME DEFAULT GETDATE(), -- Ngày thực hiện hành động
+--     Notes NVARCHAR(500), -- Ghi chú
+--     FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
+--     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE CASCADE
+-- );
+

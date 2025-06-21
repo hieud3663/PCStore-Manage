@@ -6,15 +6,22 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
 /**
  * Lớp quản lý thiết lập Locale toàn cục trong ứng dụng
  */
 public class LocaleManager {
-    
-    private static final double pointRate = 0.1; // Tỷ lệ điểm quy đổi
+    public static final double pointRate = 0.1; // Tỷ lệ điểm quy đổi
+    public static final double profitMargin = 0.2; // Tỷ lệ lợi nhuận
 
     private final String fileNameVI = "/com/pcstore/resources/vi_VN.properties";
     private final String  fileNameEN = "/com/pcstore/resources/en_US.properties";
+
+    private final String fileNameResourceVI = "com/pcstore/resources/vi_VN";
+    private final String fileNameResourceEN = "com/pcstore/resources/en_US";
+
+    private final String fileNameMessageVI = "com/pcstore/resources/message_vi_VN";
+    private final String fileNameMessageEN = "com/pcstore/resources/message_en_US";
 
     // Singleton instance
     private static LocaleManager instance;
@@ -81,9 +88,24 @@ public class LocaleManager {
         ResourceBundle resourceBundle = null;
         try {
             if (currentLocale.getLanguage().equals("vi")) {
-                resourceBundle = ResourceBundle.getBundle(fileNameVI);
+                resourceBundle = ResourceBundle.getBundle(fileNameResourceVI);
             } else {
-                resourceBundle = ResourceBundle.getBundle(fileNameEN);
+                resourceBundle = ResourceBundle.getBundle(fileNameResourceEN);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return resourceBundle;
+    }
+
+    //trả về resource bundle tương ứng với ngôn ngữ hiện tại cho message
+    public ResourceBundle getMessageResourceBundle() {
+        ResourceBundle resourceBundle = null;
+        try {
+            if (currentLocale.getLanguage().equals("vi")) {
+                resourceBundle = ResourceBundle.getBundle(fileNameMessageVI);
+            } else {
+                resourceBundle = ResourceBundle.getBundle(fileNameMessageEN);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,15 +121,16 @@ public class LocaleManager {
         currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
         numberFormatter = NumberFormat.getNumberInstance(currentLocale);
     }
-    
-    /**
+      /**
      * Thay đổi Locale hiện tại
      * @param locale Locale mới
-     */
+     */    
     public void setLocale(Locale locale) {
         if (locale != null) {
             this.currentLocale = locale;
             updateFormatters();
+            // Cập nhật lại tất cả các thông báo lỗi khi thay đổi ngôn ngữ
+            ErrorMessage.refresh();
         }
     }
     
@@ -184,6 +207,5 @@ public class LocaleManager {
             .appendOptional(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             .toFormatter(currentLocale);
     }
-
 
 }

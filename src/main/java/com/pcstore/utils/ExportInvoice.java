@@ -1,4 +1,5 @@
 package com.pcstore.utils;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -9,6 +10,7 @@ import com.pcstore.model.enums.PaymentMethodEnum;
 import com.pcstore.payment.CashPayment;
 import com.pcstore.payment.ZalopayPayment;
 import com.pcstore.utils.LocaleManager;
+import raven.toast.Notifications;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -20,22 +22,22 @@ import java.util.*;
 import javax.swing.JOptionPane;
 
 public class ExportInvoice {
-    
+
     public static boolean exportPDF(Invoice invoice, BasePayment payment) throws Exception {
         boolean isCashPayment = payment instanceof CashPayment;
         try {
             NumberFormat formatter = LocaleManager.getInstance().getCurrencyFormatter();
 
             // Kiểm tra đường dẫn file mẫu
-            File f = new File("src\\main\\java\\com\\pcstore\\resources\\bill_form.xlsx");
+            File f = new File("src\\main\\java\\com\\pcstore\\resources\\bill_sell_template.xlsx");
             if (!f.exists()) {
-                JOptionPane.showMessageDialog(null, 
-                    "Không tìm thấy file mẫu hóa đơn!\nĐường dẫn: " + f.getAbsolutePath(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "Không tìm thấy file mẫu hóa đơn!\nĐường dẫn: " + f.getAbsolutePath(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
 
-            String filePath = f.getAbsolutePath(); 
+            String filePath = f.getAbsolutePath();
             FileInputStream fis = new FileInputStream(filePath);
             Workbook workbook = new XSSFWorkbook(fis);
             Sheet sheet = workbook.getSheetAt(0);
@@ -51,15 +53,15 @@ public class ExportInvoice {
             fields.put("paymentMethod", payment.getPaymentMethod().getDisplayName());
             fields.put("usePoint", formatter.format(invoice.getDiscountAmount()));
 
-            
+
             if (isCashPayment) {
                 CashPayment cashPayment = (CashPayment) payment;
                 // Sử dụng phương thức formatCurrency của LocaleManager thay vì formatter.format
-                fields.put("amountReceived",formatter.format(cashPayment.getAmountReceived()));
-                fields.put("amountChange",formatter.format(cashPayment.getChange()));
+                fields.put("amountReceived", formatter.format(cashPayment.getAmountReceived()));
+                fields.put("amountChange", formatter.format(cashPayment.getChange()));
             } else {
-                fields.put("amountReceived",formatter.format(payment.getAmount()));
-                fields.put("amountChange",formatter.format(0));
+                fields.put("amountReceived", formatter.format(payment.getAmount()));
+                fields.put("amountChange", formatter.format(0));
             }
 
             // Dữ liệu sản phẩm 
@@ -75,18 +77,18 @@ public class ExportInvoice {
 
             // Tính tổng số lượng sản phẩm
             int sumQuantity = products.stream()
-                .mapToInt(p -> Integer.parseInt(p.get("quantity")))
-                .sum();
+                    .mapToInt(p -> Integer.parseInt(p.get("quantity")))
+                    .sum();
             BigDecimal totalAmount = products.stream()
-                .map(p -> new BigDecimal(p.get("totalPrice")))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-                
+                    .map(p -> new BigDecimal(p.get("totalPrice")))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
             // Thêm vào fields với định dạng thích hợp
             fields.put("sumQuantity", String.valueOf(sumQuantity));
             fields.put("totalAmount", formatter.format(totalAmount));
             fields.put("paymentAmount", formatter.format(invoice.getTotalAmount()));
-            
-           
+
+
             // Dòng chứa sản phẩm mẫu
             int productRowIndex = -1;
 
@@ -102,9 +104,9 @@ public class ExportInvoice {
             }
 
             if (productRowIndex == -1) {
-                JOptionPane.showMessageDialog(null, 
-                    "File mẫu không hợp lệ! Không tìm thấy placeholder {{productName}}",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "File mẫu không hợp lệ! Không tìm thấy placeholder {{productName}}",
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
                 workbook.close();
                 fis.close();
                 return false;
@@ -116,14 +118,14 @@ public class ExportInvoice {
             for (Cell cell : templateRow) {
                 styleMap.put(cell.getColumnIndex(), cell.getCellStyle());
             }
-            
+
             // 2. Sao chép dòng mẫu cho mỗi sản phẩm
             if (products.size() > 1) {
                 for (int i = 1; i < products.size(); i++) {
                     // Tạo dòng mới dưới dòng mẫu
                     sheet.shiftRows(productRowIndex + i, sheet.getLastRowNum(), 1, true, false);
                     Row newRow = sheet.createRow(productRowIndex + i);
-                    
+
                     // Sao chép style từ dòng mẫu
                     for (int j = 0; j < templateRow.getLastCellNum(); j++) {
                         Cell newCell = newRow.createCell(j);
@@ -133,12 +135,12 @@ public class ExportInvoice {
                     }
                 }
             }
-            
+
             // 3. Điền dữ liệu sản phẩm vào các dòng
             for (int i = 0; i < products.size(); i++) {
                 Map<String, String> product = products.get(i);
                 Row row = sheet.getRow(productRowIndex + i);
-                
+
                 for (int col = 0; col < 5; col++) {
                     Cell cell = row.getCell(col);
                     if (cell == null) {
@@ -147,7 +149,7 @@ public class ExportInvoice {
                             cell.setCellStyle(styleMap.get(col));
                         }
                     }
-                    
+
                     try {
                         switch (col) {
                             case 0 -> cell.setCellValue(product.get("productName"));
@@ -168,7 +170,7 @@ public class ExportInvoice {
                                 } catch (NumberFormatException e) {
                                     cell.setCellValue(product.get("totalPrice"));
                                 }
-                            } 
+                            }
                             default -> cell.setCellValue("");
                         }
                     } catch (Exception e) {
@@ -183,7 +185,7 @@ public class ExportInvoice {
                     if (cell != null && cell.getCellType() == CellType.STRING) {
                         String text = cell.getStringCellValue();
                         boolean changed = false;
-                        
+
                         for (String key : fields.keySet()) {
                             String placeholder = "{{" + key + "}}";
                             if (text.contains(placeholder)) {
@@ -198,7 +200,7 @@ public class ExportInvoice {
                                 changed = true;
                             }
                         }
-                        
+
                         if (changed) {
                             cell.setCellValue(text);
                         }
@@ -217,11 +219,14 @@ public class ExportInvoice {
             fis.close();
             fos.close();
 
-            JOptionPane.showMessageDialog(null,
-                    "Xuất hóa đơn thành công!\n" +
-                    "Tên file: " + fileName,
-                    "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
+//            JOptionPane.showMessageDialog(null,
+//                    "Xuất hóa đơn thành công!\n" +
+//                            "Tên file: " + fileName,
+//                    "Thông báo",
+//                    JOptionPane.INFORMATION_MESSAGE);
+
+//            Notifications.getInstance().show(Notifications.Type.SUCCESS, 3500, "Xuất hóa đơn thành công!\n" +
+//                    "Tên file: " + fileName);
 
             //mở file vừa tạo
             try {
@@ -230,43 +235,42 @@ public class ExportInvoice {
                 Runtime.getRuntime().exec(command);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null,
-                    "Không thể mở file hóa đơn: " + e.getMessage(),
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
+                        "Không thể mở file hóa đơn: " + e.getMessage(),
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
             }
 
             return true;
-            
+
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null,
-                "Lỗi khi xuất hóa đơn: " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
+                    "Lỗi khi xuất hóa đơn: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return false;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                "Lỗi không xác định: " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
+                    "Lỗi không xác định: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             return false;
         }
     }
 
     public static boolean exportPDF(Invoice invoice, PaymentMethodEnum paymentMethod) throws Exception {
-       
+
         BasePayment dummyPayment;
 
         if (paymentMethod == PaymentMethodEnum.ZALOPAY) {
             dummyPayment = new ZalopayPayment(invoice);
-        }
-        else {
+        } else {
             dummyPayment = new CashPayment(invoice);
             ((CashPayment) dummyPayment).setAmountReceived(invoice.getTotalAmount());
             ((CashPayment) dummyPayment).setChange(BigDecimal.ZERO);
-        }        
-        
+        }
+
         return exportPDF(invoice, dummyPayment);
     }
 }

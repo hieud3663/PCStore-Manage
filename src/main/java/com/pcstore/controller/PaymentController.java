@@ -5,11 +5,14 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JOptionPane;
 
+import com.fasterxml.jackson.databind.JsonSerializable.Base;
 import com.pcstore.model.Invoice;
 import com.pcstore.model.base.BasePayment;
 import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.payment.BankPayment;
 import com.pcstore.payment.CashPayment;
 import com.pcstore.payment.ZalopayPayment;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.view.PayForm;
 
 /**
@@ -46,35 +49,10 @@ public class PaymentController {
             case ZALOPAY:
                 return processZaloPayPayment();
             case BANK_TRANSFER:
-                processBankTransferPayment();
-                return null;
+                return processBankTransferPayment();
             default:
                 return null;
         }
-    }
-    
-    /**
-     * Xử lý thanh toán bằng tiền mặt
-     * @return Đối tượng thanh toán tiền mặt
-     */
-    private BasePayment processCashPayment() {
-        currentPayment = new CashPayment(invoice);
-
-        if (!currentPayment.processPayment(paymentForm)) {
-            JOptionPane.showMessageDialog(paymentForm, 
-                currentPayment.getDescription(), 
-                "Lỗi", 
-                JOptionPane.ERROR_MESSAGE);
-            return null;
-        }
-        
-        // Hiển thị thông tin tiền thừa
-        CashPayment cashPayment = (CashPayment) currentPayment;
-        String message = "Thanh toán thành công! Số tiền thối lại: " + cashPayment.getChange() + " đ";
-        JOptionPane.showMessageDialog(paymentForm, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        
-        confirmPayment("Cash");
-        return cashPayment;
     }
     
     //Set sự kiện 
@@ -96,6 +74,30 @@ public class PaymentController {
        processPayment(paymentForm.getSelectedPaymentMethod());
     }
 
+     /**
+     * Xử lý thanh toán bằng tiền mặt
+     * @return Đối tượng thanh toán tiền mặt
+     */
+    private BasePayment processCashPayment() {
+        currentPayment = new CashPayment(invoice);
+
+        if (!currentPayment.processPayment(paymentForm)) {
+            JOptionPane.showMessageDialog(paymentForm, 
+                currentPayment.getDescription(), 
+                ErrorMessage.ERROR_TITLE.toString(), 
+                JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        
+        // Hiển thị thông tin tiền thừa
+        CashPayment cashPayment = (CashPayment) currentPayment;
+        String message = String.format(ErrorMessage.PAYMENT_SUCCESS_CHANGE.toString(), cashPayment.getChange());
+        JOptionPane.showMessageDialog(paymentForm, message, ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
+        
+        confirmPayment("Cash");
+        return cashPayment;
+    }
+
     /**
      * Xử lý thanh toán ZaloPay
      * @return Đối tượng thanh toán ZaloPay
@@ -106,7 +108,7 @@ public class PaymentController {
         if (!currentPayment.processPayment(paymentForm)) {
             JOptionPane.showMessageDialog(paymentForm, 
                 currentPayment.getDescription(), 
-                "Lỗi", 
+                ErrorMessage.ERROR_TITLE.toString(), 
                 JOptionPane.ERROR_MESSAGE);
 
             paymentSuccessful = false;
@@ -117,18 +119,29 @@ public class PaymentController {
         confirmPayment("ZaloPay");
         return currentPayment;
     }
-    
-    /**
+      /**
      * Xử lý thanh toán chuyển khoản
      */
-    private void processBankTransferPayment() {
+    private BasePayment processBankTransferPayment() {
+        currentPayment = new BankPayment(invoice);
+        if (!currentPayment.processPayment(paymentForm)) {
+            JOptionPane.showMessageDialog(paymentForm, 
+                currentPayment.getDescription(), 
+                ErrorMessage.ERROR_TITLE.toString(), 
+                JOptionPane.ERROR_MESSAGE);
+            paymentSuccessful = false;
+            return null;
+        }
+
+        paymentSuccessful = true;
+        confirmPayment("Bank Transfer");
         JOptionPane.showMessageDialog(paymentForm, 
-            "Chức năng này đang bảo trì! Vui lòng chọn phương thức thanh toán khác", 
-            "Thông báo", 
+            currentPayment.getDescription(), 
+            ErrorMessage.INFO_TITLE.toString(), 
             JOptionPane.INFORMATION_MESSAGE);
+        return currentPayment;
     }
-    
-    /**
+      /**
      * Xác nhận thanh toán
      * @param paymentMethodName Tên phương thức thanh toán
      * @return true nếu xác nhận thành công, false nếu ngược lại
@@ -139,8 +152,8 @@ public class PaymentController {
             // Xác nhận hoàn thành giao dịch
             confirm = JOptionPane.showConfirmDialog(
                 paymentForm,
-                "Xác nhận đã thanh toán thành công?",
-                "Xác nhận thanh toán",
+                ErrorMessage.PAYMENT_CONFIRM.toString(),
+                ErrorMessage.PAYMENT_CONFIRM_TITLE.toString(),
                 JOptionPane.YES_NO_OPTION
             );
         } else {

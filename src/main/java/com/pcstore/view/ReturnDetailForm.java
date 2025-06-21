@@ -14,7 +14,31 @@ import java.util.Map;
  * @author DUC ANH
  */
 public class ReturnDetailForm extends javax.swing.JPanel {
-
+    
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbID;
+    private javax.swing.JLabel lbProductID;
+    private javax.swing.JLabel lbProductName;
+    private javax.swing.JLabel lbQuantity;
+    private javax.swing.JLabel lbReasonReturn;
+    private javax.swing.JLabel lbReturnDate;
+    private javax.swing.JLabel lbStatus;
+    private javax.swing.JPanel paneIDCustomer;
+    private com.k33ptoo.components.KGradientPanel panelInfoDetail;
+    private javax.swing.JPanel panelProductID;
+    private javax.swing.JPanel panelProductName;
+    private javax.swing.JPanel panelQuantity;
+    private javax.swing.JPanel panelReasonReturn;
+    private javax.swing.JPanel panelReturnDate;
+    private javax.swing.JPanel panelStatus;
+    private javax.swing.JTextField txtID;
+    private javax.swing.JTextField txtProductID;
+    private javax.swing.JTextField txtProductName;
+    private javax.swing.JTextField txtQuantity;
+    private javax.swing.JTextField txtReasonReturn;
+    private javax.swing.JTextField txtReturnDate;
+    private javax.swing.JTextField txtStatus;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form DetailReturnForm
      */
@@ -120,9 +144,10 @@ public class ReturnDetailForm extends javax.swing.JPanel {
         txtStatus = new javax.swing.JTextField();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setLayout(new java.awt.BorderLayout());
 
         panelInfoDetail.setBackground(new java.awt.Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         panelInfoDetail.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("txtDetail"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 24))); // NOI18N
         panelInfoDetail.setkBorderRadius(15);
         panelInfoDetail.setkEndColor(new java.awt.Color(0, 0, 0));
@@ -234,50 +259,9 @@ public class ReturnDetailForm extends javax.swing.JPanel {
 
         panelInfoDetail.add(panelStatus);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelInfoDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 454, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(panelInfoDetail, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)))
-        );
+        add(panelInfoDetail, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbID;
-    private javax.swing.JLabel lbProductID;
-    private javax.swing.JLabel lbProductName;
-    private javax.swing.JLabel lbQuantity;
-    private javax.swing.JLabel lbReasonReturn;
-    private javax.swing.JLabel lbReturnDate;
-    private javax.swing.JLabel lbStatus;
-    private javax.swing.JPanel paneIDCustomer;
-    private com.k33ptoo.components.KGradientPanel panelInfoDetail;
-    private javax.swing.JPanel panelProductID;
-    private javax.swing.JPanel panelProductName;
-    private javax.swing.JPanel panelQuantity;
-    private javax.swing.JPanel panelReasonReturn;
-    private javax.swing.JPanel panelReturnDate;
-    private javax.swing.JPanel panelStatus;
-    private javax.swing.JTextField txtID;
-    private javax.swing.JTextField txtProductID;
-    private javax.swing.JTextField txtProductName;
-    private javax.swing.JTextField txtQuantity;
-    private javax.swing.JTextField txtReasonReturn;
-    private javax.swing.JTextField txtReturnDate;
-    private javax.swing.JTextField txtStatus;
-    // End of variables declaration//GEN-END:variables
+    
 }

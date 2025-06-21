@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 3%;
+            font-size: 14px;
+            background-color: #f9fbff;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 94%;
+            max-width: 900px;
+            min-width: 320px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #ffffff 0%, #e8f1ff 100%);
+            padding: 3%;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            box-sizing: border-box;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 3%;
+            border-bottom: 3px solid #0052cc;
+            margin-bottom: 4%;
+        }
+        .header img {
+            max-width: 20%;
+            min-width: 60px;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+        }
+        .header h1 {
+            color: #003087;
+            font-size: 2.2rem;
+            margin: 1.5% 0;
+            font-weight: 700;
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4%;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .info p {
+            margin: 0.8% 0;
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.5;
+        }
+        .invoice {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 4%;
+            page-break-inside: auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .invoice th, .invoice td {
+            border: 1px solid #d6e4ff;
+            padding: 2%;
+            font-size: 1rem;
+            line-height: 1.8;
+            min-height: 30px;
+        }
+        .invoice th {
+            background-color: #0052cc;
+            color: white;
+            font-weight: 600;
+        }
+        .invoice td {
+            background-color: #ffffff;
+            transition: background-color 0.2s;
+        }
+        .invoice tr:nth-child(even) td {
+            background-color: #f9fbff;
+        }
+        .invoice tr:hover td {
+            background-color: #f0f7ff;
+        }
+        .invoice th:nth-child(1), .invoice td:nth-child(1) { text-align: center; } /* STT */
+        .invoice th:nth-child(2), .invoice td:nth-child(2) { text-align: left; }   /* Tên sản phẩm */
+        .invoice th:nth-child(3), .invoice td:nth-child(3) { text-align: center; } /* Số lượng */
+        .invoice th:nth-child(4), .invoice td:nth-child(4) { text-align: right; }  /* Đơn giá */
+        .invoice th:nth-child(5), .invoice td:nth-child(5) { text-align: right; }  /* Thành tiền */
+        .total {
+            font-weight: 700;
+            background-color: #fff3cd !important;
+            color: #003087;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 4%;
+            padding-top: 2%;
+            border-top: 2px solid #e6e6e6;
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 700px) {
+            body { font-size: 12px; }
+            .container { padding: 4%; }
+            .header h1 { font-size: 1.8rem; }
+            .info { flex-direction: column; gap: 10px; }
+            .info p { font-size: 0.95rem; }
+            .invoice th, .invoice td { 
+                padding: 2.5%; 
+                font-size: 0.9rem; 
+                line-height: 1.6; 
+                min-height: 25px; 
+            }
+            .header img { max-width: 25%; }
+            .footer { font-size: 0.9rem; }
+        }
+        @media (max-width: 450px) {
+            body { font-size: 10px; }
+            .container { 
+                min-width: 250px; 
+                padding: 5%; 
+            }
+            .header h1 { font-size: 1.4rem; }
+            .info p { font-size: 0.85rem; }
+            .invoice th, .invoice td { 
+                padding: 3%; 
+                font-size: 0.8rem; 
+                line-height: 1.4; 
+                min-height: 20px; 
+            }
+            .header img { max-width: 30%; }
+            .footer { font-size: 0.8rem; }
+        }
+        /* Print styles */
+        @media print {
+            body { margin: 0; }
+            .container { 
+                box-shadow: none; 
+                width: 100%; 
+                max-width: none; 
+                padding: 2%; 
+            }
+            .invoice { 
+                page-break-inside: avoid; 
+                border-radius: 0; 
+                box-shadow: none; 
+            }
+            .header img { max-width: 20%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img th:src="${logo}" alt="Logo" />
+            <h1>HÓA ĐƠN BÁN HÀNG</h1>
+        </div>
+        <div class="info">
+            <div>
+                <p><strong>Khách hàng:</strong> <span th:text="${customerName}"></span></p>
+                <p><strong>Địa chỉ:</strong> <span th:text="${customerAddress}"></span></p>
+            </div>
+            <div>
+                <p><strong>Ngày:</strong> <span th:text="${date}"></span></p>
+                <p><strong>Mã hóa đơn:</strong> <span th:text="${invoiceId}"></span></p>
+            </div>
+        </div>
+        <table class="invoice">
+            <tr>
+                <th style="width: 6%;">STT</th>
+                <th style="width: 42%;">Tên sản phẩm</th>
+                <th style="width: 14%;">Số lượng</th>
+                <th style="width: 19%;">Đơn giá (VND)</th>
+                <th style="width: 19%;">Thành tiền (VND)</th>
+            </tr>
+            <tr th:each="item, iterStat : ${items}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${item.name}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${item.formattedPrice}"></td>
+                <td th:text="${item.formattedTotal}"></td>
+            </tr>
+            <tr>
+                <td colspan="4" class="total">Tổng cộng</td>
+                <td class="total" th:text="${formattedTotal}"></td>
+            </tr>
+        </table>
+        <div class="footer">
+            <p><strong>Công ty ABC</strong></p>
+            <p>Địa chỉ: 123 Đường Láng, Hà Nội, Việt Nam</p>
+            <p>Email: contact@abc.com | Hotline: 0123 456 789</p>
+        </div>
+    </div>
+</body>
+</html>

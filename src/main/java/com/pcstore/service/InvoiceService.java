@@ -2,6 +2,7 @@ package com.pcstore.service;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,16 +146,20 @@ public class InvoiceService {
      * @param customerId ID của khách hàng
      * @return Danh sách hóa đơn của khách hàng
      */
-    public List<Invoice> findInvoicesByCustomer(String customerId) {
-        List<Invoice> invoices = invoiceRepository.findByCustomerId(customerId);
-        if (invoices != null) {
-            for (Invoice invoice : invoices) {
-                invoice.setInvoiceDetails(invoiceDetailService.findInvoiceDetailsByInvoiceId(invoice.getInvoiceId()));
+    public List<Invoice> findInvoicesByCustomerID(String customerId) {
+        try {
+            List<Invoice> invoices = invoiceRepository.findByCustomerId(customerId);
+            if (invoices != null) {
+                for (Invoice invoice : invoices) {
+                    invoice.setInvoiceDetails(invoiceDetailService.findInvoiceDetailsByInvoiceId(invoice.getInvoiceId()));
+                }
             }
             return invoices;
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm hóa đơn theo khách hàng: " + e.getMessage());
+            return new ArrayList<>();
         }
 
-        return new ArrayList<>();
     }
 
     /**

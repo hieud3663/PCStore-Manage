@@ -63,22 +63,6 @@ END;
 GO
 
 
---Trigger cập nhật tồn kho sau khi nhập hàng
-CREATE TRIGGER trg_UpdateWareHouseAfterPurchase
-ON PurchaseOrderDetails
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    
-    -- Cập nhật số lượng tồn kho
-    UPDATE p
-    SET StockQuantity = p.StockQuantity + i.Quantity
-    FROM Products p
-    INNER JOIN inserted i ON p.ProductID = i.ProductID;
-END;
-GO
-
 --Trigger tự động tính tổng tiền hóa đơn
 CREATE TRIGGER trg_CalculateInvoiceTotal
 ON InvoiceDetails
@@ -194,7 +178,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- Trigger tự động tạo mã sản phẩm theo danh mục (LAP001, LK002, PC001...)
+-- Cập nhật trigger tự động tạo mã sản phẩm chỉ dùng số tăng dần
 ALTER TRIGGER [dbo].[trg_GenerateProductID]
 ON [dbo].[Products]
 INSTEAD OF INSERT
@@ -208,50 +192,60 @@ BEGIN
         ProductName NVARCHAR(255),
         CategoryID VARCHAR(10),
         SupplierID VARCHAR(10),
-        Price DECIMAL(10,2),
+        Price DECIMAL(18,2),
         StockQuantity INT,
         Specifications NVARCHAR(MAX),
-        Description NVARCHAR(MAX)
+        Description NVARCHAR(MAX),
+        Manufacturer NVARCHAR(100),
+        CostPrice DECIMAL(18,2),
+        AverageCostPrice DECIMAL(18,2),
+        ProfitMargin DECIMAL(5,2),
+        CreatedAt DATETIME,
+        UpdatedAt DATETIME
     );
     
     -- Đưa dữ liệu vào bảng tạm
     INSERT INTO @InsertedProducts 
-    (ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description)
-    SELECT ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description
+    (ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description, 
+     Manufacturer, CostPrice, AverageCostPrice, ProfitMargin, CreatedAt, UpdatedAt)
+    SELECT 
+        ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description,
+        Manufacturer, CostPrice, AverageCostPrice, ProfitMargin, 
+        ISNULL(CreatedAt, GETDATE()), ISNULL(UpdatedAt, GETDATE())
     FROM inserted;
     
-    -- Thêm sản phẩm với mã tự động cho từng danh mục
+    -- Lấy mã sản phẩm tiếp theo
+    DECLARE @NextProductNumber INT;
+    SELECT @NextProductNumber = ISNULL(MAX(CAST(ProductID AS INT)), 0) + 1
+    FROM Products
+    WHERE ISNUMERIC(ProductID) = 1;
+    
+    -- Xử lý từng dòng dữ liệu được thêm vào
     DECLARE @RowCount INT = (SELECT COUNT(*) FROM @InsertedProducts)
     DECLARE @CurrentRow INT = 1
     
     WHILE @CurrentRow <= @RowCount
     BEGIN
-        DECLARE @CategoryID VARCHAR(10)
-        DECLARE @NextProductNumber INT
-        
-        -- Lấy CategoryID của dòng hiện tại
-        SELECT @CategoryID = CategoryID
-        FROM @InsertedProducts
-        WHERE RowNum = @CurrentRow
-        
-        -- Tìm số tiếp theo cho CategoryID cụ thể
-        SELECT @NextProductNumber = ISNULL(MAX(CAST(SUBSTRING(ProductID, LEN(@CategoryID) + 1, 
-                    LEN(ProductID) - LEN(@CategoryID)) AS INT)), 0) + 1
-        FROM Products 
-        WHERE ProductID LIKE @CategoryID + '%'
-        
-        -- Thêm sản phẩm với mã mới
+        -- Thêm sản phẩm với mã mới (dạng 00001, 00002,...)
         INSERT INTO Products 
-        (ProductID, ProductName, CategoryID, SupplierID, Price, StockQuantity, Specifications, Description)
+        (ProductID, ProductName, CategoryID, SupplierID, Price, StockQuantity, 
+         Specifications, Description, Manufacturer, CostPrice, AverageCostPrice, 
+         ProfitMargin, CreatedAt, UpdatedAt)
         SELECT 
-            @CategoryID + RIGHT('000' + CAST(@NextProductNumber AS VARCHAR(3)), 3),
+            RIGHT('00000' + CAST((@NextProductNumber + @CurrentRow - 1) AS VARCHAR(5)), 5),
             ProductName, 
             CategoryID, 
             SupplierID, 
             Price, 
             ISNULL(StockQuantity, 0), 
             Specifications, 
-            Description
+            Description,
+            Manufacturer,
+            CostPrice,
+            AverageCostPrice,
+            ProfitMargin,
+            CreatedAt,
+            UpdatedAt
         FROM @InsertedProducts
         WHERE RowNum = @CurrentRow
         
@@ -383,6 +377,8 @@ BEGIN
     FROM @InsertedCustomers;
 END;
 GO
+
+
 -- Tạo trigger để cập nhật UpdatedAt khi cập nhật thông tin khách hàng
 CREATE TRIGGER trg_UpdateCustomerTimestamp
 ON Customers
@@ -541,3 +537,207 @@ GO
 UPDATE Users
 SET UpdatedAt = CreatedAt
 WHERE UpdatedAt IS NULL OR UpdatedAt <> CreatedAt;
+GO
+
+-- Tạo trigger duy nhất để cập nhật giá bán, giá vốn và tỉ suất lợi nhuận
+CREATE OR ALTER TRIGGER trg_UpdateProductPricing
+ON Products
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Lấy mức độ lồng nhau của trigger để tránh vòng lặp vô hạn
+    DECLARE @TriggerNestLevel INT = TRIGGER_NESTLEVEL();
+    
+    -- Chỉ thực hiện khi mức độ lồng nhau của trigger < 2
+    IF @TriggerNestLevel < 2
+    BEGIN
+        -- TRƯỜNG HỢP 1: Cập nhật giá bán khi giá vốn hoặc tỉ suất lợi nhuận thay đổi
+        IF (UPDATE(CostPrice) OR UPDATE(ProfitMargin)) AND NOT UPDATE(Price)
+        BEGIN
+            -- Cập nhật giá bán dựa trên giá vốn và tỉ suất lợi nhuận
+            UPDATE p
+            SET 
+                Price = CASE 
+                          WHEN i.CostPrice IS NOT NULL AND i.ProfitMargin IS NOT NULL 
+                          THEN ROUND(i.CostPrice * (1 + i.ProfitMargin/100), 0)
+                          ELSE p.Price
+                       END,
+                UpdatedAt = GETDATE()
+            FROM Products p
+            INNER JOIN inserted i ON p.ProductID = i.ProductID
+            WHERE i.CostPrice IS NOT NULL 
+              AND i.ProfitMargin IS NOT NULL;
+            
+            -- Ghi lại lịch sử thay đổi giá
+            INSERT INTO PriceHistory (ProductID, OldPrice, NewPrice, OldCostPrice, NewCostPrice, ChangedDate, Note)
+            SELECT 
+                i.ProductID,
+                d.Price,
+                i.Price,
+                d.CostPrice,
+                i.CostPrice,
+                GETDATE(),
+                'Tự động cập nhật giá bán từ giá vốn và tỉ suất lợi nhuận'
+            FROM inserted i
+            INNER JOIN deleted d ON i.ProductID = d.ProductID
+            WHERE i.Price <> d.Price OR i.CostPrice <> d.CostPrice;
+        END;
+        
+        -- TRƯỜNG HỢP 2: Cập nhật tỉ suất lợi nhuận khi giá bán và giá vốn thay đổi
+        ELSE IF UPDATE(Price) AND UPDATE(CostPrice) AND NOT UPDATE(ProfitMargin)
+        BEGIN
+            -- Cập nhật tỉ suất lợi nhuận dựa trên giá bán và giá vốn mới
+            UPDATE p
+            SET 
+                ProfitMargin = CASE 
+                                 WHEN i.CostPrice > 0 
+                                 THEN ROUND(((i.Price / i.CostPrice) - 1) * 100, 2)
+                                 ELSE p.ProfitMargin
+                               END,
+                UpdatedAt = GETDATE()
+            FROM Products p
+            INNER JOIN inserted i ON p.ProductID = i.ProductID
+            WHERE i.CostPrice > 0;
+            
+            -- Ghi lại lịch sử thay đổi giá
+            INSERT INTO PriceHistory (ProductID, OldPrice, NewPrice, OldCostPrice, NewCostPrice, ChangedDate, Note)
+            SELECT 
+                i.ProductID,
+                d.Price,
+                i.Price,
+                d.CostPrice,
+                i.CostPrice,
+                GETDATE(),
+                'Tự động cập nhật tỉ suất lợi nhuận từ giá bán và giá vốn mới'
+            FROM inserted i
+            INNER JOIN deleted d ON i.ProductID = d.ProductID
+            WHERE i.Price <> d.Price OR i.CostPrice <> d.CostPrice;
+        END;
+        
+        -- TRƯỜNG HỢP 3: Cập nhật tỉ suất lợi nhuận khi chỉ giá bán thay đổi
+        ELSE IF UPDATE(Price) AND NOT UPDATE(ProfitMargin) AND NOT UPDATE(CostPrice)
+        BEGIN
+            -- Cập nhật tỉ suất lợi nhuận dựa trên giá bán mới và giá vốn hiện tại
+            UPDATE p
+            SET 
+                ProfitMargin = CASE 
+                                 WHEN i.CostPrice > 0 
+                                 THEN ROUND(((i.Price / i.CostPrice) - 1) * 100, 2)
+                                 ELSE p.ProfitMargin
+                               END,
+                UpdatedAt = GETDATE()
+            FROM Products p
+            INNER JOIN inserted i ON p.ProductID = i.ProductID
+            WHERE i.CostPrice > 0;
+            
+            -- Ghi lại lịch sử thay đổi giá
+            INSERT INTO PriceHistory (ProductID, OldPrice, NewPrice, OldCostPrice, NewCostPrice, ChangedDate, Note)
+            SELECT 
+                i.ProductID,
+                d.Price,
+                i.Price,
+                d.CostPrice,
+                i.CostPrice,
+                GETDATE(),
+                'Tự động cập nhật tỉ suất lợi nhuận từ giá bán'
+            FROM inserted i
+            INNER JOIN deleted d ON i.ProductID = d.ProductID
+            WHERE i.Price <> d.Price;
+        END;
+        
+        -- TRƯỜNG HỢP 4: Cập nhật giá bán và tỉ suất lợi nhuận khi chỉ giá vốn thay đổi
+        ELSE IF UPDATE(CostPrice) AND NOT UPDATE(Price) AND NOT UPDATE(ProfitMargin)
+        BEGIN
+            -- Cập nhật giá bán dựa trên giá vốn mới và tỉ suất lợi nhuận hiện tại
+            UPDATE p
+            SET 
+                Price = CASE 
+                          WHEN i.CostPrice IS NOT NULL AND p.ProfitMargin IS NOT NULL 
+                          THEN ROUND(i.CostPrice * (1 + p.ProfitMargin/100), 0)
+                          ELSE p.Price
+                       END,
+                UpdatedAt = GETDATE()
+            FROM Products p
+            INNER JOIN inserted i ON p.ProductID = i.ProductID
+            WHERE i.CostPrice IS NOT NULL AND i.CostPrice > 0;
+            
+            -- Ghi lại lịch sử thay đổi giá
+            INSERT INTO PriceHistory (ProductID, OldPrice, NewPrice, OldCostPrice, NewCostPrice, ChangedDate, Note)
+            SELECT 
+                i.ProductID,
+                d.Price,
+                p.Price, -- Lấy giá mới sau khi cập nhật
+                d.CostPrice,
+                i.CostPrice,
+                GETDATE(),
+                'Tự động cập nhật giá bán từ giá vốn mới'
+            FROM inserted i
+            INNER JOIN deleted d ON i.ProductID = d.ProductID
+            INNER JOIN Products p ON i.ProductID = p.ProductID
+            WHERE p.Price <> d.Price OR i.CostPrice <> d.CostPrice;
+        END;
+
+        -- TRƯỜNG HỢP 5: CẢ 3 TRƯỜNG ĐỀU CÙNG THAY ĐỔI THÌ LẤY GIÁ VỐN VÀ TỈ SUẤT LỢI NHUẬN LÀM GỐC
+        ELSE IF UPDATE(Price) AND UPDATE(CostPrice) AND UPDATE(ProfitMargin)
+        BEGIN
+            -- Cập nhật giá bán dựa trên giá vốn mới và tỉ suất lợi nhuận mới
+            UPDATE p
+            SET 
+                Price = CASE 
+                          WHEN i.CostPrice IS NOT NULL AND i.ProfitMargin IS NOT NULL 
+                          THEN ROUND(i.CostPrice * (1 + i.ProfitMargin/100), 0)
+                          ELSE p.Price
+                       END,
+                UpdatedAt = GETDATE()
+            FROM Products p
+            INNER JOIN inserted i ON p.ProductID = i.ProductID
+            WHERE i.CostPrice IS NOT NULL AND i.CostPrice > 0;
+
+            -- Ghi lại lịch sử thay đổi giá
+            INSERT INTO PriceHistory (ProductID, OldPrice, NewPrice, OldCostPrice, NewCostPrice, ChangedDate, Note)
+            SELECT 
+                i.ProductID,
+                d.Price,
+                p.Price, -- Lấy giá mới sau khi cập nhật
+                d.CostPrice,
+                i.CostPrice,
+                GETDATE(),
+                'Tự động cập nhật giá bán từ giá vốn và tỉ suất lợi nhuận mới'
+            FROM inserted i
+            INNER JOIN deleted d ON i.ProductID = d.ProductID
+            INNER JOIN Products p ON i.ProductID = p.ProductID
+            WHERE p.Price <> d.Price OR i.CostPrice <> d.CostPrice;
+        END;
+    END;
+END;
+GO
+
+-- Xóa các trigger cũ nếu có
+IF OBJECT_ID('trg_UpdatePriceFromCostAndMargin', 'TR') IS NOT NULL
+    DROP TRIGGER trg_UpdatePriceFromCostAndMargin;
+GO
+
+IF OBJECT_ID('trg_UpdateMarginFromPrice', 'TR') IS NOT NULL
+    DROP TRIGGER trg_UpdateMarginFromPrice;
+GO
+
+
+-- Trigger tự động tạo mã kiểm kê
+CREATE TRIGGER trg_GenerateCheckCode
+ON InventoryChecks
+INSTEAD OF INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @NextCheckID INT;
+    SELECT @NextCheckID = ISNULL(MAX(CAST(SUBSTRING(CheckCode, 3, LEN(CheckCode)-2) AS INT)), 0) + 1
+    FROM InventoryChecks WHERE CheckCode LIKE 'KK%';
+    
+    INSERT INTO InventoryChecks (CheckCode, EmployeeID, CheckDate, CheckType, Status, Notes)
+    SELECT 'KK' + RIGHT('000' + CAST(@NextCheckID AS VARCHAR(3)), 3),
+           EmployeeID, CheckDate, CheckType, Status, Notes
+    FROM inserted;
+END;

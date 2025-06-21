@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phiếu Kiểm Kê Kho</title>
+    <style>
+      /* Reset toàn bộ margin/padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Times New Roman", serif !important;
+      }
+
+      /* Root elements - loại bỏ hoàn toàn margin */
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100%;
+        height: 100%;
+        background: white;
+      }      body {
+        font-family: "Times New Roman", serif;
+        font-size: 17px; /* Word size 13 = 17px */
+        color: #000;
+        line-height: 1.4;
+      }
+
+      /* Container - sát viền hơn */
+      .container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 8mm; /* Giảm padding để sát viền hơn */
+        background: white;
+        min-height: 100vh;
+        border: none;
+      }
+
+      /* PRINT STYLES - QUAN TRỌNG NHẤT */
+      @media print {
+        /* Loại bỏ hoàn toàn margin của page */
+        @page {
+          size: A4;
+          margin: 0 !important;
+        }
+
+        /* Reset tất cả elements */
+        * {
+          margin: 0 !important;
+          padding: 0 !important;
+          box-sizing: border-box;
+        }
+
+        html, body {
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 210mm;
+          height: 297mm;
+          background: white;
+        }        body {
+          font-size: 17px; /* Word size 13 = 17px */
+          line-height: 1.3;
+        }
+
+        /* Container khi in - sát viền tối đa */
+        .container {
+          width: 210mm !important;
+          height: 297mm !important;
+          margin: 0 !important;
+          padding: 5mm !important; /* Chỉ 5mm padding để sát viền */
+          border: none !important;
+          box-shadow: none !important;
+          background: white !important;
+          max-width: none !important;
+          min-height: 297mm !important;
+        }
+
+        /* Header khi in */
+        .header {
+          margin-bottom: 6mm;
+          padding-bottom: 3mm;
+          border-bottom: 2px solid #000;
+        }        .header h1 {
+          font-size: 22px; /* Tương đương Word size 16-17 */
+          margin: 4mm 0 3mm 0;
+        }
+
+        .header .company-name {
+          font-size: 19px; /* Tương đương Word size 14-15 */
+        }
+
+        .header .company-address {
+          font-size: 16px; /* Tương đương Word size 11-12 */
+        }
+
+        .header .doc-number {
+          font-size: 17px; /* Tương đương Word size 13 */
+          margin: 3mm 0;
+        }
+
+        /* Info section khi in */
+        .info-section {
+          margin-bottom: 6mm;
+          padding-bottom: 4mm;
+          border-bottom: 1px solid #000;
+        }        .info-item {
+          margin: 3px 0;
+          font-size: 16px; /* Tương đương Word size 12 */
+        }
+
+        .info-label {
+          width: 85px;
+        }
+
+        .info-value {
+          min-width: 110px;
+        }
+
+        /* Table khi in */        .inventory-table {
+          margin-bottom: 6mm;
+          font-size: 16px; /* Tương đương Word size 11 */
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+          padding: 3px 2px;
+        }
+
+        .inventory-table th {
+          font-size: 14.5px; /* Tương đương Word size 10 */
+        }
+
+        .inventory-table td.product-name {
+          font-size: 14.5px; /* Tương đương Word size 10 */
+          padding-left: 4px;
+        }
+
+        /* Summary khi in */
+        .summary-section {
+          margin: 6mm 0;
+          padding: 4mm;
+          page-break-inside: avoid;
+        }        .summary-title {
+          font-size: 17px; /* Tương đương Word size 13 */
+          margin-bottom: 4mm;
+        }
+
+        .summary-item {
+          font-size: 16px; /* Tương đương Word size 12 */
+          padding: 2px 0;
+        }
+
+        /* Signature khi in */
+        .signature-section {
+          margin-top: 8mm;
+          page-break-inside: avoid;
+        }        .signature-title {
+          font-size: 15px; /* Tương đương Word size 11 */
+          margin-bottom: 25px;
+        }
+
+        .signature-line {
+          height: 35px;
+          margin: 5px 0;
+        }
+
+        .signature-name {
+          font-size: 13px; /* Tương đương Word size 10 */
+        }
+
+        /* Notes khi in */
+        .notes-section {
+          margin: 6mm 0;
+          padding: 4mm;
+        }        .notes-title {
+          font-size: 17px; /* Tương đương Word size 11 */
+        }
+
+        .notes-content {
+          min-height: 35px;
+          font-size: 19px; /* Tương đương Word size 10 */
+        }
+      }
+
+      /* SCREEN STYLES */
+      .header {
+        text-align: center;
+        margin-bottom: 12mm;
+        border-bottom: 2px solid #000;
+        padding-bottom: 6mm;
+      }
+
+      .header .company-info {
+        text-align: center;
+        margin-bottom: 6mm;
+      }      .header .company-name {
+        font-size: 18px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin: 3px 0;
+      }
+
+      .header .company-address {
+        font-size: 13px;
+        margin: 2px 0;
+      }
+
+      .header h1 {
+        color: #000;
+        font-size: 24px;
+        margin: 6mm 0 4mm 0;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .header .doc-number {
+        font-size: 16px;
+        margin: 4mm 0;
+        font-weight: bold;
+      }
+
+      .info-section {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        border-bottom: 1px solid #000;
+        padding-bottom: 8px;
+      }
+
+      .info-left,
+      .info-right {
+        width: 48%;
+      }      .info-item {
+        margin: 5px 0;
+        font-size: 17px; /* Word size 13 = 17px */
+      }
+
+      .info-label {
+        font-weight: bold;
+        display: inline-block;
+        width: 100px;
+      }
+
+      .info-value {
+        border-bottom: 1px dotted #666;
+        display: inline-block;
+        min-width: 120px;
+        padding-bottom: 1px;
+      }      .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 12px;
+        font-size: 15px; /* Tương đương Word size 11 */
+        table-layout: fixed;
+      }
+
+      .inventory-table th,
+      .inventory-table td {
+        border: 1px solid #000;
+        padding: 4px 3px;
+        text-align: center;
+        vertical-align: middle;
+        word-wrap: break-word;
+        overflow: hidden;
+      }
+
+      .inventory-table th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+        font-size: 13px; /* Tương đương Word size 10 */
+        text-transform: uppercase;
+        line-height: 1.2;
+      }
+
+      .inventory-table td.product-name {
+        text-align: left;
+        padding-left: 6px;
+        font-size: 13px; /* Tương đương Word size 10 */
+      }
+
+      .inventory-table td.number {
+        text-align: right;
+        padding-right: 4px;
+      }
+
+      /* Column widths */
+      .inventory-table th:nth-child(1) { width: 6%; }   /* STT */
+      .inventory-table th:nth-child(2) { width: 32%; }  /* Tên sản phẩm */
+      .inventory-table th:nth-child(3) { width: 12%; }  /* Mã SP */
+      .inventory-table th:nth-child(4) { width: 20%; }  /* Barcode */
+      .inventory-table th:nth-child(5) { width: 10%; }  /* Tồn kho */
+      .inventory-table th:nth-child(6) { width: 10%; }  /* Thực tế */
+      .inventory-table th:nth-child(7) { width: 10%; }  /* Chênh lệch */
+      .inventory-table th:nth-child(8) { width: 10%; }  /* Ghi chú */
+
+      .summary-section {
+        margin: 15px 0;
+        padding: 8px;
+        border: 1px solid #000;
+        background-color: #f9f9f9;
+      }      .summary-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        font-size: 17px; /* Word size 13 = 17px */
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px 0;
+        border-bottom: 1px dotted #666;
+        font-size: 16px; /* Tương đương Word size 12 */
+      }
+
+      .summary-label {
+        font-weight: bold;
+      }
+
+      .summary-value {
+        font-weight: bold;
+      }
+
+      .signature-section {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .signature-box {
+        text-align: center;
+        width: 30%;
+      }      .signature-title {
+        font-weight: bold;
+        margin-bottom: 35px;
+        text-transform: uppercase;
+        font-size: 15px; /* Tương đương Word size 11 */
+      }
+
+      .signature-line {
+        border-bottom: 1px solid #000;
+        margin: 6px 0;
+        height: 45px;
+      }
+
+      .signature-name {
+        font-size: 13px; /* Tương đương Word size 10 */
+        margin-top: 3px;
+      }
+
+      .notes-section {
+        margin: 12px 0;
+        border: 1px solid #000;
+        padding: 6px;
+      }      .notes-title {
+        font-weight: bold;
+        margin-bottom: 6px;
+        font-size: 15px; /* Tương đương Word size 11 */
+      }
+
+      .notes-content {
+        min-height: 45px;
+        border-bottom: 1px dotted #666;
+        padding: 3px 0;
+        font-size: 13px; /* Tương đương Word size 10 */
+      }
+
+      .discrepancy-positive {
+        color: #2e7d32;
+        font-weight: bold;
+      }
+
+      .discrepancy-negative {
+        color: #d32f2f;
+        font-weight: bold;
+      }
+
+      .discrepancy-zero {
+        color: #666;
+      }
+
+      /* Responsive cho mobile */
+      @media screen and (max-width: 800px) {
+        .container {
+          padding: 5mm;
+        }
+
+        .info-section {
+          flex-direction: column;
+        }
+
+        .info-left,
+        .info-right {
+          width: 100%;
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .signature-section {
+          flex-direction: column;
+        }
+
+        .signature-box {
+          width: 100%;
+          margin-bottom: 15px;
+        }
+      }
+
+      @media screen and (max-width: 500px) {
+        .container {
+          padding: 3mm;
+        }
+
+        .header h1 {
+          font-size: 16px;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+          padding: 2px 1px;
+          font-size: 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header với thông tin công ty -->
+      <div class="header">
+        <div class="company-info">
+          <div class="company-name" th:text="${companyName}">
+            CÔNG TY TNHH ABC
+          </div>
+          <div class="company-address" th:text="${companyAddress}">
+            123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh
+          </div>
+          <div class="company-address" th:text="${companyPhone}">
+            Tel: (028) 1234 5678 | Email: info@abc.com
+          </div>
+        </div>
+        <h1>PHIẾU KIỂM KÊ KHO</h1>
+        <div class="doc-number">
+          <span>Số: </span><span th:text="${inventoryCheckCode}">PKK001</span>
+        </div>
+      </div>
+
+      <!-- Thông tin phiếu kiểm kê -->
+      <div class="info-section">
+        <div class="info-left">
+          <div class="info-item">
+            <span class="info-label">Tên phiếu kiểm kê:</span>
+            <span class="info-value" th:text="${inventoryCheckName}">Kiểm kê định kỳ tháng 12</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ngày kiểm kê:</span>
+            <span class="info-value" th:text="${checkDate}">15/12/2024</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Kho:</span>
+            <span class="info-value" th:text="${warehouseName}">Kho chính</span>
+          </div>
+        </div>
+        <div class="info-right">
+          <div class="info-item">
+            <span class="info-label">Người kiểm kê:</span>
+            <span class="info-value" th:text="${checkerName}">Nguyễn Văn A</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ngày tạo:</span>
+            <span class="info-value" th:text="${createdDate}">10/12/2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bảng chi tiết sản phẩm -->
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>STT</th>
+            <th>Tên sản phẩm</th>
+            <th>Mã SP</th>
+            <th>Barcode</th>
+            <th>Tồn kho</th>
+            <th>Thực tế</th>
+            <th>Chênh lệch</th>
+            <th>Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="item, iterStat : ${inventoryItems}">
+            <td th:text="${iterStat.count}">1</td>
+            <td class="product-name" th:text="${item.productName}">Laptop Dell Inspiron 15</td>
+            <td th:text="${item.productId}">LP001</td>
+            <td th:text="${item.barcode}">1234567890123</td>
+            <td class="number" th:text="${item.systemQuantity}">10</td>
+            <td class="number" th:text="${item.actualQuantity}">8</td>
+            <td class="number" th:text="${item.discrepancy}">-2</td>
+            <td th:text="${item.notes}">Thiếu 2 sản phẩm</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Tổng kết -->
+      <div class="summary-section">
+        <div class="summary-title">Tổng kết kiểm kê</div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="summary-label">Tổng thực tế:</span>
+            <span class="summary-value" th:text="${totalActual}">50</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Số lượng tăng:</span>
+            <span class="summary-value" th:text="${totalIncrease}">5</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Số lượng giảm:</span>
+            <span class="summary-value" th:text="${totalDecrease}">12</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Tổng chênh lệch:</span>
+            <span class="summary-value" th:text="${totalDifference}">17</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ghi chú -->
+      <div class="notes-section" th:if="${notes != null and #strings.length(notes) > 0}">
+        <div class="notes-title">Ghi chú:</div>
+        <div class="notes-content" th:text="${notes}">
+          Kiểm kê định kỳ cuối năm. Cần cập nhật lại số liệu tồn kho.
+        </div>
+      </div>
+
+      <!-- Chữ ký -->
+      <div class="signature-section">
+        <div class="signature-box">
+          <div class="signature-title">Người lập phiếu</div>
+          <div class="signature-line"></div>
+          <div class="signature-name" th:text="${createdBy}">Nguyễn Thị B</div>
+        </div>
+        <div class="signature-box">
+          <div class="signature-title">Người kiểm kê</div>
+          <div class="signature-line"></div>
+          <div class="signature-name" th:text="${checkerName}">Nguyễn Văn A</div>
+        </div>
+        <div class="signature-box">
+          <div class="signature-title">Thủ kho</div>
+          <div class="signature-line"></div>
+          <div class="signature-name">........................</div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

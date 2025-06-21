@@ -2,7 +2,8 @@ package com.pcstore.controller;
 
 import com.pcstore.model.Employee;
 import com.pcstore.service.EmployeeService;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.ErrorMessage;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.DialogChooseEmployee;
 
 import javax.swing.*;
@@ -71,8 +72,8 @@ public class DialogChooseEmployeeController {
      * Thiết lập style cho bảng
      */
     private void setupTableStyle() {
-        TableStyleUtil.applyDefaultStyle(dialog.getTableListEmployee());
-        TableStyleUtil.setBooleanColumns(dialog.getTableListEmployee(), 0);
+        TableUtils.applyDefaultStyle(dialog.getTableListEmployee());
+        TableUtils.setBooleanColumns(dialog.getTableListEmployee(), 0);
     }
     
     /**
@@ -84,8 +85,9 @@ public class DialogChooseEmployeeController {
             displayEmployees(employees);
         } catch (Exception e) {
             logger.log(Level.SEVERE, "Error loading employees", e);
-            JOptionPane.showMessageDialog(dialog, "Lỗi khi tải danh sách nhân viên: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(dialog, 
+                    String.format(ErrorMessage.EMPLOYEE_LOAD_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -127,9 +129,10 @@ public class DialogChooseEmployeeController {
                 dialog.getTableListEmployee().setRowSorter(sorter);
             }
             
-            TableStyleUtil.applyFilter(sorter, searchText);
+            TableUtils.applyFilter(sorter, searchText);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error filtering employees", e);
+            // No need to show message to user for non-critical error
         }
     }
     
@@ -169,16 +172,15 @@ public class DialogChooseEmployeeController {
                     dialog.dispose();
                     return;
                 } catch (Exception e) {
-                    
                     JOptionPane.showMessageDialog(dialog, 
-                            "Lỗi khi lấy thông tin nhân viên: " + e.getMessage(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            String.format(ErrorMessage.EMPLOYEE_GET_INFO_ERROR.toString(), e.getMessage()),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
         
-        JOptionPane.showMessageDialog(dialog, "Vui lòng chọn một nhân viên", 
-                "Thông báo", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(dialog, ErrorMessage.EMPLOYEE_SELECTION_REQUIRED.toString(), 
+                ErrorMessage.INFO_TITLE.toString(), JOptionPane.WARNING_MESSAGE);
     }
     
 

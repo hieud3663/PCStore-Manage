@@ -35,6 +35,17 @@ public class ServiceForm extends JPanel {
     private ReturnServiceForm returnServiceForm;;
     private RepairServiceForm repairServiceForm;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbRepair;
+    private javax.swing.JLabel lbReturn;
+    private javax.swing.JLabel lbWarranty;
+    private javax.swing.JPanel panelContent;
+    private javax.swing.JPanel panelNav;
+    private com.k33ptoo.components.KGradientPanel panelRepair;
+    private com.k33ptoo.components.KGradientPanel panelReturn;
+    private com.k33ptoo.components.KGradientPanel panelWarranty;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form Service
      */
@@ -91,7 +102,7 @@ public class ServiceForm extends JPanel {
         lbWarranty.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbWarranty.setForeground(new java.awt.Color(30, 113, 195));
         lbWarranty.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbWarranty.setText(bundle.getString("WarrantyServiceW")); // NOI18N
         lbWarranty.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelWarranty.add(lbWarranty, java.awt.BorderLayout.CENTER);
@@ -292,14 +303,5 @@ public class ServiceForm extends JPanel {
     // End Hover=====================================================
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbRepair;
-    private javax.swing.JLabel lbReturn;
-    private javax.swing.JLabel lbWarranty;
-    private javax.swing.JPanel panelContent;
-    private javax.swing.JPanel panelNav;
-    private com.k33ptoo.components.KGradientPanel panelRepair;
-    private com.k33ptoo.components.KGradientPanel panelReturn;
-    private com.k33ptoo.components.KGradientPanel panelWarranty;
-    // End of variables declaration//GEN-END:variables
+    
 }

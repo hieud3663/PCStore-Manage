@@ -238,22 +238,80 @@ public class Repair extends BaseTimeEntity {
         return status;
     }
 
-    public void setStatus(RepairEnum status) {
-        if (status == null) {
-            throw new IllegalArgumentException("Trạng thái không được để trống");
+    public void setStatus(RepairEnum newStatus) {
+        // Nếu trạng thái hiện tại chưa được thiết lập (null), cho phép đặt trạng thái mới
+        if (this.status == null) {
+            this.status = newStatus;
+            return;
         }
         
-        // Bỏ qua kiểm tra trạng thái khi đang khởi tạo đối tượng mới
-        if (this.status != null && !canChangeStatus(status)) {
-            throw new IllegalStateException("Không thể chuyển sang trạng thái " + status);
+        // Nếu trạng thái mới giống trạng thái hiện tại, không cần thay đổi
+        if (this.status == newStatus) {
+            return;
         }
         
-        // Cập nhật ngày hoàn thành khi trạng thái là Completed
-        if (status == RepairEnum.COMPLETED && this.completionDate == null) {
-            this.completionDate = LocalDateTime.now();
+        // Kiểm tra tính hợp lệ của chuyển đổi trạng thái
+        switch (this.status) {
+            case RECEIVED:
+                // Từ RECEIVED có thể chuyển sang DIAGNOSING hoặc CANCELLED
+                if (newStatus == RepairEnum.DIAGNOSING || newStatus == RepairEnum.CANCELLED) {
+                    this.status = newStatus;
+                    return;
+                }
+                break;
+                
+            case DIAGNOSING:
+                // Từ DIAGNOSING có thể chuyển sang WAITING_FOR_PARTS, REPAIRING, COMPLETED, CANCELLED
+                if (newStatus == RepairEnum.WAITING_FOR_PARTS || newStatus == RepairEnum.REPAIRING || 
+                    newStatus == RepairEnum.COMPLETED || newStatus == RepairEnum.CANCELLED) {
+                    this.status = newStatus;
+                    return;
+                }
+                break;
+                
+            case WAITING_FOR_PARTS:
+                // Từ WAITING_FOR_PARTS có thể chuyển sang REPAIRING, CANCELLED
+                if (newStatus == RepairEnum.REPAIRING || newStatus == RepairEnum.CANCELLED) {
+                    this.status = newStatus;
+                    return;
+                }
+                break;
+                
+            case REPAIRING:
+                // Từ REPAIRING có thể chuyển sang COMPLETED, CANCELLED
+                if (newStatus == RepairEnum.COMPLETED || newStatus == RepairEnum.CANCELLED) {
+                    this.status = newStatus;
+                    return;
+                }
+                break;
+                
+            case COMPLETED:
+                // Từ COMPLETED có thể chuyển sang DELIVERED, CANCELLED
+                if (newStatus == RepairEnum.DELIVERED || newStatus == RepairEnum.CANCELLED) {
+                    this.status = newStatus;
+                    return;
+                }
+                break;
+                
+            case DELIVERED:
+                // Từ DELIVERED không thể chuyển sang trạng thái khác
+                throw new IllegalStateException("Không thể thay đổi trạng thái của thiết bị đã giao cho khách hàng");
+                
+            case CANCELLED:
+                // Từ CANCELLED không thể chuyển sang trạng thái khác
+                throw new IllegalStateException("Không thể thay đổi trạng thái của thiết bị đã hủy");
+                
+            default:
+                // Cho phép force set trạng thái trong trường hợp đặc biệt
+                if (Boolean.getBoolean("repair.status.force")) {
+                    this.status = newStatus;
+                    return;
+                }
         }
         
-        this.status = status;
+        // Nếu đến đây thì chuyển đổi trạng thái không hợp lệ
+        throw new IllegalStateException("Không thể chuyển từ trạng thái " + this.status + 
+                                       " sang trạng thái " + newStatus);
     }
     
     // Phương thức tương thích ngược với code cũ

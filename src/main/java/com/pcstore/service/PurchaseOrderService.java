@@ -2,13 +2,17 @@ package com.pcstore.service;
 
 import com.pcstore.model.PurchaseOrder;
 import com.pcstore.model.Product;
+import com.pcstore.model.PriceHistory;
+import com.pcstore.model.PurchaseOrderDetail;
 import com.pcstore.repository.impl.PurchaseOrderRepository;
-import com.pcstore.repository.Repository;
 import com.pcstore.repository.RepositoryFactory;
 import com.pcstore.repository.impl.ProductRepository;
+import com.pcstore.repository.impl.PriceHistoryRepository;
+import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +23,8 @@ import java.util.Optional;
 public class PurchaseOrderService {
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final ProductRepository productRepository;
+    private final PriceHistoryRepository priceHistoryRepository;
+    private final PurchaseOrderDetailRepository purchaseOrderDetailRepository;
     
     /**
      * Khởi tạo service với csdl
@@ -28,6 +34,8 @@ public class PurchaseOrderService {
         // Khởi tạo repository với kết nối csdl
         this.purchaseOrderRepository = new PurchaseOrderRepository(connection, repositoryFactory);
         this.productRepository = new ProductRepository(connection);
+        this.priceHistoryRepository = new PriceHistoryRepository();
+        this.purchaseOrderDetailRepository = new PurchaseOrderDetailRepository(connection, repositoryFactory);
     }
 
     /**
@@ -38,6 +46,8 @@ public class PurchaseOrderService {
     public PurchaseOrderService(PurchaseOrderRepository purchaseOrderRepository, ProductRepository productRepository) {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.productRepository = productRepository;
+        this.priceHistoryRepository = new PriceHistoryRepository();
+        this.purchaseOrderDetailRepository = new PurchaseOrderDetailRepository();
     }
     
     /**
@@ -123,25 +133,93 @@ public class PurchaseOrderService {
      * @param status Trạng thái mới
      * @return true nếu cập nhật thành công, ngược lại là false
      */
-
-     // Nếu dùng thì bỏ comment ở đây, nhưng phải sửa lại trong PurchaseOrderRepository bởi vì không có order.getOrderDetails() - Hơi rối đấy nha :() ♥♥♥
-
-    // public boolean updatePurchaseOrderStatus(String purchaseOrderId, String status) {
-    //     // Nếu trạng thái là "Completed", cập nhật số lượng sản phẩm trong kho
-    //     if ("Completed".equals(status)) {
-    //         Optional<PurchaseOrder> orderOpt = purchaseOrderRepository.findById(purchaseOrderId);
-    //         if (orderOpt.isPresent()) {
-    //             PurchaseOrder order = orderOpt.get();
-    //             // Cập nhật kho cho từng chi tiết đơn hàng
-    //             order.getOrderDetails().forEach(detail -> {
-    //                 productRepository.updateStock(detail.getProduct().getProductId(), detail.getQuantity());
-    //             });
-    //         }
-    //     }
+    public boolean completePurchaseOrder(String purchaseOrderId) {
+        PurchaseOrder order = purchaseOrderRepository.findById(purchaseOrderId).orElse(null);
+        if (order == null) {
+            return false;
+        }
         
-    //     return purchaseOrderRepository.updateStatus(purchaseOrderId, status);
-    // }
+        // Lấy chi tiết đơn hàng
+        List<PurchaseOrderDetail> details = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrderId);
+        
+        // Cập nhật trạng thái đơn hàng
+        order.setStatus("Completed");
+        PurchaseOrder updateResult = purchaseOrderRepository.update(order);
+        
+        if (updateResult != null) {
+            // Cập nhật số lượng sản phẩm và giá vốn
+            for (PurchaseOrderDetail detail : details) {
+                Product product = productRepository.findById(detail.getProduct().getProductId()).orElse(null);
+                if (product != null) {
+                    // Lưu giá cũ trước khi cập nhật
+                    BigDecimal oldPrice = product.getPrice();
+                    BigDecimal oldCostPrice = product.getCostPrice();
+                    
+                    // Cập nhật số lượng
+                    int newQuantity = product.getStockQuantity() + detail.getQuantity();
+                    product.setStockQuantity(newQuantity);
+                    
+                    // Cập nhật giá vốn trung bình
+                    updateAverageCostPrice(product, detail.getUnitCost(), detail.getQuantity());
+                    
+                    // Tự động cập nhật giá bán nếu có thiết lập tỷ suất lợi nhuận
+                    if (product.getProfitMargin() != null && product.getProfitMargin().compareTo(BigDecimal.ZERO) > 0) {
+                        BigDecimal newPrice = product.calculateSellingPrice();
+                        product.setPrice(newPrice);
+                        
+                        // Lưu lịch sử giá
+                        PriceHistory priceHistory = new PriceHistory(
+                            product.getProductId(),
+                            oldPrice,
+                            newPrice,
+                            oldCostPrice,
+                            detail.getUnitCost(),
+                            order.getEmployee().getEmployeeId(),
+                            "Cập nhật giá từ phiếu nhập " + purchaseOrderId
+                        );
+                        priceHistoryRepository.save(priceHistory);
+                    }
+                    
+                    productRepository.update(product);
+                }
+            }
+            return true;
+        }
+        
+        return false;
+    }
     
+    /**
+     * Thêm phương thức tính giá vốn trung bình
+     */
+    private void updateAverageCostPrice(Product product, BigDecimal newCostPrice, int newQuantity) {
+        if (product == null || newCostPrice == null || newQuantity <= 0) {
+            return;
+        }
+        
+        int currentStock = product.getStockQuantity();
+        BigDecimal currentAvgCost = product.getAverageCostPrice() != null ? 
+                product.getAverageCostPrice() : BigDecimal.ZERO;
+        
+        // Tính tổng giá trị hiện tại
+        BigDecimal currentTotalValue = currentAvgCost.multiply(BigDecimal.valueOf(currentStock));
+        
+        // Tính giá trị lô hàng mới
+        BigDecimal newTotalValue = newCostPrice.multiply(BigDecimal.valueOf(newQuantity));
+        
+        // Tính tổng số lượng
+        int totalQuantity = currentStock + newQuantity;
+        
+        // Tính giá vốn trung bình mới
+        BigDecimal newAverageCost = totalQuantity > 0 ?
+                (currentTotalValue.add(newTotalValue))
+                    .divide(BigDecimal.valueOf(totalQuantity), 2, RoundingMode.HALF_UP) :
+                BigDecimal.ZERO;
+        
+        // Cập nhật vào sản phẩm
+        product.setAverageCostPrice(newAverageCost);
+        product.setCostPrice(newCostPrice);
+    }
     
     /**
      * Kiểm tra đơn đặt hàng có tồn tại không

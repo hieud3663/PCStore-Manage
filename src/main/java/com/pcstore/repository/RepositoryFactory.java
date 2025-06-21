@@ -1,5 +1,6 @@
 package com.pcstore.repository;
 
+import com.pcstore.model.InventoryCheck;
 import com.pcstore.repository.impl.*;
 import java.sql.Connection;
 
@@ -22,6 +23,8 @@ public class RepositoryFactory {
     private PurchaseOrderRepository purchaseOrderRepository;
     private RepairRepository repairRepository;
     private WarrantyRepository warrantyRepository;
+    private InventoryCheckRepository inventoryCheckRepository;
+    private InventoryCheckDetailRepository inventoryCheckDetailRepository;
     // Singleton pattern implementation
     private static RepositoryFactory instance;
     private static Connection currentConnection;
@@ -111,6 +114,20 @@ public class RepositoryFactory {
     }
 
     
+    public InventoryCheckRepository getInventoryCheckRepository() {
+        if (inventoryCheckRepository == null) {
+            inventoryCheckRepository = new InventoryCheckRepository(connection);
+        }
+        return inventoryCheckRepository;
+    }
+
+    public InventoryCheckDetailRepository getInventoryCheckDetailRepository() {
+        if (inventoryCheckDetailRepository == null) {
+            inventoryCheckDetailRepository = new InventoryCheckDetailRepository(connection);
+        }
+        return inventoryCheckDetailRepository;
+    }
+
     public Connection getConnection() {
         return connection;
     }

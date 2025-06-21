@@ -90,7 +90,7 @@ public class ZalopayPayment extends BasePayment {
             // Tạo thông tin nhúng
             JSONObject embedData = new JSONObject();
             embedData.put("merchantinfo", "embeddata123");
-            embedData.put("redirecturl", "https://avancer-z.online");
+            embedData.put("redirecturl", "https://avancer-z.online/payment/success");
             
             // Tạo thông tin sản phẩm
             JSONArray items = new JSONArray();

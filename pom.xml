@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com</groupId>
     <artifactId>PCStore-Manage</artifactId>
@@ -8,23 +9,14 @@
     <repositories>
         <repository>
             <id>unknown-jars-temp-repo</id>
-            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please
+                replace the dependencies in this repository with correct ones and delete this repository.
+            </name>
             <url>file:${project.basedir}/lib</url>
         </repository>
     </repositories>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <compilerArgs>
-                        <arg>--enable-preview</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -82,7 +74,7 @@
         <maven.compiler.release>23</maven.compiler.release>
         <exec.mainClass>com.pcstore.PCStoreManage</exec.mainClass>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.konghq</groupId>
@@ -96,7 +88,7 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>12.8.1.jre11</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.k33ptoo</groupId>
             <artifactId>KControls</artifactId>
@@ -128,17 +120,17 @@
             <artifactId>datechooser</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jdesktop</groupId>
             <artifactId>timingframework</artifactId>
             <version>0.55</version>
             <scope>system</scope>
-            <systemPath>${pom.basedir}/lib/TimingFramework-0.55.jar</systemPath>
+            <systemPath>${basedir}/lib/TimingFramework-0.55.jar</systemPath>
         </dependency>
 
-        
-    <!-- Apache POI Core -->
+
+        <!-- Apache POI Core -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -193,10 +185,19 @@
             <artifactId>tabbed-custom</artifactId>
             <version>SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>unknown.binary</groupId>
             <artifactId>KControls-2.0</artifactId>
             <version>SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.k33ptoo</groupId>
+            <artifactId>KControls</artifactId>
+            <version>2.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/KControls-2.0.jar</systemPath>
         </dependency>
 
         <!-- JavaMail API -->
@@ -205,11 +206,56 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
-        
+
         <dependency>
             <groupId>com.sun.activation</groupId>
             <artifactId>javax.activation</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+
+        <!-- Payos -->
+        <dependency>
+            <groupId>vn.payos</groupId>
+            <artifactId>payos-java</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+        <!-- notification -->
+        <dependency>
+            <groupId>raven.toast</groupId>
+            <artifactId>swing-toast-notifications</artifactId>
+            <version>1.0.4</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/swing-toast-notifications-1.0.4.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>KControls-2.0</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+
+        <!-- Thymeleaf -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.1.2.RELEASE</version>
+        </dependency>
+        <!-- iText 7 -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itext7-core</artifactId>
+            <version>8.0.5</version>
+            <type>pom</type>
+        </dependency>
+        <!-- iText HTML to PDF -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>html2pdf</artifactId>
+            <version>5.0.5</version>
+        </dependency>
+
     </dependencies>
+
+
 </project>

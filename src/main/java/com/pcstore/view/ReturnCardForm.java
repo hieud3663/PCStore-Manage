@@ -10,6 +10,31 @@ package com.pcstore.view;
  */
 public class ReturnCardForm extends javax.swing.JPanel {
 
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbDisplayNameCustomer;
+    private javax.swing.JLabel lbPhonenumber1;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JPanel panelBottom;
+    private com.k33ptoo.components.KGradientPanel panelMain;
+    private javax.swing.JPanel panelNameCustomer;
+    private javax.swing.JPanel panelPhonenumberCustomer;
+    private javax.swing.JPanel panelTitle;
+    private javax.swing.JPanel panelTop;
+    private javax.swing.JTable table;
+    private javax.swing.JTextField txtNameCustomer;
+    private javax.swing.JTextField txtNameCustomer1;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form ReturnCard
      */
@@ -26,10 +51,10 @@ public class ReturnCardForm extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
+        panelMain = new com.k33ptoo.components.KGradientPanel();
+        panelTitle = new javax.swing.JPanel();
+        lbTitle = new javax.swing.JLabel();
+        panelTop = new javax.swing.JPanel();
         panelNameCustomer = new javax.swing.JPanel();
         lbDisplayNameCustomer = new javax.swing.JLabel();
         txtNameCustomer = new javax.swing.JTextField();
@@ -37,8 +62,8 @@ public class ReturnCardForm extends javax.swing.JPanel {
         lbPhonenumber1 = new javax.swing.JLabel();
         txtNameCustomer1 = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
+        table = new javax.swing.JTable();
+        panelBottom = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -49,17 +74,19 @@ public class ReturnCardForm extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
 
-        kGradientPanel1.setkFillBackground(false);
-        kGradientPanel1.setLayout(new javax.swing.BoxLayout(kGradientPanel1, javax.swing.BoxLayout.Y_AXIS));
+        setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
-        jLabel1.setText(bundle.getString("lbReturnProductCard")); // NOI18N
-        jPanel6.add(jLabel1);
+        panelMain.setkFillBackground(false);
+        panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
-        kGradientPanel1.add(jPanel6);
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
+        lbTitle.setText(bundle.getString("lbReturnProductCard")); // NOI18N
+        panelTitle.add(lbTitle);
 
-        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.Y_AXIS));
+        panelMain.add(panelTitle);
+
+        panelTop.setLayout(new javax.swing.BoxLayout(panelTop, javax.swing.BoxLayout.Y_AXIS));
 
         panelNameCustomer.setOpaque(false);
         panelNameCustomer.setPreferredSize(new java.awt.Dimension(108, 30));
@@ -76,7 +103,7 @@ public class ReturnCardForm extends javax.swing.JPanel {
         txtNameCustomer.setPreferredSize(new java.awt.Dimension(500, 23));
         panelNameCustomer.add(txtNameCustomer);
 
-        jPanel4.add(panelNameCustomer);
+        panelTop.add(panelNameCustomer);
 
         panelPhonenumberCustomer.setOpaque(false);
         panelPhonenumberCustomer.setPreferredSize(new java.awt.Dimension(64, 30));
@@ -92,11 +119,11 @@ public class ReturnCardForm extends javax.swing.JPanel {
         txtNameCustomer1.setPreferredSize(new java.awt.Dimension(500, 23));
         panelPhonenumberCustomer.add(txtNameCustomer1);
 
-        jPanel4.add(panelPhonenumberCustomer);
+        panelTop.add(panelPhonenumberCustomer);
 
-        kGradientPanel1.add(jPanel4);
+        panelMain.add(panelTop);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -107,148 +134,59 @@ public class ReturnCardForm extends javax.swing.JPanel {
                 "Mã Sản Phẩm", "Tên Sản Phẩm", "Hãng Sản Xuất", "Số Lượng", "Ngày Mua", "Trạng Thái"
             }
         ));
-        jTable2.setMaximumSize(new java.awt.Dimension(2147483647, 50));
-        jTable2.setMinimumSize(new java.awt.Dimension(90, 50));
-        jTable2.setPreferredSize(new java.awt.Dimension(450, 50));
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
+        table.setMaximumSize(new java.awt.Dimension(2147483647, 50));
+        table.setMinimumSize(new java.awt.Dimension(90, 50));
+        table.setPreferredSize(new java.awt.Dimension(450, 50));
+        jScrollPane2.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clQuantity")); // NOI18N
         }
 
-        kGradientPanel1.add(jScrollPane2);
+        panelMain.add(jScrollPane2);
 
-        jPanel5.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 120, 20));
+        panelBottom.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 120, 20));
+
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel6.setText(bundle.getString("lbWarehouseManagerSignature")); // NOI18N
+        jPanel1.add(jLabel6);
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         jLabel7.setText(bundle.getString("sign,name")); // NOI18N
+        jPanel1.add(jLabel7);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel6))
-                .addContainerGap(35, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+        panelBottom.add(jPanel1);
 
-        jPanel5.add(jPanel1);
+        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel10.setText(bundle.getString("lbVoterSignature")); // NOI18N
+        jPanel3.add(jLabel10);
 
         jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         jLabel11.setText(bundle.getString("sign,name")); // NOI18N
+        jPanel3.add(jLabel11);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jLabel11)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel11)
-                .addGap(2, 2, 2))
-        );
+        panelBottom.add(jPanel3);
 
-        jPanel5.add(jPanel3);
+        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
 
         jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel8.setText(bundle.getString("lbConfirmationSignature")); // NOI18N
+        jPanel2.add(jLabel8);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
         jLabel9.setText(bundle.getString("sign,name")); // NOI18N
+        jPanel2.add(jLabel9);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(jLabel9))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jLabel8)))
-                .addContainerGap(21, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 16, Short.MAX_VALUE))
-        );
+        panelBottom.add(jPanel2);
 
-        jPanel5.add(jPanel2);
+        panelMain.add(panelBottom);
 
-        kGradientPanel1.add(jPanel5);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(kGradientPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 912, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        add(panelMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
-    private javax.swing.JLabel lbDisplayNameCustomer;
-    private javax.swing.JLabel lbPhonenumber1;
-    private javax.swing.JPanel panelNameCustomer;
-    private javax.swing.JPanel panelPhonenumberCustomer;
-    private javax.swing.JTextField txtNameCustomer;
-    private javax.swing.JTextField txtNameCustomer1;
-    // End of variables declaration//GEN-END:variables
+    
 }

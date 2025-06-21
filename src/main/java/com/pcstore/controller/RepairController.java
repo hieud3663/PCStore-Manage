@@ -14,18 +14,23 @@ import com.pcstore.model.enums.RepairEnum;
 import com.pcstore.service.CustomerService;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.RepairService;
+import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.WarrantyService;
 import com.pcstore.utils.ErrorMessage;
+import com.pcstore.utils.DatabaseConnection;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for managing repair services
  */
 public class RepairController {
-    private final RepairService repairService;
-    private final CustomerService customerService;
-    private final EmployeeService employeeService;
-    private final WarrantyService warrantyService;
-
+    private RepairService repairService;
+    private CustomerService customerService;
+    private EmployeeService employeeService;
+    private WarrantyService warrantyService;
+    private Connection connection;
     /**
      * Constructor with all required services
      * 
@@ -38,10 +43,27 @@ public class RepairController {
                           CustomerService customerService,
                           EmployeeService employeeService,
                           WarrantyService warrantyService) {
+        this.connection = connection;
         this.repairService = new RepairService(connection, customerService, employeeService);
         this.customerService = customerService;
         this.employeeService = employeeService;
         this.warrantyService = warrantyService;
+    }
+    
+    public RepairController(){
+        try {
+            connection = DatabaseConnection.getInstance().getConnection();
+            customerService = ServiceFactory.getInstance().getCustomerService();
+            employeeService = ServiceFactory.getInstance().getEmployeeService();
+            warrantyService = ServiceFactory.getInstance().getWarrantyService();
+            repairService = ServiceFactory.getInstance().getRepairServiceService();
+        } catch (SQLException ex) {
+            Logger.getLogger(RepairController.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        } catch (Exception e) {
+            Logger.getLogger(RepairController.class.getName()).log(Level.SEVERE, null, e);
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -83,6 +105,7 @@ public class RepairController {
                         System.out.println("Đã tạo khách hàng mới với ID: " + customer.getCustomerId());
                     }
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     throw new IllegalArgumentException("Lỗi khi kiểm tra hoặc tạo khách hàng: " + ex.getMessage(), ex);
                 }
             } else {
@@ -125,6 +148,7 @@ public class RepairController {
             throw new RuntimeException(ErrorMessage.REPAIR_CREATE_ERROR + ": " + e.getMessage(), e);
         }
     }
+
     
     /**
      * Get all repair services
@@ -412,6 +436,7 @@ public class RepairController {
             Repair repair = repairService.createNewRepairService(customer, employee, description, warranty);
             return repairService.addRepairService(repair);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("Lỗi khi tạo dịch vụ sửa chữa bảo hành: " + e.getMessage(), e);
         }
     }
@@ -464,6 +489,38 @@ public class RepairController {
             return customerService.addCustomer(customer);
         } catch (Exception e) {
             throw new RuntimeException("Lỗi khi tạo khách hàng mới: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Force update repair service status (bypass validation)
+     * 
+     * @param repairId Repair service ID
+     * @param status New status
+     * @return Updated repair service
+     */
+    public Repair forceUpdateRepairStatus(Integer repairId, RepairEnum status) {
+        try {
+            // Temporarily enable force update
+            System.setProperty("repair.status.force", "true");
+            
+            Optional<Repair> repairOpt = repairService.findRepairServiceWithFullInfo(repairId);
+            if (!repairOpt.isPresent()) {
+                throw new IllegalArgumentException("Dịch vụ sửa chữa không tồn tại");
+            }
+            
+            Repair repair = repairOpt.get();
+            repair.setStatus(status);
+            
+            Repair result = repairService.updateRepairService(repair);
+            
+            // Disable force update
+            System.setProperty("repair.status.force", "false");
+            
+            return result;
+        } catch (Exception e) {
+            System.setProperty("repair.status.force", "false");
+            throw new RuntimeException("Lỗi khi cập nhật trạng thái dịch vụ sửa chữa: " + e.getMessage(), e);
         }
     }
 }

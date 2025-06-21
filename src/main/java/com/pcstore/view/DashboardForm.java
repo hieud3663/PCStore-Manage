@@ -5,29 +5,24 @@
 package com.pcstore.view;
 
 
-import java.awt.BorderLayout;
-import java.awt.Component;
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+import com.k33ptoo.components.KButton;
+import com.k33ptoo.components.KGradientPanel;
+import com.pcstore.components.menu.Menu;
+import com.pcstore.components.menu.MenuAction;
+import com.pcstore.controller.DashboardController;
+import com.pcstore.utils.DatabaseConnection;
+import raven.toast.Notifications;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import com.k33ptoo.components.KButton;
-import com.k33ptoo.components.KGradientPanel;
-import com.pcstore.controller.DashboardController;
-import com.pcstore.controller.RepairController;
-import com.pcstore.service.CustomerService;
-import com.pcstore.service.EmployeeService;
-import com.pcstore.service.WarrantyService;
-import com.pcstore.utils.DatabaseConnection;
+import java.util.List;
 
 /**
- *
  * @author MSII
  */
 public class DashboardForm extends JFrame {
@@ -45,11 +40,42 @@ public class DashboardForm extends JFrame {
     private ServiceForm serviceForm;
     private ReportForm reportForm;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KGradientPanel PanelMenu;
+    private com.k33ptoo.components.KGradientPanel PanelNavigation;
+    private com.k33ptoo.components.KButton btnSignOut;
+    private javax.swing.JComboBox<String> cbLanguage;
+    private com.k33ptoo.components.KGradientPanel kMainPanel;
+    private com.k33ptoo.components.KGradientPanel kPanelCustomer;
+    private com.k33ptoo.components.KGradientPanel kPanelEmployee;
+    private com.k33ptoo.components.KGradientPanel kPanelHome;
+    private com.k33ptoo.components.KGradientPanel kPanelInvoice;
+    private com.k33ptoo.components.KGradientPanel kPanelProduct;
+    private com.k33ptoo.components.KGradientPanel kPanelReport;
+    private com.k33ptoo.components.KGradientPanel kPanelSell;
+    private com.k33ptoo.components.KGradientPanel kPanelService;
+    private com.k33ptoo.components.KGradientPanel kPanelWareHouse;
+    private javax.swing.JLabel lbMenu;
+    private javax.swing.JLabel lbMenuCustomer;
+    private javax.swing.JLabel lbMenuEmployee;
+    private javax.swing.JLabel lbMenuHome;
+    private javax.swing.JLabel lbMenuInvoice;
+    private javax.swing.JLabel lbMenuReport;
+    private javax.swing.JLabel lbMenuService;
+    private javax.swing.JLabel lbMenuWareHouse;
+    private javax.swing.JLabel lbNameUser;
+    private javax.swing.JLabel lbProductMenu;
+    private javax.swing.JLabel lbSell;
+    private javax.swing.JLabel lbTImeNow;
+    private javax.swing.JPanel panelEmpty;
+    private javax.swing.JPanel panelLanguage;
+    // End of variables declaration//GEN-END:variables
+    private Menu menu;
 
     public static DashboardForm getInstance() {
         if (instance == null) {
             instance = new DashboardForm();
-            instance.dashboardController = new DashboardController(instance);            
+            instance.dashboardController = new DashboardController(instance);
         }
         return instance;
     }
@@ -58,12 +84,20 @@ public class DashboardForm extends JFrame {
         DashboardForm.instance = null;
     }
 
-    /**
-     * Creates new form Menu
-     */
+    public static void restartApp() {
+        if (instance != null) {
+            instance.dispose();
+        }
+        instance = new DashboardForm();
+        instance.setVisible(true);
+        instance.setLocationRelativeTo(null);
+        instance.dashboardController = new DashboardController(instance);
+    }
+
     public DashboardForm() {
 
         initComponents();
+        initMenu();
 
         homForm = new HomeForm();
         sellForm = new SellForm();
@@ -74,9 +108,6 @@ public class DashboardForm extends JFrame {
         customerForm = new CustomerForm();
         serviceForm = new ServiceForm();
         reportForm = new ReportForm();
-        
-        initializeHoverEffects();
-        selectMenu(kPanelHome, lbMenuHome, activePanel);
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -84,35 +115,177 @@ public class DashboardForm extends JFrame {
             }
         });
 
-  
+
         dashboardController = new DashboardController(this);
 
-        // Thêm sự kiện window listener để xử lý đóng cửa sổ
-        this.addWindowListener(new WindowAdapter() {
+        Notifications.getInstance().setJFrame(this);
+        
+        initMenuEvent();
+    }
+
+
+    public void initMenu() {
+        PanelMenu.removeAll();
+        PanelMenu.setLayout(null);
+        PanelMenu.setLayout(new BorderLayout());
+        PanelMenu.setLayout(new BorderLayout());
+        menu = new Menu();
+        PanelMenu.add(menu, BorderLayout.CENTER);
+        menu.setOpaque(false);
+        menu.getHeader().setIcon(new FlatSVGIcon("com/pcstore/resources/icon/menu_right.svg", 40, 40));
+
+    }
+
+    private void initMenuEvent() {
+        menu.addMenuEvent((int index, int subIndex, MenuAction action) -> {
+            handleMenuSelection(index, subIndex);
+        });
+
+        menu.getHeader().addMouseListener(new MouseAdapter() {
             @Override
-            public void windowClosing(WindowEvent windowEvent) {
-                // Đóng kết nối khi đóng cửa sổ
-                DatabaseConnection.getInstance().closeConnection();
+            public void mouseClicked(MouseEvent e) {
+                if (isEventEnabled(e)) {
+                    if (menu.isMenuFull()) {
+                        dashboardController.collapseMenu();
+                    } else {
+                        dashboardController.expandMenu();
+                    }
+                }
             }
         });
 
-        
-        RepairController repairController = new RepairController(
-            DatabaseConnection.getInstance().getConnection(),
-            new CustomerService(DatabaseConnection.getInstance().getConnection()),
-            new EmployeeService(DatabaseConnection.getInstance().getConnection()),
-            new WarrantyService(DatabaseConnection.getInstance().getConnection())
-        );
-
-        // Thiết lập controller cho form dịch vụ
-        serviceForm.setRepairController(repairController);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                DatabaseConnection.getInstance().closeConnection();
+            }
+        });
     }
 
     /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
+     * Xử lý lựa chọn menu dựa trên cấu trúc menu động và phân quyền
      */
+    private void handleMenuSelection(int index, int subIndex) {
+        List<String[]> menuItemsKey = dashboardController.getMenuItemsKey();
+
+        if (index < 0 || index >= menuItemsKey.size()) {
+            showForm(new HomeForm());
+            return;
+        }
+
+        String[] menuItem = menuItemsKey.get(index);
+        String mainMenuText = menuItem[0];
+
+        // Xử lý theo tên menu chính
+        switch (mainMenuText) {
+            case "menu.home":
+                showForm(new HomeForm());
+                break;
+            case "menu.sell":
+                handleSalesMenu(subIndex);
+                break;
+
+            case "menu.product":
+                handleProductMenu(subIndex);
+                break;
+
+            case "menu.warehouse":
+                handleWarehouseMenu(subIndex);
+                break;
+            case "menu.employee":
+                handleEmployeeMenu(subIndex);
+                break;
+
+            case "menu.customer":
+                showForm(new CustomerForm());
+                break;
+
+            case "menu.service":
+                handleServiceMenu(subIndex);
+                break;
+
+            case "menu.report":
+                showForm(new ReportForm());
+                break;
+            default:
+                showForm(new HomeForm());
+                break;
+        }
+    }
+
+    private void handleSalesMenu(int subIndex) {
+        switch (subIndex) {
+            case 1:
+                showForm(new SellForm());
+                break;
+            case 2:
+                showForm(new InvoiceForm());
+                break;
+            default:
+                showForm(new SellForm());
+                break;
+        }
+    }
+
+    private void handleProductMenu(int subIndex) {
+        switch (subIndex) {
+            case 1:
+                showForm(new ProductForm());
+                break;
+            case 2:
+                showForm(new CategoryForm());
+                break;
+            default:
+                showForm(new ProductForm());
+                break;
+        }
+    }
+
+    private void handleWarehouseMenu(int subIndex) {
+        switch (subIndex) {
+            case 1:
+                showForm(new WareHouseForm());
+                break;
+            case 2:
+                showForm(new InventoryCheckForm());
+                break;
+            default:
+                showForm(new WareHouseForm());
+                break;
+        }
+    }
+
+    private void handleEmployeeMenu(int subIndex) {
+        switch (subIndex) {
+            case 1:
+                showForm(new EmployeeForm());
+                break;
+            case 2:
+                showForm(new UserForm());
+                break;
+            default:
+                showForm(new EmployeeForm());
+                break;
+        }
+    }
+
+    private void handleServiceMenu(int subIndex) {
+        switch (subIndex) {
+            case 1:
+                showForm(new WarrantyServiceForm());
+                break;
+            case 2:
+                showForm(new RepairServiceForm());
+                break;
+            case 3:
+                showForm(new ReturnServiceForm());
+                break;
+            default:
+                showForm(new WarrantyServiceForm());
+                break;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -166,6 +339,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(lbMenu);
 
         kPanelHome.setkBorderRadius(30);
+        kPanelHome.setkBorderSize(1.5F);
         kPanelHome.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelHome.setkFillBackground(false);
         kPanelHome.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -177,6 +351,7 @@ public class DashboardForm extends JFrame {
         lbMenuHome.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/home_24px.png"))); // NOI18N
         lbMenuHome.setText(bundle.getString("txtMenuHome")); // NOI18N
+        lbMenuHome.setToolTipText(bundle.getString("txtMenuHome")); // NOI18N
         lbMenuHome.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuHome.setMaximumSize(new java.awt.Dimension(104, 30));
         lbMenuHome.setMinimumSize(new java.awt.Dimension(104, 30));
@@ -186,6 +361,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelHome);
 
         kPanelSell.setkBorderRadius(30);
+        kPanelSell.setkBorderSize(1.5F);
         kPanelSell.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelSell.setkFillBackground(false);
         kPanelSell.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -208,6 +384,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelSell);
 
         kPanelProduct.setkBorderRadius(30);
+        kPanelProduct.setkBorderSize(1.5F);
         kPanelProduct.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelProduct.setkFillBackground(false);
         kPanelProduct.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -217,7 +394,7 @@ public class DashboardForm extends JFrame {
 
         lbProductMenu.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbProductMenu.setForeground(new java.awt.Color(255, 255, 255));
-        lbProductMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/categorize_24px.png"))); // NOI18N
+        lbProductMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/box.png"))); // NOI18N
         lbProductMenu.setText(bundle.getString("txtMenuProduct")); // NOI18N
         lbProductMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbProductMenu.setMaximumSize(new java.awt.Dimension(200, 30));
@@ -229,6 +406,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelProduct);
 
         kPanelInvoice.setkBorderRadius(30);
+        kPanelInvoice.setkBorderSize(1.5F);
         kPanelInvoice.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelInvoice.setkFillBackground(false);
         kPanelInvoice.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -238,7 +416,7 @@ public class DashboardForm extends JFrame {
 
         lbMenuInvoice.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuInvoice.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuInvoice.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/google_forms_24px.png"))); // NOI18N
+        lbMenuInvoice.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/invoice.png"))); // NOI18N
         lbMenuInvoice.setText(bundle.getString("txtMenuInvoice")); // NOI18N
         lbMenuInvoice.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuInvoice.setMaximumSize(new java.awt.Dimension(200, 30));
@@ -249,6 +427,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelInvoice);
 
         kPanelWareHouse.setkBorderRadius(30);
+        kPanelWareHouse.setkBorderSize(1.5F);
         kPanelWareHouse.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelWareHouse.setkFillBackground(false);
         kPanelWareHouse.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -258,7 +437,7 @@ public class DashboardForm extends JFrame {
 
         lbMenuWareHouse.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuWareHouse.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuWareHouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/grid_24px.png"))); // NOI18N
+        lbMenuWareHouse.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/warehouse.png"))); // NOI18N
         lbMenuWareHouse.setText(bundle.getString("txtMenuWareHouse")); // NOI18N
         lbMenuWareHouse.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuWareHouse.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -268,16 +447,17 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelWareHouse);
 
         kPanelEmployee.setkBorderRadius(30);
+        kPanelEmployee.setkBorderSize(1.5F);
         kPanelEmployee.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelEmployee.setkFillBackground(false);
         kPanelEmployee.setkStartColor(new java.awt.Color(255, 255, 255));
         kPanelEmployee.setOpaque(false);
         kPanelEmployee.setPreferredSize(new java.awt.Dimension(200, 10));
-        kPanelEmployee.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 20, 5));
+        kPanelEmployee.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 5));
 
         lbMenuEmployee.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuEmployee.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        lbMenuEmployee.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/management.png"))); // NOI18N
         lbMenuEmployee.setText(bundle.getString("txtMenuIEmployee")); // NOI18N
         lbMenuEmployee.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuEmployee.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -287,6 +467,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelEmployee);
 
         kPanelService.setkBorderRadius(30);
+        kPanelService.setkBorderSize(1.5F);
         kPanelService.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelService.setkFillBackground(false);
         kPanelService.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -296,7 +477,7 @@ public class DashboardForm extends JFrame {
 
         lbMenuService.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuService.setForeground(new java.awt.Color(255, 255, 255));
-        lbMenuService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        lbMenuService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/service-product.png"))); // NOI18N
         lbMenuService.setText(bundle.getString("txtMenuIService")); // NOI18N
         lbMenuService.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuService.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -306,6 +487,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelService);
 
         kPanelCustomer.setkBorderRadius(30);
+        kPanelCustomer.setkBorderSize(1.5F);
         kPanelCustomer.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelCustomer.setkFillBackground(false);
         kPanelCustomer.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -318,7 +500,7 @@ public class DashboardForm extends JFrame {
         lbMenuCustomer.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuCustomer.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuCustomer.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMenuCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/add_user_group_woman_man_24px.png"))); // NOI18N
+        lbMenuCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/user-bag.png"))); // NOI18N
         lbMenuCustomer.setText(bundle.getString("lbMenuCustomer")); // NOI18N
         lbMenuCustomer.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuCustomer.setMinimumSize(new java.awt.Dimension(200, 30));
@@ -328,6 +510,7 @@ public class DashboardForm extends JFrame {
         PanelMenu.add(kPanelCustomer);
 
         kPanelReport.setkBorderRadius(30);
+        kPanelReport.setkBorderSize(1.5F);
         kPanelReport.setkEndColor(new java.awt.Color(255, 255, 255));
         kPanelReport.setkFillBackground(false);
         kPanelReport.setkStartColor(new java.awt.Color(255, 255, 255));
@@ -338,7 +521,7 @@ public class DashboardForm extends JFrame {
         lbMenuReport.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         lbMenuReport.setForeground(new java.awt.Color(255, 255, 255));
         lbMenuReport.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/account_24px.png"))); // NOI18N
+        lbMenuReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/monitor.png"))); // NOI18N
         lbMenuReport.setText(bundle.getString("txtMenuIReport")); // NOI18N
         lbMenuReport.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbMenuReport.setMaximumSize(new java.awt.Dimension(200, 30));
@@ -377,7 +560,7 @@ public class DashboardForm extends JFrame {
         cbLanguage.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         cbLanguage.setForeground(new java.awt.Color(255, 255, 255));
         cbLanguage.setMaximumRowCount(10);
-        cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Việt Nam", "English" }));
+        cbLanguage.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Việt Nam", "English"}));
         cbLanguage.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelLanguage.add(cbLanguage);
 
@@ -400,7 +583,10 @@ public class DashboardForm extends JFrame {
 
         getContentPane().add(PanelNavigation, java.awt.BorderLayout.PAGE_START);
 
-        kMainPanel.setkBorderRadius(12);
+        kMainPanel.setBackground(new java.awt.Color(255, 255, 255));
+        kMainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        kMainPanel.setkBorderColor(new java.awt.Color(204, 204, 204));
+        kMainPanel.setkBorderRadius(20);
         kMainPanel.setkFillBackground(false);
         kMainPanel.setOpaque(false);
         kMainPanel.setPreferredSize(new java.awt.Dimension(1153, 0));
@@ -411,22 +597,15 @@ public class DashboardForm extends JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-
-
-    //getter and setter
-    
-
     public JLabel getLbNameUser() {
         return lbNameUser;
-    }   
+    }
 
     // Hàm xử lý bật tắt sự kiện
     public boolean isEventEnabled(MouseEvent e) {
-        // Lấy panel từ nguồn sự kiện
         Component source = (Component) e.getSource();
         KGradientPanel panel = (KGradientPanel) SwingUtilities.getAncestorOfClass(KGradientPanel.class, source);
-        
-        // Nếu panel bị vô hiệu hóa thì không xử lý sự kiện
+
         if (panel != null && Boolean.TRUE.equals(panel.getClientProperty("menu-disabled"))) {
             return false;
         }
@@ -434,121 +613,13 @@ public class DashboardForm extends JFrame {
         return true;
     }
 
-    // Start Hover=====================================================
-    private void hoverPanel(KGradientPanel panel, JLabel label) {
-        panel.kFillBackground = true;
-        label.setForeground(new java.awt.Color(0,0,0));
-        panel.repaint();
-    }
-
-    private void exitHoverPanel(KGradientPanel panel, JLabel label) {
-        panel.kFillBackground = false;
-        label.setForeground(new java.awt.Color(255,255,255));
-        panel.repaint();
-    }
-
-    /**
-     * Khởi tạo tất cả hiệu ứng hover cho các menu
-     */
-    private void initializeHoverEffects() {
-        // Tạo mảng các cặp panel-label để xử lý một lần
-        KGradientPanel[] panels = {
-            kPanelHome, kPanelSell, kPanelProduct, kPanelInvoice, 
-            kPanelWareHouse, kPanelEmployee, kPanelService, 
-            kPanelReport, kPanelCustomer, kPanelService, kPanelReport
-        };
-        
-        JLabel[] labels = {
-            lbMenuHome, lbSell, lbProductMenu, lbMenuInvoice, 
-            lbMenuWareHouse, lbMenuEmployee, lbMenuService, 
-            lbMenuReport, lbMenuCustomer, lbMenuService, lbMenuReport
-        };
-        
-        // Sử dụng vòng lặp để đặt các MouseListener cho tất cả panel và label
-        for (int i = 0; i < panels.length; i++) {
-            final KGradientPanel panel = panels[i];
-            final JLabel label = labels[i];
-            
-            // Sử dụng lambda expression để tạo MouseListener gọn hơn
-            label.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent evt) {
-                    
-                    if(isEventEnabled(evt)) hoverPanel(panel, label);
-                }
-                
-                @Override
-                public void mouseExited(MouseEvent evt) {
-                    if (activePanel != panel) {
-                        if(isEventEnabled(evt))  exitHoverPanel(panel, label);
-                    }
-                }
-                
-                @Override
-                public void mouseClicked(MouseEvent evt) {
-                    if(isEventEnabled(evt)) handleMenuClick(panel, label);
-                }
-            });
-        }
-    }
-    
-    /**
-     * Xử lý khi người dùng click vào menu
-     */
-    private void handleMenuClick(KGradientPanel panel, JLabel label) {
-        if (panel == kPanelHome) {
-            selectMenu(panel, label, homForm);
-        } else if (panel == kPanelSell) {
-            selectMenu(panel, label, sellForm);
-        } else if (panel == kPanelProduct) {
-            selectMenu(panel, label, productForm);
-        } else if (panel == kPanelInvoice) {
-            selectMenu(panel, label, invoiceForm);
-        } else if (panel == kPanelWareHouse) {
-            selectMenu(panel, label, wareHouseForm);
-        } else if (panel == kPanelEmployee) {
-            selectMenu(panel, label, employeeManageForm);
-        } else if (panel == kPanelCustomer) {
-            selectMenu(panel, label, customerForm);
-        } else if (panel == kPanelService) {
-            selectMenu(panel, label, serviceForm);
-        } else if (panel == kPanelReport) {
-            selectMenu(panel, label, reportForm); // Chưa có component cho Report
-        }
-        // Bổ sung các xử lý cho Service và Report khi có component tương ứng
-    }
-    /**
-     * Xử lý khi một menu được chọn
-     * @param panel Panel menu được chọn
-     * @param label Label của menu
-     * @param panelContent Panel nội dung tương ứng cần hiển thị
-     */
-    private void selectMenu(KGradientPanel panel, JLabel label, Component component) {
-        // Reset menu trước đó nếu có
-        if (activePanel != null) {
-            exitHoverPanel(activePanel, activeLabel);
-        }
-        
-        // Thiết lập menu mới
-        activePanel = panel;
-        activeLabel = label;
-        hoverPanel(panel, label);
-        
-        // Hiển thị nội dung tương ứng
-        showComponent(component);
-    }
-
-    /**
-     * Hiển thị panel nội dung trong kMainPanel
-     * @param panel Panel cần hiển thị
-     */
-    private void showComponent(Component component) {
+    public void showForm(Component component) {
+        // Hiển thị component trong kMainPanel
         kMainPanel.removeAll();
-        
         kMainPanel.setLayout(new BorderLayout());
-        
+
         if (component instanceof JPanel) {
-            kMainPanel.add((JPanel)component, BorderLayout.CENTER);
+            kMainPanel.add((JPanel) component, BorderLayout.CENTER);
         } else {
             kMainPanel.add(homForm, BorderLayout.CENTER);
         }
@@ -557,7 +628,10 @@ public class DashboardForm extends JFrame {
         kMainPanel.revalidate();
     }
 
-    
+
+    public Menu getMenu() {
+        return menu;
+    }
 
     public KGradientPanel getkMainPanel() {
         return kMainPanel;
@@ -615,7 +689,7 @@ public class DashboardForm extends JFrame {
     public JLabel getLbMenu() {
         return lbMenu;
     }
-      
+
 
     public javax.swing.JComboBox<String> getCbLanguage() {
         return cbLanguage;
@@ -658,9 +732,6 @@ public class DashboardForm extends JFrame {
     }
 
 
-
-
-
     private KGradientPanel activePanel = null;
     private JLabel activeLabel = null;
 
@@ -678,35 +749,26 @@ public class DashboardForm extends JFrame {
         }
         super.dispose();
     }
-    
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KGradientPanel PanelMenu;
-    private com.k33ptoo.components.KGradientPanel PanelNavigation;
-    private com.k33ptoo.components.KButton btnSignOut;
-    private javax.swing.JComboBox<String> cbLanguage;
-    private com.k33ptoo.components.KGradientPanel kMainPanel;
-    private com.k33ptoo.components.KGradientPanel kPanelCustomer;
-    private com.k33ptoo.components.KGradientPanel kPanelEmployee;
-    private com.k33ptoo.components.KGradientPanel kPanelHome;
-    private com.k33ptoo.components.KGradientPanel kPanelInvoice;
-    private com.k33ptoo.components.KGradientPanel kPanelProduct;
-    private com.k33ptoo.components.KGradientPanel kPanelReport;
-    private com.k33ptoo.components.KGradientPanel kPanelSell;
-    private com.k33ptoo.components.KGradientPanel kPanelService;
-    private com.k33ptoo.components.KGradientPanel kPanelWareHouse;
-    private javax.swing.JLabel lbMenu;
-    private javax.swing.JLabel lbMenuCustomer;
-    private javax.swing.JLabel lbMenuEmployee;
-    private javax.swing.JLabel lbMenuHome;
-    private javax.swing.JLabel lbMenuInvoice;
-    private javax.swing.JLabel lbMenuReport;
-    private javax.swing.JLabel lbMenuService;
-    private javax.swing.JLabel lbMenuWareHouse;
-    private javax.swing.JLabel lbNameUser;
-    private javax.swing.JLabel lbProductMenu;
-    private javax.swing.JLabel lbSell;
-    private javax.swing.JLabel lbTImeNow;
-    private javax.swing.JPanel panelEmpty;
-    private javax.swing.JPanel panelLanguage;
-    // End of variables declaration//GEN-END:variables
+
+    public void disposeAllForms() {
+        // Giải phóng bộ nhớ cho tất cả form
+        homForm = null;
+        sellForm = null;
+        productForm = null;
+        employeeManageForm = null;
+        wareHouseForm = null;
+        invoiceForm = null;
+        customerForm = null;
+        serviceForm = null;
+        reportForm = null;
+
+        // Xóa các thành phần khỏi kMainPanel
+        kMainPanel.removeAll();
+        kMainPanel.revalidate();
+        kMainPanel.repaint();
+
+        // Gợi ý cho Garbage Collector
+        System.gc();
+    }
+
 }

@@ -4,6 +4,7 @@ import com.pcstore.model.PurchaseOrderDetail;
 import com.pcstore.repository.impl.PurchaseOrderDetailRepository;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,14 @@ public class PurchaseOrderDetailService {
      */
     public PurchaseOrderDetailService(PurchaseOrderDetailRepository purchaseOrderDetailRepository) {
         this.purchaseOrderDetailRepository = purchaseOrderDetailRepository;
+    }
+
+    /**
+     * Khởi tạo service với csdl
+     * @param connection Kết nối csdl
+     */
+    public PurchaseOrderDetailService(Connection connection) {
+        this.purchaseOrderDetailRepository = new PurchaseOrderDetailRepository(connection);
     }
     
     /**
@@ -108,7 +117,7 @@ public class PurchaseOrderDetailService {
        public BigDecimal calculatePurchaseOrderTotal(String purchaseOrderId) {
         List<PurchaseOrderDetail> details = purchaseOrderDetailRepository.findByPurchaseOrderId(purchaseOrderId);
         return details.stream()
-                .map(detail -> BigDecimal.valueOf(detail.getUnitPrice().doubleValue() * detail.getQuantity()))
+                .map(detail -> BigDecimal.valueOf(detail.getUnitCost().doubleValue() * detail.getQuantity()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }

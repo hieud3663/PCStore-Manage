@@ -1,6 +1,5 @@
 package com.pcstore.utils;
 
-import com.pcstore.repository.RepositoryFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -23,7 +22,7 @@ public class DatabaseConnection {
         try {
             connection = createConnection();
         } catch (Exception e) {
-            System.err.println("Lỗi khởi tạo DatabaseConnection: " + e.getMessage());
+            System.err.println(String.format(ErrorMessage.DB_CONNECTION_INIT_ERROR.toString(), e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -33,10 +32,10 @@ public class DatabaseConnection {
         try {
             // Kiểm tra và tạo mới kết nối nếu cần
             if (connection == null || connection.isClosed()) {
-                System.out.println("DatabaseConnection: Kết nối null hoặc đã đóng, tạo mới...");
+                System.out.println(ErrorMessage.DB_CONNECTION_NULL_OR_CLOSED.toString());
                 connection = createConnection();
             } else if (!connection.isValid(2)) {
-                System.out.println("DatabaseConnection: Kết nối không hợp lệ, tạo mới...");
+                System.out.println(ErrorMessage.DB_CONNECTION_INVALID.toString());
                 try {
                     connection.close();
                 } catch (SQLException e) {
@@ -45,11 +44,11 @@ public class DatabaseConnection {
                 connection = createConnection();
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi kiểm tra kết nối: " + e.getMessage());
+            System.err.println(String.format(ErrorMessage.DB_CONNECTION_CHECK_ERROR.toString(), e.getMessage()));
             try {
                 connection = createConnection();
             } catch (Exception ex) {
-                System.err.println("Không thể tạo lại kết nối: " + ex.getMessage());
+                System.err.println(String.format(ErrorMessage.DB_CONNECTION_RECREATE_ERROR.toString(), ex.getMessage()));
                 ex.printStackTrace();
             }
         }
@@ -79,10 +78,10 @@ public class DatabaseConnection {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();
-                System.out.println("DatabaseConnection: Đã đóng kết nối database");
+                System.out.println(ErrorMessage.DB_CONNECTION_CLOSED.toString());
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi đóng kết nối: " + e.getMessage());
+            System.err.println(String.format(ErrorMessage.DB_CONNECTION_CLOSE_ERROR.toString(), e.getMessage()));
             e.printStackTrace();
         } finally {
             connection = null;
@@ -105,19 +104,19 @@ public class DatabaseConnection {
             try (Statement stmt = newConnection.createStatement();
                 ResultSet rs = stmt.executeQuery("SELECT 1")) {
                 if (rs.next()) {
-                    System.out.println("DatabaseConnection: Tạo kết nối database thành công");
+                    System.out.println(ErrorMessage.DB_CONNECTION_SUCCESSFUL.toString());
                 }
             }
             
             return newConnection;
         } catch (ClassNotFoundException e) {
-            System.err.println("Lỗi không tìm thấy JDBC driver: " + e.getMessage());
+            System.err.println(String.format(ErrorMessage.DB_DRIVER_ERROR.toString(), e.getMessage()));
             e.printStackTrace();
-            throw new RuntimeException("Không tìm thấy JDBC driver", e);
+            throw new RuntimeException(ErrorMessage.DB_DRIVER_ERROR.toString(), e);
         } catch (SQLException e) {
-            System.err.println("Lỗi SQL khi kết nối database: " + e.getMessage());
+            System.err.println(String.format(ErrorMessage.DB_CONNECTION_ERROR.toString(), e.getMessage()));
             e.printStackTrace();
-            throw new RuntimeException("Không thể kết nối đến database", e);
+            throw new RuntimeException(ErrorMessage.DB_CONNECTION_ERROR.toString(), e);
         }
     }
 }

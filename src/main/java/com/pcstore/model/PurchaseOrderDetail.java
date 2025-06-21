@@ -11,7 +11,7 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
     private PurchaseOrder purchaseOrder;
     private Product product;
     private int quantity;
-    private BigDecimal unitPrice;
+    private BigDecimal unitCost;
     private Supplier supplier;
 
     @Override
@@ -64,18 +64,18 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
         }
     }
 
-    public BigDecimal getUnitPrice() {
-        return unitPrice;
+    public BigDecimal getUnitCost() {
+        return unitCost;
     }
 
-    public void setUnitPrice(BigDecimal unitPrice) {
+    public void setUnitCost(BigDecimal unitPrice) {
         if (unitPrice == null) {
             throw new IllegalArgumentException("Đơn giá không được để trống");
         }
         if (unitPrice.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Đơn giá phải lớn hơn 0");
         }
-        this.unitPrice = unitPrice;
+        this.unitCost = unitPrice;
         if (purchaseOrder != null) {
             purchaseOrder.updateTotalAmount();
         }
@@ -90,10 +90,10 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
     
     // Phương thức tính thành tiền của chi tiết đơn nhập
     public BigDecimal getSubtotal() {
-        if (unitPrice == null) {
+        if (unitCost == null) {
             return BigDecimal.ZERO;
         }
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
+        return unitCost.multiply(BigDecimal.valueOf(quantity));
     }
     
     // Phương thức cập nhật tồn kho khi nhập hàng
@@ -143,7 +143,7 @@ public class PurchaseOrderDetail extends BaseTimeEntity {
         detail.setPurchaseOrder(order);
         detail.setProduct(product);
         detail.setQuantity(quantity);
-        detail.setUnitPrice(unitPrice);
+        detail.setUnitCost(unitPrice);
         return detail;
     }
 }

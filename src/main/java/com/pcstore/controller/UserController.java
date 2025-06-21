@@ -7,10 +7,11 @@ import com.pcstore.service.EmployeeService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.UserService;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.PCrypt;
 import com.pcstore.utils.SessionManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.UserForm;
 import com.pcstore.view.DashboardForm;
 import com.pcstore.view.DialogChangePassword;
@@ -80,8 +81,9 @@ public class UserController {
             checkUserPermissions();
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, 
+                    String.format(ErrorMessage.USER_CONTROLLER_INIT_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -172,8 +174,8 @@ public class UserController {
     private void setupTableStyle() {
         if (userForm == null) return;
         
-        TableStyleUtil.applyDefaultStyle(userForm.getTableListUser());
-        TableStyleUtil.setBooleanColumns(userForm.getTableListUser(), 0);
+        TableUtils.applyDefaultStyle(userForm.getTableListUser());
+        TableUtils.setBooleanColumns(userForm.getTableListUser(), 0);
     }
 
     //Check admin
@@ -208,7 +210,6 @@ public class UserController {
      * Tải danh sách tất cả người dùng
      */
     public void loadAllUsers() {
-        
         try {
             List<User> users = userService.getAllUsers();
             displayUsers(users);
@@ -216,12 +217,11 @@ public class UserController {
             if (userForm.getTableListUser().getRowSorter() != null) {
                 userForm.getTableListUser().getRowSorter().setSortKeys(null);
             }
-
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(userForm, "Lỗi khi tải danh sách người dùng: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(userForm, 
+                    String.format(ErrorMessage.USER_LOAD_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-
         }
     }
     
@@ -263,12 +263,12 @@ public class UserController {
                 userForm.getTableListUser().setRowSorter(sorter);
             }
             
-            TableStyleUtil.applyFilter(sorter, searchText);
+            TableUtils.applyFilter(sorter, searchText);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(userForm, "Lỗi khi lọc danh sách người dùng: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(userForm, 
+                    String.format(ErrorMessage.USER_FILTER_ERROR.toString(), e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
-            
         }
     }
     

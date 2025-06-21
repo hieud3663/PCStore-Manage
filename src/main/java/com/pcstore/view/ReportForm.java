@@ -30,6 +30,15 @@ public class ReportForm extends javax.swing.JPanel {
     private RevenueEmployeeForm revenueEmployeeForm;
     private RevenueProductController revenueProductController;
     private RevenueEmployeeController revenueEmployeeController;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lbDaily;
+    private javax.swing.JLabel lbMonthly;
+    private javax.swing.JPanel panelContent;
+    private com.k33ptoo.components.KGradientPanel panelDaily;
+    private com.k33ptoo.components.KGradientPanel panelMonthly;
+    private javax.swing.JPanel panelNav;
+    // End of variables declaration//GEN-END:variables
     /**
      * Creates new form RevenueForm - Tự khởi tạo controller
      */
@@ -109,7 +118,7 @@ public class ReportForm extends javax.swing.JPanel {
         lbDaily.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         lbDaily.setForeground(new java.awt.Color(30, 113, 195));
         lbDaily.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbDaily.setText(bundle.getString("RevenueProduct")); // NOI18N
         lbDaily.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbDaily.setMaximumSize(new java.awt.Dimension(200, 20));
@@ -230,12 +239,5 @@ public class ReportForm extends javax.swing.JPanel {
     }
     // End Hover========================================================
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbDaily;
-    private javax.swing.JLabel lbMonthly;
-    private javax.swing.JPanel panelContent;
-    private com.k33ptoo.components.KGradientPanel panelDaily;
-    private com.k33ptoo.components.KGradientPanel panelMonthly;
-    private javax.swing.JPanel panelNav;
-    // End of variables declaration//GEN-END:variables
+    
 }

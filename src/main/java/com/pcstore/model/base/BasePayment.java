@@ -182,8 +182,12 @@ public abstract class BasePayment {
         return transactionReference;
     }
 
-    public void setTransactionReference(String transactionReference) {
-        this.transactionReference = transactionReference;
+    public void setTransactionReference(String orderCode) {
+        this.transactionReference = orderCode;
+    }
+
+    public void setTransactionReference(Long orderCode) {
+        this.transactionReference = orderCode.toString();
     }
 
     public String getDescription() {

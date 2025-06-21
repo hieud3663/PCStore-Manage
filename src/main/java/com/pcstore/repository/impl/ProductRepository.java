@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,8 @@ public class ProductRepository implements Repository<Product, String> {
     @Override
     public Product add(Product product) {
         String sql = "INSERT INTO Products (ProductID, ProductName, CategoryID, SupplierID, Price, " +
-                     "StockQuantity, Specifications, Description, Manufacturer, CreatedAt, UpdatedAt) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                     "StockQuantity, Specifications, Description, Manufacturer, CostPrice, AverageCostPrice, ProfitMargin, CreatedAt, UpdatedAt) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, product.getProductId());
@@ -43,13 +44,16 @@ public class ProductRepository implements Repository<Product, String> {
             statement.setString(7, product.getSpecifications());
             statement.setString(8, product.getDescription());
             statement.setString(9, product.getManufacturer());
+            statement.setBigDecimal(10, product.getCostPrice());
+            statement.setBigDecimal(11, product.getAverageCostPrice());
+            statement.setBigDecimal(12, product.getProfitMargin());
             
             LocalDateTime now = LocalDateTime.now();
             product.setCreatedAt(now);
             product.setUpdatedAt(now);
             
-            statement.setObject(10, now);
-            statement.setObject(11, now);
+            statement.setObject(13, now);
+            statement.setObject(14, now);
             
             statement.executeUpdate();
             return product;
@@ -62,8 +66,8 @@ public class ProductRepository implements Repository<Product, String> {
     public Product update(Product product) {
         String sql = "UPDATE Products SET ProductName = ?, Price = ?, StockQuantity = ?, " +
                 "Specifications = ?, Description = ?, CategoryID = ?, SupplierID = ?, " +
-                "UpdatedAt = ?, Manufacturer = ? " +
-                "WHERE ProductID = ?";
+                "UpdatedAt = ?, Manufacturer = ?, CostPrice = ?, AverageCostPrice = ?, ProfitMargin = ? " +
+                "WHERE ProductID = ? ";
                 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, product.getProductName());
@@ -78,7 +82,10 @@ public class ProductRepository implements Repository<Product, String> {
             product.setUpdatedAt(LocalDateTime.now());
             statement.setObject(8, product.getUpdatedAt());
             statement.setString(9, product.getManufacturer());
-            statement.setString(10, product.getProductId());
+            statement.setBigDecimal(10, product.getCostPrice());
+            statement.setBigDecimal(11, product.getAverageCostPrice());
+            statement.setBigDecimal(12, product.getProfitMargin());
+            statement.setString(13, product.getProductId());
             
             statement.executeUpdate();
             return product;
@@ -89,7 +96,7 @@ public class ProductRepository implements Repository<Product, String> {
     
     @Override
     public boolean delete(String id) {
-        String sql = "DELETE FROM Products WHERE ProductID = ?";
+        String sql = "UPDATE Products SET IsActive = 0 WHERE ProductID = ? AND IsActive = 1";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
@@ -103,11 +110,9 @@ public class ProductRepository implements Repository<Product, String> {
     @Override
     public Optional<Product> findById(String id) {
         // Sửa truy vấn để bao gồm tất cả các cột cần thiết
-        String sql = "SELECT p.ProductID, p.ProductName, p.CategoryID, p.StockQuantity, " +
-                    "p.Price, p.Specifications, p.Description, p.CreatedAt, p.UpdatedAt, " +
-                    "p.Manufacturer, p.SupplierID, c.CategoryName FROM Products p " +
+        String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.ProductID = ?";
+                    "WHERE p.ProductID = ? AND p.IsActive = 1";
         
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -118,7 +123,7 @@ public class ProductRepository implements Repository<Product, String> {
                     // Debug log
                     try {
                         String specs = resultSet.getString("Specifications");
-                        System.out.println("DB value for Specifications: " + (specs == null ? "NULL" : "'" + specs + "'"));
+                        // System.out.println("DB value for Specifications: " + (specs == null ? "NULL" : "'" + specs + "'"));
                     } catch (Exception e) {
                         System.err.println("Error reading Specifications: " + e.getMessage());
                     }
@@ -142,7 +147,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findByName(String name) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.ProductName LIKE ?";
+                    "WHERE p.ProductName LIKE ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -170,7 +175,7 @@ public class ProductRepository implements Repository<Product, String> {
                     "FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
                     "LEFT JOIN Suppliers s ON p.SupplierID = s.SupplierID " +
-                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ?";
+                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ? AND p.IsActive = 1";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String searchPattern = "%" + keyword + "%";
@@ -196,8 +201,9 @@ public class ProductRepository implements Repository<Product, String> {
         // Sửa truy vấn để bao gồm tất cả các cột cần thiết
         String sql = "SELECT p.*, c.CategoryName "
                 + "FROM Products p "
-                + "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID";
-        
+                + "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID "
+                + "WHERE p.IsActive = 1";
+
         List<Product> products = new ArrayList<>();
         
         try (Statement statement = connection.createStatement();
@@ -221,7 +227,7 @@ public class ProductRepository implements Repository<Product, String> {
     
     @Override
     public boolean exists(String id) {
-        String sql = "SELECT COUNT(*) FROM Products WHERE ProductID = ?";
+        String sql = "SELECT COUNT(*) FROM Products WHERE ProductID = ? AND IsActive = 1";
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, id);
@@ -240,7 +246,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findByCategory(String categoryId) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.CategoryID = ?";
+                    "WHERE p.CategoryID = ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -260,7 +266,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findBySupplier(String supplierId) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.SupplierID = ?";
+                    "WHERE p.SupplierID = ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -280,7 +286,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findLowStock(int threshold) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.StockQuantity < ?";
+                    "WHERE p.StockQuantity < ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -300,7 +306,7 @@ public class ProductRepository implements Repository<Product, String> {
     public List<Product> findByIdOrName(String idOrName) {
         String sql = "SELECT p.*, c.CategoryName FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ?";
+                    "WHERE p.ProductID LIKE ? OR p.ProductName LIKE ? AND p.IsActive = 1";
         List<Product> products = new ArrayList<>();
         
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -392,62 +398,39 @@ public class ProductRepository implements Repository<Product, String> {
     }
     
     /**
-     * Lấy ID tiếp theo cho sản phẩm dựa vào danh mục (category)
-     * Dựa trên cùng logic với trigger trg_GenerateProductID trên SQL Server
-     * 
-     * @param categoryId Mã danh mục sản phẩm (LAP, PC, LK, MH, ...)
-     * @return ID sản phẩm mới theo định dạng (VD: LAP001, PC005, LK010, ...)
+     * Tạo mã sản phẩm mới tự động
+     * @return ID sản phẩm mới theo định dạng (VD: 00001, 00002, 00003, ...)
      */
-    public String generateProductID(String categoryId) {
-        // Xử lý trường hợp categoryId null hoặc rỗng
-        if (categoryId == null || categoryId.trim().isEmpty()) {
-            return "UNKN001"; // Mã mặc định cho danh mục không xác định
-        }
+    public String generateProductID() {
+        String sql = "SELECT ISNULL(MAX(CAST(ProductID AS INT)), 0) + 1 AS NextNumber " +
+                     "FROM Products WHERE ISNUMERIC(ProductID) = 1";
         
-        String sql = "SELECT ISNULL(MAX(CAST(SUBSTRING(ProductID, LEN(?) + 1, " +
-                    "LEN(ProductID) - LEN(?)) AS INT)), 0) + 1 AS NextNumber " +
-                    "FROM Products WHERE ProductID LIKE ? + '%'";
-        
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, categoryId);
-            statement.setString(2, categoryId);
-            statement.setString(3, categoryId);
-            
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    int nextNumber = rs.getInt("NextNumber");
-                    return categoryId + String.format("%03d", nextNumber);
-                }
-                // Nếu không có sản phẩm nào thuộc danh mục này, trả về ID đầu tiên
-                return categoryId + "001";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int nextNumber = rs.getInt("NextNumber");
+                // Format số với độ dài 5 chữ số, thêm số 0 vào đầu nếu cần
+                return String.format("%05d", nextNumber);
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy ID sản phẩm tiếp theo: " + e.getMessage());
-            return categoryId + "001"; // Trả về giá trị mặc định nếu có lỗi
+            System.err.println("Lỗi khi tạo mã sản phẩm: " + e.getMessage());
         }
+        
+        // Trường hợp mặc định nếu có lỗi
+        return "00001";
     }
 
     /**
-     * Thêm sản phẩm mới vào CSDL mà không cần chỉ định ID,
-     * ID sẽ được tạo tự động bởi trigger trg_GenerateProductID
-     * 
-     * @param product Sản phẩm cần thêm (không cần thiết lập productId)
+     * Thêm sản phẩm mới vào CSDL mà không cần chỉ định ID
+     * @param product Sản phẩm cần thêm
      * @return Sản phẩm đã được thêm vào CSDL với ID được tạo tự động
      */
     public Product addWithAutoId(Product product) {
-        // Xác định CategoryID để dự đoán ID sẽ được tạo
-        String categoryId = product.getCategory() != null ? product.getCategory().getCategoryId() : null;
-        String predictedId = null;
-        
-        if (categoryId != null) {
-            predictedId = generateProductID(categoryId);
-//            System.out.println("ID dự kiến cho sản phẩm: " + predictedId);
-        }
-        
         String sql = "INSERT INTO Products (ProductName, CategoryID, SupplierID, Price, " +
-                     "StockQuantity, Specifications, Description, Manufacturer, CreatedAt, UpdatedAt) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                     
+                    "StockQuantity, Specifications, Description, Manufacturer, CostPrice, " +
+                    "AverageCostPrice, ProfitMargin, CreatedAt, UpdatedAt) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
         try {
             // Thiết lập các giá trị thời gian
             LocalDateTime now = LocalDateTime.now();
@@ -455,41 +438,29 @@ public class ProductRepository implements Repository<Product, String> {
             product.setUpdatedAt(now);
             
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                // Set các tham số như cũ
                 statement.setString(1, product.getProductName());
-                statement.setString(2, categoryId);
-                statement.setString(3, product.getSupplier() != null ? 
-                        product.getSupplier().getSupplierId() : null);
+                statement.setString(2, product.getCategory() != null ? product.getCategory().getCategoryId() : null);
+                statement.setString(3, product.getSupplier() != null ? product.getSupplier().getSupplierId() : null);
                 statement.setBigDecimal(4, product.getPrice());
                 statement.setInt(5, product.getStockQuantity());
                 statement.setString(6, product.getSpecifications());
                 statement.setString(7, product.getDescription());
                 statement.setString(8, product.getManufacturer());
-                statement.setObject(9, now);
-                statement.setObject(10, now);
+                statement.setBigDecimal(9, product.getCostPrice());
+                statement.setBigDecimal(10, product.getAverageCostPrice());
+                statement.setBigDecimal(11, product.getProfitMargin());
+                statement.setObject(12, now);
+                statement.setObject(13, now);
                 
                 statement.executeUpdate();
                 
-                // Vì trigger trg_GenerateProductID tự động tạo ID theo dự đoán của chúng ta,
-                // chúng ta có thể đặt ID dự kiến cho sản phẩm
-                if (predictedId != null) {
-                    product.setProductId(predictedId);
-                    
-                    // Kiểm tra xem ID được tạo có đúng như dự đoán không
-                    if (!exists(predictedId)) {
-                        // Nếu ID dự đoán không tồn tại, tìm ID thực tế đã được tạo
-                        Optional<Product> actualProduct = findNewestProductByCategory(categoryId);
-                        if (actualProduct.isPresent()) {
-                            product.setProductId(actualProduct.get().getProductId());
-                        }
-                    }
-                } else {
-                    // Nếu không có category, tìm sản phẩm mới nhất được thêm vào
-                    Optional<Product> newestProduct = findNewestProduct();
-                    if (newestProduct.isPresent()) {
-                        product.setProductId(newestProduct.get().getProductId());
-                    }
+                // Lấy sản phẩm mới nhất được thêm vào
+                Optional<Product> newestProduct = findNewestProduct();
+                if (newestProduct.isPresent()) {
+                    product.setProductId(newestProduct.get().getProductId());
                 }
-                
+                    
                 return product;
             }
         } catch (SQLException e) {
@@ -497,130 +468,109 @@ public class ProductRepository implements Repository<Product, String> {
         }
     }
 
-    /**
-     * Tìm sản phẩm mới nhất trong một danh mục
-     */
-    private Optional<Product> findNewestProductByCategory(String categoryId) {
-        String sql = "SELECT TOP 1 p.*, c.CategoryName FROM Products p " +
-                    "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "WHERE p.CategoryID = ? " +
-                    "ORDER BY p.CreatedAt DESC";
-        
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, categoryId);
-            
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    Product product = mapResultSetToProduct(resultSet);
-                    return Optional.of(product);
-                }
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi tìm sản phẩm mới nhất theo danh mục: " + e.getMessage());
-            return Optional.empty();
-        }
-    }
 
     /**
-     * Tìm sản phẩm mới nhất trong CSDL
+     * Tìm sản phẩm mới nhất được thêm vào
+     * @return Optional chứa sản phẩm mới nhất
      */
-    private Optional<Product> findNewestProduct() {
-        String sql = "SELECT TOP 1 p.*, c.CategoryName FROM Products p " +
+    public Optional<Product> findNewestProduct() {
+        String sql = "SELECT TOP 1 p.*, c.CategoryName, s.Name AS SupplierName " +
+                    "FROM Products p " +
                     "LEFT JOIN Categories c ON p.CategoryID = c.CategoryID " +
-                    "ORDER BY p.CreatedAt DESC";
+                    "LEFT JOIN Suppliers s ON p.SupplierID = s.SupplierID " +
+                    "ORDER BY CAST(p.ProductID AS INT) DESC";
         
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            ResultSet rs = statement.executeQuery();
             
-            if (resultSet.next()) {
-                Product product = mapResultSetToProduct(resultSet);
-                return Optional.of(product);
+            if (rs.next()) {
+                return Optional.of(mapResultSetToProduct(rs));
             }
-            return Optional.empty();
         } catch (SQLException e) {
-            System.err.println("Lỗi khi tìm sản phẩm mới nhất: " + e.getMessage());
-            return Optional.empty();
+            e.printStackTrace();
         }
+        
+        return Optional.empty();
     }
     
     // Phương thức chuyển ResultSet thành đối tượng Product - đã sửa
-    private Product mapResultSetToProduct(ResultSet resultSet) throws SQLException {
+    private Product mapResultSetToProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
+        product.setProductId(rs.getString("ProductID"));
+        product.setProductName(rs.getString("ProductName"));
+        product.setPrice(rs.getBigDecimal("Price"));
+        product.setStockQuantity(rs.getInt("StockQuantity"));
+        
+        // Đọc các trường có thể null một cách an toàn
         try {
-            // Đọc các trường cơ bản luôn có
-            product.setProductId(resultSet.getString("ProductID"));
-            product.setProductName(resultSet.getString("ProductName"));
-            product.setPrice(resultSet.getBigDecimal("Price"));
-            product.setStockQuantity(resultSet.getInt("StockQuantity"));
-            
-            // Đọc các trường có thể null một cách an toàn
-            try {
-                product.setSpecifications(resultSet.getString("Specifications"));
-            } catch (SQLException e) {
-                product.setSpecifications("");
-            }
-            
-            try {
-                product.setDescription(resultSet.getString("Description"));
-            } catch (SQLException e) {
-                product.setDescription("");
-            }
-            
-            // Đọc các trường ngày tháng một cách an toàn
-            try {
-                product.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
-            } catch (SQLException e) {
-                // Bỏ qua nếu trường không tồn tại
-            }
-            
-            try {
-                product.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
-            } catch (SQLException e) {
-                // Bỏ qua nếu trường không tồn tại
-            }
-            
-            // Đọc trường Manufacturer
-            try {
-                product.setManufacturer(resultSet.getString("Manufacturer"));
-            } catch (SQLException e) {
-                product.setManufacturer("");
-            }
+            String specs = rs.getString("Specifications");
+            product.setSpecifications(specs != null ? specs : "");
+        } catch (SQLException e) {
+            product.setSpecifications("");
+        }
+        
+        try {
+            product.setDescription(rs.getString("Description"));
+        } catch (SQLException e) {
+            product.setDescription("");
+        }
+        
+        // Đọc các trường ngày tháng một cách an toàn
+        try {
+            product.setCreatedAt(rs.getObject("CreatedAt", LocalDateTime.class));
+        } catch (SQLException e) {
+            // Bỏ qua nếu trường không tồn tại
+        }
+        
+        try {
+            product.setUpdatedAt(rs.getObject("UpdatedAt", LocalDateTime.class));
+        } catch (SQLException e) {
+            // Bỏ qua nếu trường không tồn tại
+        }
+        
+        // Đọc trường Manufacturer
+        try {
+            product.setManufacturer(rs.getString("Manufacturer"));
+        } catch (SQLException e) {
+            product.setManufacturer("");
+        }
 
-            // Xử lý Category
-            try {
-                String categoryId = resultSet.getString("CategoryID");
-                if (categoryId != null && !categoryId.isEmpty()) {
-                    Category category = new Category();
-                    category.setCategoryId(categoryId);
-                    
-                    try {
-                        category.setCategoryName(resultSet.getString("CategoryName"));
-                    } catch (SQLException e) {
-                        category.setCategoryName("Unknown");
-                    }
-                    
-                    product.setCategory(category);
+        // Xử lý Category
+        try {
+            String categoryId = rs.getString("CategoryID");
+            if (categoryId != null && !categoryId.isEmpty()) {
+                Category category = new Category();
+                category.setCategoryId(categoryId);
+                
+                try {
+                    category.setCategoryName(rs.getString("CategoryName"));
+                } catch (SQLException e) {
+                    category.setCategoryName("Unknown");
                 }
-            } catch (SQLException e) {
-                // Bỏ qua nếu không có CategoryID
-            }
-            
-            // Xử lý Supplier - chỉ khi cần
-            try {
-                String supplierId = resultSet.getString("SupplierID");
-                if (supplierId != null && !supplierId.isEmpty()) {
-                    // Chỉ set ID của supplier, không query thêm
-                    Supplier supplier = new Supplier();
-                    supplier.setSupplierId(supplierId);
-                    product.setSupplier(supplier);
-                }
-            } catch (SQLException e) {
-                // Bỏ qua nếu không có SupplierID
+                
+                product.setCategory(category);
             }
         } catch (SQLException e) {
-            throw new SQLException("Error mapping product from ResultSet", e);
+            // Bỏ qua nếu không có CategoryID
         }
+        
+        // Xử lý Supplier - chỉ khi cần
+        try {
+            String supplierId = rs.getString("SupplierID");
+            if (supplierId != null && !supplierId.isEmpty()) {
+                // Chỉ set ID của supplier, không query thêm
+                Supplier supplier = new Supplier();
+                supplier.setSupplierId(supplierId);
+                product.setSupplier(supplier);
+            }
+        } catch (SQLException e) {
+            // Bỏ qua nếu không có SupplierID
+        }
+        
+        // Đọc các trường mới
+        product.setCostPrice(rs.getBigDecimal("CostPrice"));
+        product.setAverageCostPrice(rs.getBigDecimal("AverageCostPrice"));
+        product.setProfitMargin(rs.getBigDecimal("ProfitMargin"));
         
         return product;
     }

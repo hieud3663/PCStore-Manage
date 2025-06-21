@@ -50,7 +50,7 @@ public class Category extends BaseTimeEntity {
 
     public void setCategoryName(String categoryName) {
         if (categoryName == null || categoryName.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.CATEGORY_NAME_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.CATEGORY_NAME_EMPTY.toString());
         }
         this.categoryName = categoryName;
     }

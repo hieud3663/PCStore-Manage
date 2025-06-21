@@ -1,94 +1,168 @@
 package com.pcstore.service;
 
-import com.pcstore.model.Category;
-import com.pcstore.repository.iCategoryRepository;
-
+import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
+
+import com.pcstore.model.Category;
+import com.pcstore.repository.RepositoryFactory;
+import com.pcstore.repository.impl.CategoryRepository;
 
 /**
  * Service xử lý logic nghiệp vụ liên quan đến danh mục sản phẩm
  */
 public class CategoryService {
-    private final iCategoryRepository categoryRepository;
-    
+    private final CategoryRepository categoryRepository;
+
     /**
-     * Khởi tạo service với repository
-     * @param categoryRepository Repository danh mục
+     * Khởi tạo service với connection
+     * @param connection Kết nối đến database
      */
-    public CategoryService(iCategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryService(Connection connection) {
+        try {
+            this.categoryRepository = RepositoryFactory.getInstance(connection)
+                .getCategoryRepository();
+        } catch (Exception e) {
+            System.err.println("Lỗi khởi tạo CategoryService: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi khởi tạo CategoryService", e);
+        }
     }
-    
+
+    /**
+     * Lấy tất cả danh mục
+     * @return Danh sách danh mục
+     */
+    public List<Category> getAllCategories() {
+        try {
+            return categoryRepository.findAll();
+        } catch (Exception e) {
+            System.err.println("Lỗi lấy danh sách danh mục: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    /**
+     * Tìm danh mục theo ID
+     * @param categoryId ID danh mục
+     * @return Optional chứa danh mục
+     */
+    public Optional<Category> findCategoryById(String categoryId) {
+        try {
+            return categoryRepository.findById(categoryId);
+        } catch (Exception e) {
+            System.err.println("Lỗi tìm danh mục theo ID: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Tìm danh mục theo tên
+     * @param categoryName Tên danh mục
+     * @return Optional chứa danh mục
+     */
+    public Optional<Category> findCategoryByName(String categoryName) {
+        try {
+            return categoryRepository.findByName(categoryName);
+        } catch (Exception e) {
+            System.err.println("Lỗi tìm danh mục theo tên: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Lấy danh mục đang hoạt động
+     * @return Danh sách danh mục đang hoạt động
+     */
+    public List<Category> getActiveCategories() {
+        try {
+            return categoryRepository.findAll(); // Tạm thời trả về tất cả
+        } catch (Exception e) {
+            System.err.println("Lỗi lấy danh mục đang hoạt động: " + e.getMessage());
+            return List.of();
+        }
+    }
+
     /**
      * Thêm danh mục mới
-     * @param category Thông tin danh mục
+     * @param category Danh mục cần thêm
      * @return Danh mục đã được thêm
      */
     public Category addCategory(Category category) {
-        return categoryRepository.addCategory(category);
+        try {
+            return categoryRepository.add(category);
+        } catch (Exception e) {
+            System.err.println("Lỗi thêm danh mục: " + e.getMessage());
+            throw new RuntimeException("Không thể thêm danh mục", e);
+        }
     }
-    
+
     /**
      * Cập nhật thông tin danh mục
-     * @param category Thông tin danh mục mới
+     * @param category Danh mục cần cập nhật
      * @return Danh mục đã được cập nhật
      */
     public Category updateCategory(Category category) {
-        return categoryRepository.updateCategory(category);
+        try {
+            return categoryRepository.update(category);
+        } catch (Exception e) {
+            System.err.println("Lỗi cập nhật danh mục: " + e.getMessage());
+            throw new RuntimeException("Không thể cập nhật danh mục", e);
+        }
     }
-    
+
     /**
-     * Xóa danh mục theo ID
-     * @param categoryId ID của danh mục
-     * @return true nếu xóa thành công, ngược lại là false
+     * Xóa danh mục
+     * @param categoryId ID danh mục cần xóa
+     * @return true nếu xóa thành công
      */
     public boolean deleteCategory(String categoryId) {
-        return categoryRepository.deleteCategory(categoryId);
+        try {
+            return categoryRepository.delete(categoryId);
+        } catch (Exception e) {
+            System.err.println("Lỗi xóa danh mục: " + e.getMessage());
+            return false;
+        }
     }
-    
-    /**
-     * Tìm danh mục theo ID
-     * @param categoryId ID của danh mục
-     * @return Optional chứa danh mục nếu tìm thấy
-     */
-    public Optional<Category> findCategoryById(String categoryId) {
-        return categoryRepository.findById(categoryId);
-    }
-    
-    /**
-     * Lấy danh sách tất cả danh mục
-     * @return Danh sách danh mục
-     */
-    public List<Category> findAllCategories() {
-        return categoryRepository.findAll();
-    }
-    
-    /**
-     * Tìm danh mục theo tên
-     * @param name Tên danh mục
-     * @return Danh sách danh mục có tên tương ứng
-     */
-    public List<Category> findCategoriesByName(String name) {
-        return categoryRepository.findByName(name);
-    }
-    
+
     /**
      * Kiểm tra danh mục có tồn tại không
-     * @param categoryId ID của danh mục
-     * @return true nếu danh mục tồn tại, ngược lại là false
+     * @param categoryId ID danh mục
+     * @return true nếu tồn tại
      */
-    public boolean categoryExists(String categoryId) {
-        return categoryRepository.exists(categoryId);
+    public boolean existsCategory(String categoryId) {
+        try {
+            return categoryRepository.exists(categoryId);
+        } catch (Exception e) {
+            System.err.println("Lỗi kiểm tra tồn tại danh mục: " + e.getMessage());
+            return false;
+        }
     }
-    
+
     /**
-     * Lấy số lượng sản phẩm trong danh mục
-     * @param categoryId ID của danh mục
-     * @return Số lượng sản phẩm
+     * Tìm kiếm danh mục theo từ khóa
+     * @param keyword Từ khóa tìm kiếm
+     * @return Danh sách danh mục
      */
-    public int getProductCountInCategory(String categoryId) {
-        // Đây chỉ là một triển khai giả định, cần triển khai thực tế nếu cần
-        return 0; // TODO: Triển khai phương thức đếm số lượng sản phẩm trong danh mục
+    public List<Category> searchCategories(String keyword) {
+        try {
+            return categoryRepository.searchByKeyword(keyword);
+        } catch (Exception e) {
+            System.err.println("Lỗi tìm kiếm danh mục: " + e.getMessage());
+            return List.of();
+        }
     }
+
+    // /**
+    //  * Đếm số lượng danh mục
+    //  * @return Số lượng danh mục
+    //  */
+    // public long countCategories() {
+    //     try {
+    //         return categoryRepository.count();
+    //     } catch (Exception e) {
+    //         System.err.println("Lỗi đếm danh mục: " + e.getMessage());
+    //         return 0;
+    //     }
+    // }
 }

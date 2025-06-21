@@ -16,6 +16,25 @@ public class WarrantyServiceHomeForm extends javax.swing.JPanel {
     private WarrantyServiceForm warrantyServicePanel;
     private RepairServiceForm repairServicePanel;
 
+     // Variables declaration - do not modify//GEN-BEGIN:variables
+     private com.k33ptoo.components.KButton btnDetailWarrantyCard;
+     private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
+     private com.k33ptoo.components.KButton btnWarrantyRegistration;
+     private javax.swing.JPanel jPanel1;
+     private javax.swing.JPanel jPanel2;
+     private javax.swing.JPanel jPanel3;
+     private javax.swing.JPanel jPanel4;
+     private javax.swing.JPanel jPanel5;
+     private javax.swing.JScrollPane jScrollPane1;
+     private javax.swing.JTable jTable1;
+     private javax.swing.JTextField jTextField1;
+     private javax.swing.JTextField jTextField2;
+     private com.k33ptoo.components.KGradientPanel kGradientPanel1;
+     private javax.swing.JLabel lbRepairService;
+     private javax.swing.JLabel lbReturnService;
+     private javax.swing.JLabel lbWarrantyService;
+     // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form WarrantyService1
      */
@@ -57,7 +76,7 @@ public class WarrantyServiceHomeForm extends javax.swing.JPanel {
 
         jTextField2.setText("jTextField2");
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         kGradientPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, bundle.getString("pnService"), javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 0, 18))); // NOI18N
         kGradientPanel1.setkFillBackground(false);
         kGradientPanel1.setMaximumSize(new java.awt.Dimension(1153, 713));
@@ -221,22 +240,5 @@ public class WarrantyServiceHomeForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnWarrantyRegistrationMouseClicked
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnDetailWarrantyCard;
-    private com.k33ptoo.components.KButton btnWarrantyInformationLookup;
-    private com.k33ptoo.components.KButton btnWarrantyRegistration;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel1;
-    private javax.swing.JLabel lbRepairService;
-    private javax.swing.JLabel lbReturnService;
-    private javax.swing.JLabel lbWarrantyService;
-    // End of variables declaration//GEN-END:variables
+   
 }

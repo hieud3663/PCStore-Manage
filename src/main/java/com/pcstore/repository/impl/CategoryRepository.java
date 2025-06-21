@@ -164,6 +164,24 @@ public class CategoryRepository implements Repository<Category, String> {
             throw new RuntimeException("Error getting product count by category", e);
         }
     }
+
+    //search by keyword
+    public List<Category> searchByKeyword(String keyword) {
+        String sql = "SELECT * FROM Categories WHERE CategoryName LIKE ?";
+        List<Category> categories = new ArrayList<>();
+        
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, "%" + keyword + "%");
+            ResultSet resultSet = statement.executeQuery();
+            
+            while (resultSet.next()) {
+                categories.add(mapResultSetToCategory(resultSet));
+            }
+            return categories;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching categories by keyword", e);
+        }
+    }
     
     private Category mapResultSetToCategory(ResultSet resultSet) throws SQLException {
         Category category = new Category();

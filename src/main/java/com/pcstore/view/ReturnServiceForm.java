@@ -8,7 +8,7 @@ import com.pcstore.controller.ReturnController;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.ErrorMessage;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -29,6 +29,21 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     private DefaultTableModel tableModel;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private final Map<String, String> statusTranslation;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane ScrollPaneTable;
+    private com.k33ptoo.components.KButton btnDetailReturnCard;
+    private com.k33ptoo.components.KButton btnRemoveReturn;
+    private com.k33ptoo.components.KButton btnReturnInformationLookup;
+    private com.k33ptoo.components.KButton btnReturnProduct;
+    private com.k33ptoo.components.KButton btnUpdateStatus;
+    private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel pnReturnFunctions;
+    private javax.swing.JPanel pnReturnMain;
+    private javax.swing.JPanel pnSearch;
+    private javax.swing.JTable tbReturn;
+    private javax.swing.JTextField txtSearch;
+    // End of variables declaration//GEN-END:variables
 
 
     /**
@@ -78,7 +93,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         };
         
         tableModel.setColumnIdentifiers(columnNames);
-        TableStyleUtil.applyDefaultStyle(tbReturn);
+        TableUtils.applyDefaultStyle(tbReturn);
     }
 
     /**
@@ -477,7 +492,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         pnSearch = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
-        jPanel1 = new javax.swing.JPanel();
+        panelBody = new javax.swing.JPanel();
         ScrollPaneTable = new javax.swing.JScrollPane();
         tbReturn = new javax.swing.JTable();
 
@@ -492,7 +507,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         pnReturnFunctions.setBackground(new java.awt.Color(255, 255, 255));
         pnReturnFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 5));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnReturnProduct.setText(bundle.getString("btnReturnProduct")); // NOI18N
         btnReturnProduct.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnReturnProduct.setkAllowGradient(false);
@@ -594,7 +609,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
 
         pnReturnMain.add(pnReturnFunctions);
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        panelBody.setLayout(new java.awt.BorderLayout());
 
         ScrollPaneTable.setAutoscrolls(true);
         ScrollPaneTable.setMaximumSize(new java.awt.Dimension(32767, 1153));
@@ -629,9 +644,9 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             tbReturn.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtReturnStatus")); // NOI18N
         }
 
-        jPanel1.add(ScrollPaneTable, java.awt.BorderLayout.CENTER);
+        panelBody.add(ScrollPaneTable, java.awt.BorderLayout.CENTER);
 
-        pnReturnMain.add(jPanel1);
+        pnReturnMain.add(panelBody);
 
         add(pnReturnMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -675,18 +690,5 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         addListeners();
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane ScrollPaneTable;
-    private com.k33ptoo.components.KButton btnDetailReturnCard;
-    private com.k33ptoo.components.KButton btnRemoveReturn;
-    private com.k33ptoo.components.KButton btnReturnInformationLookup;
-    private com.k33ptoo.components.KButton btnReturnProduct;
-    private com.k33ptoo.components.KButton btnUpdateStatus;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel pnReturnFunctions;
-    private javax.swing.JPanel pnReturnMain;
-    private javax.swing.JPanel pnSearch;
-    private javax.swing.JTable tbReturn;
-    private javax.swing.JTextField txtSearch;
-    // End of variables declaration//GEN-END:variables
+    
 }

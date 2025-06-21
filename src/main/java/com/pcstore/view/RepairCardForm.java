@@ -10,6 +10,24 @@ package com.pcstore.view;
  */
 public class RepairCardForm extends javax.swing.JPanel {
 
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel AdressCustomer;
+    private javax.swing.JLabel NameCustomer;
+    private com.k33ptoo.components.KButton btnPrintCard;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbAddress;
+    private javax.swing.JLabel lbCustomerName;
+    private javax.swing.JLabel lbPhone;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JLabel lbTotalAmonut;
+    private javax.swing.JTable table;
+    private javax.swing.JLabel txtSDT;
+    private javax.swing.JLabel txtTotal;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form RepairCard
      */
@@ -28,43 +46,44 @@ public class RepairCardForm extends javax.swing.JPanel {
 
         jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
+        lbCustomerName = new javax.swing.JLabel();
+        lbAddress = new javax.swing.JLabel();
+        lbPhone = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jLabel7 = new javax.swing.JLabel();
-        SDT = new javax.swing.JLabel();
+        table = new javax.swing.JTable();
+        lbTotalAmonut = new javax.swing.JLabel();
+        txtSDT = new javax.swing.JLabel();
         NameCustomer = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JLabel();
         btnPrintCard = new com.k33ptoo.components.KButton();
-        jLabel1 = new javax.swing.JLabel();
+        lbTitle = new javax.swing.JLabel();
         AdressCustomer = new javax.swing.JLabel();
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         jLabel2.setText(bundle.getString("NameCustomer")); // NOI18N
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel5.setText(bundle.getString("lbSDT")); // NOI18N
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText(bundle.getString("NameCustomer")); // NOI18N
-        add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 114, -1, 28));
+        lbCustomerName.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lbCustomerName.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbCustomerName.setText(bundle.getString("NameCustomer")); // NOI18N
+        add(lbCustomerName, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 114, -1, 28));
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel4.setText(bundle.getString("lbAddress")); // NOI18N
-        add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 148, -1, -1));
+        lbAddress.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lbAddress.setText(bundle.getString("lbAddress")); // NOI18N
+        add(lbAddress, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 148, -1, -1));
 
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel6.setText(bundle.getString("lbSDT")); // NOI18N
-        add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 176, -1, -1));
+        lbPhone.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lbPhone.setText(bundle.getString("lbSDT")); // NOI18N
+        add(lbPhone, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 176, -1, -1));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -75,40 +94,38 @@ public class RepairCardForm extends javax.swing.JPanel {
                 "STT", "Tên Thiết Bị", "Tên Dịch Vụ", "Chi Phí", "Ghi Chú"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clSTT")); // NOI18N
-            jTable1.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clNameDevice")); // NOI18N
-            jTable1.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameService")); // NOI18N
-            jTable1.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clCost")); // NOI18N
-            jTable1.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clNote")); // NOI18N
+        jScrollPane1.setViewportView(table);
+        if (table.getColumnModel().getColumnCount() > 0) {
+            table.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("clSTT")); // NOI18N
+            table.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("clNameDevice")); // NOI18N
+            table.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("clNameService")); // NOI18N
+            table.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("clCost")); // NOI18N
+            table.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("clNote")); // NOI18N
         }
 
         add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 210, 743, 375));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText(bundle.getString("lbTotalAmount")); // NOI18N
-        add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 599, -1, 33));
+        lbTotalAmonut.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        lbTotalAmonut.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbTotalAmonut.setText(bundle.getString("lbTotalAmount")); // NOI18N
+        add(lbTotalAmonut, new org.netbeans.lib.awtextra.AbsoluteConstraints(58, 599, -1, 33));
 
-        SDT.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        SDT.setText("         ");
-        add(SDT, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 548, 24));
+        txtSDT.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        txtSDT.setText("         ");
+        add(txtSDT, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 548, 24));
 
         NameCustomer.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         add(NameCustomer, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 114, 508, 26));
 
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel10.setText("                                  ");
-        add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(136, 604, 140, -1));
+        txtTotal.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        txtTotal.setText("                                  ");
+        add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(136, 604, 140, -1));
 
         btnPrintCard.setText(bundle.getString("btnDetailCard")); // NOI18N
         btnPrintCard.setkBorderRadius(30);
         btnPrintCard.setkEndColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.setkHoverEndColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.setkHoverForeGround(new java.awt.Color(255, 255, 255));
-        btnPrintCard.setkHoverStartColor(new java.awt.Color(153, 255, 153));
-        btnPrintCard.setkStartColor(new java.awt.Color(102, 153, 255));
         btnPrintCard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnPrintCardMouseClicked(evt);
@@ -116,9 +133,9 @@ public class RepairCardForm extends javax.swing.JPanel {
         });
         add(btnPrintCard, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 600, -1, -1));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText(bundle.getString("lbRepairCard")); // NOI18N
-        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 20, -1, -1));
+        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lbTitle.setText(bundle.getString("lbRepairCard")); // NOI18N
+        add(lbTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 20, -1, -1));
 
         AdressCustomer.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         AdressCustomer.setText("         ");
@@ -130,20 +147,5 @@ public class RepairCardForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnPrintCardMouseClicked
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel AdressCustomer;
-    private javax.swing.JLabel NameCustomer;
-    private javax.swing.JLabel SDT;
-    private com.k33ptoo.components.KButton btnPrintCard;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    // End of variables declaration//GEN-END:variables
+    
 }

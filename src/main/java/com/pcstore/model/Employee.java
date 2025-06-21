@@ -1,5 +1,9 @@
 package com.pcstore.model;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Period;
+
 import com.pcstore.model.base.BasePerson;
 import com.pcstore.model.enums.EmployeePositionEnum;
 import com.pcstore.utils.ErrorMessage;
@@ -46,10 +50,10 @@ public class Employee extends BasePerson {
 
     public void setEmployeeId(String employeeId) {
         if (employeeId == null || employeeId.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Mã nhân viên"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Mã nhân viên"));
         }
         if (!employeeId.matches("NV\\d+")) {
-            throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_ID_FORMAT);
+            throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_ID_FORMAT.toString());
         }
         this.employeeId = employeeId;
     }
@@ -60,7 +64,7 @@ public class Employee extends BasePerson {
     
     public void setPosition(EmployeePositionEnum position) {
         if (position == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chức vụ"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Chức vụ"));
         }
         this.position = position;
     }
@@ -69,7 +73,7 @@ public class Employee extends BasePerson {
     public void setPosition(String position) {
         // System.out.println("Position: " + position);
         if (position == null || position.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Chức vụ"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Chức vụ"));
         }
         try {
             for (EmployeePositionEnum pos : EmployeePositionEnum.values()) {
@@ -79,7 +83,7 @@ public class Employee extends BasePerson {
                 }
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_EMPLOYEE_POSITION);
+            throw new IllegalArgumentException(ErrorMessage.INVALID_EMPLOYEE_POSITION.toString());
         }
     }
     
@@ -88,7 +92,7 @@ public class Employee extends BasePerson {
     @Override
     public void setPhoneNumber(String phoneNumber) {
         if (!isValidPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_PHONE_NUMBER);
+            throw new IllegalArgumentException(ErrorMessage.INVALID_PHONE_NUMBER.toString());
         }
         this.phoneNumber = phoneNumber;
     }
@@ -96,7 +100,7 @@ public class Employee extends BasePerson {
     @Override
     public void setEmail(String email) {
         if (!isValidEmail(email)) {
-            throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL);
+            throw new IllegalArgumentException(ErrorMessage.INVALID_EMAIL.toString());
         }
         this.email = email;
     }
@@ -104,10 +108,10 @@ public class Employee extends BasePerson {
     @Override
     public void setFullName(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Họ tên nhân viên"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Họ tên nhân viên"));
         }
         if (fullName.length() < 2) {
-            throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NAME_TOO_SHORT);
+            throw new IllegalArgumentException(ErrorMessage.EMPLOYEE_NAME_TOO_SHORT.toString());
         }
         this.fullName = fullName;
     }
@@ -115,11 +119,24 @@ public class Employee extends BasePerson {
     @Override
     public void setAddress(String address) {
         if (address == null || address.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Địa chỉ"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Địa chỉ"));
         }
         this.address = address;
     }
    
+    @Override
+    public void setDateOfBirth(Date dateOfBirth) {
+        if (dateOfBirth != null) {
+            LocalDate today = LocalDate.now();
+            LocalDate birthDate = dateOfBirth.toLocalDate();
+            if (Period.between(birthDate, today).getYears() < 18) {
+                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_18.toString()));
+            }else if(Period.between(birthDate, today).getYears() > 70) {
+                throw new IllegalArgumentException(String.format(ErrorMessage.EMPLOYEE_AGE_70.toString()));
+            }
+        }
+        this.dateOfBirth = dateOfBirth;
+    }
     
     public String getAvatar() {
         return avatar;

@@ -17,6 +17,33 @@ import com.pcstore.controller.RevenueProductController;
  */
 public class RevenueProductForm extends javax.swing.JPanel {
     private RevenueProductController controller;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Revenue;
+    private com.k33ptoo.components.KButton btnApply;
+    private com.k33ptoo.components.KButton btnExportReport;
+    private javax.swing.JButton btnFromDate;
+    private javax.swing.JButton btnToDate;
+    private com.raven.datechooser.DateChooser dateChooserFromDate;
+    private com.raven.datechooser.DateChooser dateChooserToDate;
+    private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JLabel lbFromDate;
+    private javax.swing.JLabel lbTitle;
+    private javax.swing.JLabel lbToDate;
+    private javax.swing.JLabel lbTotal;
+    private javax.swing.JPanel panelAction;
+    private javax.swing.JPanel panelBody;
+    private javax.swing.JPanel panelChart;
+    private javax.swing.JPanel panelDate;
+    private javax.swing.JPanel panelEmpty;
+    private javax.swing.JPanel panelFooter;
+    private javax.swing.JPanel panelFromDate;
+    private javax.swing.JPanel panelHeader;
+    private javax.swing.JPanel panelToDate;
+    private javax.swing.JTable tableRevenue;
+    private javax.swing.JTextField txtFromDate;
+    private javax.swing.JTextField txtToDate;
+    // End of variables declaration//GEN-END:variables
     
     /**
      * Creates new form RevenueDaily
@@ -76,7 +103,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("lbRevenueDaily")); // NOI18N
         lbTitle.setFocusable(false);
         panelHeader.add(lbTitle, java.awt.BorderLayout.CENTER);
@@ -317,30 +344,5 @@ public class RevenueProductForm extends javax.swing.JPanel {
     }
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Revenue;
-    private com.k33ptoo.components.KButton btnApply;
-    private com.k33ptoo.components.KButton btnExportReport;
-    private javax.swing.JButton btnFromDate;
-    private javax.swing.JButton btnToDate;
-    private com.raven.datechooser.DateChooser dateChooserFromDate;
-    private com.raven.datechooser.DateChooser dateChooserToDate;
-    private javax.swing.JScrollPane jScrollPane;
-    private javax.swing.JLabel lbFromDate;
-    private javax.swing.JLabel lbTitle;
-    private javax.swing.JLabel lbToDate;
-    private javax.swing.JLabel lbTotal;
-    private javax.swing.JPanel panelAction;
-    private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel panelChart;
-    private javax.swing.JPanel panelDate;
-    private javax.swing.JPanel panelEmpty;
-    private javax.swing.JPanel panelFooter;
-    private javax.swing.JPanel panelFromDate;
-    private javax.swing.JPanel panelHeader;
-    private javax.swing.JPanel panelToDate;
-    private javax.swing.JTable tableRevenue;
-    private javax.swing.JTextField txtFromDate;
-    private javax.swing.JTextField txtToDate;
-    // End of variables declaration//GEN-END:variables
+    
 }

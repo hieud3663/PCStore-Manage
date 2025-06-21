@@ -2,6 +2,7 @@ package com.pcstore.service;
 
 import com.pcstore.model.User;
 import com.pcstore.repository.impl.UserRepository;
+import com.pcstore.utils.ErrorMessage;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -49,7 +50,7 @@ public class UserService {
 
     public User saveUser(User user) {
         if (userRepository.exists(user.getUsername())) {
-            throw new IllegalArgumentException("Username " + user.getUsername() + " existed");
+            throw new IllegalArgumentException(String.format(ErrorMessage.USERNAME_EXISTS_EN.toString(), user.getUsername()));
         }
         
         validateUserBasicInfo(user);
@@ -68,7 +69,7 @@ public class UserService {
     public User addUser(User user) {
         // Kiểm tra tồn tại
         if (userRepository.exists(user.getUsername())) {
-            throw new IllegalArgumentException("Tên đăng nhập " + user.getUsername() + " đã tồn tại");
+            throw new IllegalArgumentException(String.format(ErrorMessage.USERNAME_EXISTS.toString(), user.getUsername()));
         }
         
         validateUserBasicInfo(user);
@@ -83,7 +84,7 @@ public class UserService {
      */
     public User updateUser(User user) {
         if (!userRepository.exists(user.getUsername())) {
-            throw new IllegalArgumentException("Người dùng với tên đăng nhập " + user.getUsername() + " không tồn tại");
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), user.getUsername()));
         }
         
         validateUserBasicInfo(user);
@@ -99,14 +100,14 @@ public class UserService {
      */
     public boolean updatePassword(String username, String newPassword) {
         if (!userRepository.exists(username)) {
-            throw new IllegalArgumentException("Người dùng với tên đăng nhập " + username + " không tồn tại");
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), username));
         }
         
         if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new IllegalArgumentException("Mật khẩu mới không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY.toString());
         }
         if (newPassword.length() < 6) {
-            throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 6 ký tự");
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_TOO_SHORT.toString());
         }
         
         return userRepository.updatePassword(username, newPassword);
@@ -185,7 +186,7 @@ public class UserService {
     public boolean activateUser(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
         if (!optionalUser.isPresent()) {
-            throw new IllegalArgumentException("Người dùng với tên đăng nhập " + username + " không tồn tại");
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), username));
         }
         
         User user = optionalUser.get();
@@ -203,7 +204,7 @@ public class UserService {
     public boolean deactivateUser(String username) {
         Optional<User> optionalUser = userRepository.findById(username);
         if (!optionalUser.isPresent()) {
-            throw new IllegalArgumentException("Người dùng với tên đăng nhập " + username + " không tồn tại");
+            throw new IllegalArgumentException(String.format(ErrorMessage.USER_NOT_EXISTS.toString(), username));
         }
         
         User user = optionalUser.get();
@@ -219,10 +220,10 @@ public class UserService {
      */
     private void validateUserBasicInfo(User user) {
         if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên đăng nhập không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.USERNAME_EMPTY.toString());
         }
         if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-            throw new IllegalArgumentException("Mật khẩu không được để trống");
+            throw new IllegalArgumentException(ErrorMessage.PASSWORD_EMPTY.toString());
         }
     }
 

@@ -2,7 +2,11 @@ package com.pcstore.model;
 
 import com.pcstore.model.base.BaseTimeEntity;
 import com.pcstore.utils.ErrorMessage;
+import com.pcstore.utils.LocaleManager;
+
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +16,7 @@ import java.util.List;
 public class Product extends BaseTimeEntity {
     private String productId;
     private String productName;
+    private String barcode; // Mã vạch sản phẩm
     private BigDecimal price;
     private int stockQuantity;
     private String specifications;
@@ -19,8 +24,9 @@ public class Product extends BaseTimeEntity {
     private Category category;
     private Supplier supplier;
     private String manufacturer;    
-
-    
+    private BigDecimal costPrice;        // Giá vốn gần nhất
+    private BigDecimal averageCostPrice; // Giá vốn trung bình
+    private BigDecimal profitMargin;     // Tỷ suất lợi nhuận (%)
 
     public Product(String productId, String productName, BigDecimal price, int stockQuantity, String specifications,
             String description, Category category, Supplier supplier) {
@@ -48,9 +54,17 @@ public class Product extends BaseTimeEntity {
 
     public void setProductId(String productId) {
         if (productId == null || productId.trim().isEmpty()) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Mã sản phẩm"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Mã sản phẩm"));
         }
         this.productId = productId;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     public String getProductName() {
@@ -59,7 +73,7 @@ public class Product extends BaseTimeEntity {
 
     public void setProductName(String productName) {
         if (productName == null || productName.trim().isEmpty()) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NAME_EMPTY);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_NAME_EMPTY.toString());
         }
         this.productName = productName;
     }
@@ -70,10 +84,10 @@ public class Product extends BaseTimeEntity {
 
     public void setPrice(BigDecimal price) {
         if (price == null) {
-            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY, "Giá sản phẩm"));
+            throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Giá sản phẩm"));
         }
         if (price.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_PRICE_NEGATIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_PRICE_NEGATIVE.toString());
         }
         this.price = price;
         setUpdatedAt(java.time.LocalDateTime.now());
@@ -85,7 +99,7 @@ public class Product extends BaseTimeEntity {
 
     public void setStockQuantity(int stockQuantity) {
         if (stockQuantity < 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NEGATIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NEGATIVE.toString());
         }
         this.stockQuantity = stockQuantity;
         setUpdatedAt(java.time.LocalDateTime.now());
@@ -113,7 +127,7 @@ public class Product extends BaseTimeEntity {
 
     public void setCategory(Category category) {
         if (category == null) {
-            throw new IllegalArgumentException(ErrorMessage.CATEGORY_NULL);
+            throw new IllegalArgumentException(ErrorMessage.CATEGORY_NULL.toString());
         }
         this.category = category;
     }
@@ -124,7 +138,7 @@ public class Product extends BaseTimeEntity {
 
     public void setSupplier(Supplier supplier) {
         if (supplier == null) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_SUPPLIER_NULL);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_SUPPLIER_NULL.toString());
         }
         this.supplier = supplier;
     }
@@ -136,14 +150,14 @@ public class Product extends BaseTimeEntity {
     public void decreaseStock(int quantity) {
         if (!hasEnoughStock(quantity)) {
             throw new IllegalArgumentException(
-                String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK, quantity, this.stockQuantity));
+                String.format(ErrorMessage.PRODUCT_INSUFFICIENT_STOCK.toString(), quantity, this.stockQuantity));
         }
         setStockQuantity(this.stockQuantity - quantity);
     }
     
     public void increaseStock(int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE);
+            throw new IllegalArgumentException(ErrorMessage.PRODUCT_QUANTITY_NOT_POSITIVE.toString());
         }
         setStockQuantity(this.stockQuantity + quantity);
     }
@@ -165,6 +179,40 @@ public class Product extends BaseTimeEntity {
         this.manufacturer = manufacturer;
     }
 
+    public BigDecimal getCostPrice() {
+        return costPrice == null ? BigDecimal.ZERO : costPrice;
+    }
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+    public BigDecimal getAverageCostPrice() {
+        return averageCostPrice == null ? BigDecimal.ZERO : averageCostPrice;
+    }
+
+    public void setAverageCostPrice(BigDecimal averageCostPrice) {
+        this.averageCostPrice = averageCostPrice;
+    }
+
+    public BigDecimal getProfitMargin() {
+        return profitMargin == null ? new BigDecimal(LocaleManager.profitMargin) : profitMargin;
+    }
+
+    public void setProfitMargin(BigDecimal profitMargin) {
+        this.profitMargin = profitMargin;
+    }
+
+    public BigDecimal calculateSellingPrice() {
+        BigDecimal avgCost = getAverageCostPrice();
+        if (avgCost.compareTo(BigDecimal.ZERO) <= 0) {
+            return price; // Trả về giá hiện tại nếu không có giá vốn
+        }
+        
+        BigDecimal margin = getProfitMargin().divide(new BigDecimal("100"), 4, RoundingMode.HALF_UP);
+        BigDecimal factor = BigDecimal.ONE.add(margin);
+        return avgCost.multiply(factor).setScale(0, RoundingMode.CEILING); // Làm tròn lên đến đơn vị
+    }
 
     // Factory method để tạo sản phẩm mới
     public static Product createNew(String productId, String productName, 

@@ -18,6 +18,31 @@ public class StockInConfirm extends javax.swing.JPanel {
     
     private List<PurchaseOrderDetail> orderDetails;
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.k33ptoo.components.KButton btnClose1;
+    private com.k33ptoo.components.KButton btnExportPDF;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel29;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
+    private javax.swing.JLabel jLabel44;
+    private javax.swing.JLabel jLabel45;
+    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
+    private javax.swing.JLabel lbStockInID2;
+    // End of variables declaration//GEN-END:variables
+
     /**
      * Creates new form StockInConfirm
      */
@@ -157,7 +182,7 @@ public class StockInConfirm extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
 
         btnExportPDF.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/pdf.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnExportPDF.setText(bundle.getString("btnExportPDF")); // NOI18N
         btnExportPDF.setkBorderRadius(30);
         btnExportPDF.setkEndColor(new java.awt.Color(102, 153, 255));
@@ -187,28 +212,5 @@ public class StockInConfirm extends javax.swing.JPanel {
         // ...
     }// </editor-fold>//GEN-END:initComponents
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnClose1;
-    private com.k33ptoo.components.KButton btnExportPDF;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel30;
-    private javax.swing.JLabel jLabel31;
-    private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel33;
-    private javax.swing.JLabel jLabel34;
-    private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel36;
-    private javax.swing.JLabel jLabel37;
-    private javax.swing.JLabel jLabel38;
-    private javax.swing.JLabel jLabel39;
-    private javax.swing.JLabel jLabel40;
-    private javax.swing.JLabel jLabel41;
-    private javax.swing.JLabel jLabel42;
-    private javax.swing.JLabel jLabel43;
-    private javax.swing.JLabel jLabel44;
-    private javax.swing.JLabel jLabel45;
-    private com.k33ptoo.components.KGradientPanel kGradientPanel3;
-    private javax.swing.JLabel lbStockInID2;
-    // End of variables declaration//GEN-END:variables
+    
 }

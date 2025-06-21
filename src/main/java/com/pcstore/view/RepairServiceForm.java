@@ -15,13 +15,14 @@ import javax.swing.JDialog;
 
 import com.pcstore.controller.RepairController;
 import com.pcstore.model.enums.RepairEnum;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.AddReapairProductForm;
 import com.pcstore.utils.ErrorMessage;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  *
@@ -31,16 +32,44 @@ public class RepairServiceForm extends javax.swing.JPanel {
 
     private RepairController repairController;
 
-    private final Map<String, String> statusTranslation;
-   
+   // Variables declaration - do not modify//GEN-BEGIN:variables
+   private com.k33ptoo.components.KButton btnAddRepair;
+   private com.k33ptoo.components.KButton btnDetail;
+   private com.k33ptoo.components.KButton btnRemoveRepair;
+   private com.k33ptoo.components.KButton btnUpdateStatus;
+   private javax.swing.JScrollPane jScrollPaneTable;
+   private javax.swing.JPanel panelBody;
+   private com.k33ptoo.components.KGradientPanel pnMainRepair;
+   private javax.swing.JPanel pnRepairFunctions;
+   private javax.swing.JTable tableRepair;
+   private com.pcstore.utils.TextFieldSearch textFieldSearch;
+   // End of variables declaration//GEN-END:variables
+
+    private static final Map<String, String> statusRepairTranslation = new HashMap<>();
+    static{
+            statusRepairTranslation.put("Received", "Đã tiếp nhận");
+            statusRepairTranslation.put("Diagnosing", "Đang chẩn đoán");
+            statusRepairTranslation.put("Waiting for Parts", "Chờ linh kiện");
+            statusRepairTranslation.put("Repairing", "Đang sửa chữa");
+            statusRepairTranslation.put("Completed", "Đã hoàn thành");
+            statusRepairTranslation.put("Delivered", "Đã giao khách");
+            statusRepairTranslation.put("Cancelled", "Đã hủy");
+        
+    }
 
     /**
      * Creates new form RepairService
      */
     public RepairServiceForm() {
         initComponents();
+        repairController = new RepairController();
         try {
             loadRepairServices();
+
+            TableUtils.applyDefaultStyle(tableRepair);
+        
+            setupSearchFunctionality();            
+
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -69,7 +98,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
      */
     public void loadRepairServices() {
         try {
-            System.out.println("Đang tải danh sách dịch vụ sửa chữa...");
+            // System.out.println("Đang tải danh sách dịch vụ sửa chữa...");
             
             // Lưu trạng thái tìm kiếm và sắp xếp hiện tại
             TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) tableRepair.getRowSorter();
@@ -117,7 +146,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 String statusEn = repair.getStatus() != null ? repair.getStatus().getStatus() : "N/A";
                 
                 // Chuyển đổi sang tiếng Việt
-                String statusVi = statusTranslation.getOrDefault(statusEn, statusEn);
+                String statusVi = statusRepairTranslation.getOrDefault(statusEn, statusEn);
                 
                 String notes = repair.getNotes() != null ? repair.getNotes() : "";
                 
@@ -177,6 +206,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         btnRemoveRepair = new com.k33ptoo.components.KButton();
         btnDetail = new com.k33ptoo.components.KButton();
         btnUpdateStatus = new com.k33ptoo.components.KButton();
+        textFieldSearch = new com.pcstore.utils.TextFieldSearch();
         panelBody = new javax.swing.JPanel();
         jScrollPaneTable = new javax.swing.JScrollPane();
         tableRepair = new javax.swing.JTable();
@@ -193,7 +223,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         pnRepairFunctions.setPreferredSize(new java.awt.Dimension(490, 70));
         pnRepairFunctions.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 15));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnAddRepair.setText(bundle.getString("btnReturnProduct")); // NOI18N
         btnAddRepair.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnAddRepair.setkAllowGradient(false);
@@ -267,6 +297,9 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
         });
         pnRepairFunctions.add(btnUpdateStatus);
+
+        textFieldSearch.setPreferredSize(new java.awt.Dimension(450, 31));
+        pnRepairFunctions.add(textFieldSearch);
 
         pnMainRepair.add(pnRepairFunctions);
 
@@ -566,7 +599,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
     private void setupSearchFunctionality() {
              
         // Tạo sorter cho bảng sử dụng TableStyleUtil
-        TableRowSorter<TableModel> sorter = TableStyleUtil.setupSorting(tableRepair);
+        TableRowSorter<TableModel> sorter = TableUtils.setupSorting(tableRepair);
         
         // Thêm sự kiện tìm kiếm khi thay đổi text
         textFieldSearch.getTxtSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
@@ -603,7 +636,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         // 4: Vấn đề sửa chữa
         // 6: Trạng thái
         // 7: Ghi chú
-        TableStyleUtil.applyFilter(sorter, searchText, 1, 2, 3, 4, 6, 7);
+        TableUtils.applyFilter(sorter, searchText, 1, 2, 3, 4, 6, 7);
         
     }
 
@@ -655,12 +688,15 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
             
             com.pcstore.model.Repair repair = repairOpt.get();
+            RepairEnum currentStatusEnum = repair.getStatus();
             
-            // Tạo danh sách các trạng thái có thể chuyển đổi bằng tiếng Việt
-            String[] availableStatusesVi = {
-                "Đã tiếp nhận", "Đang chẩn đoán", "Chờ linh kiện", 
-                "Đang sửa chữa", "Đã hoàn thành", "Đã giao khách", "Đã hủy"
-            };
+            // Tạo danh sách các trạng thái có thể chuyển đổi dựa trên trạng thái hiện tại
+            List<String> availableStatusesEn = getValidNextStatuses(currentStatusEnum);
+            String[] availableStatusesVi = new String[availableStatusesEn.size()];
+            
+            for (int i = 0; i < availableStatusesEn.size(); i++) {
+                availableStatusesVi[i] = statusRepairTranslation.getOrDefault(availableStatusesEn.get(i), availableStatusesEn.get(i));
+            }
             
             // Hiển thị dialog để chọn trạng thái mới
             String newStatusVi = (String) javax.swing.JOptionPane.showInputDialog(
@@ -670,7 +706,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 javax.swing.JOptionPane.QUESTION_MESSAGE,
                 null,
                 availableStatusesVi,
-                getCurrentStatusVi(currentStatus)
+                getCurrentStatusVi(currentStatusEnum.getStatus())
             );
             
             // Nếu người dùng không chọn hoặc hủy
@@ -680,7 +716,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
             
             // Chuyển đổi từ tiếng Việt sang tiếng Anh để lưu vào DB
             String newStatusEn = null;
-            for (Map.Entry<String, String> entry : statusTranslation.entrySet()) {
+            for (Map.Entry<String, String> entry : statusRepairTranslation.entrySet()) {
                 if (entry.getValue().equals(newStatusVi)) {
                     newStatusEn = entry.getKey();
                     break;
@@ -876,25 +912,62 @@ public class RepairServiceForm extends javax.swing.JPanel {
      */
     private String getCurrentStatusVi(String statusEn) {
         // Nếu trạng thái đã là tiếng Việt, trả về nguyên trạng
-        for (String viStatus : statusTranslation.values()) {
+        for (String viStatus : statusRepairTranslation.values()) {
             if (viStatus.equals(statusEn)) {
                 return statusEn;
             }
         }
         
         // Nếu là trạng thái tiếng Anh, chuyển đổi sang tiếng Việt
-        return statusTranslation.getOrDefault(statusEn, "Không xác định");
+        return statusRepairTranslation.getOrDefault(statusEn, "Không xác định");
     }
     
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnAddRepair;
-    private com.k33ptoo.components.KButton btnDetail;
-    private com.k33ptoo.components.KButton btnRemoveRepair;
-    private com.k33ptoo.components.KButton btnUpdateStatus;
-    private javax.swing.JScrollPane jScrollPaneTable;
-    private javax.swing.JPanel panelBody;
-    private com.k33ptoo.components.KGradientPanel pnMainRepair;
-    private javax.swing.JPanel pnRepairFunctions;
-    private javax.swing.JTable tableRepair;
-    // End of variables declaration//GEN-END:variables
+    /**
+     * Lấy danh sách các trạng thái hợp lệ có thể chuyển từ trạng thái hiện tại
+     */
+    private List<String> getValidNextStatuses(RepairEnum currentStatus) {
+        List<String> validStatuses = new ArrayList<>();
+        
+        switch (currentStatus) {
+            case RECEIVED:
+                validStatuses.add("Diagnosing");
+                validStatuses.add("Cancelled");
+                break;
+            case DIAGNOSING:
+                validStatuses.add("Waiting for Parts");
+                validStatuses.add("Repairing");
+                validStatuses.add("Completed");
+                validStatuses.add("Cancelled");
+                break;
+            case WAITING_FOR_PARTS:
+                validStatuses.add("Repairing");
+                validStatuses.add("Cancelled");
+                break;
+            case REPAIRING:
+                validStatuses.add("Completed");
+                validStatuses.add("Cancelled");
+                break;
+            case COMPLETED:
+                validStatuses.add("Delivered");
+                validStatuses.add("Cancelled");
+                break;
+            case DELIVERED:
+                // Trạng thái cuối, không thể chuyển đổi
+                break;
+            case CANCELLED:
+                // Trạng thái cuối, không thể chuyển đổi
+                break;
+            default:
+                // Thêm tất cả các trạng thái có thể
+                validStatuses.add("Received");
+                validStatuses.add("Diagnosing");
+                validStatuses.add("Waiting for Parts");
+                validStatuses.add("Repairing"); 
+                validStatuses.add("Completed");
+                validStatuses.add("Delivered");
+                validStatuses.add("Cancelled");
+        }
+        
+        return validStatuses;
+    }
 }

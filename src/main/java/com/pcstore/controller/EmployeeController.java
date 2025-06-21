@@ -6,10 +6,11 @@ import com.pcstore.model.enums.EmployeePositionEnum;
 import com.pcstore.service.EmployeeService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.ButtonUtils;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JExcel;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.SessionManager;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 import com.pcstore.view.EmployeeForm;
 import com.raven.datechooser.SelectedDate;
 
@@ -51,8 +52,6 @@ import java.util.Properties;
  * Controller để quản lý các thao tác liên quan đến nhân viên
  */
 public class EmployeeController {
-    // Singleton instance
-    private static EmployeeController instance;
     
     // Services
     private EmployeeService employeeService;
@@ -93,8 +92,8 @@ public class EmployeeController {
             loadAllEmployees(); 
             refereshForm();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Lỗi khởi tạo controller: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, ErrorMessage.INIT_CONTROLLER_ERROR.toString() + e.getMessage(), 
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -179,7 +178,7 @@ public class EmployeeController {
     private void setupTableStyle() {
         if (employeeForm == null) return;
         
-        employeeTableSorter = TableStyleUtil.applyDefaultStyle(employeeForm.getTableListEmployee());
+        employeeTableSorter = TableUtils.applyDefaultStyle(employeeForm.getTableListEmployee());
         
         //Comparator cho cột ngày sinh
         employeeTableSorter.setComparator(3, new Comparator<Object>() {
@@ -216,8 +215,8 @@ public class EmployeeController {
         } catch (Exception e) {
             if (employeeForm != null) {
                 JOptionPane.showMessageDialog(employeeForm, 
-                        "Lỗi khi tải danh sách nhân viên: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.LOAD_EMPLOYEES_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -259,14 +258,7 @@ public class EmployeeController {
      */
     public void loadEmployeeDetails(String employeeId) {
         if(isAddingNew){
-            int option = JOptionPane.showConfirmDialog(employeeForm,
-                "Bạn có muốn tiếp tục thêm nhân viên không?",
-                "Xác nhận", JOptionPane.YES_NO_OPTION);
-            if (option == JOptionPane.YES_OPTION) {
-                return;
-            }
-            isAddingNew = false;
-            employeeForm.getLabelESC().setVisible(isAddingNew);
+            if(handleEscapeKey())  return;
         }
 
         try {
@@ -316,8 +308,8 @@ public class EmployeeController {
         } catch (Exception e) {
             if (employeeForm != null) {
                 JOptionPane.showMessageDialog(employeeForm, 
-                        "Lỗi khi tải thông tin nhân viên: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.LOAD_EMPLOYEE_DETAILS_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -331,6 +323,7 @@ public class EmployeeController {
         clearForm();
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnUpdate(), true);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnChangeImage(), true);
+        ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), false);
         // Tạo mã nhân viên tự động
         String newEmployeeId = employeeService.generateEmployeeId();
         employeeForm.getTxtIDEmployee().setText(newEmployeeId);
@@ -375,16 +368,16 @@ public class EmployeeController {
                     dateOfBirth = Date.valueOf(localDate);
                 } catch (DateTimeParseException e) {
                     JOptionPane.showMessageDialog(employeeForm,
-                            "Định dạng ngày không hợp lệ. Vui lòng nhập theo định dạng dd-MM-yyyy",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.INVALID_DATE_FORMAT.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                             return;
                 }
             }
 
             if (id.isEmpty() || name.isEmpty() || phone.isEmpty() || position.isEmpty() || email.isEmpty()) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Mã nhân viên, họ tên, số điện thoại, chức vụ và email không được để trống",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.EMPTY_FIELDS_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -398,8 +391,8 @@ public class EmployeeController {
             
             if (employeePosition == null) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Chức vụ không hợp lệ. Vui lòng chọn Manager, Sales, Stock Keeper hoặc Admin",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.INVALID_POSITION_ERROR.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -411,8 +404,8 @@ public class EmployeeController {
                 Optional<Employee> existingEmployee = employeeService.findEmployeeById(id);
                 if (existingEmployee.isPresent()) {
                     JOptionPane.showMessageDialog(employeeForm,
-                            "Mã nhân viên đã tồn tại",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.DUPLICATE_EMPLOYEE_ID_ERROR.toString(),
+                            ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -429,8 +422,8 @@ public class EmployeeController {
                 newEmployee.setAvatar(currentAvatar); 
                 
                 int checkOption = JOptionPane.showConfirmDialog(employeeForm,
-                        "Xác nhận Thêm nhân viên mới?",
-                        "Xác nhận", JOptionPane.YES_NO_OPTION);
+                        ErrorMessage.CONFIRM_ADD_EMPLOYEE.toString(),
+                        ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
 
                 if(checkOption != JOptionPane.YES_OPTION) {
                     return;
@@ -444,20 +437,23 @@ public class EmployeeController {
                 loadAllEmployees();
                 
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Thêm nhân viên mới thành công",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.ADD_EMPLOYEE_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 
                 selectEmployeeInTable(savedEmployee.getEmployeeId());
                 
                 employeeForm.getLabelESC().setVisible(false);
                 
             } else { // Cập nhật thông tin
+                ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), true);
+                ButtonUtils.setKButtonEnabled(employeeForm.getBtnUpdate(), true);
+
                 employeeForm.getBtnUpdate().setText(prop.getProperty("btnUpdate"));
 
                 if (selectedEmployee == null) {
                     JOptionPane.showMessageDialog(employeeForm,
-                            "Vui lòng chọn nhân viên cần cập nhật",
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                            ErrorMessage.SELECT_EMPLOYEE_TO_UPDATE.toString(),
+                            ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 
@@ -471,8 +467,8 @@ public class EmployeeController {
                 selectedEmployee.setAvatar(currentAvatar); 
 
                 int checkOption = JOptionPane.showConfirmDialog(employeeForm,
-                        "Xác nhận Cập nhật thông tin?",
-                        "Xác nhận", JOptionPane.YES_NO_OPTION);
+                        ErrorMessage.CONFIRM_UPDATE_EMPLOYEE.toString(),
+                        ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
 
                 if(checkOption != JOptionPane.YES_OPTION) {
                     return;
@@ -482,16 +478,16 @@ public class EmployeeController {
                 
                 loadAllEmployees();
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Cập nhật thông tin nhân viên thành công",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.UPDATE_EMPLOYEE_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 
                 selectEmployeeInTable(updatedEmployee.getEmployeeId());
             }
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
-                    "Lỗi khi " + (isAddingNew ? "thêm" : "cập nhật") + " nhân viên: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.UPDATE_EMPLOYEE_ERROR.toString() + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -501,14 +497,14 @@ public class EmployeeController {
     public void deleteSelectedEmployee() {
         if (selectedEmployee == null) {
             JOptionPane.showMessageDialog(employeeForm,
-                    "Vui lòng chọn nhân viên cần xóa",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.SELECT_EMPLOYEE_TO_DELETE.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
         int option = JOptionPane.showConfirmDialog(employeeForm,
-                "Bạn có chắc chắn muốn xóa nhân viên " + selectedEmployee.getFullName() + "?",
-                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CONFIRM_DELETE_EMPLOYEE.toString() + selectedEmployee.getFullName() + "?",
+                ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
         
         if (option == JOptionPane.YES_OPTION) {
             try {
@@ -518,13 +514,13 @@ public class EmployeeController {
                 clearForm();
                 
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Xóa nhân viên thành công",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.DELETE_EMPLOYEE_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
                 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Lỗi khi xóa nhân viên: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DELETE_EMPLOYEE_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -535,16 +531,16 @@ public class EmployeeController {
      */
     public void searchEmployees(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
-            TableStyleUtil.applyFilter(employeeTableSorter, "");
+            TableUtils.applyFilter(employeeTableSorter, "");
             return;
         }
         
         try {
-            TableStyleUtil.applyFilter(employeeTableSorter, keyword, 1, 2, 3, 6, 7);
+            TableUtils.applyFilter(employeeTableSorter, keyword, 1, 2, 3, 6, 7);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
-                    "Lỗi khi tìm kiếm nhân viên: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.SEARCH_EMPLOYEE_ERROR.toString() + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -589,8 +585,8 @@ public class EmployeeController {
     public void exportToExcel() {
         if (employeeList == null || employeeList.isEmpty()) {
             JOptionPane.showMessageDialog(employeeForm,
-                    "Không có dữ liệu để xuất",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.NO_DATA_TO_EXPORT.toString(),
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -628,36 +624,41 @@ public class EmployeeController {
             
             if (success) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Xuất Excel thành công!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_SUCCESS.toString(),
+                        ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Xuất Excel không thành công!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.EXPORT_EXCEL_FAILURE.toString(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(employeeForm,
-                    "Lỗi khi xuất Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.EXPORT_EXCEL_ERROR.toString() + e.getMessage(),
+                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
     
     /**
      * Xử lý khi nhấn phím Esc để hủy thao tác thêm nhân viên mới
      */
-    private void handleEscapeKey() {
+    private boolean handleEscapeKey() {
         if (isAddingNew) {
             int option = JOptionPane.showConfirmDialog(employeeForm,
-                    "Bạn có muốn hủy thao tác thêm nhân viên mới không?",
-                    "Xác nhận", JOptionPane.YES_NO_OPTION);
+                    ErrorMessage.CONFIRM_CANCEL_ADD_EMPLOYEE.toString(),
+                    ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
                     
             if (option == JOptionPane.YES_OPTION) {
                 isAddingNew = false;
                 employeeForm.getLabelESC().setVisible(false);
                 employeeForm.getBtnUpdate().setText(prop.getProperty("btnUpdate"));
                 clearForm();
+                return false;
+            }else{
+                // ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), false);
+                return true;
             }
         }
+        return true;
     }
     
     /**
@@ -684,7 +685,8 @@ public class EmployeeController {
         
         currentAvatar = null;
         displayDefaultAvatar();
-        
+
+        ButtonUtils.setKButtonEnabled(employeeForm.getBtnAddEmployee(), true);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnUpdate(), false);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnDeleteEmployee(), false);
         ButtonUtils.setKButtonEnabled(employeeForm.getBtnChangeImage(), false);
@@ -726,7 +728,7 @@ public class EmployeeController {
                 
                 BufferedImage originalImage = ImageIO.read(selectedFile);
                 if (originalImage == null) {
-                    JOptionPane.showMessageDialog(employeeForm, "File không phải là hình ảnh hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(employeeForm, ErrorMessage.INVALID_IMAGE_FILE.toString(), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -748,8 +750,8 @@ public class EmployeeController {
                 
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Lỗi khi xử lý hình ảnh: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PROCESS_IMAGE_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -796,8 +798,8 @@ public class EmployeeController {
                 }
             } catch (IOException | IllegalArgumentException e) {
                 JOptionPane.showMessageDialog(employeeForm,
-                        "Lỗi khi hiển thị avatar: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.DISPLAY_AVATAR_ERROR.toString() + e.getMessage(),
+                        ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
                 displayDefaultAvatar();
             }
         } else {
@@ -833,7 +835,7 @@ public class EmployeeController {
                 employeeForm.getPanelAvatar().repaint();
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi hiển thị avatar mặc định: " + e.getMessage());
+            System.err.println(ErrorMessage.DISPLAY_DEFAULT_AVATAR_ERROR.toString() + e.getMessage());
         }
     }
 
@@ -881,14 +883,14 @@ public class EmployeeController {
                 
             } else {
                 JOptionPane.showMessageDialog(employeeForm, 
-                    "Không tìm thấy thông tin nhân viên của bạn", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CURRENT_USER_EMPLOYEE_NOT_FOUND.toString(), 
+                    ErrorMessage.INFO_TITLE.toString(), JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(employeeForm, 
-                "Lỗi khi tải thông tin nhân viên: " + e.getMessage(), 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.LOAD_CURRENT_USER_EMPLOYEE_ERROR.toString() + e.getMessage(), 
+                ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -897,7 +899,7 @@ public class EmployeeController {
      */
     private void refereshForm(){
         clearForm();
-        
+        isAddingNew = false;
         if(isAdmin || isManager){
             loadAllEmployees();
         } else {

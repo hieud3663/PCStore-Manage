@@ -8,7 +8,7 @@ import com.pcstore.controller.WarrantyController;
 import com.pcstore.model.*;
 import com.pcstore.utils.ButtonUtils;
 import com.pcstore.utils.ErrorMessage;
-import com.pcstore.utils.TableStyleUtil;
+import com.pcstore.utils.TableUtils;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -36,8 +36,21 @@ import javax.swing.JPanel;
  */
 public class AddWarrantyForm extends javax.swing.JPanel {
     private WarrantyController controller;
-    private List<InvoiceDetail> currentInvoiceDetails; // Thêm biến này
+    private List<InvoiceDetail> currentInvoiceDetails; 
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+
+        
+     private com.k33ptoo.components.KButton btnReturnInformationLookup;
+     private com.k33ptoo.components.KButton btnWarranty;
+     private javax.swing.JScrollPane jScrollPane1;
+     private javax.swing.JPanel panelBody;
+     private javax.swing.JPanel panelFooter;
+     private javax.swing.JPanel panelHeader;
+     private com.k33ptoo.components.KGradientPanel panelMain;
+     private javax.swing.JTable table;
+     private javax.swing.JTextField txtSearch;
+   
 
     /**
      * Constructor với reference đến controller và service form cha
@@ -61,7 +74,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
      * Thiết lập các thuộc tính cho bảng
      */
     private void setupTable() {
-        TableStyleUtil.applyDefaultStyle(table);
+        TableUtils.applyDefaultStyle(table);
 
         // Đặt tên cột
         String[] columnNames = {
@@ -223,7 +236,7 @@ public class AddWarrantyForm extends javax.swing.JPanel {
         panelHeader.add(txtSearch);
 
         btnReturnInformationLookup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/pcstore/resources/icon/search.png"))); // NOI18N
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
         btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 255, 255));
         btnReturnInformationLookup.setkEndColor(new java.awt.Color(51, 153, 255));
@@ -600,16 +613,4 @@ public class AddWarrantyForm extends javax.swing.JPanel {
             sorter.setRowFilter(RowFilter.regexFilter("^" + status + "$", 7));
         }
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.k33ptoo.components.KButton btnReturnInformationLookup;
-    private com.k33ptoo.components.KButton btnWarranty;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelBody;
-    private javax.swing.JPanel panelFooter;
-    private javax.swing.JPanel panelHeader;
-    private com.k33ptoo.components.KGradientPanel panelMain;
-    private javax.swing.JTable table;
-    private javax.swing.JTextField txtSearch;
-    // End of variables declaration//GEN-END:variables
 }

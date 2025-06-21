@@ -380,3 +380,54 @@ ALTER COLUMN UnitCost decimal(18,2);
 -- Thay đổi kiểu dữ liệu của các cột giá trong bảng Products nếu cần
 ALTER TABLE Products 
 ALTER COLUMN Price decimal(18,2);
+
+
+ALTER TABLE Categories ADD IsActive BIT DEFAULT 1;
+ALTER TABLE Customers ADD IsActive BIT DEFAULT 1;
+ALTER TABLE Products ADD IsActive BIT DEFAULT 1;
+ALTER TABLE Suppliers ADD IsActive BIT DEFAULT 1;
+ALTER TABLE Employees ADD IsActive BIT DEFAULT 1;
+
+ALTER TABLE Products DROP CONSTRAINT FK__Products__Catego__0E6E26BF;
+ALTER TABLE Products ADD CONSTRAINT FK_Products_Categories
+FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID)
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ InvoiceDetails đến Invoices
+ALTER TABLE InvoiceDetails DROP CONSTRAINT FK__InvoiceDe__Invoi__08B54D69;
+ALTER TABLE InvoiceDetails ADD CONSTRAINT FK_InvoiceDetails_Invoices
+FOREIGN KEY (InvoiceID) REFERENCES Invoices(InvoiceID) 
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ Warranties đến InvoiceDetails
+ALTER TABLE Warranties DROP CONSTRAINT FK__Warrantie__Invoi__1AD3FDA4;
+ALTER TABLE Warranties ADD CONSTRAINT FK_Warranties_InvoiceDetails
+FOREIGN KEY (InvoiceDetailID) REFERENCES InvoiceDetails(InvoiceDetailID) 
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ Returns đến InvoiceDetails
+ALTER TABLE Returns DROP CONSTRAINT FK__Returns__Invoice__160F4887;
+ALTER TABLE Returns ADD CONSTRAINT FK_Returns_InvoiceDetails
+FOREIGN KEY (InvoiceDetailID) REFERENCES InvoiceDetails(InvoiceDetailID) 
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ RepairServices đến Customers
+ALTER TABLE RepairServices DROP CONSTRAINT FK__RepairSer__Custo__14270015;
+ALTER TABLE RepairServices ADD CONSTRAINT FK_RepairServices_Customers
+FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) 
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ RepairServices đến Employees
+ALTER TABLE RepairServices DROP CONSTRAINT FK__RepairSer__Emplo__151B244E;
+ALTER TABLE RepairServices ADD CONSTRAINT FK_RepairServices_Employees
+FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) 
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ PurchaseOrderDetails đến PurchaseOrders
+ALTER TABLE PurchaseOrderDetails DROP CONSTRAINT FK__PurchaseO__Purch__114A936A;
+ALTER TABLE PurchaseOrderDetails ADD CONSTRAINT FK_PurchaseOrderDetails_PurchaseOrders
+FOREIGN KEY (PurchaseOrderID) REFERENCES PurchaseOrders(PurchaseOrderID)
+ON DELETE NO ACTION ON UPDATE CASCADE;
+
+-- Xóa ràng buộc cascade từ Employees đến Invoices
+

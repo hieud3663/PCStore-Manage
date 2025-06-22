@@ -23,7 +23,7 @@ import com.pcstore.utils.DatabaseConnection;
  *
  * @author DUC ANH
  */
-public class ReportForm extends javax.swing.JPanel {
+public class ReportRevenueForm extends javax.swing.JPanel {
     private KGradientPanel activePanel = null;
     private JLabel activeLabel = null;
     private RevenueProductForm revenueProductForm;
@@ -42,7 +42,7 @@ public class ReportForm extends javax.swing.JPanel {
     /**
      * Creates new form RevenueForm - Tự khởi tạo controller
      */
-    public ReportForm() {
+    public ReportRevenueForm() {
         initComponents();
         
         // Khởi tạo các form con
@@ -54,19 +54,18 @@ public class ReportForm extends javax.swing.JPanel {
             // Lấy connection từ DatabaseConnection singleton
             Connection connection = DatabaseConnection.getInstance().getConnection();
             if (connection != null) {
-                revenueProductController = RevenueProductController.getInstance(revenueProductForm);
-                revenueEmployeeController = RevenueEmployeeController.getInstance(revenueEmployeeForm);
+                // revenueProductController = RevenueProductController.getInstance(revenueProductForm);
+                // revenueEmployeeController = RevenueEmployeeController.getInstance(revenueEmployeeForm);
                 
-                revenueProductForm.setController(revenueProductController);
-                revenueEmployeeForm.setController(revenueEmployeeController);
+                // revenueProductForm.setController(revenueProductController);
+                // revenueEmployeeForm.setController(revenueEmployeeController);
                 
                 initializeHoverEffects();
                 
                 selectMenu(panelDaily, lbDaily, revenueProductForm);
                 
-                System.out.println("ReportForm: Khởi tạo controller thành công");
             } else {
-                System.err.println("ReportForm: Không thể kết nối database");
+                
                 JOptionPane.showMessageDialog(this, 
                     "Không thể kết nối đến cơ sở dữ liệu", 
                     "Lỗi kết nối", 

@@ -38,7 +38,7 @@ public class DashboardForm extends JFrame {
     private InvoiceForm invoiceForm;
     private CustomerForm customerForm;
     private ServiceForm serviceForm;
-    private ReportForm reportForm;
+    private ReportRevenueForm reportForm;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.k33ptoo.components.KGradientPanel PanelMenu;
@@ -107,7 +107,7 @@ public class DashboardForm extends JFrame {
         wareHouseForm = new WareHouseForm();
         customerForm = new CustomerForm();
         serviceForm = new ServiceForm();
-        reportForm = new ReportForm();
+        reportForm = new ReportRevenueForm();
 
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -205,7 +205,7 @@ public class DashboardForm extends JFrame {
                 break;
 
             case "menu.report":
-                showForm(new ReportForm());
+                handleReportMenu(subIndex);
                 break;
             default:
                 showForm(new HomeForm());
@@ -282,6 +282,23 @@ public class DashboardForm extends JFrame {
                 break;
             default:
                 showForm(new WarrantyServiceForm());
+                break;
+        }
+    }
+
+    private void handleReportMenu(int subIndex) {
+        switch (subIndex) {
+            case 1:
+                showForm(new ReportRevenueForm());
+                break;
+            case 2:
+                showForm(new ReportRevenueSellingForm());
+                break;
+            case 3:
+                showForm(new ReportCustomerForm());
+                break;
+            default:
+                showForm(new ReportRevenueForm());
                 break;
         }
     }

@@ -392,6 +392,9 @@ ALTER TABLE Products ADD ProfitMargin DECIMAL(5,2);
 
 ALTER TABLE Products ALTER COLUMN ProfitMargin DECIMAL(18,2);
 
+ALTER TABLE InvoiceDetails ADD CostPrice DECIMAL(18,2); -- Giá vốn của sản phẩm trong chi tiết hóa đơn
+ALTER TABLE InvoiceDetails ADD ProfitMargin DECIMAL(5,2); -- Biên lợi nhuận của sản phẩm trong chi tiết hóa đơn
+ALTER TABLE InvoiceDetails ADD DiscountAmount DECIMAL(18,2); -- Số tiền giảm giá của sản phẩm trong chi tiết hóa đơn (được tính trung bình từ tổng giảm giá của hóa đơn)
 
 -- Tạo bảng lịch sử giá
 CREATE TABLE PriceHistory (

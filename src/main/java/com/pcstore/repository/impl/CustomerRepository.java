@@ -8,9 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +29,6 @@ public class CustomerRepository implements Repository<Customer, String> {
         this.connection = connection;
     }
 
-
     public Customer save(Customer customer) {
 
         // Kiểm tra xem customer có tồn tại chưa đã
@@ -39,12 +41,11 @@ public class CustomerRepository implements Repository<Customer, String> {
 
     }
 
-
     @Override
     public Customer add(Customer customer) {
 
-
-        String sql = "INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, Point, CreatedAt, UpdatedAt) " +
+        String sql = "INSERT INTO Customers (CustomerID, FullName, PhoneNumber, Email, Address, Point, CreatedAt, UpdatedAt) "
+                +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -63,7 +64,6 @@ public class CustomerRepository implements Repository<Customer, String> {
 
             statement.setObject(7, customer.getCreatedAt());
             statement.setObject(8, customer.getUpdatedAt());
-
 
             statement.executeUpdate();
 
@@ -86,7 +86,6 @@ public class CustomerRepository implements Repository<Customer, String> {
             statement.setString(3, customer.getEmail());
             statement.setString(4, customer.getAddress());
             statement.setInt(5, customer.getPoints());
-
 
             customer.setUpdatedAt(LocalDateTime.now());
             statement.setObject(6, customer.getUpdatedAt());
@@ -136,7 +135,7 @@ public class CustomerRepository implements Repository<Customer, String> {
         List<Customer> customers = new ArrayList<>();
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+                ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
                 customers.add(mapResultSetToCustomer(resultSet));
@@ -222,7 +221,7 @@ public class CustomerRepository implements Repository<Customer, String> {
         String sql = "SELECT MAX(CAST(SUBSTRING(CustomerID, 3, LEN(CustomerID)) AS INT)) FROM Customers WHERE CustomerID LIKE 'KH%'";
 
         try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
+                ResultSet resultSet = statement.executeQuery(sql)) {
 
             int maxId = 0;
             if (resultSet.next() && resultSet.getObject(1) != null) {
@@ -246,7 +245,6 @@ public class CustomerRepository implements Repository<Customer, String> {
         customer.setAddress(resultSet.getString("Address"));
         customer.setCreatedAt(resultSet.getObject("CreatedAt", LocalDateTime.class));
         customer.setUpdatedAt(resultSet.getObject("UpdatedAt", LocalDateTime.class));
-
 
         return customer;
     }
@@ -315,7 +313,8 @@ public class CustomerRepository implements Repository<Customer, String> {
                     customer.setAddress(address != null ? address : "");
 
                     // Log địa chỉ để debug
-                    logger.info("Customer found with ID: " + customerId + ", Address: " + (address != null ? address : "null"));
+                    logger.info("Customer found with ID: " + customerId + ", Address: "
+                            + (address != null ? address : "null"));
 
                     if (rs.getTimestamp("CreatedAt") != null) {
                         customer.setCreatedAt(rs.getTimestamp("CreatedAt").toLocalDateTime());
@@ -333,5 +332,76 @@ public class CustomerRepository implements Repository<Customer, String> {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Lấy dữ liệu doanh thu khách hàng trong khoảng thời gian
+     * 
+     * @param startDate Ngày bắt đầu
+     * @param endDate   Ngày kết thúc
+     * @return Danh sách dữ liệu doanh thu khách hàng
+     */
+    public List<Map<String, Object>> getCustomerRevenueData(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        String sql = "SELECT " +
+                "    c.CustomerID, " +
+                "    c.FullName, " +
+                "    COUNT(DISTINCT i.InvoiceID) AS OrderCount, " +
+                "    COALESCE(SUM(i.TotalAmount), 0) AS TotalAmount, " +
+                "    COALESCE(SUM(i.DiscountAmount), 0) AS DiscountAmount, " +
+                "    COALESCE(SUM(i.TotalAmount - ISNULL(i.DiscountAmount, 0)), 0) AS Revenue, " +
+                "    COALESCE(return_data.ReturnCount, 0) AS ReturnCount, " +
+                "    COALESCE(return_data.ReturnValue, 0) AS ReturnValue, " +
+                "    COALESCE(SUM(i.TotalAmount - ISNULL(i.DiscountAmount, 0)), 0) - COALESCE(return_data.ReturnValue, 0) AS NetRevenue "
+                +
+                "FROM Customers c " +
+                "    LEFT JOIN Invoices i ON c.CustomerID = i.CustomerID " +
+                "        AND i.InvoiceDate BETWEEN ? AND ? " +
+                "        AND i.StatusID = 3 " +
+                "    LEFT JOIN (  " +
+                "        SELECT " +
+                "            i2.CustomerID, " +
+                "            COUNT(DISTINCT r.ReturnID) AS ReturnCount, " +
+                "            COALESCE(SUM(r.ReturnAmount), 0) AS ReturnValue " +
+                "        FROM Returns r " +
+                "            JOIN InvoiceDetails id ON r.InvoiceDetailID = id.InvoiceDetailID " +
+                "            JOIN Invoices i2 ON id.InvoiceID = i2.InvoiceID " +
+                "        WHERE r.ReturnDate BETWEEN ? AND ? " +
+                "            AND r.Status = 'Completed' " +
+                "        GROUP BY i2.CustomerID  " +
+                "    ) return_data ON c.CustomerID = return_data.CustomerID " +
+                "WHERE i.InvoiceID IS NOT NULL " +
+                "GROUP BY c.CustomerID, c.FullName, return_data.ReturnCount, return_data.ReturnValue " +
+                "ORDER BY NetRevenue DESC;";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setTimestamp(1, Timestamp.valueOf(startDate));
+            statement.setTimestamp(2, Timestamp.valueOf(endDate));
+            statement.setTimestamp(3, Timestamp.valueOf(startDate));
+            statement.setTimestamp(4, Timestamp.valueOf(endDate));
+
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> customerData = new HashMap<>();
+                    customerData.put("customerId", rs.getString("CustomerID"));
+                    customerData.put("customerName", rs.getString("FullName"));
+                    customerData.put("orderCount", rs.getInt("OrderCount"));
+                    customerData.put("totalAmount", rs.getBigDecimal("TotalAmount"));
+                    customerData.put("discountAmount", rs.getBigDecimal("DiscountAmount"));
+                    customerData.put("revenue", rs.getBigDecimal("Revenue"));
+                    customerData.put("returnCount", rs.getInt("ReturnCount"));
+                    customerData.put("returnValue", rs.getBigDecimal("ReturnValue"));
+                    customerData.put("netRevenue", rs.getBigDecimal("NetRevenue"));
+
+                    result.add(customerData);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Lỗi khi lấy dữ liệu doanh thu khách hàng", e);
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

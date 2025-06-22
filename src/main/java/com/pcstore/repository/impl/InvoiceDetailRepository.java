@@ -50,15 +50,18 @@ public class InvoiceDetailRepository implements Repository<InvoiceDetail, Intege
     
     @Override
     public InvoiceDetail add(InvoiceDetail invoiceDetail) {
-        String sql = "INSERT INTO InvoiceDetails (InvoiceID, ProductID, Quantity, UnitPrice) " +
-                    "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO InvoiceDetails (InvoiceID, ProductID, Quantity, UnitPrice, CostPrice, ProfitMargin, DiscountAmount) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
                     
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setInt(1, invoiceDetail.getInvoice().getInvoiceId());
             statement.setString(2, invoiceDetail.getProduct().getProductId());
             statement.setInt(3, invoiceDetail.getQuantity());
             statement.setBigDecimal(4, invoiceDetail.getUnitPrice());
-            
+            statement.setBigDecimal(5, invoiceDetail.getCostPrice());
+            statement.setBigDecimal(6, invoiceDetail.getProfitMargin());
+            statement.setBigDecimal(7, invoiceDetail.getDiscountAmount());
+
             statement.executeUpdate();
             
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -341,7 +344,10 @@ public class InvoiceDetailRepository implements Repository<InvoiceDetail, Intege
         invoiceDetail.setInvoiceDetailId(resultSet.getInt("InvoiceDetailID"));
         invoiceDetail.setQuantity(resultSet.getInt("Quantity"));
         invoiceDetail.setUnitPrice(resultSet.getBigDecimal("UnitPrice"));
-        
+        invoiceDetail.setCostPrice(resultSet.getBigDecimal("CostPrice"));
+        invoiceDetail.setProfitMargin(resultSet.getBigDecimal("ProfitMargin"));
+        invoiceDetail.setDiscountAmount(resultSet.getBigDecimal("DiscountAmount"));
+
         // Tạo đối tượng Invoice giả lập chỉ với ID
         Invoice invoice = new Invoice();
         invoice.setInvoiceId(resultSet.getInt("InvoiceID"));

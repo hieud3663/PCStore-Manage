@@ -6,9 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,8 +68,8 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
 
     @Override
     public Invoice add(Invoice invoice) {
-        String sql = "INSERT INTO Invoices (CustomerID, EmployeeID, TotalAmount, InvoiceDate, StatusID, PaymentMethodID) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Invoices (CustomerID, EmployeeID, TotalAmount, InvoiceDate, StatusID, PaymentMethodID, DiscountAmount) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, invoice.getCustomer() != null ? (String) invoice.getCustomer().getId() : null);
@@ -108,7 +111,8 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
                 }
             }
             statement.setInt(6, paymentMethodId);
-            
+            statement.setBigDecimal(7, invoice.getDiscountAmount() != null ? invoice.getDiscountAmount() : BigDecimal.ZERO);
+
             statement.executeUpdate();
             
             // Lấy ID được tự động tạo
@@ -127,7 +131,7 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
     @Override
     public Invoice update(Invoice invoice) {
         String sql = "UPDATE Invoices SET CustomerID = ?, EmployeeID = ?, TotalAmount = ?, " +
-                     "InvoiceDate = ?, StatusID = ?, PaymentMethodID = ? WHERE InvoiceID = ?";
+                     "InvoiceDate = ?, StatusID = ?, PaymentMethodID = ?, DiscountAmount = ? WHERE InvoiceID = ?";
                      
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, invoice.getCustomer() != null ? (String) invoice.getCustomer().getId() : null);
@@ -161,8 +165,8 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
             }
             statement.setInt(6, paymentMethodId);
             
-            statement.setInt(7, invoice.getInvoiceId());
-            
+            statement.setBigDecimal(7, invoice.getDiscountAmount() != null ? invoice.getDiscountAmount() : BigDecimal.ZERO);
+            statement.setInt(8, invoice.getInvoiceId());
             statement.executeUpdate();
             
             invoice.setUpdatedAt(LocalDateTime.now());
@@ -406,7 +410,7 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
     
     // Tìm hóa đơn trong khoảng thời gian
     public List<Invoice> findByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        String sql = "SELECT i.*, c.FullName as CustomerName, e.FullName as EmployeeName " +
+        String sql = "SELECT i.*, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, e.FullName as EmployeeName, e.PhoneNumber as EmployeePhone " +
                      "FROM Invoices i " +
                      "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
                      "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
@@ -828,6 +832,41 @@ public class InvoiceRepository implements Repository<Invoice, Integer> {
         return invoices;
     }
     
+
+    /*
+     * Thống kê hóa dơn theo khoảng thời gian
+     */
+    public List<Invoice> getInvoiceStatistics(LocalDateTime startDate, LocalDateTime endDate) {
+        List<Invoice> statistics = new ArrayList<>();
+        String sql = "SELECT i.*, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, e.FullName as EmployeeName, e.PhoneNumber as EmployeePhone, SUM(id.Quantity) as TotalQuantity "
+                +
+                "FROM Invoices i " +
+                "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                "LEFT JOIN Employees e ON i.EmployeeID = e.EmployeeID " +
+                "JOIN InvoiceDetails id ON i.InvoiceID = id.InvoiceID " +
+                "WHERE i.InvoiceDate BETWEEN ? AND ? " +
+                "GROUP BY i.InvoiceID, i.InvoiceDate, i.TotalAmount, i.StatusID, i.CustomerID, i.EmployeeID, i.Notes, i.PaymentMethodID, i.DiscountAmount, c.FullName, c.PhoneNumber, e.FullName, e.PhoneNumber "
+                +
+                "ORDER BY i.InvoiceDate DESC";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setTimestamp(1, Timestamp.valueOf(startDate));
+            statement.setTimestamp(2, Timestamp.valueOf(endDate));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Invoice invoice = mapResultSetToInvoice(resultSet);
+                    invoice.setTotalQuantity(resultSet.getInt("TotalQuantity"));
+                    statistics.add(invoice);
+                }
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error retrieving invoice statistics", e);
+            e.printStackTrace();
+        }
+
+        return statistics;
+    }
+
     private Invoice mapResultSetToInvoice(ResultSet resultSet) throws SQLException {
         Invoice invoice = new Invoice();
         invoice.setInvoiceId(resultSet.getInt("InvoiceID"));

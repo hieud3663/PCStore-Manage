@@ -361,4 +361,16 @@ public class InvoiceService {
             return new ArrayList<>();
         }
     }
+
+    /*
+     * Báo cáo hóa đơn doanh thu
+     */
+    public List<Invoice> getInvoiceStatistics(LocalDateTime startDate, LocalDateTime endDate){
+        try {
+            return invoiceRepository.getInvoiceStatistics(startDate, endDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }

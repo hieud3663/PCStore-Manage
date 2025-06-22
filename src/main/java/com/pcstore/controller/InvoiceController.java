@@ -1049,7 +1049,7 @@ public class InvoiceController {
                         row[2] = detail.getProduct().getProductName();
                         row[3] = detail.getQuantity();
                         row[4] = currencyFormatter.format(detail.getUnitPrice());
-                        row[5] = currencyFormatter.format(detail.getSubtotal());
+                        row[5] = currencyFormatter.format(detail.getSubTotal());
                         detailModel.addRow(row);
                     }
                 }

@@ -498,7 +498,7 @@ public class ProductForm extends javax.swing.JPanel {
 
         labelProfit.setBackground(new java.awt.Color(255, 255, 255));
         labelProfit.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        labelProfit.setText(bundle.getString("lbProfit")); // NOI18N
+        labelProfit.setText(bundle.getString("lbProfitRate")); // NOI18N
         labelProfit.setOpaque(true);
         panelProfit.add(labelProfit);
 

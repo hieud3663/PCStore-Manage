@@ -652,7 +652,7 @@ public enum ErrorMessage {
     WARRANTY_DELETE_FAIL("WARRANTY_DELETE_FAIL"),                        //"Không thể xóa bảo hành. Vui lòng thử lại sau."
     WARRANTY_SELECT_ONE_DETAIL("WARRANTY_SELECT_ONE_DETAIL"),             //"Vui lòng chọn một bảo hành để xem chi tiết"
     INVOICE_DETAIL_NULL("INVOICE_DETAIL_NULL"),                          //"Chi tiết hóa đơn không được null"
-    INVOICE_NULL("INVOICE_NULL");                                       //"Thông tin hóa đơn không được null"
+    INVOICE_NULL("INVOICE_NULL");                                       //"Thông tin hóa đơn không được null"test
     
     // Original code continues
     // ...

@@ -24,7 +24,7 @@ public class Invoice extends BaseTimeEntity {
     private BigDecimal discountAmount;
     private List<InvoiceDetail> invoiceDetails = new ArrayList<>();
     private boolean pointUsed = false; // Điểm đã sử dụng hay chưa
-
+    private Integer totalQuantity;
 
     public Invoice() {
     }
@@ -153,6 +153,15 @@ public class Invoice extends BaseTimeEntity {
         this.invoiceDetails = invoiceDetails;
     }
 
+
+    public Integer getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public void setTotalQuantity(Integer totalQuantity) {
+        this.totalQuantity = totalQuantity;
+    }
+
     public void addInvoiceDetail(InvoiceDetail invoiceDetail) {
         if (invoiceDetail == null) {
             throw new IllegalArgumentException(String.format(ErrorMessage.FIELD_EMPTY.toString(), "Chi tiết hóa đơn"));
@@ -181,7 +190,7 @@ public class Invoice extends BaseTimeEntity {
     public BigDecimal calculateTotal() {
         BigDecimal total = BigDecimal.ZERO;
         for (InvoiceDetail detail : invoiceDetails) {
-            total = total.add(detail.getSubtotal());
+            total = total.add(detail.getSubTotal());
         }
         return total;
     }

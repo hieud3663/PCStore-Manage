@@ -18,6 +18,9 @@ public class InvoiceDetail extends BaseTimeEntity {
     private BigDecimal unitPrice;
     private BigDecimal discountAmount;
     private String notes;
+    private BigDecimal costPrice; // Giá vốn của sản phẩm trong chi tiết hóa đơn
+    private BigDecimal profitMargin; // Biên lợi nhuận của sản phẩm trong chi tiết hóa đơn 
+
 
     // Thêm một map để lưu trữ dữ liệu tạm thời
     private Map<String, Object> extraData = new HashMap<>();
@@ -32,6 +35,9 @@ public class InvoiceDetail extends BaseTimeEntity {
         this.unitPrice = unitPrice;
         this.discountAmount = discountAmount;
         this.notes = notes;
+        this.costPrice = product != null ? product.getCostPrice() : BigDecimal.ZERO; 
+        this.profitMargin = (unitPrice.subtract(costPrice)).divide(unitPrice, 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100)); // Tính biên lợi nhuận theo phần trăm
     }
 
     
@@ -134,13 +140,13 @@ public class InvoiceDetail extends BaseTimeEntity {
 
 
     // Tính tổng tiền trước giảm giá
-    public BigDecimal getSubtotal() {
+    public BigDecimal getSubTotal() {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 
     // Tính tổng tiền sau giảm giá
-    public BigDecimal getTotalAmount() {
-        BigDecimal subtotal = getSubtotal();
+    public BigDecimal getTotalAmountAfterDiscount() {
+        BigDecimal subtotal = getSubTotal();
         BigDecimal discount = getDiscountAmount();
         return subtotal.subtract(discount).setScale(2, RoundingMode.HALF_UP);
     }
@@ -155,7 +161,7 @@ public class InvoiceDetail extends BaseTimeEntity {
             return;
         }
 
-        BigDecimal calculatedDiscount = discount.calculateDiscount(this.getTotalAmount());
+        BigDecimal calculatedDiscount = discount.calculateDiscount(this.getSubTotal());
         if (calculatedDiscount.compareTo(BigDecimal.ZERO) > 0) {
             setDiscountAmount(calculatedDiscount);
             // discount.use();
@@ -260,4 +266,26 @@ public class InvoiceDetail extends BaseTimeEntity {
             quantity,
             unitPrice);
     }
+
+
+    public BigDecimal getCostPrice() {
+        return costPrice;
+    }
+
+
+    public void setCostPrice(BigDecimal costPrice) {
+        this.costPrice = costPrice;
+    }
+
+
+    public BigDecimal getProfitMargin() {
+        return profitMargin;
+    }
+
+
+    public void setProfitMargin(BigDecimal profitMargin) {
+        this.profitMargin = profitMargin;
+    }
+
+    
 }

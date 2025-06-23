@@ -4,6 +4,7 @@
  */
 package com.pcstore.view;
 
+import com.pcstore.utils.ErrorMessage;
 import javax.swing.JDialog;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class AddReapairProductForm extends JDialog {
     private javax.swing.JLabel lbStasus;
     private javax.swing.JLabel lbTitle;
     private com.k33ptoo.components.KGradientPanel panelBody;
-    private javax.swing.JPanel panelBottom;
+    private com.k33ptoo.components.KGradientPanel panelBottom;
     private javax.swing.JPanel panelMain;
     private javax.swing.JPanel panelRepairID;
     private javax.swing.JPanel panelRepairID1;
@@ -43,7 +44,7 @@ public class AddReapairProductForm extends JDialog {
     private javax.swing.JPanel panelRepairID6;
     private javax.swing.JPanel panelRepairID7;
     private javax.swing.JPanel panelRepairID8;
-    private javax.swing.JPanel panelTop;
+    private com.k33ptoo.components.KGradientPanel panelTop;
     private javax.swing.JTextField txtCost;
     private javax.swing.JTextField txtDiagnose;
     private javax.swing.JTextField txtNameProduct;
@@ -72,7 +73,7 @@ public class AddReapairProductForm extends JDialog {
         try {
             if (repairController == null) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Controller chưa được khởi tạo.", 
+                    ErrorMessage.REPAIR_CONTROLLER_NOT_SET, 
                     "Cảnh báo", 
                     javax.swing.JOptionPane.WARNING_MESSAGE);
                 return;
@@ -101,17 +102,15 @@ public class AddReapairProductForm extends JDialog {
                 } else {
                     System.out.println("Không tìm thấy nhân viên nào trong database");
                     javax.swing.JOptionPane.showMessageDialog(this, 
-                        "Không tìm thấy nhân viên nào trong hệ thống.", 
+                        ErrorMessage.EMPLOYEE_NOT_FOUND, 
                         "Thông báo", 
                         javax.swing.JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
-                System.err.println("Lỗi khi tải danh sách nhân viên: " + ex.getMessage());
-                
-                // Hiển thị thông báo lỗi
+                System.err.println(ErrorMessage.REPAIR_LIST_ERROR + ": " + ex.getMessage());
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Lỗi khi tải danh sách nhân viên: " + ex.getMessage() + 
+                    ErrorMessage.REPAIR_LIST_ERROR + ": " + ex.getMessage() + 
                     "\nHệ thống sẽ sử dụng dữ liệu mẫu.", 
                     "Lỗi", 
                     javax.swing.JOptionPane.ERROR_MESSAGE);
@@ -121,7 +120,7 @@ public class AddReapairProductForm extends JDialog {
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tải dữ liệu nhân viên: " + e.getMessage(), 
+                ErrorMessage.REPAIR_FORM_INIT_ERROR + ": " + e.getMessage(), 
                 "Lỗi", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
@@ -133,7 +132,7 @@ public class AddReapairProductForm extends JDialog {
     private void initComponents() {
 
         panelMain = new javax.swing.JPanel();
-        panelTop = new javax.swing.JPanel();
+        panelTop = new com.k33ptoo.components.KGradientPanel();
         lbTitle = new javax.swing.JLabel();
         panelBody = new com.k33ptoo.components.KGradientPanel();
         panelRepairID = new javax.swing.JPanel();
@@ -163,7 +162,7 @@ public class AddReapairProductForm extends JDialog {
         panelRepairID7 = new javax.swing.JPanel();
         lbEmployee = new javax.swing.JLabel();
         cbEmployee = new javax.swing.JComboBox<>();
-        panelBottom = new javax.swing.JPanel();
+        panelBottom = new com.k33ptoo.components.KGradientPanel();
         btnReturnInformationLookup = new com.k33ptoo.components.KButton();
         btnAddRepairDevice = new com.k33ptoo.components.KButton();
 
@@ -174,19 +173,19 @@ public class AddReapairProductForm extends JDialog {
         panelMain.setPreferredSize(new java.awt.Dimension(700, 660));
         panelMain.setLayout(new javax.swing.BoxLayout(panelMain, javax.swing.BoxLayout.Y_AXIS));
 
-        panelTop.setBackground(new java.awt.Color(255, 255, 255));
-        panelTop.setMinimumSize(new java.awt.Dimension(1000, 0));
-        panelTop.setPreferredSize(new java.awt.Dimension(1153, 50));
-        panelTop.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 20));
+        panelTop.setkEndColor(new java.awt.Color(0, 153, 255));
+        panelTop.setkStartColor(new java.awt.Color(0, 153, 255));
+        panelTop.setPreferredSize(new java.awt.Dimension(100, 80));
 
         lbTitle.setBackground(new java.awt.Color(0, 153, 255));
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lbTitle.setForeground(new java.awt.Color(0, 153, 255));
-        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
+        lbTitle.setForeground(new java.awt.Color(255, 255, 255));
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
         lbTitle.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
+        lbTitle.setIconTextGap(1);
         lbTitle.setMaximumSize(new java.awt.Dimension(346, 100));
         lbTitle.setMinimumSize(new java.awt.Dimension(346, 100));
-        lbTitle.setPreferredSize(new java.awt.Dimension(346, 50));
+        lbTitle.setPreferredSize(new java.awt.Dimension(346, 100));
         panelTop.add(lbTitle);
 
         panelMain.add(panelTop);
@@ -195,6 +194,7 @@ public class AddReapairProductForm extends JDialog {
         panelBody.setkEndColor(new java.awt.Color(255, 255, 255));
         panelBody.setkFillBackground(false);
         panelBody.setkStartColor(new java.awt.Color(255, 255, 255));
+        panelBody.setMinimumSize(new java.awt.Dimension(660, 450));
         panelBody.setLayout(new java.awt.GridLayout(4, 2, 30, 50));
 
         panelRepairID.setBackground(new java.awt.Color(255, 255, 255));
@@ -344,8 +344,11 @@ public class AddReapairProductForm extends JDialog {
 
         panelMain.add(panelBody);
 
-        panelBottom.setPreferredSize(new java.awt.Dimension(870, 70));
-        panelBottom.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 12, 20));
+        panelBottom.setBackground(new java.awt.Color(255, 255, 255));
+        panelBottom.setkBorderRadius(0);
+        panelBottom.setkEndColor(new java.awt.Color(255, 255, 255));
+        panelBottom.setkFillBackground(false);
+        panelBottom.setkStartColor(new java.awt.Color(255, 255, 255));
 
         btnReturnInformationLookup.setText(bundle.getString("btnCancelAddRepairDevice")); // NOI18N
         btnReturnInformationLookup.setkBackGroundColor(new java.awt.Color(102, 153, 255));
@@ -377,7 +380,7 @@ public class AddReapairProductForm extends JDialog {
         try {
             if (repairController == null) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Controller chưa được khởi tạo.", 
+                    ErrorMessage.REPAIR_CONTROLLER_NOT_SET, 
                     "Cảnh báo", 
                     javax.swing.JOptionPane.WARNING_MESSAGE);
                 return;
@@ -407,7 +410,7 @@ public class AddReapairProductForm extends JDialog {
             // Kiểm tra thông tin bắt buộc
             if (customerName.isEmpty() || customerPhone.isEmpty() || deviceName.isEmpty() || problem.isEmpty()) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Vui lòng nhập đầy đủ thông tin bắt buộc: tên khách hànghàng,SĐT, tên thiết bị, vấn đề.", 
+                    ErrorMessage.FIELD_EMPTY.toString().formatted("Tên khách hàng, SĐT, tên thiết bị, vấn đề"), 
                     "Thiếu thông tin", 
                     javax.swing.JOptionPane.WARNING_MESSAGE);
                 return;
@@ -423,7 +426,7 @@ public class AddReapairProductForm extends JDialog {
                 }
             } catch (NumberFormatException nfe) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Chi phí phải là số hợp lệ.", 
+                    ErrorMessage.REPAIR_COST_NEGATIVE, 
                     "Lỗi", 
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
@@ -435,7 +438,7 @@ public class AddReapairProductForm extends JDialog {
             
             if (employeeSelection.equals("Chọn nhân viên")) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Vui lòng chọn nhân viên phụ trách.", 
+                    ErrorMessage.EMPLOYEE_NOT_FOUND, 
                     "Thiếu thông tin", 
                     javax.swing.JOptionPane.WARNING_MESSAGE);
                 return;
@@ -454,7 +457,7 @@ public class AddReapairProductForm extends JDialog {
                 if (!customerExists) {
                     // Tạo khách hàng mới nếu không tìm thấy
                     int choice = javax.swing.JOptionPane.showConfirmDialog(this,
-                        "Khách hàng với số điện thoại này chưa tồn tại. Bạn có muốn tạo mới khách hàng?",
+                        ErrorMessage.CUSTOMER_NOT_FOUND + " Bạn có muốn tạo mới khách hàng?",
                         "Tạo khách hàng mới",
                         javax.swing.JOptionPane.YES_NO_OPTION);
                     
@@ -463,7 +466,7 @@ public class AddReapairProductForm extends JDialog {
                         // Kiểm tra lại tên khách hàng đã nhập
                         if (customerName == null || customerName.trim().isEmpty()) {
                             javax.swing.JOptionPane.showMessageDialog(this,
-                                "Tên khách hàng không được để trống!",
+                                ErrorMessage.CUSTOMER_NAME_EMPTY,
                                 "Lỗi",
                                 javax.swing.JOptionPane.ERROR_MESSAGE);
                             return;
@@ -488,7 +491,7 @@ public class AddReapairProductForm extends JDialog {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 javax.swing.JOptionPane.showMessageDialog(this,
-                    "Lỗi khi kiểm tra khách hàng: " + ex.getMessage(),
+                    ErrorMessage.CUSTOMER_NOT_FOUND + ": " + ex.getMessage(),
                     "Lỗi",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
@@ -496,7 +499,7 @@ public class AddReapairProductForm extends JDialog {
             
             if (!customerExists) {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                    "Không thể tạo dịch vụ sửa chữa vì không tìm thấy khách hàng.",
+                    ErrorMessage.CUSTOMER_NOT_FOUND,
                     "Lỗi",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
                 return;
@@ -585,7 +588,7 @@ public class AddReapairProductForm extends JDialog {
         } catch (Exception ex) {
             ex.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this, 
-                "Lỗi khi thêm dịch vụ sửa chữa: " + ex.getMessage(), 
+                ErrorMessage.REPAIR_CREATE_ERROR + ": " + ex.getMessage(), 
                 "Lỗi", 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }

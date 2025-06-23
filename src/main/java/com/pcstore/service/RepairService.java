@@ -464,4 +464,15 @@ public class RepairService {
         repairService.setServiceFee(serviceFee);
         return repairServiceRepository.update(repairService) != null;
     }
+
+    /**
+     * Cập nhật trạng thái dịch vụ sửa chữa
+     *
+     * @param repairServiceId Mã dịch vụ sửa chữa
+     * @param status          Trạng thái mới
+     * @return true nếu cập nhật thành công
+     */
+    public boolean updateServiceStatus(Integer repairServiceId, String status) {
+        return repairServiceRepository.updateStatus(repairServiceId, status);
+    }
 }

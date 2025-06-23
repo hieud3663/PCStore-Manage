@@ -1,7 +1,15 @@
 package com.pcstore.service;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -179,6 +187,23 @@ public class CustomerService {
      */
     public boolean customerExists(String customerId) {
         return customerRepository.exists(customerId);
+    }
+
+    /**
+     * Lấy dữ liệu doanh thu khách hàng trong khoảng thời gian
+     * 
+     * @param startDate Ngày bắt đầu
+     * @param endDate   Ngày kết thúc
+     * @return Danh sách dữ liệu doanh thu khách hàng
+     */
+    public List<Map<String, Object>> getCustomerRevenueData(LocalDateTime startDate, LocalDateTime endDate) {
+        try {
+            return customerRepository.getCustomerRevenueData(startDate, endDate);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Lỗi khi lấy dữ liệu doanh thu khách hàng", e);
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
     }
 
     

@@ -180,10 +180,10 @@ public class DashboardController {
             menuItemsStr.add(new String[]{
                     bundle.getProperty("menu.report.overview"),
                     bundle.getProperty("menu.report.revenue"),
-                    bundle.getProperty("menu.report.product"),
+                    bundle.getProperty("menu.report.selling"),
                     bundle.getProperty("menu.report.customer")
             });
-            menuItemsKey.add(new String[]{"menu.report", "menu.report.overview", "menu.report.revenue", "menu.report.product", "menu.report.customer"});
+            menuItemsKey.add(new String[]{"menu.report", "menu.report.revenue", "menu.report.selling", "menu.report.customer"});
         }
 
         String[][] menuArray = menuItemsStr.toArray(new String[menuItemsStr.size()][]);

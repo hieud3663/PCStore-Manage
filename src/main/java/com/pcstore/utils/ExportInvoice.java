@@ -71,7 +71,7 @@ public class ExportInvoice {
                 product.put("productName", detail.getProduct().getProductName());
                 product.put("quantity", String.valueOf(detail.getQuantity()));
                 product.put("price", String.valueOf(detail.getUnitPrice()));
-                product.put("totalPrice", String.valueOf(detail.getTotalAmount()));
+                product.put("totalPrice", String.valueOf(detail.getSubTotal()));
                 products.add(product);
             }
 

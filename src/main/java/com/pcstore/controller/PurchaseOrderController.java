@@ -98,8 +98,8 @@ public class PurchaseOrderController {
             // System.out.println("StockInController: Khởi tạo hoàn tất");
         } catch (Exception e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi khởi tạo StockInController: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_CONTROLLER_INIT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -124,7 +124,7 @@ public class PurchaseOrderController {
 
             // System.out.println("StockInController: Đã khởi tạo repository thành công");
         } catch (Exception e) {
-            System.err.println("Lỗi khi khởi tạo repository: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_REPOSITORY_INIT_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -151,7 +151,7 @@ public class PurchaseOrderController {
 
             System.out.println("StockInController: Đã khởi tạo phiếu nhập hàng mới với ID: " + newId);
         } catch (Exception e) {
-            System.err.println("Lỗi khi khởi tạo phiếu nhập hàng: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_NEW_ORDER_INIT_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -178,7 +178,7 @@ public class PurchaseOrderController {
 
             System.out.println("StockInController: Đã tải dữ liệu ban đầu thành công");
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải dữ liệu ban đầu: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_LOAD_INITIAL_DATA_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -259,7 +259,7 @@ public class PurchaseOrderController {
             });
 
         } catch (Exception e) {
-            System.err.println("Lỗi khi đăng ký sự kiện: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_EVENTS_REGISTER_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -296,7 +296,8 @@ public class PurchaseOrderController {
             if (row >= 0 && row < selectedProducts.size()) {
                 PurchaseOrderDetail removedProduct = selectedProducts.remove(row);
                 Notifications.getInstance().show(Type.INFO,
-                        "Đã xóa sản phẩm " + removedProduct.getProduct().getProductName() + " khỏi giỏ hàng");
+                        ErrorMessage.PURCHASE_ORDER_PRODUCT_REMOVED_SUCCESS
+                                .format(removedProduct.getProduct().getProductName()));
 
                 // Cập nhật bảng
                 updateSelectedProductsTable();
@@ -306,8 +307,8 @@ public class PurchaseOrderController {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi xóa sản phẩm khỏi phiếu nhập: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_REMOVE_PRODUCT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -320,14 +321,14 @@ public class PurchaseOrderController {
 
         if (selectedIDs.isEmpty()) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Vui lòng chọn sản phẩm cần xóa",
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_SELECT_PRODUCT_TO_DELETE.get(),
+                    ErrorMessage.INFO_TITLE.get(), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         int confirm = JOptionPane.showConfirmDialog(purchaseOrderForm,
-                "Bạn có chắc muốn xóa các sản phẩm đã chọn khỏi phiếu nhập?",
-                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                ErrorMessage.PURCHASE_ORDER_DELETE_PRODUCTS_CONFIRM.get(),
+                ErrorMessage.CONFIRM_TITLE.get(), JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
             // Cần xóa từ cuối lên đầu để tránh lỗi khi xóa nhiều phần tử
@@ -346,7 +347,8 @@ public class PurchaseOrderController {
                 int indexToRemove = indexesToRemove.get(i);
                 PurchaseOrderDetail removedProduct = selectedProducts.remove(indexToRemove);
                 Notifications.getInstance().show(Type.INFO,
-                        "Đã xóa sản phẩm " + removedProduct.getProduct().getProductName() + " khỏi giỏ hàng");
+                        ErrorMessage.PURCHASE_ORDER_PRODUCT_REMOVED_SUCCESS
+                                .format(removedProduct.getProduct().getProductName()));
             }
 
             // Xóa danh sách ID đã chọn
@@ -363,7 +365,7 @@ public class PurchaseOrderController {
      */
     public void refreshForm() {
         try {
-            System.out.println("Đang refresh form Purchase Order...");
+            System.out.println(ErrorMessage.PURCHASE_ORDER_REFRESH_PROCESSING.get());
 
             // 1. Làm mới danh sách sản phẩm
             loadProducts();
@@ -389,7 +391,7 @@ public class PurchaseOrderController {
                 // Hiển thị mã phiếu mới
                 purchaseOrderForm.getTextField2().setText(newId);
             } catch (Exception e) {
-                System.err.println("Lỗi khi tạo phiếu nhập mới: " + e.getMessage());
+                System.err.println(ErrorMessage.PURCHASE_ORDER_REFRESH_CREATE_NEW_ID_ERROR.format(e.getMessage()));
             }
 
             // 6. Cập nhật thông tin nhân viên (đề phòng thay đổi)
@@ -397,16 +399,16 @@ public class PurchaseOrderController {
 
             // 7. Hiển thị thông báo thành công (tùy chọn)
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Đã refresh form thành công",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_REFRESH_SUCCESS.get(),
+                    ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
 
-            System.out.println("Đã refresh form Purchase Order thành công");
+            System.out.println(ErrorMessage.PURCHASE_ORDER_REFRESH_COMPLETE_SUCCESS.get());
         } catch (Exception e) {
-            System.err.println("Lỗi khi refresh form: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_REFRESH_ERROR_MESSAGE.format(e.getMessage()));
             e.printStackTrace();
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi refresh form: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_REFRESH_FORM_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -470,7 +472,7 @@ public class PurchaseOrderController {
             System.out.println("PurchaseOrderController: Đã cập nhật bảng sản phẩm thành công với " + products.size()
                     + " sản phẩm");
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải danh sách sản phẩm: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_LOAD_PRODUCTS_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -491,13 +493,13 @@ public class PurchaseOrderController {
             for (PurchaseOrderDetail detail : selectedProducts) {
                 if (detail.getProduct().getProductId().equals(productId)) {
                     int choice = JOptionPane.showConfirmDialog(purchaseOrderForm,
-                            "Sản phẩm này đã được thêm vào phiếu nhập. Bạn có muốn cập nhật số lượng không?",
-                            "Thông báo", JOptionPane.YES_NO_OPTION);
+                            ErrorMessage.PURCHASE_ORDER_PRODUCT_ALREADY_ADDED.get(),
+                            ErrorMessage.INFO_TITLE.get(), JOptionPane.YES_NO_OPTION);
 
                     if (choice == JOptionPane.YES_OPTION) {
                         // Cập nhật số lượng
                         String quantityStr = JOptionPane.showInputDialog(purchaseOrderForm,
-                                "Nhập số lượng mới:",
+                                ErrorMessage.PURCHASE_ORDER_UPDATE_QUANTITY_CONFIRM.get(),
                                 detail.getQuantity());
 
                         if (quantityStr != null && !quantityStr.isEmpty()) {
@@ -509,13 +511,13 @@ public class PurchaseOrderController {
                                     updateTotalAmount();
                                 } else {
                                     JOptionPane.showMessageDialog(purchaseOrderForm,
-                                            "Số lượng phải lớn hơn 0",
-                                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                            ErrorMessage.PURCHASE_ORDER_QUANTITY_POSITIVE.get(),
+                                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                                 }
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                                        "Số lượng không hợp lệ",
-                                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                        ErrorMessage.PURCHASE_ORDER_QUANTITY_INVALID.get(),
+                                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     }
@@ -529,7 +531,7 @@ public class PurchaseOrderController {
             if (product != null) {
                 // Hiển thị dialog để nhập số lượng và đơn giá
                 String quantityStr = JOptionPane.showInputDialog(purchaseOrderForm,
-                        "Nhập số lượng:", "1");
+                        ErrorMessage.PURCHASE_ORDER_ENTER_QUANTITY.get(), "1");
 
                 if (quantityStr == null || quantityStr.isEmpty())
                     return; // Người dùng đã hủy
@@ -539,19 +541,19 @@ public class PurchaseOrderController {
                     quantity = Integer.parseInt(quantityStr);
                     if (quantity <= 0) {
                         JOptionPane.showMessageDialog(purchaseOrderForm,
-                                "Số lượng phải lớn hơn 0",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.PURCHASE_ORDER_QUANTITY_POSITIVE.get(),
+                                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(purchaseOrderForm,
-                            "Số lượng không hợp lệ",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.PURCHASE_ORDER_QUANTITY_INVALID.get(),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 String priceStr = JOptionPane.showInputDialog(purchaseOrderForm,
-                        "Nhập đơn giá:", product.getCostPrice().toString());
+                        ErrorMessage.PURCHASE_ORDER_ENTER_UNIT_PRICE.get(), product.getCostPrice().toString());
 
                 if (priceStr == null || priceStr.isEmpty())
                     return; // Người dùng đã hủy
@@ -561,14 +563,14 @@ public class PurchaseOrderController {
                     price = new BigDecimal(priceStr);
                     if (price.compareTo(BigDecimal.ZERO) <= 0) {
                         JOptionPane.showMessageDialog(purchaseOrderForm,
-                                "Đơn giá phải lớn hơn 0",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.PURCHASE_ORDER_UNIT_PRICE_POSITIVE.get(),
+                                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(purchaseOrderForm,
-                            "Đơn giá không hợp lệ",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.PURCHASE_ORDER_UNIT_PRICE_INVALID.get(),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -576,8 +578,8 @@ public class PurchaseOrderController {
                 Supplier supplier = purchaseOrderForm.getSelectedSupplier();
                 if (supplier == null) {
                     JOptionPane.showMessageDialog(purchaseOrderForm,
-                            "Vui lòng chọn nhà cung cấp trước",
-                            "Thông báo", JOptionPane.WARNING_MESSAGE);
+                            ErrorMessage.PURCHASE_ORDER_SELECT_SUPPLIER_FIRST.get(),
+                            ErrorMessage.INFO_TITLE.get(), JOptionPane.WARNING_MESSAGE);
                     return;
                 }
 
@@ -598,13 +600,13 @@ public class PurchaseOrderController {
                 updateTotalAmount();
             } else {
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Không tìm thấy thông tin sản phẩm",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PURCHASE_ORDER_PRODUCT_NOT_FOUND.get(),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi thêm sản phẩm: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_ADD_PRODUCT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -624,7 +626,7 @@ public class PurchaseOrderController {
 
             System.out.println("StockInController: Đã tải " + suppliers.size() + " nhà cung cấp");
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải danh sách nhà cung cấp: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_LOAD_SUPPLIERS_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -657,7 +659,7 @@ public class PurchaseOrderController {
             TableUtils.applyFilter(sorter, keyword, 0, 1, 2);
 
         } catch (Exception e) {
-            System.err.println("Lỗi khi tìm kiếm sản phẩm: " + e.getMessage());
+            System.err.println(ErrorMessage.PURCHASE_ORDER_SEARCH_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -670,8 +672,8 @@ public class PurchaseOrderController {
         int selectedRow = purchaseOrderForm.getTableProducts().getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Vui lòng chọn sản phẩm trước khi thêm vào phiếu nhập",
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_SELECT_PRODUCT_FIRST.get(),
+                    ErrorMessage.INFO_TITLE.get(), JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -683,13 +685,13 @@ public class PurchaseOrderController {
             for (PurchaseOrderDetail detail : selectedProducts) {
                 if (detail.getProduct().getProductId().equals(productId)) {
                     int choice = JOptionPane.showConfirmDialog(purchaseOrderForm,
-                            "Sản phẩm này đã được thêm vào phiếu nhập. Bạn có muốn cập nhật số lượng không?",
-                            "Thông báo", JOptionPane.YES_NO_OPTION);
+                            ErrorMessage.PURCHASE_ORDER_PRODUCT_ALREADY_ADDED.get(),
+                            ErrorMessage.INFO_TITLE.get(), JOptionPane.YES_NO_OPTION);
 
                     if (choice == JOptionPane.YES_OPTION) {
                         // Cập nhật số lượng
                         String quantityStr = JOptionPane.showInputDialog(purchaseOrderForm,
-                                "Nhập số lượng mới:",
+                                ErrorMessage.PURCHASE_ORDER_UPDATE_QUANTITY_CONFIRM.get(),
                                 detail.getQuantity());
 
                         if (quantityStr != null && !quantityStr.isEmpty()) {
@@ -701,13 +703,13 @@ public class PurchaseOrderController {
                                     updateTotalAmount();
                                 } else {
                                     JOptionPane.showMessageDialog(purchaseOrderForm,
-                                            "Số lượng phải lớn hơn 0",
-                                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                            ErrorMessage.PURCHASE_ORDER_QUANTITY_POSITIVE.get(),
+                                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                                 }
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                                        "Số lượng không hợp lệ",
-                                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                        ErrorMessage.PURCHASE_ORDER_QUANTITY_INVALID.get(),
+                                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     }
@@ -720,7 +722,7 @@ public class PurchaseOrderController {
             if (product != null) {
                 // Hiển thị dialog để nhập số lượng và đơn giá
                 String quantityStr = JOptionPane.showInputDialog(purchaseOrderForm,
-                        "Nhập số lượng:", "1");
+                        ErrorMessage.PURCHASE_ORDER_ENTER_QUANTITY.get(), "1");
 
                 if (quantityStr == null || quantityStr.isEmpty())
                     return; // Người dùng đã hủy
@@ -730,19 +732,19 @@ public class PurchaseOrderController {
                     quantity = Integer.parseInt(quantityStr);
                     if (quantity <= 0) {
                         JOptionPane.showMessageDialog(purchaseOrderForm,
-                                "Số lượng phải lớn hơn 0",
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.PURCHASE_ORDER_QUANTITY_POSITIVE.get(),
+                                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(purchaseOrderForm,
-                            "Số lượng không hợp lệ",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.PURCHASE_ORDER_QUANTITY_INVALID.get(),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 BigDecimal price = JDialogInputUtils.showInputDialogBigDecimal(purchaseOrderForm,
-                        "Nhập đơn giá:", product.getCostPrice().toString());
+                        ErrorMessage.PURCHASE_ORDER_ENTER_UNIT_PRICE.get(), product.getCostPrice().toString());
 
                 if (price == null)
                     return; // Người dùng đã hủy
@@ -765,13 +767,13 @@ public class PurchaseOrderController {
                 System.out.println("Đã thêm sản phẩm " + product.getProductName() + " vào giỏ hàng");
             } else {
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Không tìm thấy thông tin sản phẩm",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PURCHASE_ORDER_PRODUCT_NOT_FOUND.get(),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi thêm sản phẩm vào phiếu nhập: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_ADD_PRODUCT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -791,8 +793,8 @@ public class PurchaseOrderController {
 
         // Xác nhận xóa
         int choice = JOptionPane.showConfirmDialog(purchaseOrderForm,
-                "Bạn có chắc muốn xóa sản phẩm này khỏi phiếu nhập?",
-                "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
+                ErrorMessage.PURCHASE_ORDER_DELETE_CONFIRM.get(),
+                ErrorMessage.CONFIRM_TITLE.get(), JOptionPane.YES_NO_OPTION);
 
         if (choice != JOptionPane.YES_OPTION) {
             return;
@@ -802,8 +804,7 @@ public class PurchaseOrderController {
             // Xóa sản phẩm khỏi danh sách
             if (selectedRow >= 0 && selectedRow < selectedProducts.size()) {
                 PurchaseOrderDetail removedProduct = selectedProducts.remove(selectedRow);
-                System.out
-                        .println("Đã xóa sản phẩm " + removedProduct.getProduct().getProductName() + " khỏi giỏ hàng");
+                System.out.println("Đã xóa sản phẩm " + removedProduct.getProduct().getProductName() + " khỏi giỏ hàng");
 
                 // Cập nhật bảng
                 updateSelectedProductsTable();
@@ -813,8 +814,8 @@ public class PurchaseOrderController {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi xóa sản phẩm khỏi phiếu nhập: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_REMOVE_PRODUCT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -898,15 +899,15 @@ public class PurchaseOrderController {
             Supplier supplier = (Supplier) purchaseOrderForm.getComboBoxSupplier().getSelectedItem();
             if (supplier == null) {
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Vui lòng chọn nhà cung cấp",
-                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                        ErrorMessage.PURCHASE_ORDER_SELECT_SUPPLIER.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             if (selectedProducts.isEmpty()) {
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Vui lòng thêm ít nhất một sản phẩm vào phiếu nhập",
-                        "Thông báo", JOptionPane.WARNING_MESSAGE);
+                        ErrorMessage.PURCHASE_ORDER_ADD_PRODUCTS.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -940,8 +941,8 @@ public class PurchaseOrderController {
                 System.out.println("Total amount: " + totalAmount);
 
                 int option = JOptionPane.showConfirmDialog(purchaseOrderForm,
-                        "Bạn có chắc muốn lưu phiếu nhập này không?",
-                        "Xác nhận lưu", JOptionPane.YES_NO_OPTION);
+                        ErrorMessage.PURCHASE_ORDER_SAVE_CONFIRM.get(),
+                        ErrorMessage.CONFIRM_TITLE.get(), JOptionPane.YES_NO_OPTION);
 
                 if (option != JOptionPane.YES_OPTION)
                     return;
@@ -962,8 +963,8 @@ public class PurchaseOrderController {
 
                 // 8. Hiển thị thông báo thành công
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Đã lưu phiếu nhập hàng thành công!",
-                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.PURCHASE_ORDER_SAVE_SUCCESS.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
 
                 // 9. Tạo phiếu nhập mới và làm mới form
                 clearForm();
@@ -999,8 +1000,8 @@ public class PurchaseOrderController {
             System.err.println("ERROR: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi lưu phiếu nhập: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_SAVE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         } finally {
             // 13. Đảm bảo cờ hiệu luôn được reset
             synchronized (this) {
@@ -1036,7 +1037,7 @@ public class PurchaseOrderController {
                 currentPurchaseOrder.setStatus("Pending");
 
             } catch (Exception e) {
-                System.err.println("Lỗi khi tạo phiếu nhập mới trong clearForm(): " + e.getMessage());
+                System.err.println(ErrorMessage.PURCHASE_ORDER_REFRESH_CREATE_NEW_ID_ERROR.format(e.getMessage()));
                 e.printStackTrace();
             }
 
@@ -1119,20 +1120,21 @@ public class PurchaseOrderController {
                 updateSelectedProductsTable();
                 updateTotalAmount();
                 Notifications.getInstance().show(Type.INFO,
-                        "Đã cập nhật số lượng sản phẩm " + detail.getProduct().getProductName());
+                        ErrorMessage.PURCHASE_ORDER_PRODUCT_QUANTITY_UPDATED
+                                .format(detail.getProduct().getProductName()));
             } else {
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Số lượng phải lớn hơn 0",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PURCHASE_ORDER_QUANTITY_POSITIVE.get(),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Số lượng không hợp lệ",
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_QUANTITY_INVALID.get(),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi cập nhật số lượng: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PURCHASE_ORDER_UPDATE_QUANTITY_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -1142,8 +1144,8 @@ public class PurchaseOrderController {
             // Validate dữ liệu
             if (purchaseOrder == null) {
                 JOptionPane.showMessageDialog(purchaseOrderForm,
-                        "Không có dữ liệu phiếu nhập để xuất!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.EXPORT_NO_DATA.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -1157,8 +1159,8 @@ public class PurchaseOrderController {
             System.err.println("Lỗi khi xuất PDF: " + e.getMessage());
             e.printStackTrace();
             JOptionPane.showMessageDialog(purchaseOrderForm,
-                    "Lỗi khi xuất PDF: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PDF_EXPORT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 

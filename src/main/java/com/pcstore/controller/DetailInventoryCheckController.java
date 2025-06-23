@@ -466,16 +466,17 @@ public class DetailInventoryCheckController {
                                     c.setForeground(Color.BLACK);
 
                                     if (c instanceof JLabel) {
-                                        ((JLabel) c).setToolTipText("Click để nhập số lượng thực tế");
+                                        ((JLabel) c).setToolTipText("Click to edit quantity");
                                         ((JLabel) c).setBorder(
                                                 javax.swing.BorderFactory.createLineBorder(Color.GRAY, 2));
+                                        
                                     }
                                 } else {
                                     c.setBackground(table.getBackground());
                                     c.setForeground(table.getForeground());
 
                                     if (c instanceof JLabel) {
-                                        ((JLabel) c).setToolTipText("Click để chỉnh sửa số lượng thực tế");
+                                        ((JLabel) c).setToolTipText("Click to edit quantity");
                                     }
                                 }
                             }
@@ -889,28 +890,24 @@ public class DetailInventoryCheckController {
         try {
             if (inventoryCheckDetails == null || inventoryCheckDetails.isEmpty()) {
                 JOptionPane.showMessageDialog(view,
-                        "Phiếu kiểm kê chưa có chi tiết. Vui lòng thêm sản phẩm kiểm kê!",
-                        "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-
-            if (!validateAllActualQuantities()) {
+                        ErrorMessage.DETAIL_INVENTORY_CHECK_COMPLETE_NO_DETAILS.get(),
+                        ErrorMessage.WARNING_TITLE.get(), JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             // Hiển thị thông tin tổng kết
             StringBuilder summary = new StringBuilder();
-            summary.append("Thông tin tổng kết:\n");
-            summary.append("- Tổng số sản phẩm: ").append(inventoryCheckDetails.size()).append("\n");
-            summary.append("- Số lượng tăng: ").append(view.getLbTotalIncreaseValue().getText()).append("\n");
-            summary.append("- Số lượng giảm: ").append(view.getLbTotalDecreaseValue().getText()).append("\n");
-            summary.append("- Tổng chênh lệch: ").append(view.getLbTotalDifferenceValue().getText()).append("\n\n");
-            summary.append("Bạn có chắc chắn muốn hoàn thành kiểm kê?\n");
-            summary.append("Sau khi hoàn thành, tồn kho sẽ được cập nhật theo số liệu thực tế.");
+            summary.append(bundle.getString("inventory.check.detail.controller.summary.info")).append("\n");
+            summary.append("- ").append(bundle.getString("inventory.check.detail.controller.summary.total")).append(": ").append(inventoryCheckDetails.size()).append("\n");
+            summary.append("- ").append(bundle.getString("inventory.check.detail.controller.summary.increase")).append(": ").append(view.getLbTotalIncreaseValue().getText()).append("\n");
+            summary.append("- ").append(bundle.getString("inventory.check.detail.controller.summary.decrease")).append(": ").append(view.getLbTotalDecreaseValue().getText()).append("\n");
+            summary.append("- ").append(bundle.getString("inventory.check.detail.controller.summary.difference")).append(": ").append(view.getLbTotalDifferenceValue().getText()).append("\n\n");
+            summary.append(bundle.getString("inventory.check.detail.controller.summary.confirm")).append("\n");
+            summary.append(bundle.getString("inventory.check.detail.controller.summary.note"));
 
             int result = JOptionPane.showConfirmDialog(view,
                     summary.toString(),
-                    "Xác nhận hoàn thành kiểm kê",
+                    bundle.getString("inventory.check.detail.controller.confirm.complete.title"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
 
@@ -918,8 +915,8 @@ public class DetailInventoryCheckController {
 
                 if (!saveDetailsToDatabase()) {
                     JOptionPane.showMessageDialog(view,
-                            "Có lỗi khi lưu chi tiết kiểm kê. Vui lòng thử lại!",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.DETAIL_INVENTORY_CHECK_COMPLETE_SAVE_ERROR.get(),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -927,21 +924,21 @@ public class DetailInventoryCheckController {
 
                 if (success) {
                     JOptionPane.showMessageDialog(view,
-                            "Hoàn thành kiểm kê thành công!\nTồn kho đã được cập nhật theo số liệu thực tế.",
-                            "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                            ErrorMessage.DETAIL_INVENTORY_CHECK_COMPLETE_SUCCESS.get(),
+                            bundle.getString("inventory.check.detail.controller.success.title"), JOptionPane.INFORMATION_MESSAGE);
 
                     // Refresh form
                     refreshForm();
                 } else {
                     JOptionPane.showMessageDialog(view,
-                            "Lỗi hoàn thành kiểm kê. Vui lòng thử lại!",
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.DETAIL_INVENTORY_CHECK_COMPLETE_ERROR.get(),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi hoàn thành kiểm kê: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_COMPLETE_EXCEPTION.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -1026,8 +1023,8 @@ public class DetailInventoryCheckController {
                     } catch (Exception e) {
                         invalidRows++;
                         JOptionPane.showMessageDialog(view,
-                                "Lỗi xử lý dòng " + (i + 1) + ": " + e.getMessage(),
-                                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                                ErrorMessage.DETAIL_INVENTORY_CHECK_IMPORT_ROW_ERROR.format(i + 1, e.getMessage()),
+                                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     }
                 }
 
@@ -1063,15 +1060,24 @@ public class DetailInventoryCheckController {
 
         JTable table = view.getTableProducts();
         int rowCnt = view.getTableProducts().getRowCount();
-        String[] header = new String[]{"STT", "Tên sản phẩm", "Mã sản phẩm", "Barcode", "SL Tồn kho", "SL thực tế (*)", "Đơn giá", "Thành tiền"};
+        String[] header = new String[]{
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_STT.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_PRODUCT_NAME.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_PRODUCT_ID.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_BARCODE.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_SYSTEM_QTY.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_ACTUAL_QTY.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_UNIT_PRICE.get(),
+            ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_HEADERS_TOTAL_PRICE.get()
+        };
 
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("Kho kiểm kê", "Kho chính");
-        metadata.put("Mã phiếu kiểm kê", currentInventoryCheck.getCheckCode());
-        metadata.put("Tên phiếu kiểm kê", currentInventoryCheck.getCheckName());
-        metadata.put("Người tạo phiếu", currentInventoryCheck.getEmployee() != null ? currentInventoryCheck.getEmployee().getFullName() : "Chưa có");
-        metadata.put("Ngày tạo phiếu", currentInventoryCheck.getCreatedAt() != null ? currentInventoryCheck.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Chưa có");
-        metadata.put("Lưu ý", "Sử dụng file này để nhập số lượng thực tế và cập nhật trên hệ thống. Chỉ được phép nhập ở cột (*)");
+        metadata.put(ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_WAREHOUSE.get(), ErrorMessage.DETAIL_INVENTORY_CHECK_MAIN_WAREHOUSE.get());
+        metadata.put(ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_CODE.get(), currentInventoryCheck.getCheckCode());
+        metadata.put(ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_NAME.get(), currentInventoryCheck.getCheckName());
+        metadata.put(ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_CREATOR.get(), currentInventoryCheck.getEmployee() != null ? currentInventoryCheck.getEmployee().getFullName() : ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_NO_CREATOR.get());
+        metadata.put(ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_CREATE_DATE.get(), currentInventoryCheck.getCreatedAt() != null ? currentInventoryCheck.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_NO_DATE.get());
+        metadata.put(ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_METADATA_NOTES.get(), bundle.getString("inventory.check.detail.controller.export.note"));
 
         Object data[][] = new Object[rowCnt][header.length];
         try{
@@ -1094,7 +1100,7 @@ public class DetailInventoryCheckController {
             String fileName = "DANH_SACH_SAN_PHAM_KIEM_KE_" + currentInventoryCheck.getCheckCode();
 
             JExcel jExcel = new JExcel();
-            String success = jExcel.toExcel(headerList, dataList, "DANH SÁCH SẢN PHẨM KIỂM KÊ", metadata, fileName);
+            String success = jExcel.toExcel(headerList, dataList, ErrorMessage.DETAIL_INVENTORY_CHECK_EXPORT_SHEET_TITLE.get(), metadata, fileName);
 
             if (success != null) {
                 Notifications.getInstance().show(Notifications.Type.SUCCESS,
@@ -1132,8 +1138,8 @@ public class DetailInventoryCheckController {
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
-                    "Lỗi in phiếu: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.DETAIL_INVENTORY_CHECK_PRINT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -1151,7 +1157,7 @@ public class DetailInventoryCheckController {
         data.put("createdDate", currentInventoryCheck.getCreatedAt());
         data.put("status", currentInventoryCheck.getStatus());
         data.put("notes", currentInventoryCheck.getNotes());
-        data.put("warehouseName", "Kho chính");
+        data.put("warehouseName", ErrorMessage.DETAIL_INVENTORY_CHECK_MAIN_WAREHOUSE.get());
 
         // Thông tin nhân viên
         if (currentInventoryCheck.getEmployee() != null) {
@@ -1189,7 +1195,7 @@ public class DetailInventoryCheckController {
 
             item.put("actualQuantity", currentInventoryCheck.getStatus().equals(status) ? detail.getActualQuantity() : "");
 
-            item.put("barcode", detail.getProduct().getBarcode() != null ? detail.getProduct().getBarcode() : "test");
+            item.put("barcode", detail.getProduct().getBarcode() != null ? detail.getProduct().getBarcode() : " ");
             item.put("discrepancy", currentInventoryCheck.getStatus().equals(status) ? detail.getDiscrepancy() : ""); 
             item.put("notes", detail.getReason() != null ? detail.getReason() : "");
             items.add(item);

@@ -6,6 +6,8 @@ import com.pcstore.utils.TableUtils;
 import com.k33ptoo.components.KButton;
 
 import java.awt.*;
+import java.util.ResourceBundle;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -88,7 +90,7 @@ public class SupplierForm extends JPanel {
         
         // Tạo nút Thêm
         btnAdd = new KButton();
-        btnAdd.setText("Thêm");
+        btnAdd.setText(bundle.getString("supplierForm.button.add"));
         btnAdd.setkBackGroundColor(new Color(100, 180, 100));
         btnAdd.setkEndColor(new Color(80, 160, 80));
         btnAdd.setkStartColor(new Color(120, 200, 120));
@@ -101,7 +103,7 @@ public class SupplierForm extends JPanel {
         
         // Tạo nút Lưu
         btnSave = new KButton();
-        btnSave.setText("Lưu");
+        btnSave.setText(bundle.getString("supplierForm.button.save"));
         btnSave.setkBackGroundColor(new Color(80, 140, 220));
         btnSave.setkEndColor(new Color(80, 120, 220));
         btnSave.setkStartColor(new Color(100, 160, 240));
@@ -115,7 +117,7 @@ public class SupplierForm extends JPanel {
         
         // Tạo nút Xóa
         btnDelete = new KButton();
-        btnDelete.setText("Xóa");
+        btnDelete.setText(bundle.getString("supplierForm.button.delete"));
         btnDelete.setkBackGroundColor(new Color(220, 80, 80));
         btnDelete.setkEndColor(new Color(200, 60, 60));
         btnDelete.setkStartColor(new Color(240, 100, 100));
@@ -129,7 +131,7 @@ public class SupplierForm extends JPanel {
         
         // Tạo nút Làm mới
         btnRefresh = new KButton();
-        btnRefresh.setText("Làm mới");
+        btnRefresh.setText(bundle.getString("supplierForm.button.refresh"));
         btnRefresh.setkBackGroundColor(new Color(90, 160, 200));
         btnRefresh.setkEndColor(new Color(70, 140, 180));
         btnRefresh.setkStartColor(new Color(100, 180, 220));
@@ -154,7 +156,13 @@ public class SupplierForm extends JPanel {
         panelContent.add(panelButtons, BorderLayout.NORTH);
 
         // Table với thiết kế hiện đại
-        String[] columns = {"Mã NCC", "Tên NCC", "SĐT", "Email", "Địa chỉ"};
+        String[] columns = {
+            bundle.getString("supplierForm.table.supplierCode"), 
+            bundle.getString("supplierForm.table.supplierName"), 
+            bundle.getString("supplierForm.table.phone"), 
+            bundle.getString("supplierForm.table.email"), 
+            bundle.getString("supplierForm.table.address")
+        };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) { 
@@ -223,11 +231,11 @@ public class SupplierForm extends JPanel {
         }
 
         // Tạo các label cho form
-        JLabel lbId = new JLabel("Mã NCC:");
-        JLabel lbName = new JLabel("Tên NCC:");
-        JLabel lbPhone = new JLabel("SĐT:");
-        JLabel lbEmail = new JLabel("Email:");
-        JLabel lbAddress = new JLabel("Địa chỉ:");
+        JLabel lbId = new JLabel(bundle.getString("supplierForm.label.supplierCode"));
+        JLabel lbName = new JLabel(bundle.getString("supplierForm.label.supplierName"));
+        JLabel lbPhone = new JLabel(bundle.getString("supplierForm.label.phone"));
+        JLabel lbEmail = new JLabel(bundle.getString("supplierForm.label.email"));
+        JLabel lbAddress = new JLabel(bundle.getString("supplierForm.label.address"));
         
         JLabel[] labels = {lbId, lbName, lbPhone, lbEmail, lbAddress};
         for (JLabel lb : labels) {

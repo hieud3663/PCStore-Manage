@@ -109,11 +109,11 @@ public class RepairController {
                         
                         // Thêm khách hàng mới vào cơ sở dữ liệu
                         customer = customerService.addCustomer(customer);
-                        System.out.println("Đã tạo khách hàng mới với ID: " + customer.getCustomerId());
+                        // System.out.println("Đã tạo khách hàng mới với ID: " + customer.getCustomerId());
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    throw new IllegalArgumentException("Lỗi khi kiểm tra hoặc tạo khách hàng: " + ex.getMessage(), ex);
+                    throw new IllegalArgumentException("Error:  " + ex.getMessage(), ex);
                 }
             } else {
                 customer = customerOpt.get();

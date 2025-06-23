@@ -19,7 +19,7 @@ public class JDialogInputUtils {
         }        
         String input = result.toString();
         if (input.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Value"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return showInputDialogInt(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
         
@@ -48,7 +48,7 @@ public class JDialogInputUtils {
         
         String input = result.toString();
         if (input.trim().isEmpty()) {            
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Value"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
             return showInputDialogBigDecimal(parent, message, defaultValue); // Gọi lại hàm để yêu cầu nhập lại
         }
           try {
@@ -68,8 +68,8 @@ public class JDialogInputUtils {
         String input = JOptionPane.showInputDialog(parent, message, defaultValue, JOptionPane.QUESTION_MESSAGE);
         
         if (input == null || input.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
-            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"));
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Value"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Value"));
         }
           try {
             int value = Integer.parseInt(input.trim());
@@ -90,8 +90,8 @@ public class JDialogInputUtils {
         String input = JOptionPane.showInputDialog(parent, message, defaultValue, JOptionPane.QUESTION_MESSAGE);
         
         if (input == null || input.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
-            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Giá trị"));
+            JOptionPane.showMessageDialog(parent, ErrorMessage.FIELD_EMPTY.toString().formatted("Value"), ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            throw new NumberFormatException(ErrorMessage.FIELD_EMPTY.toString().formatted("Value"));
         }
           try {
             double value = Double.parseDouble(input.trim());

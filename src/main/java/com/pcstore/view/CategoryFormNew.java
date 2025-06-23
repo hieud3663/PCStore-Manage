@@ -18,7 +18,7 @@ public class CategoryFormNew extends javax.swing.JPanel {
 
    // connection là kết nối DB
     private CategoryController categoryController;
-
+    private final java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
     /**
      * Creates new form CategoryFormNew
      */
@@ -36,7 +36,10 @@ public class CategoryFormNew extends javax.swing.JPanel {
             categoryController = new CategoryController(this, categoryService);
         } catch (Exception e) {
             e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this, "Không thể kết nối dịch vụ danh mục!", "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                bundle.getString("categoryForm.serviceConnectionError"), 
+                bundle.getString("categoryForm.serviceConnectionErrorTitle"), 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -200,7 +203,11 @@ public class CategoryFormNew extends javax.swing.JPanel {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Mã Danh Mục", "Tên Danh Mục", "Mô Tả", "Trạng Thái", "Ngày Khởi Tạo"
+                bundle.getString("categoryForm.table.categoryCode"),
+                bundle.getString("categoryForm.table.categoryName"), 
+                bundle.getString("categoryForm.table.description"),
+                bundle.getString("categoryForm.table.status"), 
+                bundle.getString("categoryForm.table.dateCreate")
             }
         ));
         scrollTB.setViewportView(TableList);
@@ -264,7 +271,10 @@ public class CategoryFormNew extends javax.swing.JPanel {
         lbStatus.setText(bundle.getString("lbStatus")); // NOI18N
         jPanel1.add(lbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
 
-        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hoạt Động", "Ngừng Hoạt Động" }));
+        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { 
+            bundle.getString("categoryForm.status.active"), 
+            bundle.getString("categoryForm.status.inactive") 
+        }));
         jPanel1.add(cbStatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 10, -1, -1));
 
         pnInform.add(jPanel1);

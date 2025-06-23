@@ -131,7 +131,12 @@ public class ReturnCardForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Hãng Sản Xuất", "Số Lượng", "Ngày Mua", "Trạng Thái"
+                bundle.getString("returnCard.table.productCode"),
+                bundle.getString("returnCard.table.productName"), 
+                bundle.getString("returnCard.table.manufacturer"),
+                bundle.getString("returnCard.table.quantity"), 
+                bundle.getString("returnCard.table.purchaseDate"),
+                bundle.getString("returnCard.table.status")
             }
         ));
         table.setMaximumSize(new java.awt.Dimension(2147483647, 50));

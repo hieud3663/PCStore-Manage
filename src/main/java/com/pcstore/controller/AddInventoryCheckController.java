@@ -98,7 +98,7 @@ public class AddInventoryCheckController {
 
         view.getTxtCreateDate().setText(new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
 
-        String defaultName = "Kiểm kê ngày " + new SimpleDateFormat("dd/MM/yyyy").format(new Date());
+        String defaultName = ErrorMessage.ADD_INVENTORY_CHECK_DEFAULT_DATE_NAME.get() + " " + new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         view.getTxtInventoryName().setText(defaultName);
     }
 
@@ -196,7 +196,7 @@ public class AddInventoryCheckController {
     private void loadCategories() {
         try {
             view.getCbbCategory().removeAllItems();
-            view.getCbbCategory().addItem("Tất cả");
+            view.getCbbCategory().addItem(ErrorMessage.ADD_INVENTORY_CHECK_ALL_CATEGORIES.get());
 
             List<Category> categories = categoryService.getAllCategories();
             for (Category category : categories) {
@@ -235,7 +235,7 @@ public class AddInventoryCheckController {
     private void loadProducts() {
         try {
             view.getCbbProduct().removeAllItems();
-            view.getCbbProduct().addItem("Chọn sản phẩm...");
+            view.getCbbProduct().addItem(ErrorMessage.ADD_INVENTORY_CHECK_SELECT_PRODUCT.get());
 
             List<Product> products = productService.findAllProducts();
             for (Product product : products) {
@@ -257,10 +257,10 @@ public class AddInventoryCheckController {
             String selectedCategory = (String) view.getCbbCategory().getSelectedItem();
 
             view.getCbbProduct().removeAllItems();
-            view.getCbbProduct().addItem("Chọn sản phẩm...");
+            view.getCbbProduct().addItem(ErrorMessage.ADD_INVENTORY_CHECK_SELECT_PRODUCT.get());
 
             List<Product> products;
-            if ("Tất cả".equals(selectedCategory)) {
+            if (ErrorMessage.ADD_INVENTORY_CHECK_ALL_CATEGORIES.get().equals(selectedCategory)) {
                 products = productService.findAllProducts();
             } else {
                 // Tìm category ID theo tên
@@ -298,7 +298,7 @@ public class AddInventoryCheckController {
         try {
             String selectedProductName = (String) view.getCbbProduct().getSelectedItem().toString().split(" - ")[0];
 
-            if (selectedProductName == null || "Chọn sản phẩm...".equals(selectedProductName)) {
+            if (selectedProductName == null || ErrorMessage.ADD_INVENTORY_CHECK_SELECT_PRODUCT.get().equals(selectedProductName)) {
                 return;
             }
 
@@ -350,7 +350,7 @@ public class AddInventoryCheckController {
                     product.getProductName(),
                     product.getProductId(),
                     // product.getBarcode() != null ? product.getBarcode() : "",
-                    "Barcode ...",
+                    ErrorMessage.ADD_INVENTORY_CHECK_BARCODE_PLACEHOLDER.get(),
                     numberFormat.format(product.getQuantityInStock()),
                     currencyFormat.format(product.getPrice()),
                     currencyFormat.format(totalValue),
@@ -572,7 +572,7 @@ public class AddInventoryCheckController {
         view.getChkSelectAll().setSelected(false);
         view.getCbbCategory().setSelectedIndex(0);
         view.getCbbProduct().setSelectedIndex(0);
-        view.getTxtInventoryName().setText("Kiểm kê ngày " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
+        view.getTxtInventoryName().setText(ErrorMessage.ADD_INVENTORY_CHECK_DEFAULT_DATE_NAME.get() + " " + new SimpleDateFormat("dd/MM/yyyy").format(new Date()));
         view.getTxtNotes().setText("");
 
         loadInitialData();

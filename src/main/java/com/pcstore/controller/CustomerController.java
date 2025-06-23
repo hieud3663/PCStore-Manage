@@ -93,9 +93,9 @@ public class CustomerController {
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, 
-                    ErrorMessage.CUSTOMER_CONTROLLER_INIT_ERROR.toString().formatted(e.getMessage()), 
-                    ErrorMessage.ERROR_TITLE.toString(), 
-                    JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.CUSTOMER_CONTROLLER_INIT_ERROR.format(e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.get(), 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -254,9 +254,9 @@ public class CustomerController {
         } catch (Exception e) {
             if (customerForm != null) {
                 JOptionPane.showMessageDialog(customerForm, 
-                        ErrorMessage.CUSTOMER_LOAD_ERROR.toString().formatted(e.getMessage()),
-                        ErrorMessage.ERROR_TITLE.toString(), 
-                        JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_LOAD_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), 
+                    JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -324,9 +324,9 @@ public class CustomerController {
         } catch (Exception e) {
             if (customerForm != null) {
                 JOptionPane.showMessageDialog(customerForm, 
-                        ErrorMessage.CUSTOMER_DETAILS_LOAD_ERROR.toString().formatted(e.getMessage()),
-                        ErrorMessage.ERROR_TITLE.toString(), 
-                        JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_DETAILS_LOAD_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), 
+                    JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -376,9 +376,9 @@ public class CustomerController {
             
             if (id.isEmpty() || name.isEmpty() || phone.isEmpty()) {
                 JOptionPane.showMessageDialog(customerForm,
-                        ErrorMessage.CUSTOMER_REQUIRED_FIELDS.toString(),
-                        ErrorMessage.ERROR_TITLE.toString(), 
-                        JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_REQUIRED_FIELDS.get(),
+                    ErrorMessage.ERROR_TITLE.get(), 
+                    JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -388,16 +388,16 @@ public class CustomerController {
                     points = Integer.parseInt(pointText);
                     if (points < 0) {
                         JOptionPane.showMessageDialog(customerForm,
-                                ErrorMessage.CUSTOMER_POINTS_NEGATIVE.toString(),
-                                ErrorMessage.ERROR_TITLE.toString(), 
-                                JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.CUSTOMER_POINTS_NEGATIVE.get(),
+                            ErrorMessage.ERROR_TITLE.get(), 
+                            JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(customerForm,
-                            ErrorMessage.CUSTOMER_POINTS_INTEGER.toString(),
-                            ErrorMessage.ERROR_TITLE.toString(), 
-                            JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_POINTS_INTEGER.get(),
+                        ErrorMessage.ERROR_TITLE.get(), 
+                        JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -407,9 +407,9 @@ public class CustomerController {
                 Optional<Customer> existingCustomer = customerService.findCustomerById(id);
                 if (existingCustomer.isPresent()) {
                     JOptionPane.showMessageDialog(customerForm,
-                            ErrorMessage.CUSTOMER_ID_EXISTS.toString(),
-                            ErrorMessage.ERROR_TITLE.toString(), 
-                            JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_ID_EXISTS.get(),
+                        ErrorMessage.ERROR_TITLE.get(), 
+                        JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 
@@ -431,9 +431,9 @@ public class CustomerController {
                 loadAllCustomers();
                 
                 JOptionPane.showMessageDialog(customerForm,
-                        ErrorMessage.CUSTOMER_ADD_SUCCESS.toString(),
-                        ErrorMessage.INFO_TITLE.toString(), 
-                        JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_ADD_SUCCESS.get(),
+                    ErrorMessage.INFO_TITLE.get(), 
+                    JOptionPane.INFORMATION_MESSAGE);
                 
                 selectCustomerInTable(savedCustomer.getCustomerId());
                 
@@ -445,9 +445,9 @@ public class CustomerController {
 
                 if (selectedCustomer == null) {
                     JOptionPane.showMessageDialog(customerForm,
-                            ErrorMessage.CUSTOMER_SELECT_UPDATE.toString(),
-                            ErrorMessage.INFO_TITLE.toString(), 
-                            JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.CUSTOMER_SELECT_UPDATE.get(),
+                        ErrorMessage.INFO_TITLE.get(), 
+                        JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 
@@ -468,18 +468,18 @@ public class CustomerController {
                 
                 loadAllCustomers();
                 JOptionPane.showMessageDialog(customerForm,
-                        ErrorMessage.CUSTOMER_UPDATE_SUCCESS.toString(),
-                        ErrorMessage.INFO_TITLE.toString(), 
-                        JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_UPDATE_SUCCESS.get(),
+                    ErrorMessage.INFO_TITLE.get(), 
+                    JOptionPane.INFORMATION_MESSAGE);
                 
                 selectCustomerInTable(updatedCustomer.getCustomerId());
             }
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    (isAddingNew ? ErrorMessage.CUSTOMER_ADD_ERROR.toString() : ErrorMessage.CUSTOMER_UPDATE_ERROR.toString()).formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE.toString(), 
-                    JOptionPane.ERROR_MESSAGE);
+                (isAddingNew ? ErrorMessage.CUSTOMER_ADD_ERROR.format(e.getMessage()) : ErrorMessage.CUSTOMER_UPDATE_ERROR.format(e.getMessage())),
+                ErrorMessage.ERROR_TITLE.get(), 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -489,17 +489,17 @@ public class CustomerController {
     public void deleteSelectedCustomer() {
         if (selectedCustomer == null) {
             JOptionPane.showMessageDialog(customerForm,
-                    ErrorMessage.CUSTOMER_SELECT_DELETE.toString(),
-                    ErrorMessage.INFO_TITLE.toString(), 
-                    JOptionPane.INFORMATION_MESSAGE);
+                ErrorMessage.CUSTOMER_SELECT_DELETE.get(),
+                ErrorMessage.INFO_TITLE.get(), 
+                JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
         // Hiển thị hộp thoại xác nhận
         int option = JOptionPane.showConfirmDialog(customerForm,
-                ErrorMessage.CUSTOMER_DELETE_CONFIRM.toString().formatted(selectedCustomer.getFullName()),
-                ErrorMessage.CUSTOMER_DELETE_TITLE.toString(),
-                JOptionPane.YES_NO_OPTION);
+            ErrorMessage.CUSTOMER_DELETE_CONFIRM.format(selectedCustomer.getFullName()),
+            ErrorMessage.CUSTOMER_DELETE_TITLE.get(),
+            JOptionPane.YES_NO_OPTION);
         
         if (option == JOptionPane.YES_OPTION) {
             try {
@@ -511,20 +511,20 @@ public class CustomerController {
                     clearForm();
                     
                     JOptionPane.showMessageDialog(customerForm,
-                            ErrorMessage.CUSTOMER_DELETE_SUCCESS.toString(),
-                            ErrorMessage.INFO_TITLE.toString(), 
-                            JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.CUSTOMER_DELETE_SUCCESS.get(),
+                        ErrorMessage.INFO_TITLE.get(), 
+                        JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     JOptionPane.showMessageDialog(customerForm,
-                            ErrorMessage.CUSTOMER_DELETE_CONSTRAINT.toString(),
-                            ErrorMessage.ERROR_TITLE.toString(), 
-                            JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.CUSTOMER_DELETE_CONSTRAINT.get(),
+                        ErrorMessage.ERROR_TITLE.get(), 
+                        JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(customerForm,
-                        ErrorMessage.CUSTOMER_DELETE_ERROR.toString().formatted(e.getMessage()),
-                        ErrorMessage.ERROR_TITLE.toString(), 
-                        JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_DELETE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), 
+                    JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -544,9 +544,9 @@ public class CustomerController {
             TableUtils.applyFilter(customerTableSorter, keyword);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    ErrorMessage.CUSTOMER_SEARCH_ERROR.toString().formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE.toString(), 
-                    JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.CUSTOMER_SEARCH_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.get(), 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
     
@@ -596,20 +596,18 @@ public class CustomerController {
     public void exportToExcel() {
         if (customerList == null || customerList.isEmpty()) {
             JOptionPane.showMessageDialog(customerForm,
-                    ErrorMessage.CUSTOMER_EXPORT_NO_DATA.toString(),
-                    ErrorMessage.INFO_TITLE.toString(), 
-                    JOptionPane.INFORMATION_MESSAGE);
+                ErrorMessage.CUSTOMER_EXPORT_NO_DATA.get(),
+                ErrorMessage.INFO_TITLE.get(), 
+                JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
         try {
             // Tạo dữ liệu xuất ra Excel
-            String[] headers = {"Mã khách hàng", "Họ tên", "Số điện thoại", 
-                                "Email", "Điểm tích lũy", "Ngày tạo", "Cập nhật lần cuối"};
+            String[] headers = ErrorMessage.CUSTOMER_EXPORT_EXCEL_HEADERS.get().split(";");
 
             if (LocaleManager.getInstance().getCurrentLocale().getLanguage().equals("en")) {
-                headers = new String[]{"Customer ID", "Full Name", "Phone Number",
-                                "Email", "Points", "Created At", "Updated At"};
+                headers = ErrorMessage.CUSTOMER_EXPORT_EXCEL_HEADERS_EN.get().split(";");
             }
 
             Object[][] data = new Object[customerList.size()][headers.length];
@@ -628,35 +626,35 @@ public class CustomerController {
             }
             
             // Tạo file Excel
-            String fileName = "DANH_SACH_KHACH_HANG_" + 
+            String fileName = ErrorMessage.CUSTOMER_EXPORT_FILENAME_PREFIX.get() + 
                     LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             JExcel jExcel = new JExcel();
-            boolean success = jExcel.toExcel(headers, data, "Danh sách khách hàng", fileName);
+            boolean success = jExcel.toExcel(headers, data, ErrorMessage.CUSTOMER_EXPORT_SHEET_TITLE.get(), fileName);
             
             if (success) {
                 JOptionPane.showMessageDialog(customerForm,
-                        ErrorMessage.CUSTOMER_EXPORT_SUCCESS.toString(),
-                        ErrorMessage.INFO_TITLE.toString(), 
-                        JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.CUSTOMER_EXPORT_SUCCESS.get(),
+                    ErrorMessage.INFO_TITLE.get(), 
+                    JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(customerForm,
-                        ErrorMessage.CUSTOMER_EXPORT_FAILED.toString(),
-                        ErrorMessage.ERROR_TITLE.toString(), 
-                        JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.CUSTOMER_EXPORT_FAILED.get(),
+                    ErrorMessage.ERROR_TITLE.get(), 
+                    JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    ErrorMessage.CUSTOMER_EXPORT_ERROR.toString().formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE.toString(), 
-                    JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.CUSTOMER_EXPORT_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.get(), 
+                JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private boolean handleEscapeKey() {
         if (isAddingNew) {
             int option = JOptionPane.showConfirmDialog(customerForm,
-                    ErrorMessage.CUSTOMER_ADD_CANCEL.toString(),
-                    ErrorMessage.CONFIRM_TITLE.toString(), JOptionPane.YES_NO_OPTION);
+                ErrorMessage.CUSTOMER_ADD_CANCEL.get(),
+                ErrorMessage.CONFIRM_TITLE.get(), JOptionPane.YES_NO_OPTION);
                     
             if (option == JOptionPane.YES_OPTION) {
                 isAddingNew = false;
@@ -725,7 +723,7 @@ public class CustomerController {
         try {
             return customerService.findAllCustomers();
         } catch (Exception e) {
-            throw new RuntimeException(ErrorMessage.CUSTOMER_LOAD_ERROR.toString().formatted(e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_LOAD_ERROR.format(e.getMessage()), e);
         }
     }
     
@@ -741,9 +739,9 @@ public class CustomerController {
             return ServiceFactory.getInvoiceService().findInvoicesByCustomerID(customerId);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(customerForm,
-                    ErrorMessage.INVOICE_LOAD_ERROR.toString().formatted(e.getMessage()),
-                    ErrorMessage.ERROR_TITLE.toString(),
-                    JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.INVOICE_LOAD_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.get(),
+                JOptionPane.ERROR_MESSAGE);
             return new ArrayList<>();
         }
     }
@@ -755,9 +753,9 @@ public class CustomerController {
     public void showCustomerInvoices(Customer customer) {
         if (customer == null) {
             JOptionPane.showMessageDialog(customerForm,
-                    "Vui lòng chọn khách hàng để xem hóa đơn",
-                    ErrorMessage.INFO_TITLE.toString(),
-                    JOptionPane.INFORMATION_MESSAGE);
+                ErrorMessage.CUSTOMER_INVOICE_VIEW_MESSAGE.get(),
+                ErrorMessage.CUSTOMER_INVOICE_VIEW_TITLE.get(),
+                JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -779,7 +777,7 @@ public class CustomerController {
         try {
             return customerService.findCustomerById(customerId);
         } catch (Exception e) {
-            throw new RuntimeException(ErrorMessage.CUSTOMER_FIND_BY_ID_ERROR.toString().formatted(e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_FIND_BY_ID_ERROR.format(e.getMessage()), e);
         }
     }
     
@@ -792,7 +790,7 @@ public class CustomerController {
         try {
             return customerService.findCustomerByPhone(phoneNumber);
         } catch (Exception e) {
-            throw new RuntimeException(ErrorMessage.CUSTOMER_FIND_BY_PHONE_ERROR.toString().formatted(e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_FIND_BY_PHONE_ERROR.format(e.getMessage()), e);
         }
     }
     
@@ -815,7 +813,7 @@ public class CustomerController {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_UPDATE_ERROR.toString().formatted(e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_UPDATE_ERROR.format(e.getMessage()), e);
         }
     }
     
@@ -839,7 +837,7 @@ public class CustomerController {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_ADD_ERROR.toString().formatted(e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_ADD_ERROR.format(e.getMessage()), e);
         }
     }
     
@@ -857,7 +855,7 @@ public class CustomerController {
                 int currentPoints = customer.getPoints() != null ? customer.getPoints() : 0;
                 
                 if (currentPoints < pointsToDeduct) {
-                    throw new IllegalArgumentException(ErrorMessage.INSUFFICIENT_POINTS.toString());
+                    throw new IllegalArgumentException(ErrorMessage.INSUFFICIENT_POINTS.get());
                 }
                 
                 customer.setPoints(currentPoints - pointsToDeduct);
@@ -868,7 +866,7 @@ public class CustomerController {
             }
             return false;
         } catch (Exception e) {
-            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_DEDUCT_ERROR.toString().formatted(e.getMessage()), e);
+            throw new RuntimeException(ErrorMessage.CUSTOMER_POINTS_DEDUCT_ERROR.format(e.getMessage()), e);
         }
     }
     

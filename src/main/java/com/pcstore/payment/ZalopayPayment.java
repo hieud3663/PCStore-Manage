@@ -4,6 +4,7 @@ import com.pcstore.model.Invoice;
 import com.pcstore.model.base.BasePayment;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.utils.ErrorMessage;
 
 import java.awt.Component;
 import java.math.BigDecimal;
@@ -96,7 +97,7 @@ public class ZalopayPayment extends BasePayment {
             JSONArray items = new JSONArray();
             JSONObject item = new JSONObject();
             String invoiceId = getInvoice() != null ? String.valueOf(getInvoice().getInvoiceId()) : "0";
-            String description =  "Hóa đơn số " + invoiceId + " , tại cửa hàng HAL Store";
+            String description = ErrorMessage.ZALOPAY_PAYMENT_INVOICE_DESCRIPTION.format(invoiceId);
             
             item.put("itemid", invoiceId);
             item.put("itemname", description);
@@ -124,7 +125,7 @@ public class ZalopayPayment extends BasePayment {
                     .field("appuser", "demo")
                     .field("apptime", String.valueOf(appTime))
                     .field("amount", String.valueOf(getAmount().intValue()))
-                    .field("description", "Thanh toán hóa đơn: " + description)
+                    .field("description", ErrorMessage.ZALOPAY_PAYMENT_ORDER_DESCRIPTION.format(description))
                     .field("bankcode", "zalopayapp")
                     .field("embeddata", embedData.toString())
                     .field("item", items.toString())
@@ -136,17 +137,17 @@ public class ZalopayPayment extends BasePayment {
             // Xử lý kết quả
             if (result.getInt("returncode") == 1) {
                 this.qrCodeUrl = result.getString("orderurl");
-                System.out.println("Tạo đơn hàng thành công. Mã giao dịch: " + appTransactionId);
+                System.out.println(ErrorMessage.ZALOPAY_PAYMENT_CREATE_ORDER_SUCCESS.format(appTransactionId));
                 System.out.println("URL thanh toán: " + qrCodeUrl);
                 return qrCodeUrl;
             } else {
-                System.err.println("Tạo đơn hàng thất bại. Mã lỗi: " + result.getInt("returncode"));
+                System.err.println(ErrorMessage.ZALOPAY_PAYMENT_CREATE_ORDER_FAILED.format(result.getInt("returncode")));
                 System.err.println("Thông tin lỗi: " + result.getString("returnmessage"));
                 return null;
             }
             
         } catch (Exception e) {
-            System.err.println("Lỗi khi tạo đơn hàng ZaloPay: " + e.getMessage());
+            System.err.println(ErrorMessage.ZALOPAY_PAYMENT_CREATE_ORDER_ERROR.format(e.getMessage()));
             e.printStackTrace();
             return null;
         }
@@ -188,16 +189,16 @@ public class ZalopayPayment extends BasePayment {
                     getInvoice().setStatus(InvoiceStatusEnum.COMPLETED);
                 }
                 
-                System.out.println("Thanh toán thành công. Mã giao dịch: " + appTransactionId);
+                System.out.println(ErrorMessage.ZALOPAY_PAYMENT_CHECK_STATUS_SUCCESS.format(appTransactionId));
                 return 1;
             } else {
                 // Đang chờ thanh toán
-                System.out.println("Đang chờ thanh toán...");
+                System.out.println(ErrorMessage.ZALOPAY_PAYMENT_CHECK_STATUS_PENDING.get());
                 return 0;
             }
             
         } catch (Exception e) {
-            System.err.println("Lỗi khi kiểm tra trạng thái thanh toán: " + e.getMessage());
+            System.err.println(ErrorMessage.ZALOPAY_PAYMENT_CHECK_STATUS_ERROR.format(e.getMessage()));
             e.printStackTrace();
             return -1;
         }
@@ -248,7 +249,7 @@ public class ZalopayPayment extends BasePayment {
     @Override
     public boolean processPayment() {
         if (getAmount() == null || getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            setDescription("Số tiền thanh toán không hợp lệ");
+            setDescription(ErrorMessage.ZALOPAY_PAYMENT_INVALID_AMOUNT.get());
             return false;
         }
         
@@ -257,13 +258,13 @@ public class ZalopayPayment extends BasePayment {
             String paymentUrl = createZaloPayOrder();
             if (paymentUrl == null) {
                 setStatus(InvoiceStatusEnum.FAILED);
-                setDescription("Không thể tạo đơn hàng ZaloPay");
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_CREATE_ORDER_FAILED_MESSAGE.get());
                 return false;
             }
             
             // Mở trình duyệt để thanh toán
             if (!openWebBrowser(paymentUrl)) {
-                setDescription("Không thể mở trình duyệt để thanh toán");
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_BROWSER_ERROR.get());
                 return false;
             }
             
@@ -279,7 +280,7 @@ public class ZalopayPayment extends BasePayment {
                 setStatus(InvoiceStatusEnum.COMPLETED);
                 setPaymentDate(LocalDateTime.now());
                 setTransactionReference(this.appTransactionId);
-                setDescription("Thanh toán ZaloPay thành công");
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_SUCCESS_DESCRIPTION.get());
                 
                 // Cập nhật trạng thái hóa đơn
                 if (getInvoice() != null) {
@@ -289,11 +290,11 @@ public class ZalopayPayment extends BasePayment {
                 return true;
             } else {
                 setStatus(InvoiceStatusEnum.FAILED);
-                setDescription("Thanh toán ZaloPay thất bại: Giao dịch bị từ chối");
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_FAILED_DESCRIPTION.get());
                 return false;
             }
         } catch (Exception e) {
-            setDescription("Lỗi xử lý thanh toán ZaloPay: " + e.getMessage());
+            setDescription(ErrorMessage.ZALOPAY_PAYMENT_ERROR_DESCRIPTION.format(e.getMessage()));
             return false;
         }
     }
@@ -301,7 +302,7 @@ public class ZalopayPayment extends BasePayment {
     @Override
     public boolean processPayment(Component parent) {
         if (getAmount() == null || getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            setDescription("Số tiền thanh toán không hợp lệ");
+            setDescription(ErrorMessage.ZALOPAY_PAYMENT_INVALID_AMOUNT.get());
             return false;
         }
         
@@ -310,23 +311,23 @@ public class ZalopayPayment extends BasePayment {
             String paymentUrl = createZaloPayOrder();
             if (paymentUrl == null) {
                 setStatus(InvoiceStatusEnum.FAILED);
-                setDescription("Không thể tạo đơn hàng ZaloPay");
-                JOptionPane.showMessageDialog(parent, "Không thể tạo đơn hàng ZaloPay", "Lỗi thanh toán", JOptionPane.ERROR_MESSAGE);
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_CREATE_ORDER_FAILED_MESSAGE.get());
+                JOptionPane.showMessageDialog(parent, ErrorMessage.ZALOPAY_PAYMENT_CREATE_ORDER_FAILED_MESSAGE.get(), ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             
             // Mở trình duyệt để thanh toán
             if (!openWebBrowser(paymentUrl)) {
-                setDescription("Không thể mở trình duyệt để thanh toán");
-                JOptionPane.showMessageDialog(parent, "Không thể mở trình duyệt để thanh toán", "Lỗi thanh toán", JOptionPane.ERROR_MESSAGE);
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_BROWSER_ERROR.get());
+                JOptionPane.showMessageDialog(parent, ErrorMessage.ZALOPAY_PAYMENT_BROWSER_ERROR.get(), ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 return false;
             }
             
             // Hiển thị dialog chờ thanh toán
             int option = JOptionPane.showConfirmDialog(
                 parent,
-                "Vui lòng hoàn tất thanh toán trong trình duyệt.\nBấm OK khi đã thanh toán xong hoặc Cancel để hủy.",
-                "Đang chờ thanh toán",
+                ErrorMessage.ZALOPAY_PAYMENT_WAITING_CONFIRM.get(),
+                ErrorMessage.ZALOPAY_PAYMENT_WAITING_TITLE.get(),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
             );
@@ -335,7 +336,7 @@ public class ZalopayPayment extends BasePayment {
                 // Kiểm tra trạng thái thanh toán
                 int status = checkPaymentStatus();
                 if (status == 1) {
-                    JOptionPane.showMessageDialog(parent, "Thanh toán thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(parent, ErrorMessage.ZALOPAY_PAYMENT_SUCCESS_MESSAGE.get(), ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
                     return true;
                 } else {
                     JOptionPane.showMessageDialog(parent, "Không thể xác nhận thanh toán. Vui lòng kiểm tra lại sau.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
@@ -343,12 +344,12 @@ public class ZalopayPayment extends BasePayment {
                 }
             } else {
                 setStatus(InvoiceStatusEnum.CANCELLED);
-                setDescription("Người dùng đã hủy thanh toán");
+                setDescription(ErrorMessage.ZALOPAY_PAYMENT_CANCELLED_DESCRIPTION.get());
                 return false;
             }
         } catch (Exception e) {
-            setDescription("Lỗi xử lý thanh toán ZaloPay: " + e.getMessage());
-            JOptionPane.showMessageDialog(parent, "Lỗi xử lý thanh toán: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            setDescription(ErrorMessage.ZALOPAY_PAYMENT_ERROR_DESCRIPTION.format(e.getMessage()));
+            JOptionPane.showMessageDialog(parent, ErrorMessage.ZALOPAY_PAYMENT_ERROR_DESCRIPTION.format(e.getMessage()), ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }

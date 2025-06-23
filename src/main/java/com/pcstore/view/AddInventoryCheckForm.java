@@ -156,7 +156,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
         lbTitle.setPreferredSize(new java.awt.Dimension(900, 67));
         panelTop.add(lbTitle, java.awt.BorderLayout.LINE_START);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnCreate.setText(bundle.getString("btnAddInventory")); // NOI18N
         btnCreate.setFont(new java.awt.Font("Segoe UI", 1, 13)); // NOI18N
         btnCreate.setkAllowGradient(false);

@@ -93,7 +93,7 @@ public class CategoryFormNew extends javax.swing.JPanel {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 26)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(0, 44, 214));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("ProductCategoryManagement")); // NOI18N
         lbTitle.setPreferredSize(new java.awt.Dimension(361, 80));
         pnTitile.add(lbTitle, java.awt.BorderLayout.CENTER);

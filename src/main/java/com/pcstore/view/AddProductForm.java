@@ -40,7 +40,7 @@ public class AddProductForm extends javax.swing.JDialog {
         kGradientPanel1 = new com.k33ptoo.components.KGradientPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         setTitle(bundle.getString("titleAddProduct")); // NOI18N
         setMinimumSize(new java.awt.Dimension(739, 423));
         setResizable(false);

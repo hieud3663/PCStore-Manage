@@ -105,7 +105,7 @@ public class ForgotPasswordForm extends javax.swing.JDialog {
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(102, 102, 102));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         jLabel3.setText(bundle.getString("txtOTP")); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N

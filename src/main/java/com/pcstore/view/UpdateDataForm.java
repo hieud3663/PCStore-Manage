@@ -41,7 +41,7 @@ public class UpdateDataForm extends javax.swing.JPanel {
         kGradientPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Cập Nhật Thông Tin"));
         kGradientPanel1.setkFillBackground(false);
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         btnClose.setText(bundle.getString("btnOk")); // NOI18N
         btnClose.setkBorderRadius(30);
         btnClose.setkEndColor(new java.awt.Color(102, 153, 255));

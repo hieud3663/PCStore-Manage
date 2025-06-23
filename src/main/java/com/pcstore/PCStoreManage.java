@@ -34,6 +34,9 @@ public class PCStoreManage {
         loginForm.setVisible(true);       
         // DashboardForm sẽ được tạo sau khi đăng nhập thành công
         // trong LoginController
+
+        // java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
+        // java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
     });
     }
 }

@@ -42,7 +42,7 @@ public class EditQuantityForm extends javax.swing.JFrame {
         jLabel1.setText("Nhập Số Lượng Mới");
         jLabel1.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(0, 0, 0)));
 
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         txtQuantity.setText(bundle.getString("txtQuantity")); // NOI18N
 
         btnOK1.setText(bundle.getString("btnOk")); // NOI18N

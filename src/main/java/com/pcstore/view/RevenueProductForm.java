@@ -144,7 +144,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("lbRevenueDaily")); // NOI18N
         lbTitle.setFocusable(false);
         panelHeader.add(lbTitle, java.awt.BorderLayout.CENTER);
@@ -515,7 +515,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
         // Thiết lập label
         lbTimePeriod.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lbTimePeriod.setForeground(new java.awt.Color(30, 113, 195));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         lbTimePeriod.setText(bundle.getString("lbTimePeriod"));
         
         panelTimePeriod.add(lbTimePeriod);
@@ -538,7 +538,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
      * Khởi tạo các mục thời gian cho ComboBox
      */
     private void initializeTimePeriods() {
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.custom"));
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.today"));
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.last7Days"));
@@ -562,7 +562,7 @@ public class RevenueProductForm extends javax.swing.JPanel {
      * Xử lý khi người dùng chọn thời gian từ ComboBox
      */
     private void handleTimePeriodSelection() {
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         String selected = (String) cmbTimePeriod.getSelectedItem();
         LocalDate fromDate = null;
         LocalDate toDate = LocalDate.now();

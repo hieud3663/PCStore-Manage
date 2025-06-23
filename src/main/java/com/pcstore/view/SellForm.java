@@ -206,7 +206,7 @@ public class SellForm extends JPanel {
         labelTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         labelTitle.setForeground(new java.awt.Color(0, 54, 204));
         labelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         labelTitle.setText(bundle.getString("txtMenuSell")); // NOI18N
         labelTitle.setToolTipText(bundle.getString("txtMenuSell")); // NOI18N
         panelTitle.add(labelTitle);

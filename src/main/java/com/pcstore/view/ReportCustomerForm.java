@@ -130,7 +130,7 @@ public class ReportCustomerForm extends javax.swing.JPanel {
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20));
         lbTitle.setForeground(new java.awt.Color(30, 113, 195));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         lbTitle.setText(bundle.getString("lbReportCustomerTitle"));
         lbTitle.setFocusable(false);
         panelHeader.add(lbTitle, java.awt.BorderLayout.CENTER);
@@ -405,7 +405,7 @@ public class ReportCustomerForm extends javax.swing.JPanel {
     }
 
     private void initializeTimePeriods() {
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.custom"));
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.today"));
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.last7Days"));
@@ -422,7 +422,7 @@ public class ReportCustomerForm extends javax.swing.JPanel {
     }
     
     private void handleTimePeriodSelection() {
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         String selected = (String) cmbTimePeriod.getSelectedItem();
         LocalDate fromDate = null;
         LocalDate toDate = LocalDate.now();

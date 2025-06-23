@@ -180,7 +180,7 @@ public class AddReapairProductForm extends JDialog {
         lbTitle.setBackground(new java.awt.Color(0, 153, 255));
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(255, 255, 255));
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         lbTitle.setText(bundle.getString("lbAddRepairProduct")); // NOI18N
         lbTitle.setIconTextGap(1);
         lbTitle.setMaximumSize(new java.awt.Dimension(346, 100));

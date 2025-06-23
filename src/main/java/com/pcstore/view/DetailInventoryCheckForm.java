@@ -138,7 +138,7 @@ public class DetailInventoryCheckForm extends javax.swing.JDialog {
         txtNotes = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN"); // NOI18N
+        java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle(); // NOI18N
         setTitle(bundle.getString("inventory.detail.label.title")); // NOI18N
         setMinimumSize(new java.awt.Dimension(1200, 670));
         setResizable(false);

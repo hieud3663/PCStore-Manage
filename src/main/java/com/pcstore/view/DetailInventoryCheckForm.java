@@ -2,6 +2,7 @@ package com.pcstore.view;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.pcstore.controller.DetailInventoryCheckController;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableUtils;
 
 import java.awt.*;
@@ -410,7 +411,7 @@ public class DetailInventoryCheckForm extends javax.swing.JDialog {
         panelFormFields.add(lbInventoryWarehouse);
 
         cbbInventoryWarehouse.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        cbbInventoryWarehouse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kho chính" }));
+        cbbInventoryWarehouse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ErrorMessage.DETAIL_INVENTORY_CHECK_MAIN_WAREHOUSE.get() }));
         cbbInventoryWarehouse.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200, 200, 200)));
         cbbInventoryWarehouse.setEnabled(false);
         cbbInventoryWarehouse.setMaximumSize(new java.awt.Dimension(32767, 32));
@@ -425,7 +426,7 @@ public class DetailInventoryCheckForm extends javax.swing.JDialog {
 
         txtInventoryName.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         txtInventoryName.setForeground(new java.awt.Color(37, 99, 235));
-        txtInventoryName.setText("Kiểm kê");
+        txtInventoryName.setText(ErrorMessage.DETAIL_INVENTORY_CHECK_DEFAULT_INVENTORY_NAME.get());
         txtInventoryName.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200, 200, 200)), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtInventoryName.setMaximumSize(new java.awt.Dimension(32767, 32));
         txtInventoryName.setPreferredSize(new java.awt.Dimension(60, 60));
@@ -528,7 +529,7 @@ public class DetailInventoryCheckForm extends javax.swing.JDialog {
     }
 
     private void showEmptyTableMessage() {
-        JLabel emptyLabel = new JLabel("Không có dữ liệu", SwingConstants.CENTER);
+        JLabel emptyLabel = new JLabel(ErrorMessage.DETAIL_INVENTORY_CHECK_NO_DATA.get(), SwingConstants.CENTER);
         emptyLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
         emptyLabel.setForeground(Color.GRAY);
 

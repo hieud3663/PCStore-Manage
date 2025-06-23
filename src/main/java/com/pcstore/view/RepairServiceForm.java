@@ -26,6 +26,7 @@ import java.util.ArrayList;
 public class RepairServiceForm extends javax.swing.JPanel {
 
     private RepairController repairController;
+    private final java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
 
    // Variables declaration - do not modify//GEN-BEGIN:variables
    private com.k33ptoo.components.KButton btnAddRepair;
@@ -42,13 +43,15 @@ public class RepairServiceForm extends javax.swing.JPanel {
 
     private static final Map<String, String> statusRepairTranslation = new HashMap<>();
     static{
-            statusRepairTranslation.put("Received", "Đã tiếp nhận");
-            statusRepairTranslation.put("Diagnosing", "Đang chẩn đoán");
-            statusRepairTranslation.put("Waiting for Parts", "Chờ linh kiện");
-            statusRepairTranslation.put("Repairing", "Đang sửa chữa");
-            statusRepairTranslation.put("Completed", "Đã hoàn thành");
-            statusRepairTranslation.put("Delivered", "Đã giao khách");
-            statusRepairTranslation.put("Cancelled", "Đã hủy");
+            java.util.ResourceBundle bundle2 = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
+
+            statusRepairTranslation.put("Received", bundle2.getString("repairService.status.received"));
+            statusRepairTranslation.put("Diagnosing", bundle2.getString("repairService.status.diagnosing"));
+            statusRepairTranslation.put("Waiting for Parts", bundle2.getString("repairService.status.waitingForParts"));
+            statusRepairTranslation.put("Repairing", bundle2.getString("repairService.status.repairing"));
+            statusRepairTranslation.put("Completed", bundle2.getString("repairService.status.completed"));
+            statusRepairTranslation.put("Delivered", bundle2.getString("repairService.status.delivered"));
+            statusRepairTranslation.put("Cancelled", bundle2.getString("repairService.status.cancelled"));
         
     }
 
@@ -68,8 +71,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this, 
-                ErrorMessage.REPAIR_FORM_INIT_ERROR + ": " + e.getMessage(), 
-                "Lỗi", 
+                ErrorMessage.REPAIR_FORM_INIT_ERROR.get() + ": " + e.getMessage(), 
+                bundle.getString("repairService.initError"), 
                 javax.swing.JOptionPane.ERROR_MESSAGE);
         }
 
@@ -94,6 +97,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
     public void loadRepairServices() {
         try {
             // System.out.println("Đang tải danh sách dịch vụ sửa chữa...");
+            System.out.println(bundle.getString("repairService.loadingData"));
             
             // Lưu trạng thái tìm kiếm và sắp xếp hiện tại
             TableRowSorter<TableModel> sorter = (TableRowSorter<TableModel>) tableRepair.getRowSorter();
@@ -110,17 +114,17 @@ public class RepairServiceForm extends javax.swing.JPanel {
             model.setRowCount(0);
             
             if (repairController == null) {
-                System.out.println("Cảnh báo: RepairController chưa được thiết lập");
+                System.out.println(bundle.getString("repairService.warningControllerNotSet"));
                 return;
             }
             
             // Lấy danh sách dịch vụ từ controller - đảm bảo lấy dữ liệu mới nhất
             List<com.pcstore.model.Repair> repairs = repairController.getAllRepairServices();
-            System.out.println("Đã tìm thấy " + repairs.size() + " dịch vụ sửa chữa");
+            System.out.println(bundle.getString("repairService.foundServices").replace("%d", String.valueOf(repairs.size())));
             
             // Thêm dữ liệu vào bảng
             if (repairs.isEmpty()) {
-                model.addRow(new Object[]{"", "Không có dữ liệu", "", "", "", "", "", ""});
+                model.addRow(new Object[]{"", bundle.getString("repairService.noData"), "", "", "", "", "", ""});
                 return;
             }
             
@@ -169,11 +173,11 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
             
             // Tùy chọn: hiển thị thông báo cập nhật thành công trong console
-            System.out.println("Cập nhật bảng dịch vụ sửa chữa thành công!");
+            System.out.println(bundle.getString("repairService.updateSuccess"));
             
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Lỗi khi tải danh sách dịch vụ sửa chữa: " + e.getMessage());
+            System.err.println(bundle.getString("repairService.loadError").replace("%s", e.getMessage()));
             // Hiển thị thông báo lỗi cho người dùng nếu cần
         }
     }
@@ -336,10 +340,19 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Sửa Chữa", "Tên Khách Hàng", "Số điện thoại", "Tên Thiết Bị", "Vấn Đề Sữa Chữa", "Chi Phí ", "Trạng Thái", "Ghi Chú"
+                bundle.getString("repairService.table.repairCode"),
+                bundle.getString("repairService.table.customerName"), 
+                bundle.getString("repairService.table.phoneNumber"),
+                bundle.getString("repairService.table.deviceName"), 
+                bundle.getString("repairService.table.repairProblem"),
+                bundle.getString("repairService.table.cost"), 
+                bundle.getString("repairService.table.status"),
+                bundle.getString("repairService.table.notes")
             }
         ) {
             Class[] types = new Class [] {
@@ -359,14 +372,14 @@ public class RepairServiceForm extends javax.swing.JPanel {
         });
         jScrollPaneTable.setViewportView(tableRepair);
         if (tableRepair.getColumnModel().getColumnCount() > 0) {
-            tableRepair.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtRepairID")); // NOI18N
-            tableRepair.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtRepairNameCustomer")); // NOI18N
-            tableRepair.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtRepairPhoneNumber")); // NOI18N
-            tableRepair.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtRepairNameDevice")); // NOI18N
-            tableRepair.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtRepairProblermRepair")); // NOI18N
-            tableRepair.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtRepairCost")); // NOI18N
-            tableRepair.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtRepairStatus")); // NOI18N
-            tableRepair.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtRepairNote")); // NOI18N
+            tableRepair.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtRepairID"));
+            tableRepair.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtRepairNameCustomer"));
+            tableRepair.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtRepairPhoneNumber"));
+            tableRepair.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtRepairNameDevice"));
+            tableRepair.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtRepairProblermRepair"));
+            tableRepair.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtRepairCost"));
+            tableRepair.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtRepairStatus"));
+            tableRepair.getColumnModel().getColumn(7).setHeaderValue(bundle.getString("txtRepairNote"));
         }
 
         panelBody.add(jScrollPaneTable, java.awt.BorderLayout.CENTER);
@@ -471,8 +484,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         int selectedRow = tableRepair.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, 
-                ErrorMessage.REPAIR_SELECT_ONE_UPDATE_STATUS,
-                "Thông báo", javax.swing.JOptionPane.WARNING_MESSAGE);
+                ErrorMessage.REPAIR_SELECT_ONE_UPDATE_STATUS.get(),
+                bundle.getString("repairService.notification"), JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -483,8 +496,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         
         if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                ErrorMessage.REPAIR_ID_INVALID,
-                "Lỗi",
+                ErrorMessage.REPAIR_ID_INVALID.get(),
+                bundle.getString("repairService.error"),
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -494,8 +507,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
             repairId = Integer.parseInt(repairIdObj.toString());
         } catch (NumberFormatException e) {
             javax.swing.JOptionPane.showMessageDialog(this,
-                "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
-                "Lỗi",
+                bundle.getString("repairService.invalidID").replace("%s", repairIdObj.toString()),
+                bundle.getString("repairService.error"),
                 javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -505,8 +518,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
             java.util.Optional<com.pcstore.model.Repair> repairOpt = repairController.getRepairServiceById(repairId);
             if (repairOpt.isEmpty()) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID.toString(), repairId), 
-                    "Thông báo", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID.get(), repairId), 
+                    bundle.getString("repairService.notification"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -522,11 +535,13 @@ public class RepairServiceForm extends javax.swing.JPanel {
             }
             
             // Hiển thị dialog để chọn trạng thái mới
-            String newStatusVi = (String) javax.swing.JOptionPane.showInputDialog(
+            String newStatusVi = (String) JOptionPane.showInputDialog(
                 this,
-                "Chọn trạng thái mới cho dịch vụ sửa chữa #" + repairId + " - " + deviceName,
-                "Cập nhật trạng thái",
-                javax.swing.JOptionPane.QUESTION_MESSAGE,
+                bundle.getString("repairService.selectNewStatus")
+                    .replace("%d", repairId.toString())
+                    .replace("%s", deviceName),
+                bundle.getString("repairService.updateStatusTitle"),
+                JOptionPane.QUESTION_MESSAGE,
                 null,
                 availableStatusesVi,
                 getCurrentStatusVi(currentStatusEnum.getStatus())
@@ -548,16 +563,16 @@ public class RepairServiceForm extends javax.swing.JPanel {
             
             if (newStatusEn == null) {
                 javax.swing.JOptionPane.showMessageDialog(this, 
-                    ErrorMessage.REPAIR_STATUS_CONVERT_ERROR, 
-                    "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.REPAIR_STATUS_CONVERT_ERROR.get(), 
+                    bundle.getString("repairService.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             // Xử lý logic đặc biệt khi chuyển sang trạng thái "Completed"
             if ("Completed".equals(newStatusEn)) {
                 // Dialog nhập phí dịch vụ cuối cùng
-                String feeInput = javax.swing.JOptionPane.showInputDialog(this,
-                    "Nhập phí dịch vụ cuối cùng (VNĐ):",
+                String feeInput = JOptionPane.showInputDialog(this,
+                    bundle.getString("repairService.enterFinalFee"),
                     repair.getServiceFee() != null ? repair.getServiceFee().toString() : "0"
                 );
                 
@@ -570,8 +585,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
                     java.math.BigDecimal fee = new java.math.BigDecimal(feeInput);
                     
                     // Yêu cầu nhập ghi chú hoàn thành
-                    String notes = javax.swing.JOptionPane.showInputDialog(this,
-                        "Nhập ghi chú hoàn thành:",
+                    String notes = JOptionPane.showInputDialog(this,
+                        bundle.getString("repairService.enterCompletionNotes"),
                         repair.getNotes() != null ? repair.getNotes() : ""
                     );
                     
@@ -602,43 +617,43 @@ public class RepairServiceForm extends javax.swing.JPanel {
                     
                     if (result != null) {
                         javax.swing.JOptionPane.showMessageDialog(this,
-                            "Đã hoàn thành dịch vụ sửa chữa thành công!",
-                            "Thành công", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                            bundle.getString("repairService.completedSuccess"),
+                            bundle.getString("repairService.success"), JOptionPane.INFORMATION_MESSAGE);
                         
                         // Tải lại dữ liệu
                         loadRepairServices();
                     } else {
                         javax.swing.JOptionPane.showMessageDialog(this,
-                            "Không thể cập nhật trạng thái. Vui lòng thử lại sau!",
-                            "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
+                            bundle.getString("repairService.updateFailed"),
+                            bundle.getString("repairService.error"), JOptionPane.ERROR_MESSAGE);
                     }
                     
                 } catch (NumberFormatException e) {
                     javax.swing.JOptionPane.showMessageDialog(this,
-                        "Phí dịch vụ không hợp lệ! Vui lòng nhập số.",
-                        "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        bundle.getString("repairService.invalidFee"),
+                        bundle.getString("repairService.error"), JOptionPane.ERROR_MESSAGE);
                 }
             } 
             // Xử lý khi chuyển sang trạng thái "Cancelled"
             else if ("Cancelled".equals(newStatusEn)) {
                 // Xác nhận hủy dịch vụ
-                int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-                    "Bạn có chắc chắn muốn hủy dịch vụ sửa chữa này?",
-                    "Xác nhận hủy",
-                    javax.swing.JOptionPane.YES_NO_OPTION,
-                    javax.swing.JOptionPane.WARNING_MESSAGE);
+                int confirm = JOptionPane.showConfirmDialog(this,
+                    bundle.getString("repairService.confirmCancel"),
+                    bundle.getString("repairService.confirmCancelTitle"),
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE);
                 
-                if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+                if (confirm != JOptionPane.YES_OPTION) {
                     return;
                 }
                 
                 // Yêu cầu nhập lý do hủy
-                String cancelReason = javax.swing.JOptionPane.showInputDialog(this,
-                    "Nhập lý do hủy dịch vụ:", 
+                String cancelReason = JOptionPane.showInputDialog(this,
+                    bundle.getString("repairService.enterCancelReason"), 
                     "");
                     
                 if (cancelReason == null) {
-                    cancelReason = "Đã hủy không có lý do";
+                    cancelReason = bundle.getString("repairService.defaultCancelReason");
                 }
                 
                 // Cập nhật trạng thái và thông tin
@@ -668,15 +683,15 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 
                 if (result != null) {
                     javax.swing.JOptionPane.showMessageDialog(this,
-                        "Đã hủy dịch vụ sửa chữa thành công!",
-                        "Thành công", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                        bundle.getString("repairService.cancelSuccess"),
+                        bundle.getString("repairService.success"), JOptionPane.INFORMATION_MESSAGE);
                     
                     // Tải lại dữ liệu
                     loadRepairServices();
                 } else {
                     javax.swing.JOptionPane.showMessageDialog(this,
-                        "Không thể hủy dịch vụ. Vui lòng thử lại sau!",
-                        "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
+                        bundle.getString("repairService.cancelFailed"),
+                        bundle.getString("repairService.error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
             // Xử lý các trạng thái còn lại
@@ -725,8 +740,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this, 
-                ErrorMessage.REPAIR_STATUS_UPDATE_ERROR + ": " + e.getMessage(), 
-                "Lỗi", javax.swing.JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.REPAIR_STATUS_UPDATE_ERROR.get() + ": " + e.getMessage(), 
+                bundle.getString("repairService.error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -742,7 +757,7 @@ public class RepairServiceForm extends javax.swing.JPanel {
         }
         
         // Nếu là trạng thái tiếng Anh, chuyển đổi sang tiếng Việt
-        return statusRepairTranslation.getOrDefault(statusEn, "Không xác định");
+        return statusRepairTranslation.getOrDefault(statusEn, bundle.getString("repairService.statusUnknown"));
     }
     
     /**

@@ -10,6 +10,7 @@ import com.pcstore.model.Invoice;
 import com.pcstore.model.base.BasePayment;
 import com.pcstore.model.enums.InvoiceStatusEnum;
 import com.pcstore.model.enums.PaymentMethodEnum;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.JDialogInputUtils;
 
 /**
@@ -72,8 +73,8 @@ public class CashPayment extends BasePayment {
     public boolean processPayment(Component parent) {
 
         BigDecimal amountReceived = JDialogInputUtils.showInputDialogBigDecimal(parent, 
-                "Nhập số tiền khách đưa:", 
-                "Thanh toán bằng tiền mặt");
+                ErrorMessage.CASH_PAYMENT_ENTER_AMOUNT.get(), 
+                "0.00");
         
         // Nếu người dùng hủy việc nhập tiền
         if (amountReceived == null) {
@@ -84,8 +85,8 @@ public class CashPayment extends BasePayment {
             // Kiểm tra số tiền khách đưa có đủ không
             if (amountReceived.compareTo(invoice.getTotalAmount()) < 0) {
                 JOptionPane.showMessageDialog(parent, 
-                    "Số tiền khách đưa không đủ!", 
-                    "Lỗi", 
+                    ErrorMessage.CASH_PAYMENT_INSUFFICIENT_AMOUNT.get(), 
+                    ErrorMessage.ERROR_TITLE.get(), 
                     JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -93,13 +94,13 @@ public class CashPayment extends BasePayment {
             setAmountReceived(amountReceived);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(parent, 
-                "Số tiền không hợp lệ!", 
-                "Lỗi", 
+                ErrorMessage.CASH_PAYMENT_INVALID_AMOUNT.get(), 
+                ErrorMessage.ERROR_TITLE.get(), 
                 JOptionPane.ERROR_MESSAGE);
         }
         // Kiểm tra số tiền khách đưa phải >= số tiền cần thanh toán
         if (amountReceived == null || amountReceived.compareTo(getAmount()) < 0) {
-            setDescription("Số tiền khách đưa không đủ");
+            setDescription(ErrorMessage.CASH_PAYMENT_INSUFFICIENT_DESCRIPTION.get());
             return false;
         }
         
@@ -110,8 +111,8 @@ public class CashPayment extends BasePayment {
             // Cập nhật trạng thái
             setStatus(InvoiceStatusEnum.PAID);
             setPaymentDate(LocalDateTime.now());
-            setTransactionReference("CASH_" + getPaymentId());
-            setDescription("Thanh toán tiền mặt thành công. Tiền thừa: " + change);
+            setTransactionReference(ErrorMessage.CASH_PAYMENT_TRANSACTION_REFERENCE.format(getPaymentId()));
+            setDescription(ErrorMessage.CASH_PAYMENT_SUCCESS_DESCRIPTION.format(change));
             
             // Cập nhật trạng thái hóa đơn
             if (getInvoice() != null) {
@@ -120,7 +121,7 @@ public class CashPayment extends BasePayment {
             
             return true;
         } catch (Exception e) {
-            setDescription("Lỗi xử lý thanh toán: " + e.getMessage());
+            setDescription(ErrorMessage.CASH_PAYMENT_ERROR_DESCRIPTION.format(e.getMessage()));
             return false;
         }
     }

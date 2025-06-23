@@ -62,7 +62,7 @@ public class ProductController {
             this.connection = DatabaseConnection.getInstance().getConnection();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Lỗi kết nối database: " + e.getMessage());
+            System.err.println(ErrorMessage.PRODUCT_DATABASE_CONNECTION_ERROR_DETAIL.format(e.getMessage()));
         }
         
         // Khởi tạo các repository
@@ -233,7 +233,7 @@ public class ProductController {
 
             TableUtils.refreshSorter(productForm.getTable());
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải dữ liệu sản phẩm: " + e.getMessage());
+            // System.err.println("Lỗi khi tải dữ liệu sản phẩm: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -258,8 +258,8 @@ public class ProductController {
             TableUtils.applyFilter(productTableSorter, keyword);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(productForm, 
-                    "Lỗi tìm kiếm sản phẩm: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PRODUCT_SEARCH_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -281,15 +281,15 @@ public class ProductController {
             
             if (productName.isEmpty()) {
                 JOptionPane.showMessageDialog(productForm, 
-                        "Vui lòng nhập tên sản phẩm",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PRODUCT_SELECT_REQUIRED.get(),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             if (category == null) {
                 JOptionPane.showMessageDialog(productForm, 
-                        "Vui lòng chọn danh mục",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PRODUCT_CATEGORY_SELECT_REQUIRED.get(),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -297,6 +297,18 @@ public class ProductController {
             // int stockQuantity = 0;
             BigDecimal price = BigDecimal.ZERO;
             
+            String priceStr = productForm.getPriceField().getText().trim().replaceAll("\\.", "").replaceAll("\\,", "");
+
+            if (!priceStr.isEmpty()) {
+                try {
+                    price = new BigDecimal(priceStr);
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(productForm,
+                            ErrorMessage.PRODUCT_PRICE_VALIDATION_ERROR.format(e.getMessage()),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
 
             // Tạo mã sản phẩm mới dựa trên danh mục
             String productId = generateProductID();
@@ -330,7 +342,7 @@ public class ProductController {
             if (!profitMarginStr.isEmpty()) {
                 profitMargin = new BigDecimal(profitMarginStr);
                 if (profitMargin.compareTo(BigDecimal.ZERO) < 0) {
-                    throw new NumberFormatException("Tỷ suất lợi nhuận không được âm");
+                    throw new NumberFormatException("Rate of profit margin must be non-negative");
                 }
             }
             
@@ -346,8 +358,8 @@ public class ProductController {
                 if (profitMargin != null) {
                     int option = JOptionPane.showConfirmDialog(
                         productForm,
-                        "Bạn có muốn tính giá bán tự động dựa trên giá vốn và tỷ suất lợi nhuận không?",
-                        "Xác nhận",
+                        ErrorMessage.PRODUCT_AUTOMATIC_PRICE_UPDATE_CONFIRM.get(),
+                        ErrorMessage.CONFIRM_TITLE.get(),
                         JOptionPane.YES_NO_OPTION
                     );
                     
@@ -359,8 +371,8 @@ public class ProductController {
             }
 
             int checkOpt = JOptionPane.showConfirmDialog(productForm, 
-                    "Bạn có chắc chắn muốn thêm sản phẩm này?",
-                    "Xác nhận thêm", JOptionPane.YES_NO_OPTION);
+                    ErrorMessage.PRODUCT_ADD_CONFIRM.get(),
+                    ErrorMessage.CONFIRM_BUTTON_ADD_TEXT.get(), JOptionPane.YES_NO_OPTION);
             if(checkOpt != JOptionPane.YES_OPTION) {
                 return;
             }
@@ -369,9 +381,10 @@ public class ProductController {
             
             if (savedProduct != null) {
                 JOptionPane.showMessageDialog(productForm, 
-                        "Thêm sản phẩm thành công!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.PRODUCT_ADD_SUCCESS.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
                 
+
                 addingProduct = false;
                 updateUIForAddMode(false);
                 
@@ -381,9 +394,9 @@ public class ProductController {
                 if (productId != null) { // Nếu lưu sản phẩm thành công
                     PriceHistory priceHistory = new PriceHistory(
                         productId,
-                        BigDecimal.ZERO, // Giá cũ = 0 vì là sản phẩm mới
+                        BigDecimal.ZERO, 
                         price,
-                        BigDecimal.ZERO, // Giá vốn cũ = 0 vì là sản phẩm mới
+                        BigDecimal.ZERO,
                         costPrice,
                         SessionManager.getInstance().getCurrentUser().getEmployeeId(),
                         "Thêm mới sản phẩm"
@@ -392,13 +405,13 @@ public class ProductController {
                 }
             } else {
                 JOptionPane.showMessageDialog(productForm, 
-                        "Không thể thêm sản phẩm. Vui lòng thử lại!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PRODUCT_ADD_ERROR.format(""),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(productForm, 
-                    "Lỗi: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PRODUCT_ADD_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -418,8 +431,8 @@ public class ProductController {
             if (addingProduct) {
 
                 int checkOpt = JOptionPane.showConfirmDialog(productForm, 
-                        "Bạn có chắc chắn muốn hủy chế độ thêm sản phẩm?",
-                        "Xác nhận hủy", JOptionPane.YES_NO_OPTION);
+                        ErrorMessage.PRODUCT_CANCEL_ADD_CONFIRM.get(),
+                        ErrorMessage.PRODUCT_CANCEL_ADD_TITLE.get(), JOptionPane.YES_NO_OPTION);
                 if (checkOpt != JOptionPane.YES_OPTION) {
                     return;
                 }
@@ -429,7 +442,7 @@ public class ProductController {
                 updateUIForAddMode(false);
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi hủy chế độ thêm: " + e.getMessage());
+            System.err.println(ErrorMessage.PRODUCT_CANCEL_ADD_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -470,7 +483,7 @@ public class ProductController {
                     selectCategoryInComboBox(product.getCategory());
                 }
 
-                productForm.getTxtManufacturer().setText(product.getManufacturer() != null ? product.getManufacturer() : "N/A");
+                productForm.getTxtManufacturer().setText(product.getManufacturer() != null ? product.getManufacturer() : ErrorMessage.PRODUCT_N_A.get());
 
                 NumberUtils.setFormattedValue(productForm.getTxtCostPrice(), product.getCostPrice(), currencyFormatter);
                 NumberUtils.setFormattedValue(productForm.getPriceField(), product.getPrice(), currencyFormatter);
@@ -490,7 +503,7 @@ public class ProductController {
                 productForm.getDescriptionArea().setText(desc != null ? desc : "");
             }
         } catch (Exception e) {
-            System.err.println("Error displaying product: " + e.getMessage());
+            System.err.println(ErrorMessage.ERROR_DISPLAYING_PRODUCT.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -532,7 +545,7 @@ public class ProductController {
             }
             
         } catch (Exception e) {
-            System.err.println("Lỗi khi chuyển sang chế độ thêm: " + e.getMessage());
+            System.err.println(ErrorMessage.PRODUCT_ADD_MODE_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -547,7 +560,7 @@ public class ProductController {
             if (productForm.getBtnAdd() != null) {
                 if (isAddMode) {
                     // Đổi text của nút thêm thành "Xác nhận thêm" khi ở chế độ thêm
-                    productForm.getBtnAdd().setText("Xác nhận thêm");
+                    productForm.getBtnAdd().setText(ErrorMessage.CONFIRM_BUTTON_ADD_TEXT.get());
                     productForm.getBtnAdd().setkBackGroundColor(new java.awt.Color(0, 204, 102));
                     productForm.getBtnAdd().repaint();
                 } else {
@@ -590,7 +603,7 @@ public class ProductController {
                 productForm.getBtnResetSort().setEnabled(!isAddMode);
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi cập nhật giao diện: " + e.getMessage());
+            System.err.println(ErrorMessage.PRODUCT_UI_UPDATE_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -604,7 +617,7 @@ public class ProductController {
             String productId = productForm.getIdField().getText().trim();
             if (productId.isEmpty()) {
                 
-                Notifications.getInstance().show(Notifications.Type.WARNING, "Vui lòng chọn sản phẩm cần cập nhật");
+                Notifications.getInstance().show(Notifications.Type.WARNING, ErrorMessage.PRODUCT_SELECT_REQUIRED.get());
 
                 return;
             }
@@ -623,12 +636,12 @@ public class ProductController {
             
             // Kiểm tra thông tin bắt buộc
             if (productName.isEmpty()) {
-                Notifications.getInstance().show(Notifications.Type.WARNING,"Vui lòng nhập tên sản phẩm");
+                Notifications.getInstance().show(Notifications.Type.WARNING, ErrorMessage.PRODUCT_SELECT_REQUIRED.get());
                 return;
             }
             
             if (category == null) {
-                Notifications.getInstance().show(Notifications.Type.WARNING,"Vui lòng chọn danh mục sản phẩm");
+                Notifications.getInstance().show(Notifications.Type.WARNING, ErrorMessage.PRODUCT_CATEGORY_SELECT_REQUIRED.get());
                 return;
             }
             
@@ -651,8 +664,8 @@ public class ProductController {
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(productForm,
-                        "Lỗi định dạng số: " + e.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PRODUCT_NUMBER_FORMAT_ERROR.format(e.getMessage()),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -675,14 +688,14 @@ public class ProductController {
             if (!profitMarginStr.isEmpty()) {
                 profitMargin = new BigDecimal(profitMarginStr);
                 if (profitMargin.compareTo(BigDecimal.ZERO) < 0) {
-                    throw new NumberFormatException("Tỷ suất lợi nhuận không được âm");
+                    throw new NumberFormatException("Rate of profit margin must be non-negative");
                 }
             }
             
             // Lấy thông tin sản phẩm cũ để so sánh
             Product oldProduct = productRepository.findById(productId).orElse(null);
             if (oldProduct == null) {
-                throw new Exception("Không tìm thấy sản phẩm");
+                throw new Exception("No product found with ID: " + productId);
             }
             
             // Tạo đối tượng sản phẩm để cập nhật
@@ -715,8 +728,8 @@ public class ProductController {
                 // Hỏi người dùng có muốn tính giá bán tự động không
                 int option = JOptionPane.showConfirmDialog(
                     productForm,
-                    "Giá vốn hoặc tỷ suất lợi nhuận đã thay đổi. Bạn có muốn cập nhật giá bán tự động không?",
-                    "Xác nhận",
+                    ErrorMessage.PRODUCT_AUTOMATIC_PRICE_CONFIRM.get(),
+                    ErrorMessage.CONFIRM_TITLE.get(),
                     JOptionPane.YES_NO_OPTION
                 );
                 
@@ -745,7 +758,7 @@ public class ProductController {
                 priceHistoryRepository.save(priceHistory);
             }
             
-            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Cập nhật sản phẩm thành công!");
+            Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.PRODUCT_UPDATE_SUCCESS.get());
 
             resetForm();
             
@@ -753,8 +766,8 @@ public class ProductController {
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(productForm,
-                    "Lỗi khi cập nhật sản phẩm: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PRODUCT_UPDATE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -770,8 +783,8 @@ public class ProductController {
             String productId = table.getValueAt(selectedRow, 0).toString();
             
             int confirm = JOptionPane.showConfirmDialog(productForm, 
-                    "Bạn có chắc muốn xóa sản phẩm này?", 
-                    "Xác nhận xóa", 
+                    ErrorMessage.PRODUCT_DELETE_CONFIRM.get(), 
+                    ErrorMessage.CONFIRM_TITLE.get(), 
                     JOptionPane.YES_NO_OPTION);
             
             if (confirm == JOptionPane.YES_OPTION) {
@@ -780,16 +793,16 @@ public class ProductController {
                     loadListProducts();
                     resetForm();
 
-                    Notifications.getInstance().show(Notifications.Type.SUCCESS, "Xóa sản phẩm thành công!");
+                    Notifications.getInstance().show(Notifications.Type.SUCCESS, ErrorMessage.PRODUCT_DELETE_SUCCESS.get());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(productForm, "Lỗi khi xóa sản phẩm: " + e.getMessage(), 
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(productForm, ErrorMessage.PRODUCT_DELETE_ERROR.format(e.getMessage()), 
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(productForm, "Vui lòng chọn sản phẩm cần xóa", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(productForm, ErrorMessage.PRODUCT_SELECT_TO_DELETE.get(), 
+                    ErrorMessage.INFO_TITLE.get(), JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -832,8 +845,8 @@ public class ProductController {
             updateProductTable(products);
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(productForm, "Lỗi khi sắp xếp sản phẩm: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(productForm, ErrorMessage.PRODUCT_SEARCH_ERROR.format(e.getMessage()), 
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -866,15 +879,15 @@ public class ProductController {
                     });
                     
                 } catch (Exception e) {
-                    System.err.println("Lỗi khi thêm sản phẩm " + product.getProductId() + ": " + e.getMessage());
-                    Notifications.getInstance().show(Type.ERROR, 
-                            "Không thể thêm sản phẩm " + product.getProductId() + " vào bảng");
+                    // System.err.println("Lỗi khi thêm sản phẩm " + product.getProductId() + ": " + e.getMessage());
+                    Notifications.getInstance().show(Type.ERROR,
+                            ErrorMessage.PRODUCT_ADD_ERROR.format(product.getProductId()));
                 }
             }
             
             // System.out.println("Số dòng trong bảng sau khi cập nhật: " + model.getRowCount());
         } catch (Exception e) {
-            System.err.println("Lỗi khi cập nhật bảng: " + e.getMessage());
+            // System.err.println("Lỗi khi cập nhật bảng: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -893,8 +906,8 @@ public class ProductController {
             
         } catch (Exception e) {
             JOptionPane.showMessageDialog(productForm,
-                    "Lỗi khi khởi tạo dữ liệu: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PRODUCT_INIT_DATA_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -916,8 +929,8 @@ public class ProductController {
             
         } catch (Exception e) {
                     JOptionPane.showMessageDialog(productForm,
-                            "Lỗi khi tải danh sách danh mục: " + e.getMessage(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
+                            ErrorMessage.PRODUCT_CATEGORY_LOAD_ERROR.format(e.getMessage()),
+                            ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
         }
     }
@@ -951,12 +964,12 @@ public class ProductController {
             String profitMarginStr = productForm.getTxtProfit().getText().trim();
             
             if (costPriceStr.isEmpty()) {
-                Notifications.getInstance().show(Type.ERROR, "Vui lòng nhập giá vốn");
+                Notifications.getInstance().show(Type.ERROR, ErrorMessage.PRODUCT_COST_PRICE_EMPTY_ERROR.get());
                 return;
             }
     
             if (profitMarginStr.isEmpty()) {
-                Notifications.getInstance().show(Type.ERROR, "Vui lòng nhập tỷ suất lợi nhuận");
+                Notifications.getInstance().show(Type.ERROR, ErrorMessage.PRODUCT_PROFIT_MARGIN_EMPTY_ERROR.get());
                 profitMarginStr = "0";
             }
             
@@ -965,7 +978,7 @@ public class ProductController {
             BigDecimal profitMargin = new BigDecimal(profitMarginStr);
             
             if (profitMargin.compareTo(BigDecimal.ZERO) < 0) {
-                Notifications.getInstance().show(Type.ERROR, "Tỷ suất lợi nhuận không được âm");
+                Notifications.getInstance().show(Type.ERROR, ErrorMessage.PRODUCT_PROFIT_MARGIN_NEGATIVE_ERROR.get());
                 return;
             }
             
@@ -976,9 +989,10 @@ public class ProductController {
             productForm.getPriceField().setText(sellingPrice.toString());
 
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(productForm, 
-                "Định dạng số không hợp lệ", 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(productForm,
+        ErrorMessage.PRODUCT_SELLING_PRICE_VALIDATION_ERROR.get(),
+        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 
@@ -992,12 +1006,12 @@ public class ProductController {
             String sellingPriceStr = productForm.getPriceField().getText().trim().replaceAll("\\.", "").replaceAll("\\,", "");
             
             if (costPriceStr.isEmpty()) {
-                Notifications.getInstance().show(Type.ERROR, "Vui lòng nhập giá vốn");
+                Notifications.getInstance().show(Type.ERROR, ErrorMessage.PRODUCT_COST_PRICE_EMPTY_ERROR.get());
                 return;
             }
     
             if (sellingPriceStr.isEmpty()) {
-                Notifications.getInstance().show(Type.ERROR, "Vui lòng nhập giá bán");
+                Notifications.getInstance().show(Type.ERROR, ErrorMessage.PRODUCT_SELLING_PRICE_EMPTY_ERROR.get());
                 return;
             }
             
@@ -1006,7 +1020,7 @@ public class ProductController {
             BigDecimal sellingPrice = new BigDecimal(sellingPriceStr);
             
             if (costPrice.compareTo(BigDecimal.ZERO) <= 0) {
-                Notifications.getInstance().show(Type.ERROR, "Giá vốn phải lớn hơn 0");
+                Notifications.getInstance().show(Type.ERROR, ErrorMessage.PRODUCT_COST_PRICE_VALIDATION_ERROR.get());
                 return;
             }
             
@@ -1018,8 +1032,8 @@ public class ProductController {
 
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(productForm, 
-                "Định dạng số không hợp lệ", 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.PRODUCT_SELLING_PRICE_VALIDATION_ERROR.get(), 
+                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1028,8 +1042,8 @@ public class ProductController {
      */
     public void handleUpdateButtonClick() {
         int confirm = JOptionPane.showConfirmDialog(productForm,
-                "Bạn có chắc muốn cập nhật sản phẩm này?",
-                "Xác nhận cập nhật",
+                ErrorMessage.PRODUCT_UPDATE_CONFIRM.get(),
+                ErrorMessage.PRODUCT_CONFIRM_UPDATE_TITLE.get(),
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.QUESTION_MESSAGE);
 
@@ -1065,7 +1079,7 @@ public class ProductController {
     private void resetForm() {
         // Xóa dữ liệu trong form
         productForm.getNameField().setText("");
-        productForm.getTxtManufacturer().setText("0");
+        productForm.getTxtManufacturer().setText(ErrorMessage.PRODUCT_N_A.get());
         productForm.getPriceField().setText("0");
         productForm.getSpecificationsArea().setText("");
         productForm.getDescriptionArea().setText("");
@@ -1094,16 +1108,16 @@ public class ProductController {
     public void exportToExcel() {
         try {
             if (productRepository == null) {
-                JOptionPane.showMessageDialog(productForm, "Chưa kết nối tới CSDL", 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(productForm, ErrorMessage.PRODUCT_NO_CONNECTION.get(), 
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
             List<Product> products = productRepository.findAll();
             if (products == null || products.isEmpty()) {
                 JOptionPane.showMessageDialog(productForm, 
-                        "Không có dữ liệu sản phẩm để xuất",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.PRODUCT_EXPORT_NO_DATA.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
             
@@ -1144,17 +1158,17 @@ public class ProductController {
             
             if (success) {
                 JOptionPane.showMessageDialog(productForm,
-                        "Xuất Excel thành công!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.PRODUCT_EXPORT_SUCCESS.get(),
+                        ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(productForm,
-                        "Xuất Excel không thành công!",
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.PRODUCT_EXPORT_FAILED.get(),
+                        ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(productForm, 
-                    "Lỗi khi xuất Excel: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.PRODUCT_EXPORT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -1172,7 +1186,7 @@ public class ProductController {
 
             productForm.getNameField().requestFocus();
         } catch (Exception e) {
-            System.err.println("Error refreshing form: " + e.getMessage());
+            System.err.println(ErrorMessage.PRODUCT_REFRESH_ERROR.format(e.getMessage()));
         }
     }
 }

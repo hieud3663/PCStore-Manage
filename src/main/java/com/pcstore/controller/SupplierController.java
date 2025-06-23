@@ -177,7 +177,7 @@ public class SupplierController implements ActionListener, ListSelectionListener
         isAddingNew = true;
         isEditing = false;
         
-        view.getTxtSupplierId().setText("[Tự động]");
+        view.getTxtSupplierId().setText("[Auto]");
         view.getTableSuppliers().clearSelection();
         
         updateButtonStates(false);

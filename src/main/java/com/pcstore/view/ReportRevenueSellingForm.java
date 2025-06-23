@@ -293,7 +293,7 @@ public class ReportRevenueSellingForm extends javax.swing.JPanel {
 
         txtTotalOrders.setFont(new java.awt.Font("Segoe UI", 1, 14));
         txtTotalOrders.setForeground(new java.awt.Color(0, 69, 196));
-        txtTotalOrders.setText("...");
+        txtTotalOrders.setText(bundle.getString("reportRevenue.default.value"));
         panelContent.add(txtTotalOrders);
 
         // lbTotalRevenue.setFont(new java.awt.Font("Segoe UI", 1, 14));
@@ -313,7 +313,7 @@ public class ReportRevenueSellingForm extends javax.swing.JPanel {
 
         txtAverageOrderValue.setFont(new java.awt.Font("Segoe UI", 1, 14));
         txtAverageOrderValue.setForeground(new java.awt.Color(0, 69, 196));
-        txtAverageOrderValue.setText("...");
+        txtAverageOrderValue.setText(bundle.getString("reportRevenue.default.value"));
         panelContent.add(txtAverageOrderValue);
 
         lbProfit.setFont(new java.awt.Font("Segoe UI", 1, 14));
@@ -323,7 +323,7 @@ public class ReportRevenueSellingForm extends javax.swing.JPanel {
 
         txtProfit.setFont(new java.awt.Font("Segoe UI", 1, 14));
         txtProfit.setForeground(new java.awt.Color(0, 69, 196));
-        txtProfit.setText("...");
+        txtProfit.setText(bundle.getString("reportRevenue.default.value"));
         panelContent.add(txtProfit);
 
         panelBodyTop.add(panelContent);
@@ -341,9 +341,18 @@ public class ReportRevenueSellingForm extends javax.swing.JPanel {
                         { null, null, null, null, null, null, null, null, null, null }
                 },
                 new String[] {
-                        "Mã hóa đơn", "Khách hàng", "Nhân viên", "Số lượng", "Tổng tiền hàng", "Giảm giá", "Doanh thu",
-                        "Thu khác", "Thực thu", "Ghi chú"
+                        bundle.getString("reportRevenue.table.invoiceCode"),
+                        bundle.getString("reportRevenue.table.customer"), 
+                        bundle.getString("reportRevenue.table.employee"),
+                        bundle.getString("reportRevenue.table.quantity"), 
+                        bundle.getString("reportRevenue.table.totalAmount"),
+                        bundle.getString("reportRevenue.table.discount"), 
+                        bundle.getString("reportRevenue.table.revenue"),
+                        bundle.getString("reportRevenue.table.otherIncome"), 
+                        bundle.getString("reportRevenue.table.actualRevenue"),
+                        bundle.getString("reportRevenue.table.note")
                 }) {
+
             boolean[] canEdit = new boolean[] {
                     false, false, false, false, false, false, false, false, false, false
             };
@@ -381,13 +390,13 @@ public class ReportRevenueSellingForm extends javax.swing.JPanel {
 
         lbTotalRevenue.setFont(new java.awt.Font("Segoe UI", 1, 18));
         lbTotalRevenue.setForeground(new java.awt.Color(30, 113, 195));
-        lbTotalRevenue.setText("Tổng Doanh Thu:");
+        lbTotalRevenue.setText(bundle.getString("reportRevenue.footer.totalRevenue"));
         lbTotalRevenue.setFocusable(false);
         panelFooter.add(lbTotalRevenue);
 
         Revenue.setFont(new java.awt.Font("Segoe UI", 1, 18));
         Revenue.setForeground(new java.awt.Color(26, 162, 106));
-        Revenue.setText("                     ");
+        Revenue.setText(bundle.getString("reportRevenue.default.space"));
         Revenue.setBorder(javax.swing.BorderFactory.createMatteBorder(0, 0, 1, 0, new java.awt.Color(204, 204, 204)));
         Revenue.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         Revenue.setFocusable(false);

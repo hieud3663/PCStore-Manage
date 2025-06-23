@@ -91,8 +91,8 @@ public class ReportRevenueSellingController {
             updateDateRange(fromDate, toDate);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(revenueSellingForm,
-                    "Lỗi khởi tạo controller: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.REPORT_REVENUE_CONTROLLER_INIT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -156,7 +156,7 @@ public class ReportRevenueSellingController {
                 isUpdatingToDate = false;
 
                 Notifications.getInstance().show(Notifications.Type.ERROR, 
-                    "Ngày kết thúc đã được cập nhật theo ngày bắt đầu");
+                    ErrorMessage.REPORT_REVENUE_DATE_END_UPDATED.get());
                 return;
             }
 
@@ -183,7 +183,7 @@ public class ReportRevenueSellingController {
             // Kiểm tra nếu ngày kết thúc < ngày bắt đầu
             if (newToDate.isBefore(fromDate)) {
                 Notifications.getInstance().show(Notifications.Type.ERROR,
-                        "Ngày kết thúc không thể nhỏ hơn ngày bắt đầu: " + fromDate.format(dateFormatter));
+                        ErrorMessage.REPORT_REVENUE_DATE_END_BEFORE_START.format(fromDate.format(dateFormatter)));
                 isUpdatingToDate = true;
                 revenueSellingForm.setChooserToDate(toDate);
                 isUpdatingToDate = false;
@@ -252,7 +252,7 @@ public class ReportRevenueSellingController {
                     // Thêm dữ liệu vào bảng
                     Object[] row = {
                         invoice.getInvoiceId(),
-                        invoice.getCustomer() != null ? invoice.getCustomer().getFullName() : "Khách lẻ",
+                        invoice.getCustomer() != null ? invoice.getCustomer().getFullName() : ErrorMessage.REPORT_REVENUE_DEFAULT_CUSTOMER.get(),
                         invoice.getEmployee() != null ? invoice.getEmployee().getFullName() : "",
                         invoiceQuantity,
                         currencyFormatter.format(invoiceTotal),
@@ -278,8 +278,8 @@ public class ReportRevenueSellingController {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, 
-                "Lỗi khi tải dữ liệu doanh thu: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.REPORT_REVENUE_LOAD_DATA_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -370,7 +370,7 @@ public class ReportRevenueSellingController {
 
             if (othersRevenue.compareTo(BigDecimal.ZERO) > 0) {
                 pieChart.addData(new ModelPieChart(
-                    "Khác",
+                    ErrorMessage.REPORT_REVENUE_CHART_OTHER_LABEL.get(),
                     othersRevenue.doubleValue(),
                     colorArray[colorArray.length - 1]
                 ));
@@ -383,7 +383,7 @@ public class ReportRevenueSellingController {
             revenueSellingForm.getPanelChart().repaint();
 
         } catch (Exception e) {
-            System.err.println("Lỗi cập nhật biểu đồ: " + e.getMessage());
+            System.err.println(ErrorMessage.REPORT_REVENUE_CHART_UPDATE_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -411,33 +411,33 @@ public class ReportRevenueSellingController {
             }
 
             // Tên file
-            String fileName = "SELLING_REVENUE_" +
+            String fileName = ErrorMessage.REPORT_REVENUE_EXPORT_FILENAME_PREFIX.get() +
                     fromDate.format(DateTimeFormatter.ofPattern("yyyyMMdd")) + "_" +
                     toDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
             // Metadata
             Map<String, Object> metadata = new LinkedHashMap<>();
-            metadata.put("Từ ngày:", fromDate.format(dateFormatter));
-            metadata.put("Đến ngày:", toDate.format(dateFormatter));
-            metadata.put("Tổng doanh thu:", revenueSellingForm.getRevenue().getText());
-            metadata.put("Tổng đơn hàng:", revenueSellingForm.getTxtTotalOrders().getText());
-            metadata.put("Trung bình/đơn:", revenueSellingForm.getTxtAverageOrderValue().getText());
+            metadata.put(ErrorMessage.REPORT_REVENUE_EXPORT_FROM_DATE.get(), fromDate.format(dateFormatter));
+            metadata.put(ErrorMessage.REPORT_REVENUE_EXPORT_TO_DATE.get(), toDate.format(dateFormatter));
+            metadata.put(ErrorMessage.REPORT_REVENUE_EXPORT_TOTAL_REVENUE.get(), revenueSellingForm.getRevenue().getText());
+            metadata.put(ErrorMessage.REPORT_REVENUE_EXPORT_TOTAL_ORDERS.get(), revenueSellingForm.getTxtTotalOrders().getText());
+            metadata.put(ErrorMessage.REPORT_REVENUE_EXPORT_AVERAGE_ORDER.get(), revenueSellingForm.getTxtAverageOrderValue().getText());
 
             JExcel exporter = new JExcel();
             String filePath = exporter.toExcel(headers, data, 
-                "Báo Cáo Doanh Thu Bán Hàng", metadata, fileName);
+                ErrorMessage.REPORT_REVENUE_EXPORT_SHEET_TITLE.get(), metadata, fileName);
 
             if (filePath != null) {
                 JOptionPane.showMessageDialog(null, 
-                    "Xuất báo cáo thành công: " + filePath,
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    ErrorMessage.REPORT_REVENUE_EXPORT_SUCCESS.format(filePath),
+                    ErrorMessage.INFO_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, 
-                "Lỗi khi xuất báo cáo: " + e.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+                ErrorMessage.REPORT_REVENUE_EXPORT_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 

@@ -67,6 +67,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cmbTimePeriod;
     private javax.swing.JLabel lbTimePeriod;
     private javax.swing.JPanel panelTimePeriod;
+    private final ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
 
     /**
      * Creates new form RevenueDaily
@@ -256,7 +257,11 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
                 {null, null, null, null, null}
             },
             new String [] {
-                "STT", "Mã nhân viên", "Nhân viên", "Số lượng đã bán", "Doanh thu"
+                bundle.getString("txtNo"), 
+                bundle.getString("txtEmployeeID"), 
+                bundle.getString("txtEmployee"), 
+                bundle.getString("txtProductQuantitySell"), 
+                bundle.getString("txtRevenue")
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -368,15 +373,15 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         try {
             lblRank.setIcon(new javax.swing.ImageIcon(getClass().getResource(iconPath)));
         } catch (Exception e) {
-            lblRank.setText("#" + rank);
+            lblRank.setText(bundle.getString("revenueEmployee.medal.alt" + rank));
         }
 
-        JLabel lblName = new JLabel("...");
+        JLabel lblName = new JLabel(bundle.getString("revenueEmployee.default.employee"));
         lblName.setPreferredSize(new Dimension(150, 20));
         lblName.setFont(new java.awt.Font("Segoe UI", 0, 14));
         lblName.setForeground(new Color(30, 113, 195));
         
-        JLabel lblRevenue = new JLabel("0 VNĐ");
+        JLabel lblRevenue = new JLabel(bundle.getString("revenueEmployee.default.revenue"));
         lblRevenue.setForeground(new Color(26, 162, 106));
         lblRevenue.setFont(new java.awt.Font("Segoe UI", 0, 14));
 
@@ -484,8 +489,8 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
     public void updateTopEmployeesPanel(List<Map<String, Object>> topEmployees) {
         if (topEmployees == null || topEmployees.isEmpty()) {
             for (int i = 0; i < Math.min(3, topEmployeeNames.length); i++) {
-                topEmployeeNames[i].setText("...");
-                topEmployeeRevenues[i].setText("0");
+                topEmployeeNames[i].setText(bundle.getString("revenueEmployee.default.employee"));
+                topEmployeeRevenues[i].setText(bundle.getString("revenueEmployee.revenue.zero"));
             }
             return;
         }
@@ -507,8 +512,8 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         }
         
         for (int i = topEmployees.size(); i < topEmployeeNames.length; i++) {
-            topEmployeeNames[i].setText("...");
-            topEmployeeRevenues[i].setText("0 VNĐ");
+            topEmployeeNames[i].setText(bundle.getString("revenueEmployee.default.employee"));
+            topEmployeeRevenues[i].setText(bundle.getString("revenueEmployee.default.revenue"));
         }
     }
 
@@ -531,7 +536,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
         // Thiết lập label
         lbTimePeriod.setFont(new java.awt.Font("Segoe UI", 1, 14));
         lbTimePeriod.setForeground(new java.awt.Color(30, 113, 195));
-        ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         lbTimePeriod.setText(bundle.getString("lbTimePeriod"));
         
         panelTimePeriod.add(lbTimePeriod);
@@ -554,7 +559,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
      * Khởi tạo các mục thời gian cho ComboBox
      */
     private void initializeTimePeriods() {
-        ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.custom"));
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.today"));
         cmbTimePeriod.addItem(bundle.getString("cmbTimePeriod.last7Days"));
@@ -578,7 +583,7 @@ public class RevenueEmployeeForm extends javax.swing.JPanel {
      * Xử lý khi người dùng chọn thời gian từ ComboBox
      */
     private void handleTimePeriodSelection() {
-        ResourceBundle bundle = java.util.ResourceBundle.getBundle("com/pcstore/resources/vi_VN");
+        ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
         String selected = (String) cmbTimePeriod.getSelectedItem();
         LocalDate fromDate = null;
         LocalDate toDate = LocalDate.now();

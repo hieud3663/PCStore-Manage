@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.pcstore.controller.AddInventoryCheckController;
 import com.pcstore.model.Product;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableUtils;
 
 import java.awt.*;
@@ -138,7 +139,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
         dateChooser.setTextRefernce(txtCreateDate);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Tạo phiếu kiểm kê");
+        setTitle(ErrorMessage.ADD_INVENTORY_CHECK_FORM_TITLE.get());
         setResizable(false);
 
         panelMain.setBackground(new java.awt.Color(249, 250, 251));
@@ -151,7 +152,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
 
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(17, 24, 39));
-        lbTitle.setText("TẠO PHIẾU KIỂM KÊ");
+        lbTitle.setText(ErrorMessage.ADD_INVENTORY_CHECK_FORM_TITLE.get().toUpperCase());
         lbTitle.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
         lbTitle.setPreferredSize(new java.awt.Dimension(900, 67));
         panelTop.add(lbTitle, java.awt.BorderLayout.LINE_START);
@@ -206,7 +207,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
 
         chkSelectAll.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         chkSelectAll.setForeground(new java.awt.Color(17, 24, 39));
-        chkSelectAll.setText("Kiểm toàn bộ hàng trong kho");
+        chkSelectAll.setText(ErrorMessage.ADD_INVENTORY_CHECK_SELECT_ALL_INVENTORY.get());
         chkSelectAll.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 0, 10, 0));
         chkSelectAll.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         panelFilter.add(chkSelectAll, java.awt.BorderLayout.LINE_START);
@@ -362,7 +363,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
         panelFormFields.add(lbInventoryWarehouse);
 
         cbbInventoryWarehouse.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        cbbInventoryWarehouse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kho chính" }));
+        cbbInventoryWarehouse.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { ErrorMessage.ADD_INVENTORY_CHECK_MAIN_WAREHOUSE.get() }));
         cbbInventoryWarehouse.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200, 200, 200)));
         cbbInventoryWarehouse.setEnabled(false);
         cbbInventoryWarehouse.setMaximumSize(new java.awt.Dimension(32767, 32));
@@ -377,7 +378,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
 
         txtInventoryName.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         txtInventoryName.setForeground(new java.awt.Color(37, 99, 235));
-        txtInventoryName.setText("Kiểm kê");
+        txtInventoryName.setText(ErrorMessage.ADD_INVENTORY_CHECK_DEFAULT_INVENTORY_NAME.get());
         txtInventoryName.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(200, 200, 200)), javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         txtInventoryName.setMaximumSize(new java.awt.Dimension(32767, 32));
         txtInventoryName.setPreferredSize(new java.awt.Dimension(60, 60));
@@ -477,7 +478,7 @@ public class AddInventoryCheckForm extends javax.swing.JDialog {
     }
 
     private void showEmptyTableMessage() {
-        JLabel emptyLabel = new JLabel("Không có dữ liệu", SwingConstants.CENTER);
+        JLabel emptyLabel = new JLabel(ErrorMessage.ADD_INVENTORY_CHECK_NO_DATA.get(), SwingConstants.CENTER);
         emptyLabel.setFont(new Font("Segoe UI", Font.ITALIC, 14));
         emptyLabel.setForeground(Color.GRAY);
 

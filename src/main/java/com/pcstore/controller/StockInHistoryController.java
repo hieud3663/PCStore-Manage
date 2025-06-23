@@ -36,6 +36,7 @@ import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.BillPrintUtils;
 import com.pcstore.utils.CurrencyFormatter;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
 import com.pcstore.view.StockInHistoryForm;
@@ -82,13 +83,13 @@ public class StockInHistoryController {
             // System.out.println("StockInHistoryController: Khởi tạo thành công");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(historyForm,
-                    "Lỗi kết nối đến cơ sở dữ liệu: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.STOCK_IN_HISTORY_DB_CONNECTION_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(historyForm,
-                    "Lỗi khởi tạo form lịch sử nhập kho: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.STOCK_IN_HISTORY_INIT_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -127,9 +128,9 @@ public class StockInHistoryController {
                 historyForm.enableUpdateStatusButton(false);
             });
 
-            System.out.println("StockInHistoryController: Đăng ký sự kiện thành công");
+            System.out.println(ErrorMessage.STOCK_IN_HISTORY_REGISTER_EVENTS_SUCCESS.get());
         } catch (Exception e) {
-            System.err.println("Lỗi khi đăng ký sự kiện: " + e.getMessage());
+            System.err.println(ErrorMessage.STOCK_IN_HISTORY_REGISTER_EVENTS_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -157,8 +158,8 @@ public class StockInHistoryController {
             // Hiển thị dialog lựa chọn
             String newStatus = (String) JOptionPane.showInputDialog(
                     historyForm,
-                    "Chọn trạng thái mới cho phiếu nhập " + purchaseOrderId + ":",
-                    "Cập Nhật Trạng Thái",
+                    ErrorMessage.STOCK_IN_HISTORY_UPDATE_STATUS_SELECT.format(purchaseOrderId),
+                    ErrorMessage.STOCK_IN_HISTORY_UPDATE_STATUS_TITLE.get(),
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     statuses,
@@ -172,8 +173,8 @@ public class StockInHistoryController {
                 if (updated) {
                     JOptionPane.showMessageDialog(
                             historyForm,
-                            "Đã cập nhật trạng thái phiếu nhập " + purchaseOrderId + " thành " + newStatus,
-                            "Cập Nhật Thành Công",
+                            ErrorMessage.STOCK_IN_HISTORY_UPDATE_STATUS_SUCCESS.format(purchaseOrderId, newStatus),
+                            ErrorMessage.STOCK_IN_HISTORY_UPDATE_STATUS_SUCCESS_TITLE.get(),
                             JOptionPane.INFORMATION_MESSAGE);
 
                     // Làm mới dữ liệu
@@ -181,13 +182,13 @@ public class StockInHistoryController {
                 } else {
                     JOptionPane.showMessageDialog(
                             historyForm,
-                            "Không thể cập nhật trạng thái phiếu nhập.",
-                            "Lỗi Cập Nhật",
+                            ErrorMessage.STOCK_IN_HISTORY_UPDATE_STATUS_ERROR.get(),
+                            ErrorMessage.STOCK_IN_HISTORY_STATUS_TRANSITION_ERROR_TITLE.get(),
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
         } catch (Exception e) {
-            System.err.println("Lỗi khi hiển thị dialog cập nhật trạng thái: " + e.getMessage());
+            System.err.println(ErrorMessage.STOCK_IN_HISTORY_REGISTER_EVENTS_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -220,11 +221,11 @@ public class StockInHistoryController {
 
             // 2. Kiểm tra tính hợp lệ khi chuyển đổi trạng thái
             if (!isValidStatusTransition(currentStatus, newStatus)) {
-                String message = "Không thể chuyển trạng thái từ '" + currentStatus + "' sang '" + newStatus + "'";
+                String message = ErrorMessage.STOCK_IN_HISTORY_STATUS_TRANSITION_ERROR.format(currentStatus, newStatus);
                 System.err.println(message);
                 JOptionPane.showMessageDialog(historyForm,
                         message,
-                        "Lỗi Cập Nhật Trạng Thái",
+                        ErrorMessage.STOCK_IN_HISTORY_STATUS_TRANSITION_ERROR_TITLE.get(),
                         JOptionPane.ERROR_MESSAGE);
                 connection.rollback();
                 return false;
@@ -485,7 +486,7 @@ public class StockInHistoryController {
 
             System.out.println("Số lượng phiếu nhập đã tìm thấy: " + purchaseOrders.size());
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải lịch sử phiếu nhập: " + e.getMessage());
+            System.err.println(ErrorMessage.STOCK_IN_HISTORY_LOAD_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -531,7 +532,7 @@ public class StockInHistoryController {
             // System.out.println("StockInHistoryController: Đã tải " + details.size() +
             // " chi tiết phiếu nhập cho phiếu " + purchaseOrderId);
         } catch (Exception e) {
-            System.err.println("Lỗi khi tải chi tiết phiếu nhập: " + e.getMessage());
+            System.err.println(ErrorMessage.STOCK_IN_HISTORY_LOAD_DETAILS_ERROR.format(e.getMessage()));
             e.printStackTrace();
         }
     }
@@ -546,8 +547,8 @@ public class StockInHistoryController {
                 exportPDF(order);
             } else {
                 JOptionPane.showMessageDialog(historyForm,
-                        "Không tìm thấy thông tin phiếu nhập với mã: " + purchaseOrderId,
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ErrorMessage.STOCK_IN_HISTORY_ORDER_NOT_FOUND.format(purchaseOrderId),
+                        ErrorMessage.STOCK_IN_HISTORY_ORDER_NOT_FOUND_TITLE.get(), JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -562,8 +563,8 @@ public class StockInHistoryController {
             // Validate dữ liệu
             if (purchaseOrder == null) {
                 JOptionPane.showMessageDialog(historyForm,
-                        "Không có dữ liệu phiếu nhập để xuất!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                        ErrorMessage.STOCK_IN_HISTORY_EXPORT_NO_DATA_ERROR.get(),
+                        ErrorMessage.STOCK_IN_HISTORY_EXPORT_NO_DATA_TITLE.get(), JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
 
@@ -574,11 +575,11 @@ public class StockInHistoryController {
             BillPrintUtils.printBill(historyForm, "bill_purchase_order_template", printData, defaultFileName);
 
         } catch (Exception e) {
-            System.err.println("Lỗi khi xuất PDF: " + e.getMessage());
+            System.err.println(ErrorMessage.STOCK_IN_HISTORY_PDF_EXPORT_ERROR.format(e.getMessage()));
             e.printStackTrace();
             JOptionPane.showMessageDialog(historyForm,
-                    "Lỗi khi xuất PDF: " + e.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    ErrorMessage.STOCK_IN_HISTORY_PDF_EXPORT_ERROR.format(e.getMessage()),
+                    ErrorMessage.STOCK_IN_HISTORY_PDF_EXPORT_ERROR_TITLE.get(), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -587,7 +588,6 @@ public class StockInHistoryController {
      */
     private Map<String, Object> createPurchaseOrderPrintData(PurchaseOrder purchaseOrder) throws Exception {
         Map<String, Object> data = new HashMap<>();
-
 
         // 2. Thông tin phiếu nhập
         data.put("purchaseOrderId", purchaseOrder.getPurchaseOrderId());
@@ -609,7 +609,7 @@ public class StockInHistoryController {
             data.put("supplierAddress", supplier.getAddress());
             data.put("supplierPhone", supplier.getPhoneNumber());
         } else {
-            data.put("supplierName", "Chưa xác định");
+            data.put("supplierName", ErrorMessage.STOCK_IN_HISTORY_SUPPLIER_NAME_DEFAULT.get());
             data.put("supplierAddress", "");
             data.put("supplierPhone", "");
         }
@@ -618,10 +618,10 @@ public class StockInHistoryController {
         Employee employee = purchaseOrder.getEmployee();
         if (employee != null) {
             data.put("employeeName", employee.getFullName());
-            data.put("employeePosition", employee.getPosition() != null ? employee.getPosition() : "Nhân viên");
+            data.put("employeePosition", employee.getPosition() != null ? employee.getPosition() : ErrorMessage.STOCK_IN_HISTORY_EMPLOYEE_POSITION_DEFAULT.get());
         } else {
-            data.put("employeeName", "");
-            data.put("employeePosition", "");
+            data.put("employeeName", ErrorMessage.STOCK_IN_HISTORY_EMPLOYEE_NAME_DEFAULT.get());
+            data.put("employeePosition", ErrorMessage.STOCK_IN_HISTORY_EMPLOYEE_NAME_DEFAULT.get());
         }
 
         // 5. Chi tiết sản phẩm
@@ -659,7 +659,7 @@ public class StockInHistoryController {
                     item.put("productName", product.getProductName());
                     item.put("productId", product.getProductId());
                 } else {
-                    item.put("productName", "Không xác định");
+                    item.put("productName", ErrorMessage.STOCK_IN_HISTORY_PRODUCT_NAME_DEFAULT.get());
                     item.put("productId", "");
                 }
 
@@ -672,7 +672,7 @@ public class StockInHistoryController {
 
                 // Ghi chú
                 // item.put("notes", detail.getNotes() != null ? detail.getNotes() : "");
-                item.put("notes", " ");
+                item.put("notes", ErrorMessage.STOCK_IN_HISTORY_NOTES_DEFAULT.get());
 
                 details.add(item);
             }

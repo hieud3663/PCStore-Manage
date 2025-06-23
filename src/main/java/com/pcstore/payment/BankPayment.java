@@ -56,7 +56,7 @@ public class BankPayment extends BasePayment {
         try {
             initPayOS();
         } catch (Exception e) {
-            System.err.println("Lỗi khởi tạo PayOS: " + e.getMessage());
+            System.err.println(ErrorMessage.BANK_PAYMENT_INIT_ERROR.format(e.getMessage()));
         }
     }
     
@@ -72,7 +72,7 @@ public class BankPayment extends BasePayment {
         try {
             initPayOS();
         } catch (Exception e) {
-            System.err.println("Lỗi khởi tạo PayOS: " + e.getMessage());
+            System.err.println(ErrorMessage.BANK_PAYMENT_INIT_ERROR.format(e.getMessage()));
         }
     }
 
@@ -87,7 +87,7 @@ public class BankPayment extends BasePayment {
         try {
             initPayOS();
         } catch (Exception e) {
-            System.err.println("Lỗi khởi tạo PayOS: " + e.getMessage());
+            System.err.println(ErrorMessage.BANK_PAYMENT_INIT_ERROR.format(e.getMessage()));
         }
     }
     
@@ -101,12 +101,12 @@ public class BankPayment extends BasePayment {
             String checksumKey = EnvironmentConfig.getPayOSChecksumKey();
             
             if (clientId == null || apiKey == null || checksumKey == null) {
-                throw new Exception("Thiếu thông tin xác thực PayOS");
+                throw new Exception(ErrorMessage.BANK_PAYMENT_MISSING_CREDENTIALS.get());
             }
             
             payOS = new PayOS(clientId, apiKey, checksumKey);
         } catch (Exception e) {
-            throw new Exception("Lỗi khởi tạo PayOS: " + e.getMessage());
+            throw new Exception(ErrorMessage.BANK_PAYMENT_INIT_PAYOS_ERROR.format(e.getMessage()));
         }
     }
     
@@ -117,7 +117,7 @@ public class BankPayment extends BasePayment {
     public String createPaymentLink() {
         try {
             if (getInvoice() == null) {
-                setDescription("Không có thông tin hóa đơn");
+                setDescription(ErrorMessage.BANK_PAYMENT_NO_INVOICE_INFO.get());
                 return null;
             }
             
@@ -126,7 +126,7 @@ public class BankPayment extends BasePayment {
             
             // Tạo thông tin sản phẩm
             ItemData itemData = ItemData.builder()
-                    .name("Thanh toán hóa đơn #" + getInvoice().getInvoiceId())
+                    .name(ErrorMessage.BANK_PAYMENT_INVOICE_ITEM_NAME.format(getInvoice().getInvoiceId()))
                     .quantity(1)
                     .price(getAmount().intValue())
                     .build();
@@ -135,7 +135,7 @@ public class BankPayment extends BasePayment {
             PaymentData paymentData = PaymentData.builder()
                     .orderCode(orderCode)
                     .amount(getAmount().intValue())
-                    .description("Thanh toán hóa đơn #" + getInvoice().getInvoiceId())
+                    .description(ErrorMessage.BANK_PAYMENT_PAYMENT_DESCRIPTION.format(getInvoice().getInvoiceId()))
                     .returnUrl(returnUrl)
                     .cancelUrl(cancelUrl)
                     .item(itemData)
@@ -147,15 +147,15 @@ public class BankPayment extends BasePayment {
             if (response != null) {
                 this.checkoutUrl = response.getCheckoutUrl();
                 setTransactionReference(orderCode);
-                System.out.println("Tạo link thanh toán thành công: " + checkoutUrl);
+                System.out.println(ErrorMessage.BANK_PAYMENT_PAYMENT_LINK_SUCCESS.format(checkoutUrl));
                 return checkoutUrl;
             } else {
-                System.err.println("Tạo link thanh toán thất bại");
+                System.err.println(ErrorMessage.BANK_PAYMENT_PAYMENT_LINK_FAILED.get());
                 return null;
             }
             
         } catch (Exception e) {
-            System.err.println("Lỗi khi tạo link thanh toán: " + e.getMessage());
+            System.err.println(ErrorMessage.BANK_PAYMENT_CREATE_LINK_ERROR.format(e.getMessage()));
             e.printStackTrace();
             return null;
         }
@@ -183,22 +183,22 @@ public class BankPayment extends BasePayment {
                     this.isVerified = true;
                     setStatus(InvoiceStatusEnum.COMPLETED);
                     setPaymentDate(LocalDateTime.now());
-                    setDescription("Thanh toán ngân hàng thành công");
+                    setDescription(ErrorMessage.BANK_PAYMENT_SUCCESS_DESCRIPTION.get());
                     
                     // Cập nhật trạng thái hóa đơn
                     if (getInvoice() != null) {
                         getInvoice().setStatus(InvoiceStatusEnum.COMPLETED);
                     }
                     
-                    System.out.println("Thanh toán thành công. Mã đơn hàng: " + orderCode);
+                    System.out.println(ErrorMessage.BANK_PAYMENT_STATUS_SUCCESS.format(orderCode));
                     return 1;
                 } else if ("PENDING".equals(status)) {
                     // Đang chờ thanh toán
-                    System.out.println("Đang chờ thanh toán...");
+                    System.out.println(ErrorMessage.BANK_PAYMENT_STATUS_PENDING.get());
                     return 0;
                 } else {
                     // Thanh toán thất bại hoặc bị hủy
-                    System.out.println("Thanh toán thất bại hoặc bị hủy");
+                    System.out.println(ErrorMessage.BANK_PAYMENT_STATUS_FAILED_OR_CANCELLED.get());
                     return -1;
                 }
             } else {
@@ -206,7 +206,7 @@ public class BankPayment extends BasePayment {
             }
             
         } catch (Exception e) {
-            System.err.println("Lỗi khi kiểm tra trạng thái thanh toán: " + e.getMessage());
+            System.err.println(ErrorMessage.BANK_PAYMENT_CHECK_STATUS_ERROR.format(e.getMessage()));
             e.printStackTrace();
             return -1;
         }
@@ -234,7 +234,7 @@ public class BankPayment extends BasePayment {
     @Override
     public boolean processPayment() {
         if (getAmount() == null || getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            setDescription("Số tiền thanh toán không hợp lệ");
+            setDescription(ErrorMessage.BANK_PAYMENT_INVALID_AMOUNT.get());
             return false;
         }
         
@@ -264,11 +264,11 @@ public class BankPayment extends BasePayment {
                 return true;
             } else {
                 setStatus(InvoiceStatusEnum.FAILED);
-                setDescription("Thanh toán ngân hàng thất bại: Giao dịch bị từ chối");
+                setDescription(ErrorMessage.BANK_PAYMENT_FAILED_DESCRIPTION.get());
                 return false;
             }
         } catch (Exception e) {
-            setDescription("Lỗi xử lý thanh toán ngân hàng: " + e.getMessage());
+            setDescription(ErrorMessage.BANK_PAYMENT_ERROR_DESCRIPTION.format(e.getMessage()));
             return false;
         }
     }
@@ -276,7 +276,7 @@ public class BankPayment extends BasePayment {
     @Override
     public boolean processPayment(Component parent) {
         if (getAmount() == null || getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            setDescription("Số tiền thanh toán không hợp lệ");
+            setDescription(ErrorMessage.BANK_PAYMENT_INVALID_AMOUNT.get());
             return false;
         }
         
@@ -287,8 +287,8 @@ public class BankPayment extends BasePayment {
                 setStatus(InvoiceStatusEnum.FAILED);
                 setDescription("Không thể tạo link thanh toán");
                 JOptionPane.showMessageDialog(parent, 
-                    ErrorMessage.PAYMENT_LINK_CREATE_ERROR.toString(), 
-                    ErrorMessage.ERROR_TITLE.toString(), 
+                    ErrorMessage.PAYMENT_LINK_CREATE_ERROR.get(), 
+                    ErrorMessage.ERROR_TITLE.get(), 
                     JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -297,8 +297,8 @@ public class BankPayment extends BasePayment {
             if (!openWebBrowser(paymentUrl)) {
                 setDescription("Không thể mở trình duyệt để thanh toán");
                 JOptionPane.showMessageDialog(parent, 
-                    ErrorMessage.BROWSER_OPEN_ERROR.toString(), 
-                    ErrorMessage.ERROR_TITLE.toString(), 
+                    ErrorMessage.BROWSER_OPEN_ERROR.get(), 
+                    ErrorMessage.ERROR_TITLE.get(), 
                     JOptionPane.ERROR_MESSAGE);
                 return false;
             }
@@ -306,8 +306,8 @@ public class BankPayment extends BasePayment {
             // Hiển thị dialog chờ thanh toán
             int option = JOptionPane.showConfirmDialog(
                 parent,
-                ErrorMessage.PAYMENT_WAITING_MESSAGE.toString(),
-                ErrorMessage.PAYMENT_CONFIRM_TITLE.toString(),
+                ErrorMessage.PAYMENT_WAITING_MESSAGE.get(),
+                ErrorMessage.PAYMENT_CONFIRM_TITLE.get(),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.INFORMATION_MESSAGE
             );
@@ -317,27 +317,27 @@ public class BankPayment extends BasePayment {
                 int status = checkPaymentStatus();
                 if (status == 1) {
                     JOptionPane.showMessageDialog(parent, 
-                        ErrorMessage.PAYMENT_SUCCESS.toString(), 
-                        ErrorMessage.INFO_TITLE.toString(), 
+                        ErrorMessage.PAYMENT_SUCCESS.get(), 
+                        ErrorMessage.INFO_TITLE.get(), 
                         JOptionPane.INFORMATION_MESSAGE);
                     return true;
                 } else {
                     JOptionPane.showMessageDialog(parent, 
-                        ErrorMessage.PAYMENT_VERIFICATION_FAILED.toString(), 
-                        ErrorMessage.WARNING_TITLE.toString(), 
+                        ErrorMessage.PAYMENT_VERIFICATION_FAILED.get(), 
+                        ErrorMessage.WARNING_TITLE.get(), 
                         JOptionPane.WARNING_MESSAGE);
                     return false;
                 }
             } else {
                 setStatus(InvoiceStatusEnum.CANCELLED);
-                setDescription("Người dùng đã hủy thanh toán");
+                setDescription(ErrorMessage.BANK_PAYMENT_USER_CANCELLED.get());
                 return false;
             }
         } catch (Exception e) {
-            setDescription("Lỗi xử lý thanh toán ngân hàng: " + e.getMessage());
+            setDescription(ErrorMessage.BANK_PAYMENT_ERROR_DESCRIPTION.format(e.getMessage()));
             JOptionPane.showMessageDialog(parent, 
-                ErrorMessage.PAYMENT_PROCESSING_ERROR.toString().formatted(e.getMessage()), 
-                ErrorMessage.ERROR_TITLE.toString(), 
+                ErrorMessage.PAYMENT_PROCESSING_ERROR.format(e.getMessage()), 
+                ErrorMessage.ERROR_TITLE.get(), 
                 JOptionPane.ERROR_MESSAGE);
             return false;
         }

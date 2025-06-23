@@ -45,6 +45,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 
+    private final java.util.ResourceBundle bundle = com.pcstore.utils.LocaleManager.getInstance().getResourceBundle();
 
     /**
      * Creates new form ReturnService
@@ -53,10 +54,10 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         initComponents();
         // Khởi tạo bản dịch trạng thái từ tiếng Anh sang tiếng Việt
         statusTranslation = new HashMap<>();
-        statusTranslation.put("Pending", "Đang chờ xử lý");
-        statusTranslation.put("Approved", "Đã phê duyệt");
-        statusTranslation.put("Rejected", "Đã từ chối");
-        statusTranslation.put("Completed", "Đã hoàn thành");
+        statusTranslation.put("Pending", bundle.getString("returnService.status.pending"));
+        statusTranslation.put("Approved", bundle.getString("returnService.status.approved"));
+        statusTranslation.put("Rejected", bundle.getString("returnService.status.rejected"));
+        statusTranslation.put("Completed", bundle.getString("returnService.status.completed"));
         
         addListeners();
         initComponentsCustom();
@@ -79,7 +80,7 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, 
                 ErrorMessage.DB_CONNECTION_ERROR + ": " + ex.getMessage(),
-                "Lỗi kết nối", JOptionPane.ERROR_MESSAGE);
+                bundle.getString("returnService.connectionError"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -231,7 +232,13 @@ public class ReturnServiceForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Mã Sản Phẩm", "Tên Sản Phẩm", "Số Lượng", "Lý Do", "Ngày Đổi/Trả", "Phân Loại", "Trạng Thái"
+                bundle.getString("returnService.table.productCode"),
+                bundle.getString("returnService.table.productName"), 
+                bundle.getString("returnService.table.quantity"),
+                bundle.getString("returnService.table.reason"), 
+                bundle.getString("returnService.table.returnDate"),
+                bundle.getString("returnService.table.category"), 
+                bundle.getString("returnService.table.status")
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -243,16 +250,6 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             }
         });
         ScrollPaneTable.setViewportView(tbReturn);
-        if (tbReturn.getColumnModel().getColumnCount() > 0) {
-            tbReturn.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("return.column.productId"));
-            tbReturn.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("return.column.productName"));
-            tbReturn.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("return.column.quantity"));
-            tbReturn.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("return.column.reason"));
-            tbReturn.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("return.column.returnDate"));
-            tbReturn.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("return.column.category"));
-            tbReturn.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("return.column.status"));
-            tbReturn.getTableHeader().repaint(); // Cập nhật lại giao diện header
-        }
 
         panelBody.add(ScrollPaneTable, java.awt.BorderLayout.CENTER);
 

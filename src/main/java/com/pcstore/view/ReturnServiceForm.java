@@ -244,13 +244,14 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         });
         ScrollPaneTable.setViewportView(tbReturn);
         if (tbReturn.getColumnModel().getColumnCount() > 0) {
-            tbReturn.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("txtReturnProductID")); // NOI18N
-            tbReturn.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("txtReturnProductName")); // NOI18N
-            tbReturn.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("txtReturnQuantity")); // NOI18N
-            tbReturn.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("txtReturnReason")); // NOI18N
-            tbReturn.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("txtReturnDateReturn")); // NOI18N
-            tbReturn.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("txtReturnCategory")); // NOI18N
-            tbReturn.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("txtReturnStatus")); // NOI18N
+            tbReturn.getColumnModel().getColumn(0).setHeaderValue(bundle.getString("return.column.productId"));
+            tbReturn.getColumnModel().getColumn(1).setHeaderValue(bundle.getString("return.column.productName"));
+            tbReturn.getColumnModel().getColumn(2).setHeaderValue(bundle.getString("return.column.quantity"));
+            tbReturn.getColumnModel().getColumn(3).setHeaderValue(bundle.getString("return.column.reason"));
+            tbReturn.getColumnModel().getColumn(4).setHeaderValue(bundle.getString("return.column.returnDate"));
+            tbReturn.getColumnModel().getColumn(5).setHeaderValue(bundle.getString("return.column.category"));
+            tbReturn.getColumnModel().getColumn(6).setHeaderValue(bundle.getString("return.column.status"));
+            tbReturn.getTableHeader().repaint(); // Cập nhật lại giao diện header
         }
 
         panelBody.add(ScrollPaneTable, java.awt.BorderLayout.CENTER);
@@ -300,8 +301,20 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         });
         btnUpdateStatus.addActionListener(this::btnUpdateStatusActionPerformed);
 
-        txtSearch.addActionListener(e -> {
-            if (returnController != null) returnController.searchReturns(this);
+        // Tìm kiếm realtime khi gõ vào ô tìm kiếm
+        txtSearch.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            @Override
+            public void insertUpdate(javax.swing.event.DocumentEvent e) {
+                if (returnController != null) returnController.searchReturns(ReturnServiceForm.this);
+            }
+            @Override
+            public void removeUpdate(javax.swing.event.DocumentEvent e) {
+                if (returnController != null) returnController.searchReturns(ReturnServiceForm.this);
+            }
+            @Override
+            public void changedUpdate(javax.swing.event.DocumentEvent e) {
+                if (returnController != null) returnController.searchReturns(ReturnServiceForm.this);
+            }
         });
     }
 

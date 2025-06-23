@@ -20,6 +20,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.pcstore.model.Warranty;
@@ -58,6 +61,26 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
             initComponents();
             initController();
             TableUtils.applyDefaultStyle(tableListWarranty);
+
+            // Thêm DocumentListener cho tìm kiếm realtime
+            txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    if (controller != null)
+                        controller.searchWarranties(txtSearch.getText().trim());
+                }
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    if (controller != null)
+                        controller.searchWarranties(txtSearch.getText().trim());
+                }
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    if (controller != null)
+                        controller.searchWarranties(txtSearch.getText().trim());
+                }
+            });
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                 this,
@@ -294,7 +317,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     }
    
     
-
+ 
     /**
      * Cập nhật dữ liệu bảng bảo hành từ danh sách
      * @param warranties Danh sách bảo hành để hiển thị
@@ -306,12 +329,7 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
         model.setRowCount(0); // Xóa tất cả các hàng hiện có
         
         if (warranties == null || warranties.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Không có dữ liệu bảo hành nào để hiển thị.",
-                "Thông báo",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+          
             return;
         }
         

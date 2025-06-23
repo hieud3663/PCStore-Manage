@@ -233,7 +233,7 @@ public class DashboardForm extends JFrame {
                 showForm(new ProductForm());
                 break;
             case 2:
-                showForm(new CategoryForm());
+                showForm(new CategoryFormNew());
                 break;
             default:
                 showForm(new ProductForm());

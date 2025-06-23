@@ -7,12 +7,13 @@ package com.pcstore.view;
 import com.pcstore.controller.ReturnController;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
+import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.TableUtils;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -60,8 +61,10 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         addListeners();
         initComponentsCustom();
         initController();
-        setupTable();
-        loadAllReturns();
+        if (returnController != null) {
+            returnController.setupTable(this);
+            returnController.loadAllReturns(this);
+        }
         
     }
 
@@ -75,420 +78,12 @@ public class ReturnServiceForm extends javax.swing.JPanel {
             );
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, 
-                "Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage(),
+                ErrorMessage.DB_CONNECTION_ERROR + ": " + ex.getMessage(),
                 "Lỗi kết nối", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void setupTable() {
-        // Thiết lập mô hình bảng
-        tableModel = (DefaultTableModel) tbReturn.getModel();
-        tableModel.setRowCount(0);
-        
-        // Thiết lập tiêu đề cột
-        String[] columnNames = {
-            "Mã Trả Hàng", "Mã Sản Phẩm", "Tên Sản Phẩm", 
-            "Số Lượng", "Lý Do", "Ngày Trả", "Trạng Thái"
-        };
-        
-        tableModel.setColumnIdentifiers(columnNames);
-        TableUtils.applyDefaultStyle(tbReturn);
-    }
-
-    /**
-     * Phương thức public để tải lại dữ liệu đơn trả hàng
-     * Được gọi từ AddReturnProductForm sau khi tạo đơn trả hàng mới
-     */
-    public void loadAllReturns() {
-        try {
-            if (returnController == null) {
-                return;
-            }
-            
-            // Gọi controller để lấy tất cả đơn trả hàng
-            List<Return> returns = returnController.getAllReturns();
-            displayReturns(returns);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tải dữ liệu đơn trả hàng: " + ex.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * Thêm đơn trả hàng mới vào bảng
-     * @param returnObj Đơn trả hàng mới
-     */
-    public  void addReturnToTable(Return returnObj) {
-        if (returnObj == null) return;
-        
-        String status = returnObj.getStatus();
-        // Dịch trạng thái sang tiếng Việt nếu có
-        String translatedStatus = statusTranslation.getOrDefault(status, status);
-        
-        Object[] rowData = {
-            returnObj.getReturnId(),
-            returnObj.getInvoiceDetail().getProduct().getProductId(),
-            returnObj.getInvoiceDetail().getProduct().getProductName(),
-            returnObj.getQuantity(),
-            returnObj.getReason(),
-            returnObj.getReturnDate().format(dateFormatter),
-            translatedStatus
-        };
-        tableModel.addRow(rowData);
-        
-        // Cuộn đến dòng mới thêm vào
-        int lastRow = tableModel.getRowCount() - 1;
-        if (lastRow >= 0) {
-            tbReturn.scrollRectToVisible(tbReturn.getCellRect(lastRow, 0, true));
-            tbReturn.setRowSelectionInterval(lastRow, lastRow);
-        }
-    }
-
-    private void displayReturns(List<Return> returns) {
-        // Xóa dữ liệu cũ
-        tableModel.setRowCount(0);
-        
-        // Hiển thị dữ liệu mới
-        for (Return returnObj : returns) {
-            String status = returnObj.getStatus();
-            // Dịch trạng thái sang tiếng Việt nếu có
-            String translatedStatus = statusTranslation.getOrDefault(status, status);
-            
-            Object[] rowData = {
-                returnObj.getReturnId(),
-                returnObj.getInvoiceDetail().getProduct().getProductId(),
-                returnObj.getInvoiceDetail().getProduct().getProductName(),
-                returnObj.getQuantity(),
-                returnObj.getReason(),
-                returnObj.getReturnDate().format(dateFormatter),
-                translatedStatus
-            };
-            tableModel.addRow(rowData);
-        }
-        
-        // Cập nhật lại kích thước của các cột để hiển thị tốt hơn
-        if (tbReturn.getColumnCount() > 0) {
-            // Đặt kích thước cột ID
-            tbReturn.getColumnModel().getColumn(0).setPreferredWidth(70);
-            // Đặt kích thước cột ProductID
-            tbReturn.getColumnModel().getColumn(1).setPreferredWidth(100);
-            // Đặt kích thước cột ProductName
-            tbReturn.getColumnModel().getColumn(2).setPreferredWidth(200);
-            // Đặt kích thước cột Quantity
-            tbReturn.getColumnModel().getColumn(3).setPreferredWidth(70);
-            // Đặt kích thước cột Reason (rộng hơn để hiển thị đủ lý do)
-            tbReturn.getColumnModel().getColumn(4).setPreferredWidth(200);
-            // Đặt kích thước cột Date
-            tbReturn.getColumnModel().getColumn(5).setPreferredWidth(150);
-            // Đặt kích thước cột Status
-            tbReturn.getColumnModel().getColumn(6).setPreferredWidth(120);
-        }
-    }
-
-    private void searchReturns() {
-        String keyword = txtSearch.getText().trim();
-        if (keyword.isEmpty()) {
-            loadAllReturns();
-            return;
-        }
-        
-        try {
-            List<Return> searchResults;
-            
-            // Kiểm tra xem từ khóa có phải là ID
-            if (keyword.matches("\\d+")) {
-                // Tìm theo ID
-                Optional<Return> returnById = returnController.getReturnById(Integer.parseInt(keyword));
-                searchResults = returnById.isPresent() ? 
-                    List.of(returnById.get()) : List.of();
-            } 
-            // Kiểm tra xem từ khóa có phải là số điện thoại
-            else if (keyword.matches("\\d{10,11}")) {
-                // Tìm theo số điện thoại khách hàng
-                searchResults = returnController.getReturnsByCustomer(keyword);
-            } 
-            // Kiểm tra xem có phải là mã sản phẩm không
-            else if (keyword.matches("[A-Za-z0-9]+")) {
-                // Tìm theo mã sản phẩm
-                searchResults = returnController.getReturnsByProduct(keyword);
-            } 
-            else {
-                // Tìm kiếm tổng hợp (theo từ khóa trong lý do, tên sản phẩm, v.v.)
-                searchResults = returnController.searchReturns(keyword);
-            }
-            
-            displayReturns(searchResults);
-            
-            if (searchResults.isEmpty()) {
-                JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy đơn trả hàng nào phù hợp với từ khóa: " + keyword,
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tìm kiếm: " + ex.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void openAddReturnForm() {
-        // Mở form thêm đơn trả hàng mới, truyền this để AddReturnProductForm có thể cập nhật lại dữ liệu
-        AddReturnProductForm addForm = new AddReturnProductForm(this);
-        
-        // Hiển thị trong dialog
-        javax.swing.JDialog dialog = new javax.swing.JDialog();
-        dialog.setTitle("Thêm đơn trả hàng mới");
-        dialog.setModal(true);
-        dialog.setSize(1040, 700);
-        dialog.setLocationRelativeTo(this);
-        dialog.add(addForm);
-        dialog.setVisible(true);
-    }
-
-    /**
-     * Hiển thị chi tiết đơn trả hàng khi chọn một dòng và nhấn nút Chi tiết
-     */
-    private void showReturnDetails() {
-        int selectedRow = tbReturn.getSelectedRow();
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, 
-                "Vui lòng chọn một đơn trả hàng để xem chi tiết",
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
-        // Lấy ID của đơn trả hàng được chọn
-        int modelRow = tbReturn.convertRowIndexToModel(selectedRow);
-        Integer returnId = (Integer) tableModel.getValueAt(modelRow, 0);
-        
-        // Hiển thị chi tiết đơn trả hàng
-        try {
-            Optional<Return> returnOpt = returnController.getReturnById(returnId);
-            if (returnOpt.isPresent()) {
-                // Sử dụng ReturnDetailForm để hiển thị thông tin
-                showReturnDetailInDialog(returnOpt.get());
-            } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy thông tin đơn trả hàng với ID: " + returnId, 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tải chi tiết đơn trả hàng: " + ex.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    /**
-     * Hiển thị chi tiết đơn trả hàng trong Dialog sử dụng ReturnDetailForm
-     * @param returnObj Đối tượng Return cần hiển thị
-     */
-    private void showReturnDetailInDialog(Return returnObj) {
-        // Tạo dialog để hiển thị chi tiết
-        javax.swing.JDialog detailDialog = new javax.swing.JDialog();
-        detailDialog.setTitle("Chi tiết đơn trả hàng #" + returnObj.getReturnId());
-        detailDialog.setModal(true);
-        detailDialog.setSize(700, 500);
-        detailDialog.setLocationRelativeTo(this);
-        
-        // Tạo ReturnDetailForm để hiển thị thông tin
-        ReturnDetailForm detailForm = new ReturnDetailForm(returnObj);
-        
-        // Thêm panel chứa nút đóng ở dưới form chi tiết
-        javax.swing.JPanel containerPanel = new javax.swing.JPanel(new java.awt.BorderLayout());
-        containerPanel.add(detailForm, java.awt.BorderLayout.CENTER);
-        
-        javax.swing.JPanel buttonPanel = new javax.swing.JPanel();
-        javax.swing.JButton closeButton = new javax.swing.JButton("Đóng");
-        closeButton.addActionListener(e -> detailDialog.dispose());
-        buttonPanel.add(closeButton);
-        
-        containerPanel.add(buttonPanel, java.awt.BorderLayout.SOUTH);
-        
-        // Thêm vào dialog và hiển thị
-        detailDialog.add(containerPanel);
-        detailDialog.setVisible(true);
-    }
-
-    private void addDetailRow(javax.swing.JPanel panel, String label, String value) {
-        panel.add(new javax.swing.JLabel(label));
-        javax.swing.JTextField field = new javax.swing.JTextField(value);
-        field.setEditable(false);
-        panel.add(field);
-    }
-
-    /**
-     * Xử lý sự kiện khi click vào nút xóa đơn trả hàng
-     */
-    private void deleteSelectedReturn() {
-        // Lấy dòng đang được chọn
-        int selectedRow = tbReturn.getSelectedRow();
-        if (selectedRow == -1) {
-
-            return;
-        }
-        
-        // Chuyển từ dòng hiển thị sang dòng thực trong model (quan trọng khi có sắp xếp)
-        int modelRow = tbReturn.convertRowIndexToModel(selectedRow);
-        
-        // Lấy thông tin từ dòng được chọn
-        Integer returnId = (Integer) tableModel.getValueAt(modelRow, 0);
-        String productName = (String) tableModel.getValueAt(modelRow, 2);
-        String status = (String) tableModel.getValueAt(modelRow, 6);
-        
-        // Kiểm tra trạng thái - chỉ cho phép xóa đơn trả có trạng thái "Đang chờ xử lý"
-        if (!status.equals(statusTranslation.get("Pending"))) {
-            JOptionPane.showMessageDialog(this, 
-                "Chỉ có thể xóa đơn trả hàng ở trạng thái 'Đang chờ xử lý'.\n" +
-                "Đơn trả hàng này đang ở trạng thái: " + status, 
-                "Không thể xóa", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Hiển thị dialog xác nhận
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Bạn có chắc chắn muốn xóa đơn trả hàng này?\n" +
-            "- Mã đơn: " + returnId + "\n" +
-            "- Sản phẩm: " + productName, 
-            "Xác nhận xóa", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        
-        if (confirm != JOptionPane.YES_OPTION) {
-            return; // Người dùng không xác nhận
-        }
-        
-        try {
-            // Gọi controller để xóa đơn trả hàng
-            boolean result = returnController.deleteReturn(returnId);
-            
-            if (result) {
-                // Xóa dòng khỏi bảng
-                tableModel.removeRow(modelRow);
-                
-                JOptionPane.showMessageDialog(this, 
-                    "Đã xóa đơn trả hàng thành công!", 
-                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Không thể xóa đơn trả hàng. Vui lòng thử lại sau!", 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Lỗi khi xóa đơn trả hàng: " + e.getMessage(), 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Cập nhật trạng thái đơn trả hàng
-     */
-    private void updateReturnStatus() {
-        // Lấy dòng đang được chọn
-        int selectedRow = tbReturn.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                "Vui lòng chọn một đơn trả hàng để cập nhật trạng thái",
-                "Thông báo", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Chuyển từ dòng hiển thị sang dòng thực trong model
-        int modelRow = tbReturn.convertRowIndexToModel(selectedRow);
-        
-        // Lấy thông tin từ dòng được chọn
-        Integer returnId = (Integer) tableModel.getValueAt(modelRow, 0);
-        String productName = (String) tableModel.getValueAt(modelRow, 2);
-        String currentStatus = (String) tableModel.getValueAt(modelRow, 6);
-        
-        try {
-            // Lấy thông tin đơn trả hiện tại
-            Optional<Return> returnOptional = returnController.getReturnById(returnId);
-            if (returnOptional.isEmpty()) {
-                JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy thông tin đơn trả hàng với ID: " + returnId, 
-                    "Thông báo", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            Return returnObj = returnOptional.get();
-            
-            // Tạo danh sách các trạng thái có thể chuyển đổi
-            String[] availableStatuses = {"Đang chờ xử lý", "Đã phê duyệt", "Đã từ chối", "Đã hoàn thành"};
-            
-            // Hiển thị dialog để chọn trạng thái mới
-            String newStatus = (String) JOptionPane.showInputDialog(
-                this,
-                "Chọn trạng thái mới cho đơn trả hàng #" + returnId + " - " + productName,
-                "Cập nhật trạng thái",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                availableStatuses,
-                currentStatus
-            );
-            
-            // Nếu người dùng không chọn hoặc hủy
-            if (newStatus == null || newStatus.equals(currentStatus)) {
-                return;
-            }
-            
-            // Chuyển đổi từ tiếng Việt sang tiếng Anh để lưu vào DB
-            String englishStatus = null;
-            for (Map.Entry<String, String> entry : statusTranslation.entrySet()) {
-                if (entry.getValue().equals(newStatus)) {
-                    englishStatus = entry.getKey();
-                    break;
-                }
-            }
-            
-            if (englishStatus == null) {
-                JOptionPane.showMessageDialog(this, 
-                    "Lỗi chuyển đổi trạng thái", 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // Xử lý logic khi chuyển từ Approved (Đã phê duyệt) sang Completed (Đã hoàn thành)
-            if ("Approved".equals(returnObj.getStatus()) && "Completed".equals(englishStatus)) {
-                // Hiển thị xác nhận điều chỉnh kho
-                int option = JOptionPane.showConfirmDialog(this, 
-                    "Khi chuyển sang trạng thái 'Đã hoàn thành', hệ thống sẽ điều chỉnh kho.\n"
-                    + "- Hoàn trả số lượng " + returnObj.getQuantity() + " sản phẩm vào kho.\n"
-                    + "Bạn có chắc chắn muốn tiếp tục?",
-                    "Xác nhận điều chỉnh kho", 
-                    JOptionPane.YES_NO_OPTION);
-                
-                if (option != JOptionPane.YES_OPTION) {
-                    return;
-                }
-            }
-            
-            // Gọi controller để cập nhật trạng thái
-            boolean result = returnController.updateReturnStatus(returnId, englishStatus);
-            
-            if (result) {
-                // Cập nhật lại bảng
-                tableModel.setValueAt(newStatus, modelRow, 6);
-                
-                JOptionPane.showMessageDialog(this, 
-                    "Cập nhật trạng thái thành công!", 
-                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                    
-                // Tải lại dữ liệu để đảm bảo hiển thị đúng
-                loadAllReturns();
-            } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Không thể cập nhật trạng thái. Vui lòng thử lại sau!", 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Lỗi khi cập nhật trạng thái: " + e.getMessage(), 
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -588,10 +183,8 @@ public class ReturnServiceForm extends javax.swing.JPanel {
 
         txtSearch.setToolTipText("");
         txtSearch.setMargin(new java.awt.Insets(2, 6, 2, 0));
-        txtSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtSearchActionPerformed(evt);
-            }
+        txtSearch.addActionListener(e -> {
+            if (returnController != null) returnController.searchReturns(this);
         });
 
         btnReturnInformationLookup.setText(bundle.getString("btnReturnInformationLookup")); // NOI18N
@@ -667,37 +260,49 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         add(pnReturnMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSearchActionPerformed
+    
 
     private void btnRemoveReturnMouseClicked(java.awt.event.MouseEvent evt) {
-        deleteSelectedReturn();
+        if (returnController != null) returnController.deleteSelectedReturn(this);
     }
 
     private void btnRemoveReturnActionPerformed(java.awt.event.ActionEvent evt) {
-        deleteSelectedReturn();
+        if (returnController != null) returnController.deleteSelectedReturn(this);
     }
 
     private void btnReturnInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {
-        searchReturns();
+        if (returnController != null) returnController.searchReturns(this);
     }
 
     private void btnReturnProductActionPerformed(java.awt.event.ActionEvent evt) {
-        openAddReturnForm();
+        if (returnController != null) returnController.openAddReturnForm(this);
     }
 
     private void btnDetailReturnCardActionPerformed(java.awt.event.ActionEvent evt) {
-        showReturnDetails();
+        if (returnController != null) returnController.showReturnDetails(this);
+    }
+
+    private void btnUpdateStatusActionPerformed(java.awt.event.ActionEvent evt) {
+        if (returnController != null) {
+            returnController.handleUpdateReturnStatus(this);
+        }
     }
 
     private void addListeners() {
         btnReturnInformationLookup.addActionListener(this::btnReturnInformationLookupActionPerformed);
         btnReturnProduct.addActionListener(this::btnReturnProductActionPerformed);
         btnDetailReturnCard.addActionListener(this::btnDetailReturnCardActionPerformed);
-        btnRemoveReturn.addActionListener(evt -> deleteSelectedReturn());
-        // Thêm sự kiện cho nút cập nhật trạng thái
-        btnUpdateStatus.addActionListener(evt -> updateReturnStatus());
+        btnRemoveReturn.addActionListener(this::btnRemoveReturnActionPerformed);
+        btnRemoveReturn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRemoveReturnMouseClicked(evt);
+            }
+        });
+        btnUpdateStatus.addActionListener(this::btnUpdateStatusActionPerformed);
+
+        txtSearch.addActionListener(e -> {
+            if (returnController != null) returnController.searchReturns(this);
+        });
     }
 
     private void initComponentsCustom() {
@@ -706,5 +311,12 @@ public class ReturnServiceForm extends javax.swing.JPanel {
         addListeners();
     }
 
-    
+    public JTable getTbReturn() { return tbReturn; }
+    public DefaultTableModel getTableModel() { return tableModel; }
+    public Map<String, String> getStatusTranslation() { return statusTranslation; }
+    public JTextField getTxtSearch() { return txtSearch; }
+    public DateTimeFormatter getDateFormatter() { return dateFormatter; }
+    public ReturnController getReturnController() {
+        return returnController;
+    }
 }

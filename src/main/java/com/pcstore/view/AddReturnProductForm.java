@@ -7,6 +7,7 @@ import com.pcstore.model.InvoiceDetail;
 import com.pcstore.model.Return;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.utils.TableUtils;
+import com.pcstore.utils.ErrorMessage;
 
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -80,7 +81,7 @@ public class AddReturnProductForm extends javax.swing.JPanel {
             loadAllInvoices();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, 
-                "Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage(),
+                ErrorMessage.DB_CONNECTION_ERROR + ": " + ex.getMessage(),
                 "Lỗi kết nối", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
@@ -125,22 +126,15 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     private void searchByPhoneNumber() {
         String phoneNumber = txtSearch.getText().trim();
         if (phoneNumber.isEmpty()) {
-            // Nếu không nhập gì thì hiển thị lại tất cả đơn hàng
             loadAllInvoices();
             return;
         }
-        
         try {
-            // Tìm hóa đơn theo SĐT khách hàng
             List<Invoice> invoices = invoiceController.getInvoicesByCustomerPhone(phoneNumber);
-            
-                      
-            // Hiển thị thông tin các sản phẩm trong hóa đơn
             displayInvoiceDetails(invoices);
-            
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tìm kiếm hóa đơn: " + ex.getMessage(), 
+                ErrorMessage.INVOICE_SEARCH_ERROR + ": " + ex.getMessage(), 
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -237,34 +231,23 @@ public class AddReturnProductForm extends javax.swing.JPanel {
      
     private void loadAllInvoices() {
         try {
-            // Đảm bảo bảng đã được thiết lập
             if (invoiceTableModel == null) {
                 setupTable();
             }
-            
-            // Xóa hết dữ liệu hiện có trong bảng
             invoiceTableModel.setRowCount(0);
-            
             System.out.println("Đang tải danh sách hóa đơn cho trả hàng...");
-            
-            // Sử dụng phương thức mới đơn giản hơn
             List<Invoice> invoices = invoiceController.getAllInvoicesSimple();
-            
             if (invoices.isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-                    "Không tìm thấy hóa đơn nào trong hệ thống.", 
+                    ErrorMessage.INVOICE_LIST_EMPTY, 
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            
             System.out.println("Tìm thấy " + invoices.size() + " hóa đơn.");
-            
-            // Hiển thị thông tin các sản phẩm trong hóa đơn
             displayInvoiceDetails(invoices);
-            
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tải dữ liệu hóa đơn: " + ex.getMessage(), 
+                ErrorMessage.INVOICE_LOAD_ERROR + ": " + ex.getMessage(), 
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
@@ -276,100 +259,80 @@ public class AddReturnProductForm extends javax.swing.JPanel {
     private void createReturn() {
         try {
             System.out.println("Bắt đầu tạo đơn đổi trả...");
-            
-            // Lấy dòng được chọn
             int selectedRow = table.getSelectedRow();
             if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm để trả hàng", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    ErrorMessage.RETURN_SELECT_ONE, 
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
-            // Chuyển từ dòng hiển thị sang dòng thực trong model (quan trọng khi có sắp xếp)
             selectedRow = table.convertRowIndexToModel(selectedRow);
-            
-            // Lấy thông tin từ dòng được chọn
             int invoiceDetailId = Integer.parseInt(invoiceTableModel.getValueAt(selectedRow, 0).toString());
             String productName = invoiceTableModel.getValueAt(selectedRow, 2).toString();
             int availableQuantity = Integer.parseInt(invoiceTableModel.getValueAt(selectedRow, 4).toString());
             String invoiceDateStr = invoiceTableModel.getValueAt(selectedRow, 5).toString();
-            
             System.out.println("Thông tin sản phẩm: ID=" + invoiceDetailId + ", Tên=" + productName + ", SL=" + availableQuantity);
-            
-            // Kiểm tra còn hàng để trả không
             if (availableQuantity <= 0) {
-                JOptionPane.showMessageDialog(this, "Sản phẩm này đã trả hết", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    ErrorMessage.RETURN_NO_QUANTITY, 
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            
-            // Chuyển đổi ngày hóa đơn từ chuỗi
             LocalDateTime invoiceDate = LocalDateTime.parse(invoiceDateStr, dateFormatter);
             LocalDateTime now = LocalDateTime.now();
-            
-            // Kiểm tra hạn 30 ngày
             long daysBetween = ChronoUnit.DAYS.between(invoiceDate.toLocalDate(), now.toLocalDate());
             if (daysBetween > 30) {
                 int option = JOptionPane.showConfirmDialog(this, 
-                    "Sản phẩm này đã quá 30 ngày kể từ ngày mua (" + daysBetween + " ngày).\n"
-                    + "Việc trả hàng có thể bị từ chối hoặc áp dụng điều kiện đặc biệt.\n"
-                    + "Bạn vẫn muốn tiếp tục?",
+                    String.format(ErrorMessage.RETURN_OVER_30_DAYS.toString(), daysBetween),
                     "Cảnh báo", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                
                 if (option != JOptionPane.YES_OPTION) {
                     return;
                 }
             }
-            
-            // Sử dụng toàn bộ số lượng có sẵn
             int quantity = availableQuantity;
-           
-            // Nhập lý do trả hàng
             String reason = JOptionPane.showInputDialog(this, 
-                "Nhập lý do trả hàng:", "Lý do", JOptionPane.QUESTION_MESSAGE);
-            
+                ErrorMessage.RETURN_INPUT_REASON, "Lý do", JOptionPane.QUESTION_MESSAGE);
             if (reason == null || reason.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập lý do trả hàng", "Thông báo", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    ErrorMessage.RETURN_REASON_EMPTY, 
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-           
-            // Tạo đơn trả hàng với toàn bộ số lượng
             Return returnObj = returnController.createReturn(invoiceDetailId, quantity, reason);
-            
             if (returnObj != null) {
                 System.out.println("Tạo đơn trả hàng thành công: ID=" + returnObj.getReturnId());
-                JOptionPane.showMessageDialog(this, "Đã tạo đơn trả hàng thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                
-                // Cập nhật lại bảng
+                JOptionPane.showMessageDialog(this, 
+                    ErrorMessage.RETURN_CREATE_SUCCESS.toString(), 
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 loadAllInvoices();
-                
-                // Gọi phương thức cập nhật danh sách đơn trả hàng ở form cha
                 if (parentForm != null) {
-                    parentForm.loadAllReturns();
+                    if (parentForm.getReturnController() != null) {
+                        parentForm.getReturnController().loadAllReturns(parentForm);
+                    }
                 }
             } else {
                 System.err.println("Không thể tạo đơn trả hàng");
-                JOptionPane.showMessageDialog(this, "Không thể tạo đơn trả hàng", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, 
+                    ErrorMessage.RETURN_CREATE_FAIL.toString(), 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
-            
         } catch (Exception ex) {
-            System.err.println("Lỗi khi tạo đơn trả hàng: " + ex.getMessage());
+            System.err.println(ErrorMessage.RETURN_CREATE_ERROR + ": " + ex.getMessage());
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, 
-                "Lỗi khi tạo đơn trả hàng: " + ex.getMessage(), 
+                ErrorMessage.RETURN_CREATE_ERROR + ": " + ex.getMessage(), 
                 "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     // Thêm xử lý sự kiện cho các nút trong form
     private void addListeners() {
-        System.out.println("Đăng ký sự kiện cho các nút...");
         
         btnReturnInformationLookup.addActionListener(e -> {
-            System.out.println("Nút tìm kiếm được nhấn");
             searchByPhoneNumber();
         });
         
         btnWarranty.addActionListener(e -> {
-            System.out.println("Nút đổi trả được nhấn");
             createReturn();
         });
 

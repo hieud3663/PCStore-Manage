@@ -153,6 +153,39 @@ public class CategoryService {
         }
     }
 
+    /**
+     * Sinh mã danh mục mới tự động (ví dụ: DM001, DM002, ...)
+     * @return mã danh mục mới
+     */
+    public String generateCategoryId() {
+        List<Category> categories = getAllCategories();
+        int max = 0;
+        for (Category c : categories) {
+            String id = c.getCategoryId();
+            if (id != null && id.startsWith("DM")) {
+                try {
+                    int num = Integer.parseInt(id.substring(2));
+                    if (num > max) max = num;
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        return String.format("DM%03d", max + 1);
+    }
+
+    /**
+     * Kiểm tra danh mục có sản phẩm liên kết không
+     * @param categoryId ID danh mục
+     * @return true nếu có sản phẩm liên kết
+     */
+    public boolean hasProducts(String categoryId) {
+        try {
+            return categoryRepository.hasProducts(categoryId);
+        } catch (Exception e) {
+            System.err.println("Lỗi kiểm tra sản phẩm liên kết: " + e.getMessage());
+            return false;
+        }
+    }
+
     // /**
     //  * Đếm số lượng danh mục
     //  * @return Số lượng danh mục

@@ -2,11 +2,8 @@ package com.pcstore.repository.impl;
 
 import com.pcstore.repository.Repository;
 import com.pcstore.model.Category;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,24 +21,24 @@ public class CategoryRepository implements Repository<Category, String> {
     
     @Override
     public Category add(Category category) {
-        String sql = "INSERT INTO Categories (CategoryName) VALUES (?)";
-        
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, category.getCategoryName());
-            
-            statement.executeUpdate();
-            
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                String generatedId = generatedKeys.getString(1);
-                category.setCategoryId(generatedId);
+        String sql = "INSERT INTO Categories (CategoryID, CategoryName, Description, Status, CreatedAt) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, category.getCategoryId());
+            statement.setString(2, category.getCategoryName());
+            statement.setString(3, category.getDescription());
+            statement.setString(4, category.getStatus()); // Thêm dòng này
+            java.sql.Timestamp now = java.sql.Timestamp.valueOf(java.time.LocalDateTime.now());
+            statement.setTimestamp(5, now);
+
+
+            int rows = statement.executeUpdate();
+            if (rows > 0) {
+                category.setCreatedAt(now.toLocalDateTime());
+                category.setUpdatedAt(now.toLocalDateTime());
+                return category;
+            } else {
+                throw new RuntimeException("Error adding category");
             }
-            
-            LocalDateTime now = LocalDateTime.now();
-            category.setCreatedAt(now);
-            category.setUpdatedAt(now);
-            
-            return category;
         } catch (SQLException e) {
             throw new RuntimeException("Error adding category", e);
         }
@@ -49,14 +46,13 @@ public class CategoryRepository implements Repository<Category, String> {
     
     @Override
     public Category update(Category category) {
-        String sql = "UPDATE Categories SET CategoryName = ? WHERE CategoryID = ?";
-        
+        String sql = "UPDATE Categories SET CategoryName = ?, Description = ?, Status = ? WHERE CategoryID = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, category.getCategoryName());
-            statement.setString(2, category.getCategoryId());
-            
+            statement.setString(2, category.getDescription());
+            statement.setString(3, category.getStatus()); // Thêm dòng này
+            statement.setString(4, category.getCategoryId());
             statement.executeUpdate();
-            
             category.setUpdatedAt(LocalDateTime.now());
             return category;
         } catch (SQLException e) {
@@ -183,13 +179,16 @@ public class CategoryRepository implements Repository<Category, String> {
         }
     }
     
-    private Category mapResultSetToCategory(ResultSet resultSet) throws SQLException {
+    private Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category category = new Category();
-        category.setCategoryId(resultSet.getString("CategoryID"));
-        category.setCategoryName(resultSet.getString("CategoryName"));
-        
-        // Products sẽ được load khi cần thông qua ProductRepository
-        
+        category.setCategoryId(rs.getString("CategoryID"));
+        category.setCategoryName(rs.getString("CategoryName"));
+        category.setDescription(rs.getString("Description"));
+        category.setStatus(rs.getString("Status")); // Thêm dòng này
+        Timestamp createdAt = rs.getTimestamp("CreatedAt");
+        if (createdAt != null) {
+            category.setCreatedAt(createdAt.toLocalDateTime());
+        }
         return category;
     }
 }

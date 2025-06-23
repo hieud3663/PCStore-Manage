@@ -153,6 +153,25 @@ public class CategoryService {
         }
     }
 
+    /**
+     * Sinh mã danh mục mới tự động (ví dụ: DM001, DM002, ...)
+     * @return mã danh mục mới
+     */
+    public String generateCategoryId() {
+        List<Category> categories = getAllCategories();
+        int max = 0;
+        for (Category c : categories) {
+            String id = c.getCategoryId();
+            if (id != null && id.startsWith("DM")) {
+                try {
+                    int num = Integer.parseInt(id.substring(2));
+                    if (num > max) max = num;
+                } catch (NumberFormatException ignored) {}
+            }
+        }
+        return String.format("DM%03d", max + 1);
+    }
+
     // /**
     //  * Đếm số lượng danh mục
     //  * @return Số lượng danh mục

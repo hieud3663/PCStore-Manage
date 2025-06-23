@@ -8,112 +8,159 @@ import com.pcstore.view.SupplierForm;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Controller cho SupplierForm với các chức năng thêm, xem, lưu, xóa và làm mới
+ * Xử lý tất cả logic và tương tác với model, cập nhật view
  */
-public class SupplierController {
+public class SupplierController implements ActionListener, ListSelectionListener {
+    
     // Singleton instance
     private static SupplierController instance;
     
-    // Services
+    // Services (Model)
     private SupplierService supplierService;
     
-    // UI related
-    private SupplierForm supplierForm;
+    // View
+    private SupplierForm view;
+    
+    // Data
     private List<Supplier> supplierList;
     private Supplier selectedSupplier;
-    private TableRowSorter<TableModel> supplierTableSorter;
+    private TableRowSorter<TableModel> tableSorter;
+    
+    // State
+    private boolean isAddingNew = false;
+    private boolean isEditing = false;
     
     /**
      * Lấy instance duy nhất của controller (Singleton pattern)
-     * @param supplierForm Form hiển thị nhà cung cấp
+     * @param view Form hiển thị nhà cung cấp
      * @return SupplierController instance
      */
-    public static synchronized SupplierController getInstance(SupplierForm supplierForm) {
+    public static synchronized SupplierController getInstance(SupplierForm view) {
         if (instance == null) {
-            instance = new SupplierController(supplierForm);
-        } else if (instance.supplierForm != supplierForm) {
-            // Cập nhật form nếu khác với instance hiện tại
-            instance.supplierForm = supplierForm;
-            instance.setupEventListeners();
-            instance.setupTableStyle();
-            instance.loadAllSuppliers();
+            instance = new SupplierController(view);
+        } else if (instance.view != view) {
+            instance.view = view;
+            instance.setupEventHandlers();
         }
         return instance;
     }
     
     /**
-     * Khởi tạo controller với form (Giao diện người dùng)
-     * @param supplierForm Form hiển thị nhà cung cấp
+     * Khởi tạo controller với view
      */
-    public SupplierController(SupplierForm supplierForm) {
+    private SupplierController(SupplierForm view) {
         try {
+            // Lấy service từ ServiceFactory
             this.supplierService = ServiceFactory.getInstance().getSupplierService();
-            this.supplierForm = supplierForm;
+            
+            // Gán view
+            this.view = view;
+            view.setController(this);
+            
+            // Khởi tạo danh sách
             this.supplierList = new ArrayList<>();
-
-            setupEventListeners();
-            setupTableStyle();
+            
+            // Thiết lập xử lý sự kiện
+            setupEventHandlers();
+            
+            // Thiết lập bộ lọc bảng
+            setupTableSorter();
+            
+            // Tải dữ liệu ban đầu
             loadAllSuppliers();
-            clearForm();
             
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, 
-                    "Lỗi khởi tạo SupplierController: " + e.getMessage(), 
-                    ErrorMessage.ERROR_TITLE.toString(), 
-                    JOptionPane.ERROR_MESSAGE);
+            showError("Lỗi khởi tạo controller: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
     /**
-     * Thiết lập các sự kiện cho form
+     * Thiết lập xử lý sự kiện cho các thành phần của view
      */
-    private void setupEventListeners() {
-        // Sự kiện khi chọn nhà cung cấp trong bảng
-        supplierForm.getTableSuppliers().getSelectionModel().addListSelectionListener(this::handleSupplierSelection);
+    private void setupEventHandlers() {
+        // Xử lý sự kiện cho các nút
+        view.getBtnAdd().addActionListener(this);
+        view.getBtnSave().addActionListener(this);
+        view.getBtnDelete().addActionListener(this);
+        view.getBtnRefresh().addActionListener(this);
         
-        // Sự kiện cho nút Làm mới
-        supplierForm.getBtnRefresh().addActionListener(e -> {
-            loadAllSuppliers();
-            clearForm();
-        });
-        
-        // Sự kiện cho nút Lưu
-        supplierForm.getBtnSave().addActionListener(e -> {
-            if (supplierForm.isAddingNew()) {
-                addNewSupplier();
-            } else {
-                updateSelectedSupplier();
-            }
-        });
-        
-        // Sự kiện cho nút Xóa
-        supplierForm.getBtnDelete().addActionListener(e -> {
-            deleteSelectedSupplier();
-        });
-        
-        // Sự kiện cho nút Thêm
-        supplierForm.getBtnAdd().addActionListener(e -> {
-            prepareForNewSupplier();
-        });
+        // Xử lý sự kiện chọn dòng trong bảng
+        view.getTableSuppliers().getSelectionModel().addListSelectionListener(this);
     }
-
+    
     /**
-     * Thiết lập style cho bảng
+     * Thiết lập bộ lọc bảng
      */
-    private void setupTableStyle() {
+    private void setupTableSorter() {
         try {
-            supplierTableSorter = new TableRowSorter<>(supplierForm.getTableSuppliers().getModel());
-            supplierForm.getTableSuppliers().setRowSorter(supplierTableSorter);
+            tableSorter = new TableRowSorter<>(view.getTableModel());
+            view.getTableSuppliers().setRowSorter(tableSorter);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Xử lý sự kiện khi các nút được nhấn
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        
+        if (source == view.getBtnAdd()) {
+            prepareForNewSupplier();
+        } 
+        else if (source == view.getBtnSave()) {
+            if (isAddingNew) {
+                saveNewSupplier();
+            } else if (isEditing) {
+                updateSelectedSupplier();
+            }
+        } 
+        else if (source == view.getBtnDelete()) {
+            deleteSelectedSupplier();
+        } 
+        else if (source == view.getBtnRefresh()) {
+            refreshData();
+        }
+    }
+    
+    /**
+     * Xử lý sự kiện khi chọn dòng trong bảng
+     */
+    @Override
+    public void valueChanged(ListSelectionEvent e) {
+        if (!e.getValueIsAdjusting()) {
+            int selectedRow = view.getTableSuppliers().getSelectedRow();
+            if (selectedRow >= 0 && !isAddingNew) {
+                loadSelectedSupplier(selectedRow);
+                updateButtonStates(true);
+            } else if (selectedRow < 0 && !isAddingNew) {
+                selectedSupplier = null;
+                updateButtonStates(false);
+            }
+        }
+    }
+    
+    /**
+     * Xử lý khi người dùng thay đổi nội dung trên form
+     */
+    public void handleFormFieldChange() {
+        if (!isAddingNew && selectedSupplier != null && !isEditing) {
+            isEditing = true;
+            updateButtonStates(true);
         }
     }
     
@@ -122,40 +169,202 @@ public class SupplierController {
      */
     private void prepareForNewSupplier() {
         clearForm();
-        supplierForm.getTxtSupplierId().setText("[Tự động]");
+        isAddingNew = true;
+        isEditing = false;
         
-        // Đảm bảo các trường được làm sạch hoàn toàn
-        supplierForm.getTxtSupplierName().setText("");
-        supplierForm.getTxtPhone().setText("");
-        supplierForm.getTxtEmail().setText("");
-        supplierForm.getTxtAddress().setText("");
+        view.getTxtSupplierId().setText("[Tự động]");
+        view.getTableSuppliers().clearSelection();
+        
+        updateButtonStates(false);
+        view.getBtnSave().setEnabled(true);
+        view.getBtnAdd().setEnabled(false);
+        
+        view.getTxtSupplierName().requestFocus();
+    }
+    
+    /**
+     * Lưu nhà cung cấp mới
+     */
+    private void saveNewSupplier() {
+        try {
+            // Lấy dữ liệu từ form
+            String name = view.getTxtSupplierName().getText().trim();
+            String phone = view.getTxtPhone().getText().trim();
+            String email = view.getTxtEmail().getText().trim();
+            String address = view.getTxtAddress().getText().trim();
+            
+            // Kiểm tra dữ liệu
+            if (name.isEmpty() || phone.isEmpty()) {
+                showWarning("Tên và số điện thoại của nhà cung cấp không được để trống.");
+                return;
+            }
+            
+            // Tạo đối tượng nhà cung cấp mới
+            Supplier newSupplier = new Supplier();
+            newSupplier.setName(name);
+            newSupplier.setPhoneNumber(phone);
+            newSupplier.setEmail(email);
+            newSupplier.setAddress(address);
+            newSupplier.setSupplierId(generateSupplierId());
+            
+            // Thêm vào CSDL
+            supplierService.addSupplier(newSupplier);
+            
+            // Thông báo thành công
+            showInfo("Thêm nhà cung cấp thành công.");
+            
+            // Làm mới dữ liệu và reset trạng thái
+            loadAllSuppliers();
+            clearForm();
+            resetState();
+            
+        } catch (Exception ex) {
+            showError("Lỗi khi thêm nhà cung cấp: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Cập nhật nhà cung cấp đã chọn
+     */
+    private void updateSelectedSupplier() {
+        if (selectedSupplier == null) {
+            showWarning("Vui lòng chọn nhà cung cấp để cập nhật.");
+            return;
+        }
+        
+        try {
+            // Lấy dữ liệu từ form
+            String name = view.getTxtSupplierName().getText().trim();
+            String phone = view.getTxtPhone().getText().trim();
+            String email = view.getTxtEmail().getText().trim();
+            String address = view.getTxtAddress().getText().trim();
+            
+            // Kiểm tra dữ liệu
+            if (name.isEmpty() || phone.isEmpty()) {
+                showWarning("Tên và số điện thoại của nhà cung cấp không được để trống.");
+                return;
+            }
+            
+            // Cập nhật thông tin
+            selectedSupplier.setName(name);
+            selectedSupplier.setPhoneNumber(phone);
+            selectedSupplier.setEmail(email);
+            selectedSupplier.setAddress(address);
+            
+            // Lưu vào CSDL
+            supplierService.updateSupplier(selectedSupplier);
+            
+            // Thông báo thành công
+            showInfo("Cập nhật nhà cung cấp thành công.");
+            
+            // Làm mới dữ liệu và reset trạng thái
+            loadAllSuppliers();
+            clearForm();
+            resetState();
+            
+        } catch (Exception ex) {
+            showError("Lỗi khi cập nhật nhà cung cấp: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Xóa nhà cung cấp đã chọn
+     */
+    private void deleteSelectedSupplier() {
+        if (selectedSupplier == null) {
+            showWarning("Vui lòng chọn nhà cung cấp để xóa.");
+            return;
+        }
+        
+        int confirm = JOptionPane.showConfirmDialog(
+                view, 
+                "Bạn có chắc chắn muốn xóa nhà cung cấp này không?", 
+                "Xác nhận xóa", 
+                JOptionPane.YES_NO_OPTION);
+                
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // Xóa khỏi CSDL
+                supplierService.deleteSupplier(selectedSupplier.getSupplierId());
+                
+                // Thông báo thành công
+                showInfo("Xóa nhà cung cấp thành công.");
+                
+                // Làm mới dữ liệu và form
+                loadAllSuppliers();
+                clearForm();
+                resetState();
+                
+            } catch (Exception e) {
+                showError("Lỗi khi xóa nhà cung cấp: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Làm mới dữ liệu
+     */
+    private void refreshData() {
+        loadAllSuppliers();
+        clearForm();
+        resetState();
     }
     
     /**
      * Tải danh sách tất cả nhà cung cấp
      */
-    public void loadAllSuppliers() {
+    private void loadAllSuppliers() {
         try {
             supplierList = supplierService.getAllSuppliers();
-            updateSupplierTable(supplierList);
+            updateSupplierTable();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Lỗi khi tải danh sách nhà cung cấp: " + e.getMessage(), 
-                    ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
+            showError("Lỗi khi tải danh sách nhà cung cấp: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Tải thông tin nhà cung cấp đã chọn
+     * @param selectedRow Dòng đang chọn
+     */
+    private void loadSelectedSupplier(int selectedRow) {
+        try {
+            if (selectedRow >= 0) {
+                // Chuyển từ view index sang model index nếu có sorter
+                if (view.getTableSuppliers().getRowSorter() != null) {
+                    selectedRow = view.getTableSuppliers().getRowSorter().convertRowIndexToModel(selectedRow);
+                }
+                
+                // Lấy ID từ bảng
+                String supplierId = view.getTableModel().getValueAt(selectedRow, 0).toString();
+                
+                // Tìm nhà cung cấp trong danh sách
+                for (Supplier supplier : supplierList) {
+                    if (supplier.getSupplierId().equals(supplierId)) {
+                        selectedSupplier = supplier;
+                        displaySupplierDetails(supplier);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
     /**
      * Cập nhật bảng nhà cung cấp
-     * @param suppliers Danh sách nhà cung cấp
      */
-    private void updateSupplierTable(List<Supplier> suppliers) {
-        DefaultTableModel tableModel = (DefaultTableModel) supplierForm.getTableSuppliers().getModel();
-        tableModel.setRowCount(0);
+    private void updateSupplierTable() {
+        // Xóa tất cả dữ liệu cũ
+        view.getTableModel().setRowCount(0);
         
-        for (Supplier supplier : suppliers) {
-            tableModel.addRow(new Object[] {
+        // Thêm dữ liệu mới
+        for (Supplier supplier : supplierList) {
+            view.getTableModel().addRow(new Object[] {
                 supplier.getSupplierId(),
                 supplier.getName(),
                 supplier.getPhoneNumber(),
@@ -166,109 +375,23 @@ public class SupplierController {
     }
     
     /**
-     * Xử lý sự kiện khi chọn nhà cung cấp trong bảng
+     * Hiển thị chi tiết nhà cung cấp lên form
+     * @param supplier Nhà cung cấp cần hiển thị
      */
-    private void handleSupplierSelection(ListSelectionEvent e) {
-        if (!e.getValueIsAdjusting()) {
-            int selectedRow = supplierForm.getTableSuppliers().getSelectedRow();
-            if (selectedRow >= 0) {
-                if (supplierForm.getTableSuppliers().getRowSorter() != null) {
-                    selectedRow = supplierForm.getTableSuppliers().getRowSorter().convertRowIndexToModel(selectedRow);
-                }
-                String supplierId = supplierForm.getTableSuppliers().getModel().getValueAt(selectedRow, 0).toString();
-                
-                // Tìm nhà cung cấp được chọn
-                for (Supplier supplier : supplierList) {
-                    if (supplier.getSupplierId().equals(supplierId)) {
-                        selectedSupplier = supplier;
-                        break;
-                    }
-                }
-                
-                // Hiển thị thông tin trên form
-                fillFormWithSelectedSupplier();
-            } else {
-                selectedSupplier = null;
-            }
-        }
-    }
-    
-    /**
-     * Hiển thị thông tin nhà cung cấp được chọn trên form
-     */
-    private void fillFormWithSelectedSupplier() {
-        if (selectedSupplier == null) return;
-        
-        supplierForm.getTxtSupplierId().setText(selectedSupplier.getSupplierId());
-        supplierForm.getTxtSupplierName().setText(selectedSupplier.getName());
-        supplierForm.getTxtPhone().setText(selectedSupplier.getPhoneNumber());
-        supplierForm.getTxtEmail().setText(selectedSupplier.getEmail() != null ? selectedSupplier.getEmail() : "");
-        supplierForm.getTxtAddress().setText(selectedSupplier.getAddress() != null ? selectedSupplier.getAddress() : "");
-    }
-    
-    /**
-     * Thêm mới nhà cung cấp
-     */
-        // ...existing code...
-    
-    /**
-     * Thêm mới nhà cung cấp
-     */
-    private void addNewSupplier() {
-        try {
-            // Lấy thông tin từ form
-            String name = supplierForm.getTxtSupplierName().getText().trim();
-            String phone = supplierForm.getTxtPhone().getText().trim();
-            String email = supplierForm.getTxtEmail().getText().trim();
-            String address = supplierForm.getTxtAddress().getText().trim();
-            
-            // Kiểm tra dữ liệu trước khi thêm
-            if (name.isEmpty() || phone.isEmpty()) {
-                JOptionPane.showMessageDialog(supplierForm, 
-                        "Tên và số điện thoại của nhà cung cấp không được để trống.", 
-                        "Lỗi", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            // Tạo nhà cung cấp mới
-            Supplier newSupplier = new Supplier();
-            newSupplier.setSupplierId(generateSupplierId());
-            newSupplier.setName(name);
-            newSupplier.setPhoneNumber(phone);
-            newSupplier.setEmail(email);
-            newSupplier.setAddress(address);
-            
-            // Thêm vào database
-            supplierService.addSupplier(newSupplier);
-            
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Thêm nhà cung cấp thành công.", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            
-            // Tải lại danh sách và làm mới form
-            loadAllSuppliers();
-            
-            // Đảm bảo đặt lại trạng thái isAddingNew thành false trong SupplierForm
-            supplierForm.resetAddingState();
-            
-            // Sau đó mới xóa form
-            clearForm();
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Lỗi khi thêm nhà cung cấp: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+    private void displaySupplierDetails(Supplier supplier) {
+        view.getTxtSupplierId().setText(supplier.getSupplierId());
+        view.getTxtSupplierName().setText(supplier.getName());
+        view.getTxtPhone().setText(supplier.getPhoneNumber());
+        view.getTxtEmail().setText(supplier.getEmail() != null ? supplier.getEmail() : "");
+        view.getTxtAddress().setText(supplier.getAddress() != null ? supplier.getAddress() : "");
     }
     
     /**
      * Sinh ID mới cho nhà cung cấp
-     * @return ID mới
      */
     private String generateSupplierId() {
-        // Tạo ID theo định dạng "NCC" + số thứ tự 2 chữ số (NCC01, NCC02...)
         int maxId = 0;
+        
         for (Supplier s : supplierList) {
             String id = s.getSupplierId();
             if (id != null && id.startsWith("NCC")) {
@@ -278,7 +401,7 @@ public class SupplierController {
                         maxId = num;
                     }
                 } catch (NumberFormatException e) {
-                    // Ignore
+                    // Bỏ qua
                 }
             }
         }
@@ -287,176 +410,61 @@ public class SupplierController {
     }
     
     /**
-     * Cập nhật thông tin nhà cung cấp đã chọn
+     * Xóa form
      */
-       // ...existing code...
-    
-    /**
-     * Cập nhật thông tin nhà cung cấp đã chọn
-     */
-    private void updateSelectedSupplier() {
-        if (selectedSupplier == null) {
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Vui lòng chọn nhà cung cấp để cập nhật.", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
-        try {
-            // Lấy thông tin từ form
-            String name = supplierForm.getTxtSupplierName().getText().trim();
-            String phone = supplierForm.getTxtPhone().getText().trim();
-            String email = supplierForm.getTxtEmail().getText().trim();
-            String address = supplierForm.getTxtAddress().getText().trim();
-            
-            if (name.isEmpty() || phone.isEmpty()) {
-                JOptionPane.showMessageDialog(supplierForm, 
-                        "Tên và số điện thoại của nhà cung cấp không được để trống.", 
-                        "Lỗi", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
-            
-            // Cập nhật thông tin nhà cung cấp
-            selectedSupplier.setName(name);
-            selectedSupplier.setPhoneNumber(phone);
-            selectedSupplier.setEmail(email);
-            selectedSupplier.setAddress(address);
-            
-            // Cập nhật vào database
-            supplierService.updateSupplier(selectedSupplier);
-            
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Cập nhật nhà cung cấp thành công.", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            
-            // Đảm bảo đặt lại trạng thái trong form
-            supplierForm.resetAddingState();
-            
-            // Tải lại danh sách và xóa form
-            loadAllSuppliers();
-            clearForm();
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Lỗi khi cập nhật nhà cung cấp: " + e.getMessage(), 
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+    private void clearForm() {
+        view.getTxtSupplierId().setText("");
+        view.getTxtSupplierName().setText("");
+        view.getTxtPhone().setText("");
+        view.getTxtEmail().setText("");
+        view.getTxtAddress().setText("");
     }
     
     /**
-     * Xóa nhà cung cấp đã chọn
+     * Reset trạng thái
      */
-    private void deleteSelectedSupplier() {
-        if (selectedSupplier == null) {
-            JOptionPane.showMessageDialog(supplierForm, 
-                    "Vui lòng chọn nhà cung cấp để xóa.", 
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            return;
-        }
-        
-        int confirm = JOptionPane.showConfirmDialog(supplierForm, 
-                "Bạn có chắc chắn muốn xóa nhà cung cấp này không?", 
-                "Xác nhận", JOptionPane.YES_NO_OPTION);
-                
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                // Xóa nhà cung cấp khỏi database
-                supplierService.deleteSupplier(selectedSupplier.getSupplierId());
-                
-                JOptionPane.showMessageDialog(supplierForm, 
-                        "Xóa nhà cung cấp thành công.", 
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                
-                // Tải lại danh sách và xóa form
-                loadAllSuppliers();
-                clearForm();
-                
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(supplierForm, 
-                        "Lỗi khi xóa nhà cung cấp: " + e.getMessage(), 
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }
-    }
-    
-    /**
-     * Phương thức để cập nhật nhà cung cấp từ form
-     * @param supplier Nhà cung cấp cần cập nhật
-     */
-    public void updateSupplier(Supplier supplier) throws Exception {
-        if (supplier == null || supplier.getSupplierId() == null) {
-            throw new Exception("Nhà cung cấp không hợp lệ để cập nhật");
-        }
-        
-        supplierService.updateSupplier(supplier);
-        loadAllSuppliers(); // Tải lại danh sách để cập nhật dữ liệu mới
-    }
-    
-    /**
-     * Phương thức để xóa nhà cung cấp theo ID
-     * @param supplierId ID của nhà cung cấp cần xóa
-     */
-    public void deleteSupplier(String supplierId) throws Exception {
-        if (supplierId == null || supplierId.isEmpty()) {
-            throw new Exception("ID nhà cung cấp không hợp lệ để xóa");
-        }
-        
-        supplierService.deleteSupplier(supplierId);
-        loadAllSuppliers(); // Tải lại danh sách sau khi xóa
-    }
-    
-    /**
-     * Xóa thông tin nhà cung cấp khỏi form
-     */
-    public void clearForm() {
-        if (supplierForm == null) return;
-        
-        // Xóa hoàn toàn các trường dữ liệu
-        supplierForm.getTxtSupplierId().setText("");
-        supplierForm.getTxtSupplierName().setText("");
-        supplierForm.getTxtPhone().setText("");
-        supplierForm.getTxtEmail().setText("");
-        supplierForm.getTxtAddress().setText("");
-        
-        // Reset trạng thái
+    private void resetState() {
+        isAddingNew = false;
+        isEditing = false;
         selectedSupplier = null;
+        view.getTableSuppliers().clearSelection();
+        updateButtonStates(false);
     }
     
     /**
-     * Phương thức để thêm mới nhà cung cấp
-     * @param supplier Nhà cung cấp cần thêm
-     * @throws Exception nếu có lỗi
+     * Cập nhật trạng thái các nút
+     * @param isRowSelected Có dòng nào được chọn không
      */
-    public void addNewSupplier(Supplier supplier) throws Exception {
-        if (supplier == null) {
-            throw new IllegalArgumentException("Nhà cung cấp không được phép null");
+    private void updateButtonStates(boolean isRowSelected) {
+        if (isAddingNew) {
+            view.getBtnAdd().setEnabled(false);
+            view.getBtnSave().setEnabled(true);
+            view.getBtnDelete().setEnabled(false);
+        } else if (isEditing && isRowSelected) {
+            view.getBtnAdd().setEnabled(true);
+            view.getBtnSave().setEnabled(true);
+            view.getBtnDelete().setEnabled(true);
+        } else if (isRowSelected) {
+            view.getBtnAdd().setEnabled(true);
+            view.getBtnSave().setEnabled(false);
+            view.getBtnDelete().setEnabled(true);
+        } else {
+            view.getBtnAdd().setEnabled(true);
+            view.getBtnSave().setEnabled(false);
+            view.getBtnDelete().setEnabled(false);
         }
-        
-        // Kiểm tra dữ liệu bắt buộc
-        if (supplier.getName() == null || supplier.getName().trim().isEmpty()) {
-            throw new IllegalArgumentException("Tên nhà cung cấp không được để trống");
-        }
-        
-        if (supplier.getPhoneNumber() == null || supplier.getPhoneNumber().trim().isEmpty()) {
-            throw new IllegalArgumentException("Số điện thoại không được để trống");
-        }
-        
-        // Sinh ID tự động nếu chưa có
-        if (supplier.getSupplierId() == null || supplier.getSupplierId().isEmpty() 
-                || supplier.getSupplierId().equals("[Tự động]")) {
-            supplier.setSupplierId(generateSupplierId());
-        }
-        
-        try {
-            // Thêm vào database
-            supplierService.addSupplier(supplier);
-            
-            // Tải lại danh sách
-            loadAllSuppliers();
-        } catch (Exception e) {
-            throw new Exception("Không thể thêm nhà cung cấp: " + e.getMessage());
-        }
+    }
+    
+    // Tiện ích hiển thị thông báo
+    private void showInfo(String message) {
+        JOptionPane.showMessageDialog(view, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    private void showWarning(String message) {
+        JOptionPane.showMessageDialog(view, message, "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+    }
+    
+    private void showError(String message) {
+        JOptionPane.showMessageDialog(view, message, ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
     }
 }

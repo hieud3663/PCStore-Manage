@@ -1,20 +1,16 @@
 package com.pcstore.view;
 
 import com.pcstore.controller.SupplierController;
-import com.pcstore.model.Supplier;
-import com.pcstore.service.ServiceFactory;
-import com.pcstore.service.SupplierService;
 import com.pcstore.utils.TableUtils;
 import com.k33ptoo.components.KButton;
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
  * Form quản lý nhà cung cấp với thiết kế hiện đại, sắc nét
+ * View trong mô hình MVC - chỉ chứa giao diện, không xử lý logic
  * 
  * @author MSII
  */
@@ -29,13 +25,11 @@ public class SupplierForm extends JPanel {
     private JLabel lbTitle;
     private JTable tableSuppliers;
     private DefaultTableModel tableModel;
-    private JTextField txtSupplierId, txtSupplierName, txtPhone, txtEmail, txtAddress, txtSearch;
+    private JTextField txtSupplierId, txtSupplierName, txtPhone, txtEmail, txtAddress;
     private KButton btnRefresh, btnSave, btnDelete, btnAdd;
-    private boolean isEditing = false;
-    private boolean isAddingNew = false;
     
     // Controller
-    private SupplierController supplierController;
+    private SupplierController controller;
 
     /**
      * Tạo form quản lý nhà cung cấp
@@ -48,11 +42,8 @@ public class SupplierForm extends JPanel {
         createTopPanel();
         initComponents();
         
-        // Khởi tạo controller
-        supplierController = SupplierController.getInstance(this);
-        
-        // Khởi tạo trạng thái nút
-        updateButtonStates();
+        // Khởi tạo controller và gắn nó với view này
+        controller = SupplierController.getInstance(this);
     }
 
     /**
@@ -217,13 +208,11 @@ public class SupplierForm extends JPanel {
             ));
             f.setBackground(Color.WHITE);
             
-            // Thêm sự kiện key listener để theo dõi khi người dùng bắt đầu chỉnh sửa
-            f.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    if ((!isEditing && !isAddingNew) && f.isEditable()) {
-                        isEditing = true;
-                        updateButtonStates();
+            // Thêm key listener để báo cho controller về sự thay đổi
+            f.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyReleased(java.awt.event.KeyEvent evt) {
+                    if (controller != null) {
+                        controller.handleFormFieldChange();
                     }
                 }
             });
@@ -256,252 +245,8 @@ public class SupplierForm extends JPanel {
 
         // Thêm main vào form với padding
         add(panelMain, BorderLayout.CENTER);
-        
-        // Thêm các listeners cho các nút
-        setupButtonListeners();
     }
-    
-    /**
-     * Thiết lập sự kiện cho các nút
-     */
-    private void setupButtonListeners() {
-        // Nút Làm mới
-        btnRefresh.addActionListener(e -> {
-            clearForm();
-            isEditing = false;
-            isAddingNew = false;
-            updateButtonStates();
-        });
-        
-        // Nút Lưu
-        btnSave.addActionListener(e -> {
-            if (isAddingNew) {
-                // Thêm mới
-                saveNewSupplier();
-            } else if (isEditing) {
-                // Cập nhật
-                updateSupplier();
-            }
-            isEditing = false;
-            isAddingNew = false;
-            updateButtonStates();
-        });
-        
-        // Nút Xóa
-        btnDelete.addActionListener(e -> {
-            deleteSupplier();
-        });
-        
-        // Nút Thêm
-        btnAdd.addActionListener(e -> {
-            prepareForNewSupplier();
-        });
-        
-        // Sự kiện chọn dòng trong bảng
-        tableSuppliers.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                int selectedRow = tableSuppliers.getSelectedRow();
-                if (selectedRow >= 0 && !isAddingNew) {
-                    isAddingNew = false; // Hủy chế độ thêm mới nếu chọn một dòng
-                    updateButtonStates(true);
-                } else {
-                    updateButtonStates(false);
-                }
-            }
-        });
-    }
-    
-    /**
-     * Chuẩn bị form để thêm mới nhà cung cấp
-     */
-    private void prepareForNewSupplier() {
-        clearForm();
-        isAddingNew = true;
-        isEditing = false;
-        
-        // Đặt ID tạm thời
-        txtSupplierId.setText("[Tự động]");
-        
-        // Kích hoạt nút lưu, vô hiệu nút xóa
-        btnSave.setEnabled(true);
-        btnDelete.setEnabled(false);
-        
-        // Focus vào trường đầu tiên
-        txtSupplierName.requestFocus();
-    }
-    
-    /**
-     * Cập nhật trạng thái kích hoạt/vô hiệu của các nút
-     * @param isRowSelected có dòng nào được chọn không
-     */
-    private void updateButtonStates(boolean isRowSelected) {
-        if (isAddingNew) {
-            btnDelete.setEnabled(false);
-            btnSave.setEnabled(true);
-            btnAdd.setEnabled(false);
-        } else {
-            btnDelete.setEnabled(isRowSelected);
-            btnSave.setEnabled(isEditing && isRowSelected);
-            btnAdd.setEnabled(true);
-        }
-    }
-    
-    /**
-     * Cập nhật trạng thái kích hoạt/vô hiệu của các nút
-     */
-    private void updateButtonStates() {
-        updateButtonStates(tableSuppliers.getSelectedRow() >= 0);
-    }
-    
-    /**
-     * Lưu thông tin nhà cung cấp mới
-     */
-    private void saveNewSupplier() {
-        // Kiểm tra dữ liệu nhập
-        String name = txtSupplierName.getText().trim();
-        String phone = txtPhone.getText().trim();
-        String email = txtEmail.getText().trim();
-        String address = txtAddress.getText().trim();
-        
-        if (name.isEmpty() || phone.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                    "Tên và số điện thoại là bắt buộc.",
-                    "Lỗi", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        try {
-            // Tạo đối tượng nhà cung cấp mới
-            Supplier supplier = new Supplier();
-            supplier.setName(name);
-            supplier.setPhoneNumber(phone);
-            supplier.setEmail(email);
-            supplier.setAddress(address);
-            
-            // Gọi thêm mới từ controller
-            supplierController.addNewSupplier(supplier);
-            
-            JOptionPane.showMessageDialog(this,
-                    "Thêm mới nhà cung cấp thành công!",
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            
-            // Làm mới bảng và form
-            supplierController.loadAllSuppliers();
-            clearForm();
-            
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Lỗi khi thêm mới: " + ex.getMessage(),
-                    "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    /**
-     * Cập nhật thông tin nhà cung cấp hiện có
-     */
-    private void updateSupplier() {
-        // Kiểm tra dữ liệu nhập
-        String name = txtSupplierName.getText().trim();
-        String phone = txtPhone.getText().trim();
-        String email = txtEmail.getText().trim();
-        String address = txtAddress.getText().trim();
-        
-        if (name.isEmpty() || phone.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                    "Tên và số điện thoại là bắt buộc.",
-                    "Lỗi", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Nếu có ID (đang sửa)
-        String id = txtSupplierId.getText().trim();
-        if (!id.isEmpty() && !id.equals("[Tự động]")) {
-            try {
-                // Tạo đối tượng nhà cung cấp
-                Supplier supplier = new Supplier();
-                supplier.setSupplierId(id);
-                supplier.setName(name);
-                supplier.setPhoneNumber(phone);
-                supplier.setEmail(email);
-                supplier.setAddress(address);
-                
-                // Gọi cập nhật từ controller
-                supplierController.updateSupplier(supplier);
-                
-                JOptionPane.showMessageDialog(this,
-                        "Cập nhật thành công!",
-                        "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                
-                // Làm mới bảng và form
-                supplierController.loadAllSuppliers();
-                clearForm();
-                
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Lỗi khi cập nhật: " + ex.getMessage(),
-                        "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-    
-    /**
-     * Xóa nhà cung cấp
-     */
-    private void deleteSupplier() {
-        int selectedRow = tableSuppliers.getSelectedRow();
-        if (selectedRow >= 0) {
-            int option = JOptionPane.showConfirmDialog(this,
-                    "Bạn có chắc chắn muốn xóa nhà cung cấp này không?",
-                    "Xác nhận xóa", JOptionPane.YES_NO_OPTION);
-            
-            if (option == JOptionPane.YES_OPTION) {
-                // Chuyển đổi từ model view index sang model index nếu có sorter
-                if (tableSuppliers.getRowSorter() != null) {
-                    selectedRow = tableSuppliers.getRowSorter().convertRowIndexToModel(selectedRow);
-                }
-                
-                String id = tableModel.getValueAt(selectedRow, 0).toString();
-                try {
-                    supplierController.deleteSupplier(id);
-                    JOptionPane.showMessageDialog(this,
-                            "Xóa thành công!",
-                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                    clearForm();
-                    supplierController.loadAllSuppliers();
-                } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(this,
-                            "Lỗi khi xóa: " + ex.getMessage(),
-                            "Lỗi", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
-    }
-    
-    /**
-     * Xóa form
-     */
-    private void clearForm() {
-        txtSupplierId.setText("");
-        txtSupplierName.setText("");
-        txtPhone.setText("");
-        txtEmail.setText("");
-        txtAddress.setText("");
-        tableSuppliers.clearSelection();
-        isEditing = false;
-        isAddingNew = false;
-        updateButtonStates();
-    }
-        // Add this method to SupplierForm class
-    
-    /**
-     * Reset trạng thái thêm mới
-     */
-    public void resetAddingState() {
-        this.isAddingNew = false;
-        this.isEditing = false;
-        updateButtonStates();
-    }
-    
+
     /**
      * Panel bo góc hiện đại
      */
@@ -527,7 +272,7 @@ public class SupplierForm extends JPanel {
         }
     }
 
-    // Getters cho controller để truy cập components
+    // Getters cho các components
     public JTable getTableSuppliers() {
         return tableSuppliers;
     }
@@ -556,10 +301,6 @@ public class SupplierForm extends JPanel {
         return txtAddress;
     }
 
-    public JTextField getTxtSearch() {
-        return txtSearch;
-    }
-
     public KButton getBtnRefresh() {
         return btnRefresh;
     }
@@ -576,8 +317,10 @@ public class SupplierForm extends JPanel {
         return btnAdd;
     }
     
-    // Getter để kiểm tra trạng thái
-    public boolean isAddingNew() {
-        return isAddingNew;
+    /**
+     * Đặt controller cho view
+     */
+    public void setController(SupplierController controller) {
+        this.controller = controller;
     }
 }

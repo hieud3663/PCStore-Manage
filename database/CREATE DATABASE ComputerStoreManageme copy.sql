@@ -1,4 +1,4 @@
--- ### Mô tả quan hệ giữa các bảng:
+-- ### Mô tả quan hệ giữa các bảng:Add commentMore actions
 
 -- 1. **Customers (Khách hàng) ↔ Invoices (Hóa đơn)**
 --    - Mỗi khách hàng **có thể có nhiều** hóa đơn.
@@ -447,7 +447,7 @@ CREATE TABLE InventoryCheckDetails (
     LossValue DECIMAL(15,2) DEFAULT 0, -- Giá trị mất mát (nếu có)
     CreatedAt DATETIME DEFAULT GETDATE(), 
     FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
-    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)Add commentMore actions
 );
 
 -- --Bảng lịch sử kiểm kê
@@ -462,3 +462,8 @@ CREATE TABLE InventoryCheckDetails (
 --     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE CASCADE
 -- );
 
+ALTER TABLE Categories
+ADD 
+    description nchar(500) NULL,
+    CreatedAt datetime NULL,
+    Status nvarchar(50) NULL;

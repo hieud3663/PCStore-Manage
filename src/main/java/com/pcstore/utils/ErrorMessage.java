@@ -16,13 +16,7 @@ public enum ErrorMessage {
     INVALID_VALUE("INVALID_VALUE"), // "Giá trị không hợp lệ. Vui lòng nhập lại."
     VALUE_MUST_BE_POSITIVE("VALUE_MUST_BE_POSITIVE"), // "Giá trị phải là lớn hơn 0"
     ERROR_TITLE("ERROR_TITLE"), // "Lỗi"
-
-    FIELD_EMPTY("FIELD_EMPTY"), // "Phần tử không được để trống"
-    FIELD_NEGATIVE("FIELD_NEGATIVE"), // "Phần tử không được âm"
-    INVALID_VALUE("INVALID_VALUE"), // "Giá trị không hợp lệ. Vui lòng nhập lại."
-    VALUE_MUST_BE_POSITIVE("VALUE_MUST_BE_POSITIVE"), // "Giá trị phải là lớn hơn 0"
-    ERROR_TITLE("ERROR_TITLE"), // "Lỗi"
-
+    
     // User messages
     USERNAME_EMPTY("USERNAME_EMPTY"), // "Tên đăng nhập không được để trống"
     USERNAME_TOO_SHORT("USERNAME_TOO_SHORT"), // "Tên đăng nhập phải có ít nhất 3 ký tự"
@@ -86,12 +80,27 @@ public enum ErrorMessage {
     CUSTOMER_ID_FORMAT("CUSTOMER_ID_FORMAT"), // "Mã khách hàng phải có định dạng KHxx"
 
     // Category error messages
-    CATEGORY_NAME_EMPTY("CATEGORY_NAME_EMPTY"), // "Tên danh mục không được để trống"
-    CATEGORY_SELF_REFERENCE("CATEGORY_SELF_REFERENCE"), // "Danh mục không thể là danh mục cha của chính nó"
-    CATEGORY_CIRCULAR_REFERENCE("CATEGORY_CIRCULAR_REFERENCE"), // "Không thể tạo vòng lặp trong cấu trúc danh mục"
-    SUBCATEGORY_NULL("SUBCATEGORY_NULL"), // "Danh mục con không được để trống"
-    PRODUCT_NULL("PRODUCT_NULL"), // "Sản phẩm không được để trống"
-    PARENT_CATEGORY_NULL("PARENT_CATEGORY_NULL"), // "Danh mục cha không được để trống"
+    CATEGORY_NAME_EMPTY("CATEGORY_NAME_EMPTY"),
+    CATEGORY_SELF_REFERENCE("CATEGORY_SELF_REFERENCE"),
+    CATEGORY_CIRCULAR_REFERENCE("CATEGORY_CIRCULAR_REFERENCE"),
+    SUBCATEGORY_NULL("SUBCATEGORY_NULL"),
+    PRODUCT_NULL("PRODUCT_NULL"),
+    PARENT_CATEGORY_NULL("PARENT_CATEGORY_NULL"),
+    CATEGORY_ADD_SUCCESS("CATEGORY_ADD_SUCCESS"),
+    CATEGORY_ADD_ERROR("CATEGORY_ADD_ERROR"),
+    CATEGORY_SELECT_UPDATE("CATEGORY_SELECT_UPDATE"),
+    CATEGORY_NOT_FOUND_UPDATE("CATEGORY_NOT_FOUND_UPDATE"),
+    CATEGORY_UPDATE_SUCCESS("CATEGORY_UPDATE_SUCCESS"),
+    CATEGORY_UPDATE_ERROR("CATEGORY_UPDATE_ERROR"),
+    CATEGORY_SELECT_DELETE("CATEGORY_SELECT_DELETE"),
+    CATEGORY_DELETE_CONSTRAINT("CATEGORY_DELETE_CONSTRAINT"),
+    CATEGORY_ADD_REQUIRED("CATEGORY_ADD_REQUIRED"),
+    CATEGORY_NAME_EXISTS("CATEGORY_NAME_EXISTS"),
+    CATEGORY_DELETE_CONFIRM("CATEGORY_DELETE_CONFIRM"),
+    CATEGORY_DELETE_SUCCESS("CATEGORY_DELETE_SUCCESS"),
+    CATEGORY_DELETE_FAIL("CATEGORY_DELETE_FAIL"),
+    CATEGORY_DELETE_ERROR("CATEGORY_DELETE_ERROR"),
+    
 
     // Discount error messages
     DISCOUNT_CODE_EMPTY("DISCOUNT_CODE_EMPTY"), // "Mã khuyến mãi không được để trống"
@@ -562,7 +571,192 @@ public enum ErrorMessage {
     INVOICE_DELETE_MAIN_ERROR("INVOICE_DELETE_MAIN_ERROR"), /* "Lỗi khi xóa hóa đơn: %s" */
     INVOICE_SEARCH_INVOICES_ERROR("INVOICE_SEARCH_INVOICES_ERROR"), /* "Lỗi khi tìm kiếm hóa đơn: %s" */
     INVOICE_DELETE_SINGLE_ERROR("INVOICE_DELETE_SINGLE_ERROR"), /* "Lỗi khi xóa hóa đơn: %s" */
-    INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR("INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR"); /* "Lỗi khi xử lý chi tiết hóa đơn %d: %s" */
+    INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR("INVOICE_RETURNABLE_INVOICE_DETAILS_ERROR"), /* "Lỗi khi xử lý chi tiết hóa đơn %d: %s" */
+
+
+    //Revenue
+    // Revenue controller messagesAdd commentMore actions
+    REVENUE_CONTROLLER_INIT_ERROR("REVENUE_CONTROLLER_INIT_ERROR"), // Lỗi khi khởi tạo controller doanh thu: %s
+    DATE_END_UPDATED("DATE_END_UPDATED"), // Ngày kết thúc đã được cập nhật để không nhỏ hơn ngày bắt đầu
+    DATE_END_BEFORE_START("DATE_END_BEFORE_START"), // Ngày kết thúc không được nhỏ hơn ngày bắt đầu (%s)
+    REVENUE_DATA_LOAD_ERROR("REVENUE_DATA_LOAD_ERROR"), // Lỗi khi tải dữ liệu doanh thu: %s
+    EXPORT_REPORT_SUCCESS("EXPORT_REPORT_SUCCESS"), // Xuất báo cáo thành công: %s
+    EXPORT_REPORT_ERROR("EXPORT_REPORT_ERROR"), // Lỗi khi xuất báo cáo: %s
+    REVENUE_BY_PRODUCT_ERROR("REVENUE_BY_PRODUCT_ERROR"), // Lỗi khi lấy doanh thu sản phẩm: %s
+    QUANTITY_SOLD_ERROR("QUANTITY_SOLD_ERROR"), // Lỗi khi lấy số lượng sản phẩm đã bán: %s
+    TOP_SELLING_PRODUCTS_ERROR("TOP_SELLING_PRODUCTS_ERROR"), // Lỗi khi lấy danh sách sản phẩm bán chạy: %s
+    NO_DATA_AVAILABLE("NO_DATA_AVAILABLE"), // Không có dữ liệu
+    DATA_LOAD_ERROR("DATA_LOAD_ERROR"), // Lỗi tải dữ liệu
+    BEST_SELLING_PRODUCT_ERROR("BEST_SELLING_PRODUCT_ERROR"), // Lỗi khi lấy thông tin sản phẩm bán chạy: %s
+    SLOW_SELLING_PRODUCT_ERROR("SLOW_SELLING_PRODUCT_ERROR"), // Lỗi khi lấy thông tin sản phẩm bán chậm: %s
+    PROFIT_MARGIN_ERROR("PROFIT_MARGIN_ERROR"), // Lỗi khi tính tỷ suất lợi nhuận: %s
+    NO_BEST_SELLING_DATA("NO_BEST_SELLING_DATA"), // Không có dữ liệu sản phẩm bán chạy trong khoảng thời gian này
+    BEST_SELLING_DISPLAY_ERROR("BEST_SELLING_DISPLAY_ERROR"), // Lỗi khi hiển thị sản phẩm bán chạy: %s
+    NO_SLOW_SELLING_DATA("NO_SLOW_SELLING_DATA"), // Không có dữ liệu sản phẩm bán chậm trong khoảng thời gian này
+    SLOW_SELLING_DISPLAY_ERROR("SLOW_SELLING_DISPLAY_ERROR"), // Lỗi khi hiển thị sản phẩm bán chậm: %s
+
+    // Revenue Product Controller UI messages
+    PRODUCT_DETAIL_TITLE("PRODUCT_DETAIL_TITLE"), // Chi tiết sản phẩm
+    PRODUCT_DETAIL_MESSAGE("PRODUCT_DETAIL_MESSAGE"), // Sản phẩm: %s\nMã sản phẩm: %s\nDoanh thu: %s\nSố lượng đã bán:
+                                                      // %d
+    OTHER_PRODUCTS_TITLE("OTHER_PRODUCTS_TITLE"), // Danh sách sản phẩm khác
+    OTHER_PRODUCTS_HEADER("OTHER_PRODUCTS_HEADER"), // Các sản phẩm khác:\n\n
+    CLOSE_BUTTON("CLOSE_BUTTON"), // Đóng
+    REVENUE_PIE_CHART_UPDATE_ERROR("REVENUE_PIE_CHART_UPDATE_ERROR"), // Lỗi khi cập nhật biểu đồ tròn: %s
+    REVENUE_PRODUCT_TABLE_STT("REVENUE_PRODUCT_TABLE_STT"), // STT
+    REVENUE_PRODUCT_TABLE_PRODUCT_ID("REVENUE_PRODUCT_TABLE_PRODUCT_ID"), // Mã SP
+    REVENUE_PRODUCT_TABLE_PRODUCT_NAME("REVENUE_PRODUCT_TABLE_PRODUCT_NAME"), // Tên sản phẩm
+    REVENUE_PRODUCT_TABLE_CATEGORY("REVENUE_PRODUCT_TABLE_CATEGORY"), // Danh mục
+    REVENUE_PRODUCT_TABLE_QUANTITY("REVENUE_PRODUCT_TABLE_QUANTITY"), // Số lượng bán
+    REVENUE_PRODUCT_TABLE_REVENUE("REVENUE_PRODUCT_TABLE_REVENUE"), // Doanh thu
+    REVENUE_PRODUCT_TABLE_AVG_PRICE("REVENUE_PRODUCT_TABLE_AVG_PRICE"), // Giá TB
+    TOP_10_BEST_SELLING_TITLE("TOP_10_BEST_SELLING_TITLE"), // Top 10 sản phẩm bán chạy
+    TOP_10_SLOW_SELLING_TITLE("TOP_10_SLOW_SELLING_TITLE"), // Top 10 sản phẩm bán chậm
+    REVENUE_CHART_OTHER_LABEL("REVENUE_CHART_OTHER_LABEL"), // Khác
+
+    // Revenue Product Export messages
+    REVENUE_EXPORT_FROM_DATE_LABEL("REVENUE_EXPORT_FROM_DATE_LABEL"), // Từ ngày
+    REVENUE_EXPORT_TO_DATE_LABEL("REVENUE_EXPORT_TO_DATE_LABEL"), // Đến ngày
+    REVENUE_EXPORT_TOTAL_REVENUE_LABEL("REVENUE_EXPORT_TOTAL_REVENUE_LABEL"), // Tổng doanh thu
+    REVENUE_EXPORT_SHEET_TITLE("REVENUE_EXPORT_SHEET_TITLE"), // DOANH THU SẢN PHẨM
+
+    // Revenue Product Tooltip messages
+    REVENUE_TOOLTIP_BEST_SELLING("REVENUE_TOOLTIP_BEST_SELLING"), // Nhấp để xem chi tiết top 10 sản phẩm bán chạy
+    REVENUE_TOOLTIP_SLOW_SELLING("REVENUE_TOOLTIP_SLOW_SELLING"), // Nhấp để xem chi tiết top 10 sản phẩm bán chậm
+    REVENUE_TOOLTIP_PROFIT_MARGIN("REVENUE_TOOLTIP_PROFIT_MARGIN"), // Tỷ suất lợi nhuận trong khoảng thời gian đã chọn
+
+    // Revenue Employee Controller messages
+    REVENUE_EMPLOYEE_CONTROLLER_INIT_ERROR("REVENUE_EMPLOYEE_CONTROLLER_INIT_ERROR"), // Lỗi khi khởi tạo controller: %s
+    REVENUE_EMPLOYEE_DATE_END_UPDATED("REVENUE_EMPLOYEE_DATE_END_UPDATED"), // Ngày kết thúc đã được cập nhật để không
+                                                                            // nhỏ hơn ngày bắt đầu.
+    REVENUE_EMPLOYEE_DATE_END_BEFORE_START("REVENUE_EMPLOYEE_DATE_END_BEFORE_START"), // Ngày kết thúc không được nhỏ
+                                                                                      // hơn ngày bắt đầu (%s).
+    REVENUE_EMPLOYEE_LOAD_ERROR("REVENUE_EMPLOYEE_LOAD_ERROR"), // Lỗi khi tải dữ liệu doanh thu: %s
+    REVENUE_EMPLOYEE_BY_ID_ERROR("REVENUE_EMPLOYEE_BY_ID_ERROR"), // Lỗi khi lấy doanh thu nhân viên: %s
+    REVENUE_EMPLOYEE_SALES_COUNT_ERROR("REVENUE_EMPLOYEE_SALES_COUNT_ERROR"), // Lỗi khi lấy số lượng hóa đơn của nhân
+                                                                              // viên: %s
+    REVENUE_EMPLOYEE_TOP_PERFORMERS_ERROR("REVENUE_EMPLOYEE_TOP_PERFORMERS_ERROR"), // Lỗi khi lấy danh sách nhân viên
+                                                                                    // doanh thu cao: %s
+    REVENUE_EMPLOYEE_CHART_UPDATE_ERROR("REVENUE_EMPLOYEE_CHART_UPDATE_ERROR"), // Lỗi khi cập nhật biểu đồ: %s
+    REVENUE_EMPLOYEE_DAILY_DATA_ERROR("REVENUE_EMPLOYEE_DAILY_DATA_ERROR"), // Lỗi khi lấy dữ liệu doanh thu theo ngày:
+                                                                            // %s
+    REVENUE_EMPLOYEE_NO_DAILY_DATA("REVENUE_EMPLOYEE_NO_DAILY_DATA"), // Không có dữ liệu doanh thu theo ngày cho nhân
+                                                                      // viên này trong khoảng thời gian đã chọn
+    REVENUE_EMPLOYEE_DAILY_CHART_TITLE("REVENUE_EMPLOYEE_DAILY_CHART_TITLE"), // Biểu đồ doanh thu theo ngày - %s
+    REVENUE_EMPLOYEE_DAILY_CHART_HEADER("REVENUE_EMPLOYEE_DAILY_CHART_HEADER"), // Doanh thu của %s từ %s đến %s
+    REVENUE_EMPLOYEE_DAILY_CHART_SCALE_NOTE("REVENUE_EMPLOYEE_DAILY_CHART_SCALE_NOTE"), // (* Số lượng sản phẩm đã được
+                                                                                        // điều chỉnh tỷ lệ để hiển thị)
+    REVENUE_EMPLOYEE_DAILY_CHART_ERROR("REVENUE_EMPLOYEE_DAILY_CHART_ERROR"), // Lỗi khi hiển thị biểu đồ: %s    // Revenue Employee Export messages
+    REVENUE_EMPLOYEE_EXPORT_HEADERS_STT("REVENUE_EMPLOYEE_EXPORT_HEADERS_STT"), // STT
+    REVENUE_EMPLOYEE_EXPORT_HEADERS_ID("REVENUE_EMPLOYEE_EXPORT_HEADERS_ID"), // Mã nhân viên
+    REVENUE_EMPLOYEE_EXPORT_HEADERS_NAME("REVENUE_EMPLOYEE_EXPORT_HEADERS_NAME"), // Tên nhân viên
+    REVENUE_EMPLOYEE_EXPORT_HEADERS_QUANTITY("REVENUE_EMPLOYEE_EXPORT_HEADERS_QUANTITY"), // Số lượng sản phẩm
+    REVENUE_EMPLOYEE_EXPORT_HEADERS_REVENUE("REVENUE_EMPLOYEE_EXPORT_HEADERS_REVENUE"), // Doanh thu
+    REVENUE_EMPLOYEE_EXPORT_FILENAME_PREFIX("REVENUE_EMPLOYEE_EXPORT_FILENAME_PREFIX"), // EMPLOYEE_REVENUE_
+    REVENUE_EMPLOYEE_EXPORT_FROM_DATE("REVENUE_EMPLOYEE_EXPORT_FROM_DATE"), // Từ ngày
+    REVENUE_EMPLOYEE_EXPORT_TO_DATE("REVENUE_EMPLOYEE_EXPORT_TO_DATE"), // Đến ngày
+    REVENUE_EMPLOYEE_EXPORT_TOTAL_REVENUE("REVENUE_EMPLOYEE_EXPORT_TOTAL_REVENUE"), // Tổng doanh thu
+    REVENUE_EMPLOYEE_EXPORT_SHEET_TITLE("REVENUE_EMPLOYEE_EXPORT_SHEET_TITLE"), // DOANH THU NHÂN VIÊN
+    REVENUE_EMPLOYEE_EXPORT_SUCCESS("REVENUE_EMPLOYEE_EXPORT_SUCCESS"), // Xuất báo cáo thành công: %s
+    REVENUE_EMPLOYEE_EXPORT_ERROR("REVENUE_EMPLOYEE_EXPORT_ERROR"), // Lỗi khi xuất báo cáo: %s
+
+    // Revenue Employee Chart messages
+    REVENUE_EMPLOYEE_CHART_REVENUE_MILLION("REVENUE_EMPLOYEE_CHART_REVENUE_MILLION"), // Doanh thu (triệu)
+    REVENUE_EMPLOYEE_CHART_PRODUCT_COUNT("REVENUE_EMPLOYEE_CHART_PRODUCT_COUNT"), // Số lượng sản phẩm
+    REVENUE_EMPLOYEE_DAILY_CHART_CLOSE("REVENUE_EMPLOYEE_DAILY_CHART_CLOSE"), // Đóng
+
+
+    // Return related messages
+    RETURN_NOT_FOUND("RETURN_NOT_FOUND"),                                //"Đơn trả hàng không tồn tại"
+    RETURN_NOT_FOUND_WITH_ID("RETURN_NOT_FOUND_WITH_ID"),                //"Không tìm thấy thông tin đơn trả hàng với ID: %s"
+    RETURN_NOT_FOUND_WITH_KEYWORD("RETURN_NOT_FOUND_WITH_KEYWORD"),      //"Không tìm thấy đơn trả hàng nào phù hợp với từ khóa: %s"
+    RETURN_CANNOT_UPDATE("RETURN_CANNOT_UPDATE"),                        //"Không thể cập nhật đơn trả hàng ở trạng thái hiện tại"
+    RETURN_QUANTITY_EXCEED("RETURN_QUANTITY_EXCEED"),                    //"Số lượng trả không thể lớn hơn số lượng trong hóa đơn"
+    RETURN_UPDATE_ERROR("RETURN_UPDATE_ERROR"),                          //"Lỗi khi cập nhật đơn trả hàng"
+    RETURN_CANNOT_EXCHANGE("RETURN_CANNOT_EXCHANGE"),                    //"Không thể đổi sản phẩm với đơn trả hàng ở trạng thái hiện tại"
+    RETURN_EXCHANGE_ERROR("RETURN_EXCHANGE_ERROR"),                      //"Lỗi khi đổi sản phẩm"
+    RETURN_STATUS_INVALID("RETURN_STATUS_INVALID"),                      //"Không thể chuyển từ trạng thái 'Đã từ chối' về 'Đang chờ xử lý'"
+    RETURN_LOAD_ERROR("RETURN_LOAD_ERROR"),                              //"Lỗi khi tải dữ liệu đơn trả hàng"
+    RETURN_SEARCH_ERROR("RETURN_SEARCH_ERROR"),                          //"Lỗi khi tìm kiếm đơn trả hàng"
+    RETURN_DETAIL_LOAD_ERROR("RETURN_DETAIL_LOAD_ERROR"),                //"Lỗi khi tải chi tiết đơn trả hàng"
+    RETURN_SELECT_ONE("RETURN_SELECT_ONE"),                              //"Vui lòng chọn một đơn trả hàng để thực hiện thao tác"
+    RETURN_DELETE_ONLY_PENDING("RETURN_DELETE_ONLY_PENDING"),            //"Chỉ có thể xóa đơn trả hàng ở trạng thái 'Đang chờ xử lý'"
+    RETURN_CURRENT_STATUS("RETURN_CURRENT_STATUS"),                      //"Đơn trả hàng này đang ở trạng thái: "
+    RETURN_DELETE_CONFIRM("RETURN_DELETE_CONFIRM"),                      //"Bạn có chắc chắn muốn xóa đơn trả hàng này?\n- Mã đơn: %s\n- Sản phẩm: %s"
+    RETURN_DELETE_SUCCESS("RETURN_DELETE_SUCCESS"),                      //"Đã xóa đơn trả hàng thành công!"
+    RETURN_DELETE_FAIL("RETURN_DELETE_FAIL"),                            //"Không thể xóa đơn trả hàng. Vui lòng thử lại sau!"
+    RETURN_DELETE_ERROR("RETURN_DELETE_ERROR"),                          //"Lỗi khi xóa đơn trả hàng"
+    RETURN_STATUS_CONVERT_ERROR("RETURN_STATUS_CONVERT_ERROR"),          //"Lỗi chuyển đổi trạng thái"
+    RETURN_STATUS_UPDATE_SUCCESS("RETURN_STATUS_UPDATE_SUCCESS"),        //"Cập nhật trạng thái thành công!"
+    RETURN_STATUS_UPDATE_FAIL("RETURN_STATUS_UPDATE_FAIL"),              //"Không thể cập nhật trạng thái. Vui lòng thử lại sau!"
+    RETURN_STATUS_UPDATE_ERROR("RETURN_STATUS_UPDATE_ERROR"),            //"Lỗi khi cập nhật trạng thái"
+
+    // Invoice additional messages
+    INVOICE_LIST_EMPTY("INVOICE_LIST_EMPTY"),                            //"Không tìm thấy hóa đơn nào trong hệ thống."
+    
+    // Return additional messages
+    RETURN_NO_QUANTITY("RETURN_NO_QUANTITY"),                            //"Sản phẩm này đã trả hết"
+    RETURN_OVER_30_DAYS("RETURN_OVER_30_DAYS"),                          //"Sản phẩm này đã quá 30 ngày kể từ ngày mua (%d ngày).\nViệc trả hàng có thể bị từ chối hoặc áp dụng điều kiện đặc biệt.\nBạn vẫn muốn tiếp tục?"
+    RETURN_INPUT_REASON("RETURN_INPUT_REASON"),                          //"Nhập lý do trả hàng:"
+    RETURN_CREATE_SUCCESS("RETURN_CREATE_SUCCESS"),                      //"Đã tạo đơn trả hàng thành công!"
+    RETURN_CREATE_FAIL("RETURN_CREATE_FAIL"),                            //"Không thể tạo đơn trả hàng"
+    RETURN_CREATE_ERROR("RETURN_CREATE_ERROR"),                          //"Lỗi khi tạo đơn trả hàng"
+    
+    // Repair error messages
+    REPAIR_NOT_FOUND("REPAIR_NOT_FOUND"),                                //"Dịch vụ sửa chữa không tồn tại"
+    REPAIR_NOT_FOUND_WITH_ID("REPAIR_NOT_FOUND_WITH_ID"),                //"Không tìm thấy dịch vụ sửa chữa với ID: %s"
+    REPAIR_ID_INVALID("REPAIR_ID_INVALID"),                              //"ID dịch vụ sửa chữa không hợp lệ"
+    REPAIR_CONTROLLER_NOT_SET("REPAIR_CONTROLLER_NOT_SET"),              //"Controller chưa được thiết lập. Thao tác không thể thực hiện."
+    REPAIR_FORM_INIT_ERROR("REPAIR_FORM_INIT_ERROR"),                    //"Lỗi khi khởi tạo form dịch vụ sửa chữa"
+    REPAIR_FORM_ADD_ERROR("REPAIR_FORM_ADD_ERROR"),                      //"Lỗi khi mở form thêm mới dịch vụ sửa chữa"
+    REPAIR_FORM_DETAIL_ERROR("REPAIR_FORM_DETAIL_ERROR"),                //"Lỗi khi hiển thị chi tiết dịch vụ sửa chữa"
+    REPAIR_SELECT_ONE("REPAIR_SELECT_ONE"),                              //"Vui lòng chọn một dịch vụ sửa chữa để xem chi tiết."
+    REPAIR_SELECT_ONE_DELETE("REPAIR_SELECT_ONE_DELETE"),                //"Vui lòng chọn một dịch vụ sửa chữa để xóa."
+    REPAIR_SELECT_ONE_UPDATE_STATUS("REPAIR_SELECT_ONE_UPDATE_STATUS"),  //"Vui lòng chọn một dịch vụ sửa chữa để cập nhật trạng thái"
+    REPAIR_DELETE_CONFIRM("REPAIR_DELETE_CONFIRM"),                      //"Bạn có chắc chắn muốn xóa dịch vụ sửa chữa này không?"
+    REPAIR_DELETE_SUCCESS("REPAIR_DELETE_SUCCESS"),                      //"Đã xóa dịch vụ sửa chữa thành công!"
+    REPAIR_DELETE_FAIL("REPAIR_DELETE_FAIL"),                            //"Không thể xóa dịch vụ sửa chữa. Vui lòng thử lại sau."
+    REPAIR_DELETE_ERROR("REPAIR_DELETE_ERROR"),                          //"Lỗi khi xóa dịch vụ sửa chữa"
+    REPAIR_STATUS_CONVERT_ERROR("REPAIR_STATUS_CONVERT_ERROR"),          //"Lỗi chuyển đổi trạng thái"
+    REPAIR_STATUS_UPDATE_SUCCESS("REPAIR_STATUS_UPDATE_SUCCESS"),        //"Cập nhật trạng thái thành công!"
+    REPAIR_STATUS_UPDATE_FAIL("REPAIR_STATUS_UPDATE_FAIL"),              //"Không thể cập nhật trạng thái. Vui lòng thử lại sau!"
+    REPAIR_STATUS_UPDATE_ERROR("REPAIR_STATUS_UPDATE_ERROR"),            //"Lỗi khi cập nhật trạng thái"
+    REPAIR_CREATE_ERROR("REPAIR_CREATE_ERROR"),                          //"Lỗi khi tạo dịch vụ sửa chữa"
+    REPAIR_LIST_ERROR("REPAIR_LIST_ERROR"),                              //"Lỗi khi lấy danh sách dịch vụ sửa chữa"
+    REPAIR_FIND_ERROR("REPAIR_FIND_ERROR"),                              //"Lỗi khi tìm dịch vụ sửa chữa"
+    REPAIR_UPDATE_ERROR("REPAIR_UPDATE_ERROR"),                          //"Lỗi khi cập nhật dịch vụ sửa chữa"
+    REPAIR_ASSIGN_EMPLOYEE_ERROR("REPAIR_ASSIGN_EMPLOYEE_ERROR"),        //"Lỗi khi phân công nhân viên"
+    REPAIR_UPDATE_FEE_ERROR("REPAIR_UPDATE_FEE_ERROR"),                  //"Lỗi khi cập nhật phí dịch vụ"
+    EMPLOYEE_NOT_FOUND("EMPLOYEE_NOT_FOUND"),                           //"Nhân viên không tồn tại"
+    CUSTOMER_NOT_FOUND("CUSTOMER_NOT_FOUND"),                           //"Khách hàng không tồn tại"
+    
+    // Warranty error messages
+    WARRANTY_LOAD_ERROR("WARRANTY_LOAD_ERROR"),                           //"Lỗi khi tải danh sách bảo hành"
+    WARRANTY_SEARCH_ERROR("WARRANTY_SEARCH_ERROR"),                       //"Lỗi khi tìm kiếm bảo hành"
+    WARRANTY_NOT_FOUND_WITH_ID("WARRANTY_NOT_FOUND_WITH_ID"),             //"Không tìm thấy bảo hành có mã %s"
+    WARRANTY_DETAIL_ERROR("WARRANTY_DETAIL_ERROR"),                       //"Lỗi khi hiển thị chi tiết bảo hành"
+    WARRANTY_CREATE_ERROR("WARRANTY_CREATE_ERROR"),                       //"Lỗi khi tạo bảo hành"
+    WARRANTY_ID_NULL("WARRANTY_ID_NULL"),                                //"Không thể xóa bảo hành với ID null"
+    WARRANTY_DELETE_ERROR("WARRANTY_DELETE_ERROR"),                       //"Lỗi khi xóa bảo hành"
+    WARRANTY_FORM_INIT_ERROR("WARRANTY_FORM_INIT_ERROR"),                 //"Lỗi khởi tạo form bảo hành"
+    WARRANTY_FORM_ADD_ERROR("WARRANTY_FORM_ADD_ERROR"),                   //"Lỗi khi mở form đăng ký bảo hành"
+    WARRANTY_CONTROLLER_NOT_SET("WARRANTY_CONTROLLER_NOT_SET"),           //"Controller chưa được khởi tạo."
+    WARRANTY_SELECT_ONE("WARRANTY_SELECT_ONE"),                          //"Vui lòng chọn sản phẩm để đăng ký bảo hành"
+    WARRANTY_EXPIRED("WARRANTY_EXPIRED"),                                //"Sản phẩm này đã hết hạn bảo hành vào ngày %s.\nVui lòng liên hệ nhân viên để được hỗ trợ thêm!"
+    WARRANTY_ALREADY_REGISTERED("WARRANTY_ALREADY_REGISTERED"),           //"Sản phẩm này đã được đăng ký bảo hành trước đó!"
+    WARRANTY_DETAIL_NOT_FOUND("WARRANTY_DETAIL_NOT_FOUND"),               //"Không thể tìm thấy thông tin chi tiết của sản phẩm đã chọn"
+    WARRANTY_REGISTER_SUCCESS("WARRANTY_REGISTER_SUCCESS"),               //"Đã đăng ký bảo hành thành công với mã: %s"
+    WARRANTY_REGISTER_ERROR("WARRANTY_REGISTER_ERROR"),                   //"Lỗi khi đăng ký bảo hành"
+    WARRANTY_NOT_FOUND_BY_PHONE("WARRANTY_NOT_FOUND_BY_PHONE"),           //"Không tìm thấy sản phẩm nào theo số điện thoại này"
+    WARRANTY_SELECT_ONE_DELETE("WARRANTY_SELECT_ONE_DELETE"),             //"Vui lòng chọn một bảo hành để xóa."
+    WARRANTY_ID_INVALID("WARRANTY_ID_INVALID"),                          //"Bảo hành không có ID hợp lệ."
+    WARRANTY_DELETE_CONFIRM("WARRANTY_DELETE_CONFIRM"),                  //"Bạn có chắc chắn muốn xóa bảo hành này không?"
+    WARRANTY_DELETE_SUCCESS("WARRANTY_DELETE_SUCCESS"),                  //"Đã xóa bảo hành thành công!"
+    WARRANTY_DELETE_FAIL("WARRANTY_DELETE_FAIL"),                        //"Không thể xóa bảo hành. Vui lòng thử lại sau."
+    WARRANTY_SELECT_ONE_DETAIL("WARRANTY_SELECT_ONE_DETAIL"),             //"Vui lòng chọn một bảo hành để xem chi tiết"
+    INVOICE_DETAIL_NULL("INVOICE_DETAIL_NULL"),                          //"Chi tiết hóa đơn không được null"
+    INVOICE_NULL("INVOICE_NULL"),                                      //"Thông tin hóa đơn không được null"test
+    ;
 
     private final String key;
     private static LocaleManager LM = LocaleManager.getInstance();

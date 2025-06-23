@@ -103,6 +103,7 @@ public class CategoryRepository implements Repository<Category, String> {
             }
             return categories;
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException("Error finding all categories", e);
         }
     }

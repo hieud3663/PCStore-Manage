@@ -81,7 +81,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             loadAllSuppliers();
             
         } catch (Exception e) {
-            showError("Lỗi khởi tạo controller: " + e.getMessage());
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_CONTROLLER_INIT_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.toString(),
+                JOptionPane.ERROR_MESSAGE
+            );
             e.printStackTrace();
         }
     }
@@ -195,7 +200,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             
             // Kiểm tra dữ liệu
             if (name.isEmpty() || phone.isEmpty()) {
-                showWarning("Tên và số điện thoại của nhà cung cấp không được để trống.");
+                JOptionPane.showMessageDialog(
+                    view,
+                    ErrorMessage.SUPPLIER_NAME_PHONE_REQUIRED.toString(),
+                    ErrorMessage.WARNING_TITLE.toString(),
+                    JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
             
@@ -211,7 +221,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             supplierService.addSupplier(newSupplier);
             
             // Thông báo thành công
-            showInfo("Thêm nhà cung cấp thành công.");
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_ADD_SUCCESS.toString(),
+                ErrorMessage.INFO_TITLE.toString(),
+                JOptionPane.INFORMATION_MESSAGE
+            );
             
             // Làm mới dữ liệu và reset trạng thái
             loadAllSuppliers();
@@ -219,7 +234,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             resetState();
             
         } catch (Exception ex) {
-            showError("Lỗi khi thêm nhà cung cấp: " + ex.getMessage());
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_ADD_ERROR.format(ex.getMessage()),
+                ErrorMessage.ERROR_TITLE.toString(),
+                JOptionPane.ERROR_MESSAGE
+            );
             ex.printStackTrace();
         }
     }
@@ -229,7 +249,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
      */
     private void updateSelectedSupplier() {
         if (selectedSupplier == null) {
-            showWarning("Vui lòng chọn nhà cung cấp để cập nhật.");
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_SELECT_TO_UPDATE.toString(),
+                ErrorMessage.WARNING_TITLE.toString(),
+                JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
         
@@ -242,7 +267,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             
             // Kiểm tra dữ liệu
             if (name.isEmpty() || phone.isEmpty()) {
-                showWarning("Tên và số điện thoại của nhà cung cấp không được để trống.");
+                JOptionPane.showMessageDialog(
+                    view,
+                    ErrorMessage.SUPPLIER_NAME_PHONE_REQUIRED.toString(),
+                    ErrorMessage.WARNING_TITLE.toString(),
+                    JOptionPane.WARNING_MESSAGE
+                );
                 return;
             }
             
@@ -256,7 +286,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             supplierService.updateSupplier(selectedSupplier);
             
             // Thông báo thành công
-            showInfo("Cập nhật nhà cung cấp thành công.");
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_UPDATE_SUCCESS.toString(),
+                ErrorMessage.INFO_TITLE.toString(),
+                JOptionPane.INFORMATION_MESSAGE
+            );
             
             // Làm mới dữ liệu và reset trạng thái
             loadAllSuppliers();
@@ -264,7 +299,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             resetState();
             
         } catch (Exception ex) {
-            showError("Lỗi khi cập nhật nhà cung cấp: " + ex.getMessage());
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_UPDATE_ERROR.format(ex.getMessage()),
+                ErrorMessage.ERROR_TITLE.toString(),
+                JOptionPane.ERROR_MESSAGE
+            );
             ex.printStackTrace();
         }
     }
@@ -274,14 +314,19 @@ public class SupplierController implements ActionListener, ListSelectionListener
      */
     private void deleteSelectedSupplier() {
         if (selectedSupplier == null) {
-            showWarning("Vui lòng chọn nhà cung cấp để xóa.");
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_SELECT_TO_DELETE.toString(),
+                ErrorMessage.WARNING_TITLE.toString(),
+                JOptionPane.WARNING_MESSAGE
+            );
             return;
         }
         
         int confirm = JOptionPane.showConfirmDialog(
                 view, 
-                "Bạn có chắc chắn muốn xóa nhà cung cấp này không?", 
-                "Xác nhận xóa", 
+                ErrorMessage.SUPPLIER_DELETE_CONFIRM.toString(), 
+                ErrorMessage.SUPPLIER_DELETE_CONFIRM_TITLE.toString(), 
                 JOptionPane.YES_NO_OPTION);
                 
         if (confirm == JOptionPane.YES_OPTION) {
@@ -290,7 +335,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
                 supplierService.deleteSupplier(selectedSupplier.getSupplierId());
                 
                 // Thông báo thành công
-                showInfo("Xóa nhà cung cấp thành công.");
+                JOptionPane.showMessageDialog(
+                    view,
+                    ErrorMessage.SUPPLIER_DELETE_SUCCESS.toString(),
+                    ErrorMessage.INFO_TITLE.toString(),
+                    JOptionPane.INFORMATION_MESSAGE
+                );
                 
                 // Làm mới dữ liệu và form
                 loadAllSuppliers();
@@ -298,7 +348,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
                 resetState();
                 
             } catch (Exception e) {
-                showError("Lỗi khi xóa nhà cung cấp: " + e.getMessage());
+                JOptionPane.showMessageDialog(
+                    view,
+                    ErrorMessage.SUPPLIER_DELETE_ERROR.format(e.getMessage()),
+                    ErrorMessage.ERROR_TITLE.toString(),
+                    JOptionPane.ERROR_MESSAGE
+                );
                 e.printStackTrace();
             }
         }
@@ -321,7 +376,12 @@ public class SupplierController implements ActionListener, ListSelectionListener
             supplierList = supplierService.getAllSuppliers();
             updateSupplierTable();
         } catch (Exception e) {
-            showError("Lỗi khi tải danh sách nhà cung cấp: " + e.getMessage());
+            JOptionPane.showMessageDialog(
+                view,
+                ErrorMessage.SUPPLIER_LOAD_ALL_ERROR.format(e.getMessage()),
+                ErrorMessage.ERROR_TITLE.toString(),
+                JOptionPane.ERROR_MESSAGE
+            );
             e.printStackTrace();
         }
     }
@@ -453,18 +513,5 @@ public class SupplierController implements ActionListener, ListSelectionListener
             view.getBtnSave().setEnabled(false);
             view.getBtnDelete().setEnabled(false);
         }
-    }
-    
-    // Tiện ích hiển thị thông báo
-    private void showInfo(String message) {
-        JOptionPane.showMessageDialog(view, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    private void showWarning(String message) {
-        JOptionPane.showMessageDialog(view, message, "Cảnh báo", JOptionPane.WARNING_MESSAGE);
-    }
-    
-    private void showError(String message) {
-        JOptionPane.showMessageDialog(view, message, ErrorMessage.ERROR_TITLE.toString(), JOptionPane.ERROR_MESSAGE);
     }
 }

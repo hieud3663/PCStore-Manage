@@ -184,7 +184,7 @@ public class CategoryRepository implements Repository<Category, String> {
         category.setCategoryId(rs.getString("CategoryID"));
         category.setCategoryName(rs.getString("CategoryName"));
         category.setDescription(rs.getString("Description"));
-        category.setStatus(rs.getString("Status")); // Thêm dòng này
+        category.setStatus(rs.getString("Status")); 
         Timestamp createdAt = rs.getTimestamp("CreatedAt");
         if (createdAt != null) {
             category.setCreatedAt(createdAt.toLocalDateTime());

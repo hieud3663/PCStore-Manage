@@ -4,14 +4,9 @@
  */
 package com.pcstore.view;
 
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.JDialog;
 
 import com.pcstore.controller.RepairController;
 import com.pcstore.model.enums.RepairEnum;
@@ -337,6 +332,10 @@ public class RepairServiceForm extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
@@ -384,42 +383,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnAddRepairMouseClicked
 
     private void btnAddRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddRepairActionPerformed
-        try {
-            // Tạo và hiển thị dialog AddReapairProductForm
-            AddReapairProductForm addDialog = new AddReapairProductForm();
-            addDialog.setTitle("Thêm sản phẩm sửa chữa");
-            addDialog.setSize(850, 700);
-            addDialog.setLocationRelativeTo(this);
-            addDialog.setModal(true); // Làm dialog modal để chặn tương tác với form cha
-            addDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-            // Truyền controller vào dialog
-            if (repairController != null) {
-                addDialog.setRepairController(repairController);
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_CONTROLLER_NOT_SET,
-                    "Cảnh báo",
-                    javax.swing.JOptionPane.WARNING_MESSAGE);
-            }
-
-            // Hiển thị dialog
-            addDialog.setVisible(true);
-
-            // Kiểm tra xem đã thêm mới thành công hay không
-            if (addDialog.isRepairAdded()) {
-                // Cập nhật bảng với dữ liệu mới
-                loadRepairServices();
-
-                // Có thể thêm thông báo sau khi đã cập nhật bảng thành công
-                System.out.println("Đã cập nhật bảng sau khi thêm mới dịch vụ sửa chữa");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this,
-                ErrorMessage.REPAIR_FORM_ADD_ERROR + ": " + e.getMessage(),
-                "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (repairController != null) {
+            repairController.handleAddRepair(this);
         }
     }//GEN-LAST:event_btnAddRepairActionPerformed
 
@@ -429,80 +394,8 @@ public class RepairServiceForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnDetailMouseClicked
 
     private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
-        try {
-            int selectedRow = tableRepair.getSelectedRow();
-            if (selectedRow == -1) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_SELECT_ONE,
-                    "Thông báo",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            // Lấy ID của dịch vụ sửa chữa được chọn
-            Object repairIdObj = tableRepair.getValueAt(selectedRow, 0);
-            if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_ID_INVALID,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            Integer repairId = null;
-            try {
-                repairId = Integer.parseInt(repairIdObj.toString());
-            } catch (NumberFormatException e) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Kiểm tra controller
-            if (repairController == null) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_CONTROLLER_NOT_SET,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Lấy thông tin chi tiết dịch vụ sửa chữa
-            java.util.Optional<com.pcstore.model.Repair> repairOpt = repairController.getRepairServiceById(repairId);
-            if (!repairOpt.isPresent()) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID.toString(), repairId),
-                    "Thông báo",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            // Hiển thị dialog chi tiết
-            javax.swing.JDialog detailDialog = new javax.swing.JDialog();
-            detailDialog.setTitle("Chi tiết dịch vụ sửa chữa");
-            detailDialog.setSize(900,800 );
-            detailDialog.setLocationRelativeTo(this);
-            detailDialog.setModal(true);
-
-            // Tạo form chi tiết
-            RepairDetailsForm detailsForm = new RepairDetailsForm();
-            detailsForm.setRepairDetails(repairOpt.get());
-
-            // Thêm form vào dialog
-            detailDialog.getContentPane().add(detailsForm, java.awt.BorderLayout.CENTER);
-            detailsForm.addCloseButton(detailDialog); // Thêm nút đóng
-
-            detailDialog.pack();
-            detailDialog.setVisible(true);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this,
-                ErrorMessage.REPAIR_FORM_DETAIL_ERROR + ": " + e.getMessage(),
-                "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (repairController != null) {
+            repairController.handleDetailRepair(this);
         }
     }//GEN-LAST:event_btnDetailActionPerformed
 
@@ -512,85 +405,15 @@ public class RepairServiceForm extends javax.swing.JPanel {
     }//GEN-LAST:event_btnRemoveRepairMouseClicked
 
     private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveRepairActionPerformed
-        try {
-            int selectedRow = tableRepair.getSelectedRow();
-            if (selectedRow == -1) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_SELECT_ONE_DELETE,
-                    "Thông báo",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-
-            // Lấy ID của dịch vụ sửa chữa được chọn
-            Object repairIdObj = tableRepair.getValueAt(selectedRow, 0);
-            if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_ID_INVALID,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            Integer repairId = null;
-            try {
-                repairId = Integer.parseInt(repairIdObj.toString());
-            } catch (NumberFormatException e) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Kiểm tra controller
-            if (repairController == null) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_CONTROLLER_NOT_SET,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            // Xác nhận trước khi xóa
-            int choice = javax.swing.JOptionPane.showConfirmDialog(this,
-                ErrorMessage.REPAIR_DELETE_CONFIRM,
-                "Xác nhận xóa",
-                javax.swing.JOptionPane.YES_NO_OPTION,
-                javax.swing.JOptionPane.WARNING_MESSAGE);
-
-            if (choice != javax.swing.JOptionPane.YES_OPTION) {
-                return;
-            }
-
-            // Tiến hành xóa dịch vụ
-            boolean success = repairController.deleteRepair(repairId);
-
-            if (success) {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_DELETE_SUCCESS,
-                    "Thành công",
-                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-                // Cập nhật lại bảng
-                loadRepairServices();
-            } else {
-                javax.swing.JOptionPane.showMessageDialog(this,
-                    ErrorMessage.REPAIR_DELETE_FAIL,
-                    "Lỗi",
-                    javax.swing.JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(this,
-                ErrorMessage.REPAIR_DELETE_ERROR + ": " + e.getMessage(),
-                "Lỗi",
-                javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (repairController != null) {
+            repairController.handleRemoveRepair(this);
         }
     }//GEN-LAST:event_btnRemoveRepairActionPerformed
 
     private void btnUpdateStatusMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUpdateStatusMouseClicked
-        updateRepairStatus();
+        if (repairController != null) {
+            repairController.handleUpdateRepairStatus(this);
+        }
     }//GEN-LAST:event_btnUpdateStatusMouseClicked
 
     /**
@@ -969,5 +792,9 @@ public class RepairServiceForm extends javax.swing.JPanel {
         }
         
         return validStatuses;
+    }
+
+    public JTable getTableRepair() {
+        return tableRepair;
     }
 }

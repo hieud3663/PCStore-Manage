@@ -459,3 +459,8 @@ CREATE TABLE InventoryCheckDetails (
 --     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE CASCADE
 -- );
 
+ALTER TABLE Categories
+ADD 
+    description nchar(500) NULL,
+    CreatedAt datetime NULL,
+    Status nvarchar(50) NULL;

@@ -4,7 +4,11 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 import com.pcstore.model.Customer;
 import com.pcstore.model.Employee;
@@ -16,8 +20,11 @@ import com.pcstore.service.EmployeeService;
 import com.pcstore.service.RepairService;
 import com.pcstore.service.ServiceFactory;
 import com.pcstore.service.WarrantyService;
-import com.pcstore.utils.ErrorMessage;
 import com.pcstore.utils.DatabaseConnection;
+import com.pcstore.utils.ErrorMessage;
+import com.pcstore.view.AddReapairProductForm;
+import com.pcstore.view.RepairDetailsForm;
+import com.pcstore.view.RepairServiceForm;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -523,4 +530,226 @@ public class RepairController {
             throw new RuntimeException("Lỗi khi cập nhật trạng thái dịch vụ sửa chữa: " + e.getMessage(), e);
         }
     }
+
+    // Map trạng thái tiếng Anh <-> tiếng Việt (có thể chuyển sang static nếu cần)
+    private static final Map<String, String> statusRepairTranslation = Map.of(
+        "Received", "Đã tiếp nhận",
+        "Diagnosing", "Đang chẩn đoán",
+        "Waiting for Parts", "Chờ linh kiện",
+        "Repairing", "Đang sửa chữa",
+        "Completed", "Đã hoàn thành",
+        "Delivered", "Đã giao khách",
+        "Cancelled", "Đã hủy"
+    );
+
+    public void handleAddRepair(RepairServiceForm form) {
+        try {
+            AddReapairProductForm addDialog = new AddReapairProductForm();
+            addDialog.setTitle("Thêm sản phẩm sửa chữa");
+            addDialog.setSize(850, 700);
+            addDialog.setLocationRelativeTo(form);
+            addDialog.setModal(true);
+            addDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+
+            addDialog.setRepairController(this);
+
+            addDialog.setVisible(true);
+
+            if (addDialog.isRepairAdded()) {
+                form.loadRepairServices();
+                System.out.println("Đã cập nhật bảng sau khi thêm mới dịch vụ sửa chữa");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_FORM_ADD_ERROR + ": " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void handleRemoveRepair(RepairServiceForm form) {
+        JTable tableRepair = form.getTableRepair();
+        int selectedRow = tableRepair.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_SELECT_ONE_DELETE,
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Object repairIdObj = tableRepair.getValueAt(selectedRow, 0);
+        if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_ID_INVALID,
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Integer repairId;
+        try {
+            repairId = Integer.parseInt(repairIdObj.toString());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(form,
+                "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int choice = JOptionPane.showConfirmDialog(form,
+            ErrorMessage.REPAIR_DELETE_CONFIRM,
+            "Xác nhận xóa",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+        boolean success = deleteRepair(repairId);
+        if (success) {
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_DELETE_SUCCESS,
+                "Thành công",
+                JOptionPane.INFORMATION_MESSAGE);
+            form.loadRepairServices();
+        } else {
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_DELETE_FAIL,
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void handleDetailRepair(RepairServiceForm form) {
+        JTable tableRepair = form.getTableRepair();
+        int selectedRow = tableRepair.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_SELECT_ONE,
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Object repairIdObj = tableRepair.getValueAt(selectedRow, 0);
+        if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
+            JOptionPane.showMessageDialog(form,
+                ErrorMessage.REPAIR_ID_INVALID,
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Integer repairId;
+        try {
+            repairId = Integer.parseInt(repairIdObj.toString());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(form,
+                "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Optional<Repair> repairOpt = getRepairServiceById(repairId);
+        if (!repairOpt.isPresent()) {
+            JOptionPane.showMessageDialog(form,
+                String.format(ErrorMessage.REPAIR_NOT_FOUND_WITH_ID.toString(), repairId),
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        JDialog detailDialog = new JDialog();
+        detailDialog.setTitle("Chi tiết dịch vụ sửa chữa");
+        detailDialog.setSize(900, 800);
+        detailDialog.setLocationRelativeTo(form);
+        detailDialog.setModal(true);
+
+        RepairDetailsForm detailsForm = new RepairDetailsForm();
+        detailsForm.setRepairDetails(repairOpt.get());
+        detailDialog.getContentPane().add(detailsForm, java.awt.BorderLayout.CENTER);
+        detailsForm.addCloseButton(detailDialog);
+
+        detailDialog.pack();
+        detailDialog.setVisible(true);
+    }
+
+    public void handleUpdateRepairStatus(RepairServiceForm form) {
+        JTable table = form.getTableRepair();
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(form,
+                "Vui lòng chọn một dịch vụ sửa chữa để cập nhật trạng thái.",
+                "Thông báo",
+                JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Object repairIdObj = table.getValueAt(selectedRow, 0);
+        if (repairIdObj == null || repairIdObj.toString().isEmpty()) {
+            JOptionPane.showMessageDialog(form,
+                "ID dịch vụ sửa chữa không hợp lệ.",
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Integer repairId;
+        try {
+            repairId = Integer.parseInt(repairIdObj.toString());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(form,
+                "ID dịch vụ sửa chữa không hợp lệ: " + repairIdObj,
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Danh sách trạng thái mới
+        String[] statuses = {
+            "Đã tiếp nhận",
+            "Đang chẩn đoán",
+            "Chờ linh kiện",
+            "Đang sửa chữa",
+            "Đã hoàn thành",
+            "Đã giao khách",
+            "Đã hủy"
+        };
+        // Lấy trạng thái hiện tại ở cột 6
+        String currentStatus = table.getValueAt(selectedRow, 6).toString();
+        String newStatus = (String) JOptionPane.showInputDialog(
+            form,
+            "Chọn trạng thái mới:",
+            "Cập nhật trạng thái",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            statuses,
+            currentStatus
+        );
+        if (newStatus == null || newStatus.equals(currentStatus)) {
+            return; // Không chọn hoặc không thay đổi
+        }
+
+        // Chuyển trạng thái tiếng Việt sang Enum tiếng Anh nếu cần
+        String statusEnum = null;
+        for (Map.Entry<String, String> entry : statusRepairTranslation.entrySet()) {
+            if (entry.getValue().equals(newStatus)) {
+                statusEnum = entry.getKey();
+                break;
+            }
+        }
+        if (statusEnum == null) statusEnum = newStatus; // fallback
+
+        // Gọi service cập nhật trạng thái
+        boolean success = repairService.updateServiceStatus(repairId, statusEnum);
+        if (success) {
+            JOptionPane.showMessageDialog(form,
+                "Cập nhật trạng thái thành công!",
+                "Thành công",
+                JOptionPane.INFORMATION_MESSAGE);
+            form.loadRepairServices();
+        } else {
+            JOptionPane.showMessageDialog(form,
+                "Cập nhật trạng thái thất bại!",
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Thêm các hàm getTableRepair(), getTableModel(), ... vào RepairServiceForm nếu cần
 }

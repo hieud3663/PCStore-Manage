@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import com.pcstore.model.Customer;
@@ -478,4 +479,99 @@ public class WarrantyController {
      * @param warranty Thông tin bảo hành
      */
 
+     public void handleWarrantyRegistration() {
+        try {
+            // Tạo dialog mới
+            javax.swing.JDialog dialog = new javax.swing.JDialog();
+            dialog.setTitle("Đăng ký bảo hành mới");
+            dialog.setModal(true);
+            dialog.setSize(980, 650);
+            dialog.setLocationRelativeTo(serviceForm);
+
+            // Tạo form đăng ký bảo hành và thêm vào dialog
+            AddWarrantyForm addWarrantyForm = new AddWarrantyForm(this);
+            dialog.add(addWarrantyForm);
+
+            // Hiển thị dialog
+            dialog.setVisible(true);
+
+            // Sau khi dialog đóng, cập nhật lại danh sách bảo hành
+            loadWarranties();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(serviceForm,
+                ErrorMessage.WARRANTY_FORM_ADD_ERROR + ": " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void handleRemoveRepair() {
+        try {
+            JTable table = serviceForm.getWarrantyTable();
+            int selectedRow = table.getSelectedRow();
+            if (selectedRow == -1) {
+                JOptionPane.showMessageDialog(serviceForm,
+                    ErrorMessage.WARRANTY_SELECT_ONE_DELETE,
+                    "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            Object warrantyIdObj = table.getValueAt(selectedRow, 0);
+            if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
+                JOptionPane.showMessageDialog(serviceForm,
+                    ErrorMessage.WARRANTY_ID_INVALID,
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String warrantyId = warrantyIdObj.toString();
+            int choice = JOptionPane.showConfirmDialog(serviceForm,
+                ErrorMessage.WARRANTY_DELETE_CONFIRM,
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+            boolean success = deleteWarranty(warrantyId);
+            if (success) {
+                JOptionPane.showMessageDialog(serviceForm,
+                    ErrorMessage.WARRANTY_DELETE_SUCCESS,
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+                loadWarranties();
+            } else {
+                JOptionPane.showMessageDialog(serviceForm,
+                    ErrorMessage.WARRANTY_DELETE_FAIL,
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(serviceForm,
+                ErrorMessage.WARRANTY_DELETE_ERROR + ": " + e.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void handleDetailWarrantyCard() {
+        JTable table = serviceForm.getWarrantyTable();
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                serviceForm,
+                ErrorMessage.WARRANTY_SELECT_ONE_DETAIL,
+                "Chưa Chọn",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+        String warrantyId = table.getValueAt(selectedRow, 0).toString();
+        viewWarrantyDetail(warrantyId);
+    }
+
+    public void handleWarrantyInformationLookup() {
+        String keyword = serviceForm.getSearchField().getText().trim();
+        searchWarranties(keyword);
+    }
 }

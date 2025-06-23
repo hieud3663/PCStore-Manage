@@ -306,7 +306,9 @@ public class AddReturnProductForm extends javax.swing.JPanel {
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 loadAllInvoices();
                 if (parentForm != null) {
-                    parentForm.loadAllReturns();
+                    if (parentForm.getReturnController() != null) {
+                        parentForm.getReturnController().loadAllReturns(parentForm);
+                    }
                 }
             } else {
                 System.err.println("Không thể tạo đơn trả hàng");

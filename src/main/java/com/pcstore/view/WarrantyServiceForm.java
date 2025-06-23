@@ -266,123 +266,32 @@ public class WarrantyServiceForm extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnWarrantyRegistrationActionPerformed(java.awt.event.ActionEvent evt) {
-        try {
-            if (controller == null) {
-                JOptionPane.showMessageDialog(this,
-                    ErrorMessage.WARRANTY_CONTROLLER_NOT_SET,
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            
-            // Tạo dialog mới
-            javax.swing.JDialog dialog = new javax.swing.JDialog();
-            dialog.setTitle("Đăng ký bảo hành mới");
-            dialog.setModal(true);
-            dialog.setSize(980, 650);
-            dialog.setLocationRelativeTo(this);
-            
-            // Tạo form đăng ký bảo hành và thêm vào dialog
-            AddWarrantyForm addWarrantyForm = new AddWarrantyForm(controller);
-            dialog.add(addWarrantyForm);
-            
-            // Hiển thị dialog
-            dialog.setVisible(true);
-            
-            // Sau khi dialog đóng, cập nhật lại danh sách bảo hành
-            controller.loadWarranties();
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                ErrorMessage.WARRANTY_FORM_ADD_ERROR + ": " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handleWarrantyRegistration();
         }
-    }//GEN-LAST:event_btnWarrantyRegistrationActionPerformed
-
-    private void btnRemoveRepairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRemoveRepairMouseClicked
-        // Gọi phương thức xử lý sự kiện action để tránh lặp code
-        btnRemoveRepairActionPerformed(null);
-    }//GEN-LAST:event_btnRemoveRepairMouseClicked
+    }
 
     private void btnRemoveRepairActionPerformed(java.awt.event.ActionEvent evt) {
-        try {
-            int selectedRow = tableListWarranty.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(this,
-                    ErrorMessage.WARRANTY_SELECT_ONE_DELETE,
-                    "Thông báo",
-                    JOptionPane.INFORMATION_MESSAGE);
-                return;
-            }
-            Object warrantyIdObj = tableListWarranty.getValueAt(selectedRow, 0);
-            if (warrantyIdObj == null || warrantyIdObj.toString().isEmpty()) {
-                JOptionPane.showMessageDialog(this,
-                    ErrorMessage.WARRANTY_ID_INVALID,
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            String warrantyId = warrantyIdObj.toString();
-            if (controller == null) {
-                JOptionPane.showMessageDialog(this,
-                    ErrorMessage.WARRANTY_CONTROLLER_NOT_SET,
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            int choice = JOptionPane.showConfirmDialog(this,
-                ErrorMessage.WARRANTY_DELETE_CONFIRM,
-                "Xác nhận xóa",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE);
-            if (choice != JOptionPane.YES_OPTION) {
-                return;
-            }
-            boolean success = controller.deleteWarranty(warrantyId);
-            if (success) {
-                JOptionPane.showMessageDialog(this,
-                    ErrorMessage.WARRANTY_DELETE_SUCCESS,
-                    "Thành công",
-                    JOptionPane.INFORMATION_MESSAGE);
-                controller.loadWarranties();
-            } else {
-                JOptionPane.showMessageDialog(this,
-                    ErrorMessage.WARRANTY_DELETE_FAIL,
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                ErrorMessage.WARRANTY_DELETE_ERROR + ": " + e.getMessage(),
-                "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
+        if (controller != null) {
+            controller.handleRemoveRepair();
         }
-    }//GEN-LAST:event_btnRemoveRepairActionPerformed
+    }
+
+    private void btnRemoveRepairMouseClicked(java.awt.event.MouseEvent evt) {
+        btnRemoveRepairActionPerformed(null);
+    }
 
     private void btnDetailWarrantyCardActionPerformed(java.awt.event.ActionEvent evt) {
         if (controller != null) {
-            int selectedRow = tableListWarranty.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    ErrorMessage.WARRANTY_SELECT_ONE_DETAIL,
-                    "Chưa Chọn",
-                    JOptionPane.WARNING_MESSAGE
-                );
-                return;
-            }
-            String warrantyId = tableListWarranty.getValueAt(selectedRow, 0).toString();
-            controller.viewWarrantyDetail(warrantyId);
+            controller.handleDetailWarrantyCard();
         }
-    }//GEN-LAST:event_btnDetailWarrantyCardActionPerformed
+    }
 
     private void btnWarrantyInformationLookupActionPerformed(java.awt.event.ActionEvent evt) {
         if (controller != null) {
-            String keyword = txtSearch.getText().trim();
-            controller.searchWarranties(keyword);
+            controller.handleWarrantyInformationLookup();
         }
-    }//GEN-LAST:event_btnWarrantyInformationLookupActionPerformed
+    }
    
     
 

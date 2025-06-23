@@ -1,6 +1,7 @@
 package com.pcstore.view;
 
 import com.pcstore.controller.SupplierController;
+import com.pcstore.utils.LocaleManager;
 import com.pcstore.utils.TableUtils;
 import com.k33ptoo.components.KButton;
 
@@ -27,6 +28,8 @@ public class SupplierForm extends JPanel {
     private DefaultTableModel tableModel;
     private JTextField txtSupplierId, txtSupplierName, txtPhone, txtEmail, txtAddress;
     private KButton btnRefresh, btnSave, btnDelete, btnAdd;
+
+    private ResourceBundle bundle;
     
     // Controller
     private SupplierController controller;
@@ -44,6 +47,7 @@ public class SupplierForm extends JPanel {
         
         // Khởi tạo controller và gắn nó với view này
         controller = SupplierController.getInstance(this);
+        bundle = LocaleManager.getInstance().getResourceBundle();
     }
 
     /**

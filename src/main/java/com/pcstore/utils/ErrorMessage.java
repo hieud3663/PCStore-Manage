@@ -757,48 +757,22 @@ public enum ErrorMessage {
     INVOICE_DETAIL_NULL("INVOICE_DETAIL_NULL"),                          //"Chi tiết hóa đơn không được null"
     INVOICE_NULL("INVOICE_NULL"),                                      //"Thông tin hóa đơn không được null"test
 
-    //=================test =================
-    // Invoice Controller specific messages
-    INVOICE_LOAD_ALL_ERROR("INVOICE_LOAD_ALL_ERROR"),                       //"Lỗi khi tải danh sách hóa đơn: %s"
-    INVOICE_SEARCH_ERROR("INVOICE_SEARCH_ERROR"),                           //"Lỗi khi tìm kiếm hóa đơn: %s"
-    INVOICE_DELETE_SELECTED_NO_SELECTION("INVOICE_DELETE_SELECTED_NO_SELECTION"), //"Vui lòng tích chọn ít nhất một hóa đơn để xóa!"
-    INVOICE_DELETE_SELECTED_CONFIRM("INVOICE_DELETE_SELECTED_CONFIRM"),     //"Bạn có chắc chắn muốn xóa %d hóa đơn đã chọn?"
-    INVOICE_DELETE_SELECTED_TITLE("INVOICE_DELETE_SELECTED_TITLE"),         //"Xác nhận xóa"
-    INVOICE_DELETE_SELECTED_SUCCESS("INVOICE_DELETE_SELECTED_SUCCESS"),     //"Đã xóa thành công %d hóa đơn.\n"
-    INVOICE_DELETE_SELECTED_FAILED("INVOICE_DELETE_SELECTED_FAILED"),       //"Không thể xóa %d hóa đơn.\n\n"
-    INVOICE_DELETE_SELECTED_DETAILS("INVOICE_DELETE_SELECTED_DETAILS"),     //"Chi tiết lỗi:\n"
-    INVOICE_DELETE_SELECTED_PAID_OR_DELIVERED("INVOICE_DELETE_SELECTED_PAID_OR_DELIVERED"), //"Hóa đơn #%d: Không thể xóa hóa đơn đã thanh toán hoặc đã giao hàng!"
-    INVOICE_DELETE_SELECTED_FAIL_DETAIL("INVOICE_DELETE_SELECTED_FAIL_DETAIL"), //"Hóa đơn #%d: Xóa thất bại!"
-    INVOICE_DELETE_SELECTED_RESULT_TITLE("INVOICE_DELETE_SELECTED_RESULT_TITLE"), //"Kết quả xóa hóa đơn"
-    INVOICE_PAYMENT_NO_SELECTION("INVOICE_PAYMENT_NO_SELECTION"),           //"Vui lòng chọn hóa đơn cần thanh toán!"
-    INVOICE_PAYMENT_ALREADY_PAID("INVOICE_PAYMENT_ALREADY_PAID"),           //"Hóa đơn đã được thanh toán!"
-    INVOICE_UPDATE_STATUS_ERROR("INVOICE_UPDATE_STATUS_ERROR"),             //"Lỗi cập nhật trạng thái hóa đơn: %s"
-    INVOICE_PROCESS_PAYMENT_ERROR("INVOICE_PROCESS_PAYMENT_ERROR"),         //"Lỗi xử lý thanh toán: %s"
-    INVOICE_EXPORT_EXCEL_NO_DATA("INVOICE_EXPORT_EXCEL_NO_DATA"),           //"Không có dữ liệu hóa đơn để xuất"
-    INVOICE_RETURNABLE_DETAILS_ERROR("INVOICE_RETURNABLE_DETAILS_ERROR"),   //"Lỗi khi lấy chi tiết hóa đơn có thể trả: %s"
-    INVOICE_WARRANTY_DETAILS_ERROR("INVOICE_WARRANTY_DETAILS_ERROR"),       //"Lỗi khi lấy chi tiết hóa đơn cho bảo hành: %s"
-    INVOICE_INVOICES_FOR_WARRANTY_ERROR("INVOICE_INVOICES_FOR_WARRANTY_ERROR"), //"Lỗi khi lấy danh sách hóa đơn cho bảo hành: %s"
-    INVOICE_INVOICES_FOR_RETURN_ERROR("INVOICE_INVOICES_FOR_RETURN_ERROR"),     //"Lỗi khi lấy hóa đơn cho trả hàng: %s"
-    INVOICE_INVOICES_SIMPLE_ERROR("INVOICE_INVOICES_SIMPLE_ERROR"),             //"Lỗi khi lấy danh sách hóa đơn đơn giản: %s"
-    INVOICE_CALCULATE_REVENUE_ERROR("INVOICE_CALCULATE_REVENUE_ERROR"),         //"Lỗi khi tính doanh thu: %s"
-    INVOICE_SEARCH_BY_CUSTOMER_ERROR("INVOICE_SEARCH_BY_CUSTOMER_ERROR"),       //"Lỗi khi tìm hóa đơn theo khách hàng: %s"
-    INVOICE_SEARCH_BY_CUSTOMER_PHONE_ERROR("INVOICE_SEARCH_BY_CUSTOMER_PHONE_ERROR"), //"Lỗi khi lấy hóa đơn theo số điện thoại: %s"
-    INVOICE_SEARCH_BY_EMPLOYEE_ERROR("INVOICE_SEARCH_BY_EMPLOYEE_ERROR"),       //"Lỗi khi tìm hóa đơn theo nhân viên: %s"
-    INVOICE_SEARCH_BY_DATE_RANGE_ERROR("INVOICE_SEARCH_BY_DATE_RANGE_ERROR"),   //"Lỗi khi tìm hóa đơn theo khoảng thời gian: %s"
-    INVOICE_CREATE_MAIN_ERROR("INVOICE_CREATE_MAIN_ERROR"),                     //"Lỗi khi tạo hóa đơn mới: %s"
-    INVOICE_ADD_PRODUCT_STOCK_ERROR("INVOICE_ADD_PRODUCT_STOCK_ERROR"),         //"Số lượng sản phẩm không đủ. Hiện chỉ còn %d"
-    INVOICE_ADD_PRODUCT_MAIN_ERROR("INVOICE_ADD_PRODUCT_MAIN_ERROR"),           //"Lỗi khi thêm sản phẩm vào hóa đơn: %s"
-    INVOICE_UPDATE_QUANTITY_INSUFFICIENT("INVOICE_UPDATE_QUANTITY_INSUFFICIENT"), //"Số lượng sản phẩm không đủ. Hiện chỉ còn %d"
-    INVOICE_UPDATE_QUANTITY_MAIN_ERROR("INVOICE_UPDATE_QUANTITY_MAIN_ERROR"),   //"Lỗi khi cập nhật số lượng sản phẩm: %s"
-    INVOICE_REMOVE_PRODUCT_MAIN_ERROR("INVOICE_REMOVE_PRODUCT_MAIN_ERROR"),     //"Lỗi khi xóa sản phẩm khỏi hóa đơn: %s"
-    INVOICE_COMPLETE_NO_DETAILS("INVOICE_COMPLETE_NO_DETAILS"),                 //"Hóa đơn không có sản phẩm nào"
-    INVOICE_COMPLETE_MAIN_ERROR("INVOICE_COMPLETE_MAIN_ERROR"),                 //"Lỗi khi hoàn thành hóa đơn: %s"
-    INVOICE_CANCEL_INVALID_STATUS("INVOICE_CANCEL_INVALID_STATUS"),             //"Không thể hủy hóa đơn ở trạng thái %s"
-    INVOICE_CANCEL_MAIN_ERROR("INVOICE_CANCEL_MAIN_ERROR"),                     //"Lỗi khi hủy hóa đơn: %s"
-    INVOICE_DELETE_INVALID_STATUS("INVOICE_DELETE_INVALID_STATUS"),             //"Không thể xóa hóa đơn đã thanh toán hoặc đã giao"
-    INVOICE_DELETE_MAIN_ERROR("INVOICE_DELETE_MAIN_ERROR"),                     //"Lỗi khi xóa hóa đơn: %s"
-    INVOICE_SEARCH_INVOICES_ERROR("INVOICE_SEARCH_INVOICES_ERROR"),             //"Lỗi khi tìm kiếm hóa đơn: %s"
-    INVOICE_DELETE_SINGLE_ERROR("INVOICE_DELETE_SINGLE_ERROR"),                 //"Lỗi khi xóa hóa đơn: %s"
+
+    // Supplier controller specific messages 
+    SUPPLIER_CONTROLLER_INIT_ERROR("SUPPLIER_CONTROLLER_INIT_ERROR"),
+    SUPPLIER_LOAD_ALL_ERROR("SUPPLIER_LOAD_ALL_ERROR"),
+    SUPPLIER_SELECT_TO_UPDATE("SUPPLIER_SELECT_TO_UPDATE"),
+    SUPPLIER_SELECT_TO_DELETE("SUPPLIER_SELECT_TO_DELETE"),
+    SUPPLIER_DELETE_CONFIRM("SUPPLIER_DELETE_CONFIRM"),
+    SUPPLIER_DELETE_CONFIRM_TITLE("SUPPLIER_DELETE_CONFIRM_TITLE"),
+    SUPPLIER_DELETE_SUCCESS("SUPPLIER_DELETE_SUCCESS"),
+    SUPPLIER_DELETE_ERROR("SUPPLIER_DELETE_ERROR"),
+    SUPPLIER_ADD_SUCCESS("SUPPLIER_ADD_SUCCESS"),
+    SUPPLIER_ADD_ERROR("SUPPLIER_ADD_ERROR"),
+    SUPPLIER_UPDATE_SUCCESS("SUPPLIER_UPDATE_SUCCESS"),
+    SUPPLIER_UPDATE_ERROR("SUPPLIER_UPDATE_ERROR"),
+    SUPPLIER_NAME_PHONE_REQUIRED("SUPPLIER_NAME_PHONE_REQUIRED"),
+
     ;
 
     private final String key;

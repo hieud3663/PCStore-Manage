@@ -3,7 +3,9 @@ package com.pcstore.controller;
 import com.pcstore.model.Category;
 import com.pcstore.service.CategoryService;
 import com.pcstore.view.CategoryFormNew;
+import com.pcstore.utils.ButtonUtils;
 import com.pcstore.utils.ErrorMessage;
+import com.pcstore.utils.TableUtils;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,6 +26,8 @@ public class CategoryController {
         this.tableModel = (DefaultTableModel) view.getTableList().getModel(); // Sửa ở đây
         initController();
         loadCategoryTable();
+        refreshForm();
+        
     }
 
     private void initController() {
@@ -51,11 +55,16 @@ public class CategoryController {
                     }
                     view.getCbStatus().setSelectedItem(getString(row, 3));
                     view.getTxtDateCreate().setText(getString(row, 4));
-                    view.getBtnUpdateCategory().setEnabled(true);
-                    view.getBtnDeleteCategory().setEnabled(true);
+                    // view.getBtnUpdateCategory().setEnabled(true);
+                    // view.getBtnDeleteCategory().setEnabled(true);
+                    ButtonUtils.setKButtonEnabled(view.getBtnUpdateCategory(), true);
+                    ButtonUtils.setKButtonEnabled(view.getBtnDeleteCategory(), true);
                 }
             }
         });
+
+
+        TableUtils.applyDefaultStyle(view.getTableList());
     }
 
     private String getString(int row, int col) {
@@ -83,6 +92,7 @@ public class CategoryController {
     }
 
     private void addCategory() {
+        String categoryCode = view.getTxtCategoryCode().getText().trim();
         String name = view.getTxtCategoryName().getText().trim();
         String desc = view.getTxtDescription().getText().trim();
         String status = view.getCbStatus().getSelectedItem() != null ? view.getCbStatus().getSelectedItem().toString() : "";
@@ -109,11 +119,27 @@ public class CategoryController {
         }
 
         try {
-            // Sinh mã danh mục mới
-            String newId = service.generateCategoryId();
+            // Nếu người dùng không nhập mã danh mục thì tự sinh
+            String newId;
+            if (categoryCode.isEmpty()) {
+                newId = service.generateCategoryId();
+            } else {
+                // Kiểm tra mã danh mục đã tồn tại chưa
+                boolean codeExists = categories.stream()
+                        .anyMatch(c -> c.getCategoryId().equals(categoryCode));
+                if (codeExists) {
+                    JOptionPane.showMessageDialog(view,
+                        "Category code already exists. Please enter a different code.",
+                        ErrorMessage.ERROR_TITLE.get(),
+                        JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                newId = categoryCode;
+            }
+            
             Category category = new Category(newId, name, desc, status);
 
-            service.addCategory(category); // Không gán vào boolean
+            service.addCategory(category);
             loadCategoryTable();
             refreshForm();
             JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_ADD_SUCCESS.get());
@@ -216,8 +242,8 @@ public class CategoryController {
         view.getTxtDateCreate().setText("");
         view.getTableList().clearSelection();
         // Disable nút cập nhật, xóa khi không chọn dòng nào
-        view.getBtnUpdateCategory().setEnabled(false);
-        view.getBtnDeleteCategory().setEnabled(false);
+        ButtonUtils.setKButtonEnabled(view.getBtnUpdateCategory(), false);
+        ButtonUtils.setKButtonEnabled(view.getBtnDeleteCategory(), false);
     }
 
    

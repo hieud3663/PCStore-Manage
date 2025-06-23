@@ -68,13 +68,6 @@
 -- CREATE DATABASE ComputerStoreManagement;
 USE ComputerStoreManagement;
 
--- Bảng phân quyền (tạo trước để làm khóa ngoại)
-CREATE TABLE Roles (
-    RoleID INT PRIMARY KEY,
-    RoleName NVARCHAR(50) NOT NULL UNIQUE,
-    Description NVARCHAR(255)
-);
-
 -- Bảng khách hàng
 CREATE TABLE Customers (
     CustomerID VARCHAR(10) PRIMARY KEY, -- Mã KH01, KH02...
@@ -82,7 +75,6 @@ CREATE TABLE Customers (
     PhoneNumber NVARCHAR(15) UNIQUE NOT NULL, -- Số điện thoại
     Email NVARCHAR(255) NULL, -- Email
     Address NVARCHAR(MAX), -- Địa chỉ
-    Point INT DEFAULT 0 CHECK (Point >= 0), -- Tích điểm khách hàng
     CreatedAt DATETIME DEFAULT GETDATE() -- Ngày đăng ký tài khoản
 );
 
@@ -101,23 +93,16 @@ CREATE TABLE Categories (
     CategoryName NVARCHAR(255) NOT NULL UNIQUE -- Tên danh mục
 );
 
--- Bảng sản phẩm (đã tích hợp tất cả các trường bổ sung)
+-- Bảng sản phẩm
 CREATE TABLE Products (
     ProductID VARCHAR(10) PRIMARY KEY, -- Mã sản phẩm
     ProductName NVARCHAR(255) NOT NULL, -- Tên sản phẩm
     CategoryID VARCHAR(10), -- Mã danh mục sản phẩm (FK)
     SupplierID VARCHAR(10) NULL, -- Mã nhà cung cấp (FK)
-    Price DECIMAL(18,2) NOT NULL CHECK (Price > 0), -- Giá bán
-    CostPrice DECIMAL(18,2), -- Giá vốn
-    AverageCostPrice DECIMAL(18,2), -- Giá vốn trung bình
-    ProfitMargin DECIMAL(18,2), -- Biên lợi nhuận
+    Price DECIMAL(10,2) NOT NULL CHECK (Price > 0) , -- Giá bán
     StockQuantity INT DEFAULT 0 CHECK (StockQuantity >= 0), -- Số lượng tồn kho
     Specifications NVARCHAR(MAX), -- Thông số kỹ thuật
     Description NVARCHAR(MAX), -- Mô tả sản phẩm
-    Manufacturer NVARCHAR(100), -- Hãng sản xuất
-    isActive BIT DEFAULT 1, -- Trạng thái sản phẩm (còn bán hay không)
-    CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo sản phẩm
-    UpdatedAt DATETIME DEFAULT GETDATE(), -- Ngày cập nhật sản phẩm
     FOREIGN KEY (CategoryID) REFERENCES Categories(CategoryID) 
         ON DELETE CASCADE
         ON UPDATE CASCADE,
@@ -126,19 +111,18 @@ CREATE TABLE Products (
         ON UPDATE CASCADE
 );
 
--- Bảng nhân viên (đã tích hợp tất cả các trường bổ sung)
+-- Bảng nhân viên
 CREATE TABLE Employees (
     EmployeeID VARCHAR(10) PRIMARY KEY, -- Mã nhân viên, NV01, NV02,...
     FullName NVARCHAR(255) NOT NULL, -- Họ và tên
     PhoneNumber NVARCHAR(15) UNIQUE NOT NULL, -- Số điện thoại
     Email NVARCHAR(255) UNIQUE NOT NULL, -- Email
-    Position NVARCHAR(50) CHECK (Position IN ('Manager', 'Sales', 'Stock Keeper')) NOT NULL, -- Chức vụ
-    Gender NVARCHAR(10) CHECK (Gender IN ('Male', 'Female', 'Other')), -- Giới tính
-    DateOfBirth DATE, -- Ngày sinh
-    Avatar VARCHAR(MAX), -- Đường dẫn ảnh đại diện
-    CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo nhân viên
-    UpdatedAt DATETIME DEFAULT GETDATE() -- Ngày cập nhật nhân viên
+    Position NVARCHAR(50) CHECK (Position IN ('Manager', 'Sales', 'Stock Keeper')) NOT NULL -- Chức vụ
 );
+ALTER TABLE Employees
+ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo nhân viên
+    UpdatedAt DATETIME DEFAULT GETDATE();
+
 
 -- Bảng phương thức thanh toán
 CREATE TABLE PaymentMethods (
@@ -147,7 +131,7 @@ CREATE TABLE PaymentMethods (
     Description NVARCHAR(255)
 );
 
--- Bảng trạng thái đơn hàng
+-- Bổ sung trạng thái đơn hàng
 CREATE TABLE InvoiceStatus (
     StatusID INT PRIMARY KEY,
     StatusName NVARCHAR(50) NOT NULL UNIQUE, -- VD: Chờ xử lý, Đã thanh toán, Đã hủy...
@@ -159,10 +143,10 @@ CREATE TABLE Invoices (
     InvoiceID INT IDENTITY(1,1) PRIMARY KEY, -- Mã hóa đơn
     CustomerID VARCHAR(10) NULL, -- Mã khách hàng (FK)
     EmployeeID VARCHAR(10) NULL, -- Mã nhân viên lập hóa đơn (FK)
-    TotalAmount DECIMAL(18,2) CHECK (TotalAmount >= 0) NOT NULL, -- Tổng tiền hóa đơn
+    TotalAmount DECIMAL(10,2) CHECK (TotalAmount >= 0) NOT NULL, -- Tổng tiền hóa đơn
     InvoiceDate DATETIME DEFAULT GETDATE(), -- Ngày lập hóa đơn
-    StatusID INT NOT NULL DEFAULT 0, -- Trạng thái hóa đơn
-    PaymentMethodID VARCHAR(10) NOT NULL DEFAULT '1', -- Phương thức thanh toán
+    StatusID INT NOT NULL DEFAULT 0, -- Default status (e.g., 1 could be "Pending")
+    PaymentMethodID VARCHAR(10) NOT NULL DEFAULT 1, -- Default payment method (e.g., 1 = Cash)
     Notes NVARCHAR(MAX), -- Ghi chú
     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) 
         ON DELETE SET NULL
@@ -176,34 +160,42 @@ CREATE TABLE Invoices (
     FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
         ON DELETE NO ACTION
         ON UPDATE CASCADE
+
 );
 
--- Bảng chi tiết hóa đơn (đã tích hợp các trường bổ sung)
+
+
+-- ALTER TABLE Invoices
+-- ADD StatusID INT NOT NULL DEFAULT 1, -- Default status (e.g., 1 could be "Pending")
+-- FOREIGN KEY (StatusID) REFERENCES InvoiceStatus(StatusID)
+--     ON UPDATE CASCADE;
+
+-- ALTER TABLE Invoices
+-- ADD PaymentMethodID INT NOT NULL DEFAULT 1, -- Default payment method (e.g., 1 = Cash)
+-- FOREIGN KEY (PaymentMethodID) REFERENCES PaymentMethods(PaymentMethodID)
+--     ON UPDATE CASCADE;
+    
+-- Bảng chi tiết hóa đơn
 CREATE TABLE InvoiceDetails (
     InvoiceDetailID INT IDENTITY(1,1) PRIMARY KEY, -- Mã chi tiết hóa đơn
     InvoiceID INT NOT NULL, -- Mã hóa đơn (FK)
     ProductID VARCHAR(10) NOT NULL, -- Mã sản phẩm (FK)
     Quantity INT CHECK (Quantity > 0) NOT NULL, -- Số lượng sản phẩm trong hóa đơn
-    UnitPrice DECIMAL(18,2) CHECK (UnitPrice > 0) NOT NULL, -- Giá bán từng sản phẩm
-    CostPrice DECIMAL(18,2), -- Giá vốn của sản phẩm trong chi tiết hóa đơn
-    ProfitMargin DECIMAL(5,2), -- Biên lợi nhuận của sản phẩm trong chi tiết hóa đơn
-    DiscountAmount DECIMAL(18,2), -- Số tiền giảm giá của sản phẩm
+    UnitPrice DECIMAL(10,2) CHECK (UnitPrice > 0) NOT NULL, -- Giá bán từng sản phẩm
     FOREIGN KEY (InvoiceID) REFERENCES Invoices(InvoiceID) 
         ON DELETE CASCADE 
         ON UPDATE CASCADE,
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID) 
         ON DELETE NO ACTION
-        ON UPDATE CASCADE
+        ON UPDATE CASCADE,
 );
 
--- Bảng nhập hàng từ nhà cung cấp (đã tích hợp các trường bổ sung)
+-- Bảng nhập hàng từ nhà cung cấp
 CREATE TABLE PurchaseOrders (
     PurchaseOrderID VARCHAR(30) PRIMARY KEY, -- Mã phiếu nhập hàng
     SupplierID VARCHAR(10) NULL, -- Mã nhà cung cấp (FK)
     EmployeeID VARCHAR(10) NULL, -- Mã nhân viên nhập hàng (FK)
     OrderDate DATETIME DEFAULT GETDATE(), -- Ngày nhập hàng
-    Status NVARCHAR(50) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Completed', 'Cancelled', 'Delivering')), -- Trạng thái
-    TotalAmount DECIMAL(18,2) CHECK (TotalAmount >= 0) NOT NULL DEFAULT 0, -- Tổng tiền nhập hàng
     FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID) 
         ON DELETE SET NULL
         ON UPDATE CASCADE,
@@ -212,13 +204,14 @@ CREATE TABLE PurchaseOrders (
         ON UPDATE CASCADE
 );
 
+-- DROP TABLE PurchaseOrderDetails;
 -- Bảng chi tiết nhập hàng
 CREATE TABLE PurchaseOrderDetails (
     PurchaseOrderDetailID INT IDENTITY(1,1) PRIMARY KEY, -- Mã chi tiết nhập hàng
     PurchaseOrderID VARCHAR(30) NOT NULL, -- Mã phiếu nhập hàng (FK)
     ProductID VARCHAR(10) NOT NULL, -- Mã sản phẩm (FK)
     Quantity INT CHECK (Quantity > 0) NOT NULL, -- Số lượng nhập
-    UnitCost DECIMAL(18,2) CHECK (UnitCost > 0) NOT NULL, -- Giá nhập từng sản phẩm
+    UnitCost DECIMAL(10,2) CHECK (UnitCost > 0) NOT NULL, -- Giá nhập từng sản phẩm
     FOREIGN KEY (PurchaseOrderID) REFERENCES PurchaseOrders(PurchaseOrderID)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
@@ -236,8 +229,11 @@ CREATE TABLE Warranties (
     FOREIGN KEY (InvoiceDetailID) REFERENCES InvoiceDetails(InvoiceDetailID) 
         ON DELETE CASCADE
         ON UPDATE CASCADE,
+
     CHECK (EndDate > StartDate)
 );
+
+
 
 -- Bảng khuyến mãi và giảm giá
 CREATE TABLE Promotions (
@@ -277,24 +273,28 @@ CREATE TABLE RepairServices (
         ON UPDATE CASCADE
 );
 
--- Bảng quản lý người dùng (đã tích hợp RoleID)
+-- Bảng quản lý người dùng (cho đăng nhập hệ thống)
 CREATE TABLE Users (
-    UserID VARCHAR(10) PRIMARY KEY, -- vd: U001, U002,...
+    UserID VARCHAR(10) PRIMARY KEY, -- vd: U001, U002,... (nên tạo triger để tự động tạo mã)
     Username NVARCHAR(50) NOT NULL UNIQUE,
-    PasswordHash NVARCHAR(255) NOT NULL, -- Lưu hash của mật khẩu
-    EmployeeID VARCHAR(10) NULL, -- Liên kết với nhân viên
-    RoleID INT NULL, -- Phân quyền
+    PasswordHash NVARCHAR(255) NOT NULL, -- Lưu hash của mật khẩu, không lưu trực tiếp
+    EmployeeID VARCHAR(10) NULL, -- Liên kết với nhân viên nếu là tài khoản nhân viên
     IsActive BIT DEFAULT 1,
     LastLogin DATETIME,
     CreatedAt DATETIME DEFAULT GETDATE(),
-    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) 
-        ON DELETE SET NULL,
-    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE
+    FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE SET NULL
 );
 
--- Bảng quản lý trả hàng và đổi sản phẩm (đã tích hợp Notes)
+
+-- Bảng phân quyền
+CREATE TABLE Roles (
+    RoleID INT PRIMARY KEY,
+    RoleName NVARCHAR(50) NOT NULL UNIQUE,
+    Description NVARCHAR(255)
+);
+
+
+-- Bảng quản lý trả hàng và đổi sản phẩm
 CREATE TABLE Returns (
     ReturnID INT IDENTITY(1,1) PRIMARY KEY,
     InvoiceDetailID INT NOT NULL, -- Chi tiết hóa đơn gốc
@@ -306,9 +306,7 @@ CREATE TABLE Returns (
     Status NVARCHAR(20) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Approved', 'Rejected', 'Completed')),
     IsExchange BIT DEFAULT 0, -- Đánh dấu là đổi hàng hay hoàn tiền
     NewProductID VARCHAR(10) NULL, -- Sản phẩm mới nếu là đổi hàng
-    Notes NVARCHAR(MAX) DEFAULT '', -- Ghi chú
-    FOREIGN KEY (InvoiceDetailID) REFERENCES InvoiceDetails(InvoiceDetailID) 
-        ON DELETE CASCADE,
+    FOREIGN KEY (InvoiceDetailID) REFERENCES InvoiceDetails(InvoiceDetailID) ON DELETE CASCADE,
     FOREIGN KEY (ProcessedBy) REFERENCES Employees(EmployeeID) 
         ON DELETE NO ACTION
         ON UPDATE CASCADE,
@@ -317,7 +315,88 @@ CREATE TABLE Returns (
         ON UPDATE CASCADE
 );
 
--- Bảng lịch sử giá
+-- Thêm trường giới tính trong nhân viên
+ALTER TABLE Employees
+ADD Gender NVARCHAR(10) CHECK (Gender IN ('Male', 'Female', 'Other'));
+
+-- thêm trường ngày sinh cho employees
+ALTER TABLE Employees
+ADD DateOfBirth DATE;
+GO
+-- Thêm trường avatar trong bảng Employees
+
+ALTER TABLE Employees
+ADD Avatar VARCHAR(MAX);
+
+-- Thêm trường point cho khách hàng
+ALTER TABLE Customers
+ADD Point INT DEFAULT 0 CHECK (Point >= 0);
+
+--Thêm trường CreatedAt, UpdatedAt cho bảng Products
+ALTER TABLE Products
+ADD CreatedAt DATETIME DEFAULT GETDATE(), -- Ngày tạo sản phẩm
+    UpdatedAt DATETIME DEFAULT GETDATE(); -- Ngày cập nhật sản phẩm
+-- Cập nhật trường UpdatedAt mỗi khi có thay đổi
+
+--thêm dữ liệu thời gian tạo và cập nhật cho bảng Products
+UPDATE Products
+SET CreatedAt = GETDATE(), UpdatedAt = GETDATE()
+WHERE CreatedAt IS NULL OR UpdatedAt IS NULL;
+
+
+-- Thêm trường RoleID vào bẳng Users
+ALTER TABLE Users
+ADD RoleID INT NULL,
+    FOREIGN KEY (RoleID) REFERENCES Roles(RoleID)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+
+--Thểm cột notes cho bảng Returns
+ALTER TABLE Returns
+ADD Notes NVARCHAR(MAX) DEFAULT '';
+
+-- Thêm cột Manufacturer (Hãng sản xuất) vào bảng Products
+ALTER TABLE Products
+ADD Manufacturer NVARCHAR(100);
+
+-- Thêm cột trạng thái PurchaseOrders
+ALTER TABLE PurchaseOrders
+ADD Status NVARCHAR(50) DEFAULT 'Pending' CHECK (Status IN ('Pending', 'Completed', 'Cancelled', 'Delivering'));
+
+--Thêm cột TotalAmount cho bảng PurchaseOrders
+ALTER TABLE PurchaseOrders
+ADD TotalAmount DECIMAL(10,2) CHECK (TotalAmount >= 0) NOT NULL DEFAULT 0; -- Tổng tiền hóa đơn
+
+
+-- Thay đổi kiểu dữ liệu của cột TotalAmount trong bảng PurchaseOrders
+ALTER TABLE PurchaseOrders 
+ALTER COLUMN TotalAmount decimal(18,2);
+
+-- Thay đổi kiểu dữ liệu của cột UnitCost trong bảng PurchaseOrderDetails
+ALTER TABLE PurchaseOrderDetails 
+ALTER COLUMN UnitCost decimal(18,2);
+
+-- Thay đổi kiểu dữ liệu của các cột giá trong bảng Products nếu cần
+ALTER TABLE Products 
+ALTER COLUMN Price decimal(18,2);
+
+ALTER TABLE Products
+ADD isActive BIT DEFAULT 1; -- Trạng thái sản phẩm (còn bán hay không)
+
+--==========================================
+-- Bổ sung trường giá vốn vào bảng Products
+ALTER TABLE Products ADD CostPrice DECIMAL(18,2);   -- Giá vốn
+ALTER TABLE Products ADD AverageCostPrice DECIMAL(18,2);
+ALTER TABLE Products ADD ProfitMargin DECIMAL(5,2);
+
+ALTER TABLE Products ALTER COLUMN ProfitMargin DECIMAL(18,2);
+
+ALTER TABLE InvoiceDetails ADD CostPrice DECIMAL(18,2); -- Giá vốn của sản phẩm trong chi tiết hóa đơn
+ALTER TABLE InvoiceDetails ADD ProfitMargin DECIMAL(5,2); -- Biên lợi nhuận của sản phẩm trong chi tiết hóa đơn
+ALTER TABLE InvoiceDetails ADD DiscountAmount DECIMAL(18,2); -- Số tiền giảm giá của sản phẩm trong chi tiết hóa đơn (được tính trung bình từ tổng giảm giá của hóa đơn)
+
+-- Tạo bảng lịch sử giá
 CREATE TABLE PriceHistory (
     PriceHistoryID INT PRIMARY KEY IDENTITY(1,1),
     ProductID VARCHAR(10) NOT NULL,
@@ -332,7 +411,7 @@ CREATE TABLE PriceHistory (
     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
 );
 
--- Bảng chiến lược giá
+-- Tạo bảng chiến lược giá
 CREATE TABLE PricingStrategies (
     StrategyID INT PRIMARY KEY IDENTITY(1,1),
     StrategyName NVARCHAR(100) NOT NULL,
@@ -367,8 +446,19 @@ CREATE TABLE InventoryCheckDetails (
     Reason NVARCHAR(255), -- Lý do chênh lệch
     LossValue DECIMAL(15,2) DEFAULT 0, -- Giá trị mất mát (nếu có)
     CreatedAt DATETIME DEFAULT GETDATE(), 
-    FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) 
-        ON DELETE CASCADE,
+    FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
 );
+
+-- --Bảng lịch sử kiểm kê
+-- CREATE TABLE InventoryCheckHistory (
+--     HistoryID INT PRIMARY KEY IDENTITY(1,1), -- Mã lịch sử kiểm kê
+--     InventoryCheckID INT NOT NULL, -- Mã kiểm kê (FK)
+--     EmployeeID VARCHAR(10) NOT NULL, -- Mã nhân viên thực hiện kiểm kê (FK)
+--     Action NVARCHAR(50) NOT NULL, -- Hành động (VD: 'CREATE', 'UPDATE', 'DELETE')
+--     ActionDate DATETIME DEFAULT GETDATE(), -- Ngày thực hiện hành động
+--     Notes NVARCHAR(500), -- Ghi chú
+--     FOREIGN KEY (InventoryCheckID) REFERENCES InventoryChecks(InventoryCheckID) ON DELETE CASCADE,
+--     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID) ON DELETE CASCADE
+-- );
 

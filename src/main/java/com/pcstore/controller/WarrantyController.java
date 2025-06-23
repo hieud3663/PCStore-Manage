@@ -137,29 +137,26 @@ public class WarrantyController {
     }
     
     /**
-     * Tìm kiếm bảo hành theo từ khóa
+     * Tìm kiếm bảo hành theo từ khóa (mã, tên khách, sản phẩm, SĐT...)
      * @param keyword Từ khóa tìm kiếm
      */
     public void searchWarranties(String keyword) {
+        if (serviceForm == null) return;
         try {
             List<Warranty> warranties;
             if (keyword == null || keyword.trim().isEmpty()) {
                 warranties = warrantyService.getAllWarranties();
             } else {
-                warranties = warrantyService.searchWarranties(keyword);
+                warranties = warrantyService.searchWarranties(keyword.trim());
             }
-            if (serviceForm != null) {
-                serviceForm.updateWarrantyTable(warranties);
-            }
-        } catch (Exception e) {
-            if (serviceForm != null) {
-                JOptionPane.showMessageDialog(
-                    serviceForm,
-                    ErrorMessage.WARRANTY_SEARCH_ERROR + ": " + e.getMessage(),
-                    "Lỗi",
-                    JOptionPane.ERROR_MESSAGE
-                );
-            }
+            serviceForm.updateWarrantyTable(warranties);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                serviceForm,
+                "Không thể tìm kiếm bảo hành: " + ex.getMessage(),
+                "Lỗi",
+                JOptionPane.ERROR_MESSAGE
+            );
         }
     }
     

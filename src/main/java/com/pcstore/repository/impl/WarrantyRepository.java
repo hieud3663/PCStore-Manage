@@ -519,28 +519,27 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
      */
     public List<Warranty> search(String keyword) {
         List<Warranty> warranties = new ArrayList<>();
-        
-        // Sửa tên cột để khớp với cấu trúc DB
-        String sql = "SELECT w.*, id.invoice_detail_id, c.customer_id, c.full_name as CustomerName, c.phone_number as CustomerPhone, " +
-                     "p.product_id, p.product_name " +
-                     "FROM warranty w " +
-                     "LEFT JOIN invoice_detail id ON w.invoice_detail_id = id.invoice_detail_id " +
-                     "LEFT JOIN invoice i ON id.invoice_id = i.invoice_id " +
-                     "LEFT JOIN customer c ON i.customer_id = c.customer_id " +
-                     "LEFT JOIN product p ON id.product_id = p.product_id " +
-                     "WHERE w.warranty_id LIKE ? " +
-                     "OR c.full_name LIKE ? " +
-                     "OR c.phone_number LIKE ? " +
-                     "OR p.product_id LIKE ? " +
-                     "OR p.product_name LIKE ? " +
-                     "ORDER BY w.warranty_date DESC";
-        
+
+        String sql = "SELECT w.*, id.InvoiceDetailID, c.CustomerID, c.FullName as CustomerName, c.PhoneNumber as CustomerPhone, " +
+                     "p.ProductID, p.ProductName " +
+                     "FROM Warranties w " +
+                     "LEFT JOIN InvoiceDetails id ON w.InvoiceDetailID = id.InvoiceDetailID " +
+                     "LEFT JOIN Invoices i ON id.InvoiceID = i.InvoiceID " +
+                     "LEFT JOIN Customers c ON i.CustomerID = c.CustomerID " +
+                     "LEFT JOIN Products p ON id.ProductID = p.ProductID " +
+                     "WHERE w.WarrantyID LIKE ? " +
+                     "OR c.FullName LIKE ? " +
+                     "OR c.PhoneNumber LIKE ? " +
+                     "OR p.ProductID LIKE ? " +
+                     "OR p.ProductName LIKE ? " +
+                     "ORDER BY w.StartDate DESC";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             String searchPattern = "%" + keyword + "%";
             for (int i = 1; i <= 5; i++) {
                 stmt.setString(i, searchPattern);
             }
-            
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     warranties.add(mapResultSetToWarranty(rs));
@@ -550,7 +549,7 @@ public class WarrantyRepository implements Repository<Warranty, Integer> {
             logger.log(Level.SEVERE, "Error searching warranties with keyword: " + keyword, e);
             throw new RuntimeException("Database error when searching warranties", e);
         }
-        
+
         return warranties;
     }
     

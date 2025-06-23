@@ -662,32 +662,17 @@ public class ReturnController {
 
     public void searchReturns(ReturnServiceForm form) {
         String keyword = form.getTxtSearch().getText().trim();
-        if (keyword.isEmpty()) {
-            loadAllReturns(form);
-            return;
-        }
         try {
-            List<Return> searchResults;
-            if (keyword.matches("\\d+")) {
-                Optional<Return> returnById = getReturnById(Integer.parseInt(keyword));
-                searchResults = returnById.isPresent() ? List.of(returnById.get()) : List.of();
-            } else if (keyword.matches("\\d{10,11}")) {
-                searchResults = getReturnsByCustomer(keyword);
-            } else if (keyword.matches("[A-Za-z0-9]+")) {
-                searchResults = getReturnsByProduct(keyword);
+            List<Return> results;
+            if (keyword.isEmpty()) {
+                results = getAllReturns();
             } else {
-                searchResults = searchReturns(keyword);
+                results = returnService.searchReturns(keyword);
             }
-            displayReturns(form, searchResults);
-            if (searchResults.isEmpty()) {
-                JOptionPane.showMessageDialog(form,
-                    String.format(ErrorMessage.RETURN_NOT_FOUND_WITH_KEYWORD.toString(), keyword),
-                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-            }
+            displayReturns(form, results);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(form,
-                ErrorMessage.RETURN_SEARCH_ERROR + ": " + ex.getMessage(),
-                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(form, "Lỗi khi tìm kiếm đơn trả hàng: " + ex.getMessage(),
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 

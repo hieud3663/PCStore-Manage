@@ -35,11 +35,24 @@ public class CategoryController {
             public void mouseClicked(MouseEvent evt) {
                 int row = view.getTableList().getSelectedRow();
                 if (row >= 0) {
-                    view.getTxtCategoryCode().setText(getString(row, 0));
+                    String id = getString(row, 0);
+                    view.getTxtCategoryCode().setText(id);
                     view.getTxtCategoryName().setText(getString(row, 1));
-                    view.getTxtDescription().setText(getString(row, 2));
+                    // Lấy mô tả đầy đủ từ service thay vì từ bảng
+                    List<Category> categories = service.getAllCategories();
+                    Category selected = categories.stream()
+                            .filter(c -> c.getCategoryId().equals(id))
+                            .findFirst().orElse(null);
+                    if (selected != null) {
+                        String desc = selected.getDescription();
+                        view.getTxtDescription().setText(desc == null ? "" : desc.trim());
+                    } else {
+                        view.getTxtDescription().setText("");
+                    }
                     view.getCbStatus().setSelectedItem(getString(row, 3));
                     view.getTxtDateCreate().setText(getString(row, 4));
+                    view.getBtnUpdateCategory().setEnabled(true);
+                    view.getBtnDeleteCategory().setEnabled(true);
                 }
             }
         });
@@ -70,17 +83,37 @@ public class CategoryController {
     }
 
     private void addCategory() {
+        String name = view.getTxtCategoryName().getText().trim();
+        String desc = view.getTxtDescription().getText().trim();
+        String status = view.getCbStatus().getSelectedItem() != null ? view.getCbStatus().getSelectedItem().toString() : "";
+
+        // Kiểm tra thông tin bắt buộc
+        if (name.isEmpty() || desc.isEmpty() || status.isEmpty()) {
+            JOptionPane.showMessageDialog(view,
+                ErrorMessage.CATEGORY_ADD_REQUIRED.get(),
+                ErrorMessage.INFO_TITLE.get(),
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Kiểm tra trùng tên danh mục
+        List<Category> categories = service.getAllCategories();
+        boolean isDuplicate = categories.stream()
+                .anyMatch(c -> c.getCategoryName().equalsIgnoreCase(name));
+        if (isDuplicate) {
+            JOptionPane.showMessageDialog(view,
+                ErrorMessage.CATEGORY_NAME_EXISTS.get(),
+                ErrorMessage.INFO_TITLE.get(),
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
+            // Sinh mã danh mục mới
             String newId = service.generateCategoryId();
-            view.getTxtCategoryCode().setText(newId);
-
-            String name = view.getTxtCategoryName().getText().trim();
-            String desc = view.getTxtDescription().getText().trim();
-            String status = view.getCbStatus().getSelectedItem().toString();
-
             Category category = new Category(newId, name, desc, status);
 
-            service.addCategory(category);
+            service.addCategory(category); // Không gán vào boolean
             loadCategoryTable();
             refreshForm();
             JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_ADD_SUCCESS.get());
@@ -124,25 +157,55 @@ public class CategoryController {
     }
 
     private void deleteCategory() {
-        try {
-            String id = view.getTxtCategoryCode().getText().trim();
-            if (id.isEmpty()) {
-                JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_SELECT_DELETE.get());
-                return;
-            }
-            int confirm = JOptionPane.showConfirmDialog(view, ErrorMessage.CATEGORY_DELETE_CONFIRM.get(), ErrorMessage.CONFIRM_TITLE.get(), JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
+        String id = view.getTxtCategoryCode().getText().trim();
+        int row = view.getTableList().getSelectedRow();
+
+        // Kiểm tra đã chọn danh mục chưa
+        if (id.isEmpty() || row < 0) {
+            JOptionPane.showMessageDialog(view,
+                    ErrorMessage.CATEGORY_SELECT_DELETE.get(),
+                    ErrorMessage.INFO_TITLE.get(),
+                    JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Kiểm tra liên kết sản phẩm
+        if (service.hasProducts(id)) {
+            JOptionPane.showMessageDialog(view,
+                    ErrorMessage.CATEGORY_DELETE_CONSTRAINT.get(),
+                    ErrorMessage.ERROR_TITLE.get(),
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Xác nhận xóa
+        int confirm = JOptionPane.showConfirmDialog(view,
+                ErrorMessage.CATEGORY_DELETE_CONFIRM.get(),
+                ErrorMessage.CONFIRM_TITLE.get(),
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
                 boolean deleted = service.deleteCategory(id);
                 if (deleted) {
-                    JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_DELETE_SUCCESS.get());
                     loadCategoryTable();
                     refreshForm();
+                    JOptionPane.showMessageDialog(view,
+                            ErrorMessage.CATEGORY_DELETE_SUCCESS.get(),
+                            ErrorMessage.INFO_TITLE.get(),
+                            JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_DELETE_FAIL.get());
+                    JOptionPane.showMessageDialog(view,
+                            ErrorMessage.CATEGORY_DELETE_FAIL.get(),
+                            ErrorMessage.ERROR_TITLE.get(),
+                            JOptionPane.ERROR_MESSAGE);
                 }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(view,
+                        ErrorMessage.CATEGORY_DELETE_ERROR.format(ex.getMessage()),
+                        ErrorMessage.ERROR_TITLE.get(),
+                        JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_DELETE_ERROR.format(ex.getMessage()));
         }
     }
 
@@ -152,6 +215,10 @@ public class CategoryController {
         view.getTxtDescription().setText("");
         view.getTxtDateCreate().setText("");
         view.getTableList().clearSelection();
+        // Disable nút cập nhật, xóa khi không chọn dòng nào
+        view.getBtnUpdateCategory().setEnabled(false);
+        view.getBtnDeleteCategory().setEnabled(false);
     }
 
+   
 }

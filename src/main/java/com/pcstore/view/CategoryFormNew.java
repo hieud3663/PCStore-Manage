@@ -71,7 +71,8 @@ public class CategoryFormNew extends javax.swing.JPanel {
         txtCategoryName = new javax.swing.JTextField();
         pnDescription = new javax.swing.JPanel();
         lbDescription = new javax.swing.JLabel();
-        txtDescription = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtDescription = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         lbStatus = new javax.swing.JLabel();
         cbStatus = new javax.swing.JComboBox<>();
@@ -113,6 +114,7 @@ public class CategoryFormNew extends javax.swing.JPanel {
         pnFuntion.add(btnAddCategory);
 
         btnUpdateCategory.setText(bundle.getString("btUpdateCategory")); // NOI18N
+        btnUpdateCategory.setEnabled(false);
         btnUpdateCategory.setkEndColor(new java.awt.Color(0, 153, 255));
         btnUpdateCategory.setkHoverEndColor(new java.awt.Color(0, 102, 153));
         btnUpdateCategory.setkHoverForeGround(new java.awt.Color(255, 255, 255));
@@ -220,8 +222,11 @@ public class CategoryFormNew extends javax.swing.JPanel {
         lbDescription.setText(bundle.getString("lbDescription")); // NOI18N
         pnDescription.add(lbDescription, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 90, -1, -1));
 
-        txtDescription.setPreferredSize(new java.awt.Dimension(175, 30));
-        pnDescription.add(txtDescription, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 10, 230, 180));
+        txtDescription.setColumns(20);
+        txtDescription.setRows(5);
+        jScrollPane1.setViewportView(txtDescription);
+
+        pnDescription.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 60, -1, -1));
 
         pnInform.add(pnDescription);
 
@@ -275,6 +280,7 @@ public class CategoryFormNew extends javax.swing.JPanel {
     private com.k33ptoo.components.KButton btnUpdateCategory;
     private javax.swing.JComboBox<String> cbStatus;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lbCategoryCode;
     private javax.swing.JLabel lbCategoryName;
     private javax.swing.JLabel lbDateCreate;
@@ -294,7 +300,7 @@ public class CategoryFormNew extends javax.swing.JPanel {
     private javax.swing.JTextField txtCategoryCode;
     private javax.swing.JTextField txtCategoryName;
     private javax.swing.JLabel txtDateCreate;
-    private javax.swing.JTextField txtDescription;
+    private javax.swing.JTextArea txtDescription;
     // End of variables declaration//GEN-END:variables
 
     // Các biến và phương thức khác...
@@ -329,7 +335,7 @@ public class CategoryFormNew extends javax.swing.JPanel {
     public JTextField getTxtCategoryName() {
         return txtCategoryName;
     }
-    public JTextField getTxtDescription() {
+    public JTextArea getTxtDescription() {
         return txtDescription;
     }
     public JLabel getTxtDateCreate() {

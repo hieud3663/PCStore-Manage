@@ -179,6 +179,21 @@ public class CategoryRepository implements Repository<Category, String> {
         }
     }
     
+    // Kiểm tra danh mục có sản phẩm liên kết không
+    public boolean hasProducts(String categoryId) {
+        String sql = "SELECT COUNT(*) FROM Products WHERE CategoryID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, categoryId);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+            return false;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error checking products for category", e);
+        }
+    }
+    
     private Category mapResultSetToCategory(ResultSet rs) throws SQLException {
         Category category = new Category();
         category.setCategoryId(rs.getString("CategoryID"));

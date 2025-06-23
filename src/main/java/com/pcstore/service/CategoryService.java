@@ -172,6 +172,20 @@ public class CategoryService {
         return String.format("DM%03d", max + 1);
     }
 
+    /**
+     * Kiểm tra danh mục có sản phẩm liên kết không
+     * @param categoryId ID danh mục
+     * @return true nếu có sản phẩm liên kết
+     */
+    public boolean hasProducts(String categoryId) {
+        try {
+            return categoryRepository.hasProducts(categoryId);
+        } catch (Exception e) {
+            System.err.println("Lỗi kiểm tra sản phẩm liên kết: " + e.getMessage());
+            return false;
+        }
+    }
+
     // /**
     //  * Đếm số lượng danh mục
     //  * @return Số lượng danh mục

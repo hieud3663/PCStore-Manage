@@ -81,7 +81,17 @@ public enum ErrorMessage {
     SUBCATEGORY_NULL("SUBCATEGORY_NULL"),                          //"Danh mục con không được để trống"
     PRODUCT_NULL("PRODUCT_NULL"),                                  //"Sản phẩm không được để trống"
     PARENT_CATEGORY_NULL("PARENT_CATEGORY_NULL"),                  //"Danh mục cha không được để trống"
-    
+     CATEGORY_ADD_SUCCESS("CATEGORY_ADD_SUCCESS"),
+    CATEGORY_ADD_ERROR("CATEGORY_ADD_ERROR"),
+    CATEGORY_SELECT_UPDATE("CATEGORY_SELECT_UPDATE"),
+    CATEGORY_NOT_FOUND_UPDATE("CATEGORY_NOT_FOUND_UPDATE"),
+    CATEGORY_UPDATE_SUCCESS("CATEGORY_UPDATE_SUCCESS"),
+    CATEGORY_UPDATE_ERROR("CATEGORY_UPDATE_ERROR"),
+    CATEGORY_SELECT_DELETE("CATEGORY_SELECT_DELETE"),
+    CATEGORY_DELETE_CONFIRM("CATEGORY_DELETE_CONFIRM"),
+    CATEGORY_DELETE_SUCCESS("CATEGORY_DELETE_SUCCESS"),
+    CATEGORY_DELETE_FAIL("CATEGORY_DELETE_FAIL"),
+    CATEGORY_DELETE_ERROR("CATEGORY_DELETE_ERROR"),
     // Discount error messages
     DISCOUNT_CODE_EMPTY("DISCOUNT_CODE_EMPTY"),                    //"Mã khuyến mãi không được để trống"
     DISCOUNT_AMOUNT_NULL("DISCOUNT_AMOUNT_NULL"),                  //"Số tiền giảm giá không được để trống"

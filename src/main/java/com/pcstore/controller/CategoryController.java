@@ -3,6 +3,7 @@ package com.pcstore.controller;
 import com.pcstore.model.Category;
 import com.pcstore.service.CategoryService;
 import com.pcstore.view.CategoryFormNew;
+import com.pcstore.utils.ErrorMessage;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -82,17 +83,17 @@ public class CategoryController {
             service.addCategory(category);
             loadCategoryTable();
             refreshForm();
-            JOptionPane.showMessageDialog(view, "Thêm danh mục thành công!");
+            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_ADD_SUCCESS.get());
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(view, "Lỗi khi thêm danh mục: " + ex.getMessage());
+            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_ADD_ERROR.format(ex.getMessage()));
         }
     }
 
     private void updateCategory() {
         int row = view.getTableList().getSelectedRow();
         if (row < 0) {
-            JOptionPane.showMessageDialog(view, "Vui lòng chọn danh mục cần cập nhật!");
+            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_SELECT_UPDATE.get());
             return;
         }
         try {
@@ -107,7 +108,7 @@ public class CategoryController {
                     .findFirst().orElse(null);
 
             if (old == null) {
-                JOptionPane.showMessageDialog(view, "Không tìm thấy danh mục để cập nhật!");
+                JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_NOT_FOUND_UPDATE.get());
                 return;
             }
 
@@ -115,10 +116,10 @@ public class CategoryController {
             service.updateCategory(updated);
 
             loadCategoryTable();
-            JOptionPane.showMessageDialog(view, "Cập nhật thành công!");
+            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_UPDATE_SUCCESS.get());
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(view, "Lỗi khi cập nhật: " + ex.getMessage());
+            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_UPDATE_ERROR.format(ex.getMessage()));
         }
     }
 
@@ -126,22 +127,22 @@ public class CategoryController {
         try {
             String id = view.getTxtCategoryCode().getText().trim();
             if (id.isEmpty()) {
-                JOptionPane.showMessageDialog(view, "Vui lòng chọn danh mục để xóa!");
+                JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_SELECT_DELETE.get());
                 return;
             }
-            int confirm = JOptionPane.showConfirmDialog(view, "Bạn có chắc muốn xóa danh mục này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(view, ErrorMessage.CATEGORY_DELETE_CONFIRM.get(), ErrorMessage.CONFIRM_TITLE.get(), JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
                 boolean deleted = service.deleteCategory(id);
                 if (deleted) {
-                    JOptionPane.showMessageDialog(view, "Xóa danh mục thành công!");
+                    JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_DELETE_SUCCESS.get());
                     loadCategoryTable();
                     refreshForm();
                 } else {
-                    JOptionPane.showMessageDialog(view, "Không thể xóa danh mục!");
+                    JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_DELETE_FAIL.get());
                 }
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(view, "Lỗi xóa danh mục: " + ex.getMessage());
+            JOptionPane.showMessageDialog(view, ErrorMessage.CATEGORY_DELETE_ERROR.format(ex.getMessage()));
         }
     }
 
